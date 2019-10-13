@@ -1,0 +1,40 @@
+#! /usr/bin/python
+# -*- coding: u8 -*-
+"""
+OWASP Maryam!
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+"""
+
+import sys
+import platform
+from core import base
+from core.framework import Colors
+
+if(platform.system() not in ["Linux", "Darwin"]):
+	print(Colors.R + "This tool is designed for Linux and Mac. maybe not work!" + Colors.N)
+
+
+sys.dont_write_bytecode = True
+
+
+def ui():
+    x = base.Base()
+    try:
+        x.cmdloop()
+    except KeyboardInterrupt:
+        print('')
+
+
+ui()
