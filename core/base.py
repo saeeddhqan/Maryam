@@ -1,4 +1,5 @@
 # -*- coding: u8 -*-
+# Based on the Recon-ng: https://github.com/lanmaster53/recon-ng
 from __future__ import print_function
 __version__ = "v1.3.2"
 import errno
