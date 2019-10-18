@@ -208,16 +208,8 @@ class Base(framework.Framework):
     # ==================================================
 
     def show_banner(self):
-        eggs = ["Does your mom know you're here?",
-                "You need the 'help' option",
-                "Don't worry, nobody understands!",
-                "Oh my Maryam.Where's the your 'help'?"
-                ]
         banner = open(os.path.join(self.data_path, "banner.txt")).read()
         print(banner)
-        # print quotes
-        egg = random.choice(eggs)
-        print(" "*4 + framework.Colors.C + egg + framework.Colors.N)
         # print version
         print(" "*15 + __version__)
         print('')
