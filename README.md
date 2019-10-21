@@ -10,7 +10,7 @@ OWASP Maryam
 
 [![asciicast](https://asciinema.org/a/DlWH9AgkRtg2TfLd9DvwDvmy3.svg)](https://asciinema.org/a/DlWH9AgkRtg2TfLd9DvwDvmy3)
 
-OWASP Maryam is a full-featured open-source intelligence(OSINT) modular framework BASED ON The Recon-ng and written in Python. 
+**OWASP Maryam** is an **Open-source intelligence(OSINT)** and **Web-based Footprinting** modular framework based on the Recon-ng and written in Python.
 
 ## What can be done
 
