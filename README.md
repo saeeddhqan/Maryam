@@ -3,7 +3,7 @@
 ![Python 2.x](https://img.shields.io/badge/Python-2.x-green.svg)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/40d81c48b3444ee78ffc6c5c8639134c)](https://www.codacy.com/manual/saeeddhqan/Maryam?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=saeeddhqan/Maryam&amp;utm_campaign=Badge_Grade)
 
-<img src="https://www.owasp.org//resources/assets/owasplogo.png?6963c">
+<img src="https://www.owasp.org/images/8/83/Owasp-banner.png">
 
 OWASP Maryam
 ====
