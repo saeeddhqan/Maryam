@@ -34,7 +34,7 @@ class Module(BaseModule):
     def module_run(self):
         host = self.options["host"]
         host_attr = self.urlib(host)
-        host = host_attr.sub_service("http")
+        host = host_attr.sub_service("https")
         hostname = self.urlib(host).get_netloc
         if self.options["engines"]:
             limit = self.options["limit"]
@@ -70,7 +70,6 @@ class Module(BaseModule):
             final_resp = []
             req = self.request(
                 "https://threatcrowd.org/searchApi/v2/domain/report/?domain=" + hostname)
-            # print(req.json)
             txt = re.sub("[\t\n ]+", "", req.text)
             txt = re.findall(
                 r"\"subdomains\":(\[[\"\.A-z0-9_\-,]+\])", txt)
@@ -91,13 +90,13 @@ class Module(BaseModule):
             with open(tld_list) as o:
                 tlds = o.read().split()
 
-            hostname = host.split('.')[0]
+            hsplit = host.split('.')[0:-1]
             self.heading("DNS TLD Brute Furce", level=0)
             tld_verbose = self.options["tldverbose"]
             tld_ver = 349 if tld_verbose > 349 else tld_verbose
             tld_ver = 1 if tld_ver < 1 else tld_ver
             for i in range(0, len(tlds[:tld_ver])):
-                tmp_hname = "%s.%s" % (hostname, tlds[i])
+                tmp_hname = "%s.%s" % (hsplit, tlds[i])
                 try:
                     req = self.request(tmp_hname)
                 except Exception:
@@ -141,7 +140,7 @@ class Module(BaseModule):
             for i in read:
                 if(attempt > max_attempt):
                     break
-                tmp_name = "%s.%s" % (i, hostname)
+                tmp_name = "%s.%s" % (i, host.split("://")[1])
                 try:
                     req = self.request(tmp_name)
                 except Exception as e:
@@ -153,6 +152,7 @@ class Module(BaseModule):
                 else:
                     self.output("\"%s\"" % tmp_name, "G")
                     hits.append(tmp_name)
+
             self.heading("HITS", level=1)
             for i in hits:
-                self.output("\t%s" % tmp_name, "G")
+                self.output("\t%s" % i, "G")
