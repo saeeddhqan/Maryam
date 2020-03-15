@@ -1,6 +1,7 @@
-#! /usr/bin/python
-# -*- coding: u8 -*-
+# -*- coding : u8 -*-
 """
+OWASP Maryam!
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -15,69 +16,96 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import re as _re
+import re
 
+class main:
 
-class page_parse:
-    """docstring for page_parse"""
+	def __init__(self, framework, page):
+		self.framework = framework
+		self.page = page
 
-    def __init__(self, framework, page):
-        self.framework = framework
-        self.page = page
+	def pclean(self):
+		subs = r"<em>|<b>|</b>|</em>|<strong>|</strong>|<wbr>|</wbr>"
+		self.page = re.sub(subs, "", self.page)
+		self.page = re.sub(r"%3a", ' ', self.page)
+		self.page = re.sub(r"%2f", ' ', self.page)
 
-    def generic_clean(self):
-        self.page = _re.sub(r"<em>", '', self.page)
-        self.page = _re.sub(r"<b>", '', self.page)
-        self.page = _re.sub(r"</b>", '', self.page)
-        self.page = _re.sub(r"</em>", '', self.page)
-        self.page = _re.sub(r"%2f", ' ', self.page)
-        self.page = _re.sub(r"%3a", ' ', self.page)
-        self.page = _re.sub(r"<strong>", '', self.page)
-        self.page = _re.sub(r"</strong>", '', self.page)
-        self.page = _re.sub(r"<wbr>", '', self.page)
-        self.page = _re.sub(r"</wbr>", '', self.page)
+	def dork_clean(self, host):
+		# Clear Dork's footprints
+		host = re.sub(r"(^[\'|\"]?[\.@])|(['\"]+$)", "", host)
+		return host
 
-    def findall(self, re):
-        re = _re.compile(re)
-        return re.findall(self.page)
+	def findall(self, reg):
+		return re.compile(reg).findall(self.page)
 
-    def get_sites(self):
-        self.generic_clean()
-        re = _re.compile(r"<cite>(.*?)</cite>")
-        resp = []
-        for i in re.findall(self.page):
-            if(i not in resp):
-                resp.append(i)
-        return resp
+	@property
+	def sites(self):
+		self.pclean()
+		reg = re.compile(r"<cite>(.*?)</cite>")
+		resp = []
+		for i in reg.findall(self.page):
+			if i not in resp:
+				resp.append(i)
+		return resp
+		
+	@property
+	def social_nets(self):
+		self.pclean()
+		reg_id = self.framework.reglib().social_network_ulinks
+		resp = {}
+		for i in reg_id:
+			name = re.findall(reg_id[i], self.page)
+			names = []
+			for j in name:
+				if j not in names:
+					names.append(j)
+			resp[i] = names
+		return resp
 
-    def get_social_nets(self):
-        self.generic_clean()
-        reg_id = self.framework.reglib().social_network_ulinks
-        resp = {}
-        for i in reg_id:
-            _id = _re.findall(reg_id[i], self.page)
-            _id2 = []
-            for j in _id:
-                if(j not in _id2):
-                    _id2.append(j)
-            resp[i] = _id2
-        return resp
+	def get_emails(self, host):
+		self.pclean()
+		host = self.dork_clean(host + '.' if '.' not in host else host)
+		resp = []
+		for i in re.findall(r"[A-z0-9.\-]+@[A-z0-9\-\.]{0,255}?%s(?:[A-z]+)?" % host, self.page):
+			if i not in resp:
+				resp.append(i)
+		return resp
 
-    def get_emails(self, host):
-        self.generic_clean()
-        host = host + '.' if '.' not in host else host
-        resp = []
-        for i in _re.findall(r"[A-z0-9.\-]+@[A-z0-9\-\.]{0,255}?%s(?:[A-z]+)?" % host, self.page):
-            if(i not in resp):
-                resp.append(i)
-        return resp
+	@property
+	def all_emails(self):
+		self.pclean()
+		emails = self.framework.reglib(self.page).emails
+		return emails
 
-    def get_dns(self, host):
-        self.generic_clean()
-        resp = []
-        for i in _re.findall(r"[A-z0-9\.\-]+\.%s" % host, self.page):
-            i = i.replace("\\", "").replace("www.", "")
-            i = i[1:] if i[0] == "." else i
-            if(i not in resp):
-                resp.append(i)
-        return resp
+	def get_dns(self, host):
+		self.pclean()
+		resp = []
+		reg = r"[A-z0-9\.\-%s]+\.%s" % ('%',host.replace("\"","").replace("'",""))
+		for i in re.findall(reg, self.page):
+			i = i.replace("\\", "").replace("www.", "")
+			if i not in resp and "%" not in resp:
+				resp.append(i)
+
+		return resp
+
+	def get_docs(self, query, urls=None):
+		self.pclean()
+		if "%" in query:
+			query = self.framework.urlib(query).unquote
+		print(query)
+		ext = re.search(r"filetype:([A-z0-9]+)", query)
+		if ext:
+			docs = []
+			ext = ext.group(1)
+			if urls is None:
+				# Concat url_m regex with file extentions
+				reg = "%s.%s" % (self.framework.reglib(self.page).url_m, ext)
+				docs = self.findall(reg)
+			else:
+				for url in urls:
+					if url.endswith("."+ext):
+						docs.append(url)
+			return list(set(docs))
+		else:
+			self.framework.error("Filetype not specified. Concat 'filetype:doc' to the query")
+			return []

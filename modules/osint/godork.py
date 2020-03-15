@@ -1,6 +1,7 @@
-#! /usr/bin/python
-# -*- coding: u8 -*-
+# -*- coding : u8 -*-
 """
+OWASP Maryam!
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -20,29 +21,32 @@ from core.module import BaseModule
 
 class Module(BaseModule):
 
-    meta = {
-        "name": "Google Dork Search",
-        "author": "Saeed Dehqan(saeeddhqan)",
-        "version": "0.1",
-        "description": "Search your dork in google and get response",
-        "options": (
-            ("dork", None, True, "Google dork string"),
-            ("limit", 2, True, "Google search limit(min=1, max=15)"),
-            ("count", 50, True, "Link count in page(min=10, max=100)")
-        )
-    }
+	meta = {
+		"name": "Google Dork Search",
+		"author": "Saeeddqn",
+		"version": "0.2",
+		"description": "Search your dork in the google and get result",
+		"options": (
+			("dork", None, True, "Google dork string", "-d", "store"),
+			("limit", 2, False, "Google search limit", "-l", "store"),
+			("count", 50, False, "Link count in page(min=10, max=100)", "-c", "store"),
+			("output", False, False, "Save output to workspace", "--output", "store_false"),
+		),
+        "examples": ["email_search -d <DORK> -l 15 --output"]
 
-    def module_run(self):
-        dork = self.options["dork"]
-        limit = self.options["limit"]
-        count = self.options["count"]
-        run = self.google_engine(dork, limit, count)
-        run.run_crawl()
-        urls = self.page_parse(run.get_pages).get_sites()
+	}
 
-        self.alert("urls:")
-        if(urls != []):
-            for i in urls:
-                self.output("\t\"%s\"" % i, "g")
-        else:
-            self.output("Without result")
+	def module_run(self):
+		dork = self.options["dork"]
+		limit = self.options["limit"]
+		count = self.options["count"]
+		run = self.google(dork, limit, count)
+		run.run_crawl()
+		links = run.links
+		
+		if links == []:
+			self.output("Without result")
+		else:
+			for link in links:
+				self.output("\t%s" % link, "g")
+		self.save_gather({"links" : links}, "osint/godork", dork, output=self.options["output"])

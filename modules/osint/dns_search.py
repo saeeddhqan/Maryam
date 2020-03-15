@@ -1,6 +1,7 @@
-#! /usr/bin/python
-# -*- coding: u8 -*-
+# -*- coding : u8 -*-
 """
+OWASP Maryam!
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -14,7 +15,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-
 from core.module import BaseModule
 import re
 import os
@@ -24,150 +24,135 @@ class Module(BaseModule):
 
     meta = {
         "name": "DNS Searcher",
-        "author": "Saeed Dehqan(saeeddhqan)",
-        "version": "1.0",
-        "description": "Search in search engines and other sources for find DNS. engines[bing,google,yahoo,yandex,metacrawler,ask]",
+        "author": "Saeeddqn",
+        "version": "1.4",
+        "description": "Search in the search engines and other sources for find DNS. engines[bing,google,yahoo,yandex,metacrawler,ask,\
+                        baidu,startpage,netcraft,threatcrowd,virustotal]",
         "comments": [
-            "Sources:search engines and dnsdumpster.com, threatcrowd.org, netcraft.com"
+            "Sources:Search engines and dnsdumpster.com, threatcrowd.org, netcraft.com"
         ],
         "options": (
-            ("host", BaseModule._global_options["target"],
-             True, "Host name without https?://"),
-            ("limit", 3, True, "Search limit(min=1, max=15)"),
-            ("count", 50, True, "Link count in page(min=10, max=100)"),
-            ("engines", None, False, "Search engine names. e.g bing,google,.."),
-            ("threatcrowd", False, True, "Use ThreatCrowd.org"),
-            ("netcraft", False, True, "Use NetCraft.org"),
-            ("tld", False, True, "DNS tld brute force"),
-            ("tldverbose", 349, True, "tld brute force verbose(min=1, max=349)"),
-            ("dnsdumpster", False, False, "Uses dnsdumpster.com for get DNS map"),
-            ("dnsbrute", False, True, "DNS brute force flag"),
-            ("wordlist", os.path.join(BaseModule.data_path, 'dnsnames.txt'), False, "DNS brute force list"),
-        )
+            ("domain", BaseModule._global_options["target"],
+             True, "Domain name without https?://", "-d", "store"),
+            ("limit", 3, False, "Search limit", "-l", "store"),
+            ("count", 50, False, "Links count in page(min=10, max=100)", "-c", "store"),
+            ("engines", None, True, "Search engine names. e.g bing,google,..", "-e", "store"),
+            ("dnsdumpster", False, False, "Uses dnsdumpster.com for get DNS map", "--dumpster", "store_true"),
+            ("output", False, False, "Save output to workspace", "--output", "store_true"),
+        ),
+        "examples": ["dns_search -d example.com --output -e google,bing,yahoo -l 3", "dns_search -d example.com --dumpster --output"]
+
     }
 
     def module_run(self):
-        host = self.options["host"]
-        host_attr = self.urlib(host)
-        host = host_attr.sub_service("https")
-        hostname = self.urlib(host).get_netloc
-        if self.options["engines"]:
-            limit = self.options["limit"]
-            count = self.options["count"]
-            engines = self.options["engines"].split(",")
-            run = self.search_eng(hostname, engines, limit, count)
-            run.run_crawl()
-            page = self.urlib(run.get_pages).unquote()
-            dns = self.page_parse(page).get_dns(hostname)
-            self.heading("Search Engines:", level=0)
-            for i in dns:
-                self.output("\t\"%s\"" % i, "G")
+        domain = self.options["domain"]
+        domain_attr = self.urlib(domain)
+        domain = domain_attr.sub_service("http")
+        domain_name = self.urlib(domain).netloc
+        domain_names = []
+        fin = {}
+        limit = self.options["limit"]
+        count = self.options["count"]
+        engines = self.options["engines"].lower().split(",")
 
-
-
-        ## NetCraft.com Search #
-        ########################
-        if self.options["netcraft"]:
-            run = self.netcraft_search(hostname)
-            run.run_crawl()
-            resp = run.get_dns()
-            self.heading("NetCraft.com", level=0)
-            if resp == []:
-                self.output("\tNo Result")
-            else:
-                for i in resp:
-                    self.output("\t\"%s\"" % i, "G")
-            del resp,run
-
-        # ThreatCrowd.org Search #
-        ##########################
-        if self.options["threatcrowd"]:
-            final_resp = []
+        if "threatcrowd" in engines:
+            self.alert("ThreatCrowd")
+            final = []
             req = self.request(
-                "https://threatcrowd.org/searchApi/v2/domain/report/?domain=" + hostname)
+                "https://threatcrowd.org/searchApi/v2/domain/report/?domain=" + domain_name)
             txt = re.sub("[\t\n ]+", "", req.text)
             txt = re.findall(
                 r"\"subdomains\":(\[[\"\.A-z0-9_\-,]+\])", txt)
-            resp = txt[0][1:-1].split(",")
-            self.heading("ThreatCrowd.org", level=0)
-            for i in resp:
-                i = i.replace("..", ".")
-                if i not in final_resp:
-                    final_resp.append(i)
-                    self.output("\t%s" % i, "G")
-            del final_resp,resp,txt
+            hosts = txt[0][1:-1].split(",")
+            for host in hosts:
+                host = host[1:-1]
+                if host not in final:
+                    domain_names.append(host)
+                    final.append(host)
+                    self.output("\t%s"%host)
 
-        ### TLD Brute Force ####
-        ########################
-        if self.options["tld"]:
-            # Full version of http://data.iana.org/TLD/tlds-alpha-by-domain.txt
-            tld_list = os.path.join(BaseModule.data_path, 'tlds.txt')
-            with open(tld_list) as o:
-                tlds = o.read().split()
+        if "virustotal" in engines:
+            self.alert("VirusTotal")
+            final = []
+            req = self.request("https://www.virustotal.com/ui/domains/%s/subdomains?relationships=resolutions&cursor=STMwCi4=&limit=40" % domain_name)
+            parser = self.page_parse(req.text).get_dns(domain_name)
+            for host in parser:
+                if host[0].isdigit():
+                    matches = re.match(r'.+([0-9])[^0-9]*$', host)
+                    host = host[matches.start(1) + 1:]
+                if host not in final:
+                    domain_names.append(host)
+                    final.append(host)
+                    self.output("\t%s"%host)
 
-            hsplit = host.split('.')[0:-1]
-            self.heading("DNS TLD Brute Furce", level=0)
-            tld_verbose = self.options["tldverbose"]
-            tld_ver = 349 if tld_verbose > 349 else tld_verbose
-            tld_ver = 1 if tld_ver < 1 else tld_ver
-            for i in range(0, len(tlds[:tld_ver])):
-                tmp_hname = "%s.%s" % (hsplit, tlds[i])
-                try:
-                    req = self.request(tmp_hname)
-                except Exception:
-                    pass
-                else:
-                    self.output("\"%s\"" % tmp_hname, "g")
-                    
+        if "google" in engines:
+            search = self.google(domain_name, limit, count)
+            search.run_crawl()
+            fin["google"] = search.dns
 
-        ##### DNSDUMPSTER.com ######
-        ########################
+        if "bing" in engines:
+            search = self.bing(domain_name, limit, count)
+            search.run_crawl()
+            fin["bing"] = search.dns
+
+        if "yahoo" in engines:
+            search = self.yahoo(domain_name, limit, count)
+            search.run_crawl()
+            fin["yahoo"] = search.dns
+
+        if "metacrawler" in engines:
+            search = self.metacrawler(domain_name, limit)
+            search.run_crawl()
+            fin["metacrawler"] = search.dns
+
+        if "yandex" in engines:
+            search = self.yandex(domain_name, limit, count)
+            search.run_crawl()
+            fin["yandex"] = search.dns
+
+        if "startpage" in engines:
+            search = self.startpage(domain_name, limit)
+            search.run_crawl()
+            fin["startpage"] = search.dns
+
+        if "baidu" in engines:
+            search = self.baidu(domain_name, limit)
+            search.run_crawl()
+            fin["baidu"] = search.dns
+
+        if "netcraft" in engines:
+            search = self.netcraft(domain_name)
+            search.run_crawl()
+            fin["netcraft"] = search.dns
+
+        ###### DNSDUMPSTER ######
+        # #########################
         if self.options["dnsdumpster"]:
             try:
                 req = self.request(
-                    "https://dnsdumpster.com/static/map/%s.png" % hostname)
+                    "https://dnsdumpster.com/static/map/%s.png" % domain_name)
             except Exception as e:
-                self.verbose(e.args[0], "R")
+                self.error(str(e.args))
             else:
-                text = req.read
-                file_path = "%s/%s.png" % (self.workspace, hostname)
+                read = req.read
+                file_path = "%s/%s.png" % (self.workspace, domain_name)
                 try:
                     with open(file_path, "wb") as o:
                         o.write(text)
                 except Exception as e:
-                    self.error("File save error: " + e.message)
+                    self.error(str(e))
                 else:
-                    self.heading("dnsdumpster.com", level=0)
+                    resp["dnsdumpster"] = file_path
+                    methods.append("dnsdumpster")
+                    self.heading("DNSdumpster", level=0)
                     self.output(
-                        "\tdnsdumpster response saved in \"%s\"" % file_path)
+                        "\tdnsdumpster response saved to \"%s\"" % file_path)
+        uniq = []
+        for eng in fin:
+            self.alert(eng)
+            for host in fin[eng]:
+                if "%" not in host and host not in uniq:
+                    uniq.append(host)
+                    self.output("\t%s"%host)
 
-
-        ### DNS Brute Force ####
-        ########################
-        if self.options["dnsbrute"]:
-            hits = []
-            max_attempt = 4
-            attempt = 0
-            filename = self.options["wordlist"]
-            with open(filename) as o:
-                read = o.read().split()
-            self.heading("DNS Brute", level=0)
-            for i in read:
-                if(attempt > max_attempt):
-                    break
-                tmp_name = "%s.%s" % (i, host.split("://")[1])
-                try:
-                    req = self.request(tmp_name)
-                except Exception as e:
-                    if(e.args[0] == "timed out"):
-                        self.verbose("%s => Timed out" % tmp_name, "O")
-                        attempt += 1
-                    else:
-                        self.verbose("%s:\"%s\"" % (e.args[0], tmp_name), "O")
-                else:
-                    self.output("\"%s\"" % tmp_name, "G")
-                    hits.append(tmp_name)
-
-            self.heading("HITS", level=1)
-            for i in hits:
-                self.output("\t%s" % i, "G")
+        self.save_gather(uniq, "osint/dns_search", domain_name, output=self.options["output"])

@@ -1,4 +1,3 @@
-#! /usr/bin/python
 # -*- coding: u8 -*-
 """
 OWASP Maryam!
@@ -22,19 +21,19 @@ import platform
 from core import base
 from core.framework import Colors
 
-if(platform.system() not in ["Linux", "Darwin"]):
-	print(Colors.R + "This tool is designed for Linux and Mac. maybe not work!" + Colors.N)
-
+# Check the OS
+if platform.system() not in ["Linux", "Darwin"]:
+	print(Colors.R + "This tool is designed for Linux and Darwin. maybe not work!" + Colors.N)
 
 sys.dont_write_bytecode = True
 
+def cui():
+	x = base.Base()
+	try:
+		x.cmdloop()
+	except KeyboardInterrupt:
+		print('')
+	except Exception as e:
+		raise e
 
-def ui():
-    x = base.Base()
-    try:
-        x.cmdloop()
-    except KeyboardInterrupt:
-        print('')
-
-
-ui()
+cui()
