@@ -29,7 +29,7 @@ class Module(BaseModule):
 			("domain", BaseModule._global_options["target"], True, "Domain string", "-d", "store"),
 			("crawl", False, False, "Crawl in the more pages", "--crawl", "store_true"),
 			("debug", False, False, "debug the scraper", "--debug", "store_true"),
-			("limit", 20, False, "The number of pages that open", "-l", "store"),
+			("limit", 1, False, "The number of pages that open", "-l", "store"),
 			("output", False, False, "Save output to workspace", "--output", "store_true"),
 		),
 		"examples": ["crawler -d <DOMAIN> --output --debug -l 10", "crawler -d <DOMAIN> --crawl --output"]
@@ -52,11 +52,18 @@ class Module(BaseModule):
 				for j in e[i]:
 					self.output("\t\"%s\"" % j, "o")
 
-		for i in run.social_nets:
-			self.alert(i)
-			if run.social_nets[i] != []:
-				for j in run.social_nets[i]:
-					self.output("\t\t%s" % str(j), "g")
+		usernames = run.social_nets
+		for net in usernames:
+			self.alert(net)
+			net = list(set(usernames[net]))
+			if net != []:
+				for link in net:
+					if type(link) is tuple:
+						for mic in link:
+							if len(mic) >2:
+								self.output("\t\t%s" % str(mic), 'g')
+					else:
+						self.output("\t\t%s" % str(link), 'g')
 			else:
 				self.output("\t\t-")
 

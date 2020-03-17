@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from lxml.html import fromstring
 import re
-# Web Scraper v4.3
+# Web Scraper v4.4
 
 class main:
 
@@ -184,7 +184,6 @@ class main:
 			if resp != "":
 				self._pages = self._pages + resp
 				self._category_pages[url] = resp
-
 			return links
 
 		lnks = get_source(self.url, self.url)
@@ -192,12 +191,12 @@ class main:
 		if not lnks:
 			return [self.url]
 		else:
-			rept(self.url, final_links)
+			final_links = rept(self.url, final_links)
 
-		if not self.force:
+		if not self.force and self.limit == 1:
 			self._links = final_links
 			return
-
+			
 		for i in lnks:
 			lnks1 = get_source(i, i)
 			if self.numerator == self.limit:

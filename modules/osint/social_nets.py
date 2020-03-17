@@ -23,7 +23,7 @@ class Module(BaseModule):
 	meta = {
 		"name": "Get Usernames in Social Networks",
 		"author": "Saeeddqn",
-		"version": "0.3",
+		"version": "0.4",
 		"description": "Search for find Usernames in social networks. engines[bing,google,yahoo,yandex,metacrawler,ask,startpage]",
 		"options": (
 			("name", BaseModule._global_options["target"], True, "Company Name,domain name, .. without <PRTCL>://", "-n", "store"),
@@ -85,12 +85,18 @@ class Module(BaseModule):
 			wled += search.pages
 
 		usernames = self.page_parse(wled).social_nets
-		self.alert("Social Networks:")
-		for i in usernames:
-			if usernames[i] != []:
-				for j in usernames[i]:
-					self.output("\t\t%s" % str(j), "g")
+		for net in usernames:
+			self.alert(net)
+			net = list(set(usernames[net]))
+			if net != []:
+				for link in net:
+					if type(link) is tuple:
+						for mic in link:
+							if len(mic) >2:
+								self.output("\t\t%s" % str(mic), 'g')
+					else:
+						self.output("\t\t%s" % str(link), 'g')
 			else:
-				self.output("\t\tunknown")
+				self.output("\t\t-")
 
 		self.save_gather(usernames, "osint/dns_search", name, output=self.options["output"])
