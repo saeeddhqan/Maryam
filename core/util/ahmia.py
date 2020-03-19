@@ -26,7 +26,7 @@ class main:
 		self.ahmia = "ahmia.fi"
 
 	def run_crawl(self):
-		url = "http://%s/search/?q=%s" % (self.ahmia, self.q)
+		url = "https://%s/search/?q=%s" % (self.ahmia, self.q)
 		try:
 			req = self.framework.request(url=url)
 		except Exception as e:

@@ -26,13 +26,14 @@ class Module(BaseModule):
 		"author": "Saeeddqn",
 		"version": "0.2",
 		"description": "Search your dork in the google and get result",
+		"sources": ("google",),
 		"options": (
 			("dork", None, True, "Google dork string", "-d", "store"),
 			("limit", 2, False, "Google search limit", "-l", "store"),
 			("count", 50, False, "Link count in page(min=10, max=100)", "-c", "store"),
 			("output", False, False, "Save output to workspace", "--output", "store_false"),
 		),
-        "examples": ["email_search -d <DORK> -l 15 --output"]
+        "examples": ("email_search -d <DORK> -l 15 --output")
 
 	}
 

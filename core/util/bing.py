@@ -27,7 +27,7 @@ class main:
 		self.bing = "bing.com"
 
 	def run_crawl(self):
-		urls = ["http://%s/search?q=%s&count=%d&first=1%d" % (
+		urls = ["https://%s/search?q=%s&count=%d&first=1%d" % (
 			self.bing, self.q, self.count, i*11) for i in range(0, self.limit)]
 		max_attempt = len(urls)
 		for url in urls:

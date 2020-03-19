@@ -53,7 +53,7 @@ class main(object):
 	def __init__(self, framework, **kwargs):
 		'''Initializes control parameters as class attributes.'''
 		self.framework = framework
-		self.user_agent = self.framework.rand_uagent().get if "user_agent" not in kwargs else kwargs["user_agent"]
+		self.user_agent = "Mozilla/5.0 (X11; U; Linux x86_64; en-US) AppleWebKit/534.13 (KHTML, like Gecko) Ubuntu/10.04" if "user_agent" not in kwargs else kwargs["user_agent"]
 		self.debug = False if "debug" not in kwargs else kwargs["debug"]
 		self.proxy = None if "proxy" not in kwargs else kwargs["proxy"]
 		self.timeout = None if "timeout" not in kwargs else kwargs["timeout"]

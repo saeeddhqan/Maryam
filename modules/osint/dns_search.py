@@ -27,10 +27,9 @@ class Module(BaseModule):
         "author": "Saeeddqn",
         "version": "1.4",
         "description": "Search in the search engines and other sources for find DNS. engines[bing,google,yahoo,yandex,metacrawler,ask,\
-                        baidu,startpage,netcraft,threatcrowd,virustotal]",
-        "comments": [
-            "Sources:Search engines and dnsdumpster.com, threatcrowd.org, netcraft.com"
-        ],
+                        baidu,startpage,netcraft,threatcrowd,virustotal,yippy]",
+        "sources": ("bing", "google", "yahoo", "yandex", "metacrawler", "ask", "baidu", "startpage",
+                    "netcraft", "threatcrowd", "virustotal", "yippy"),
         "options": (
             ("domain", BaseModule._global_options["target"],
              True, "Domain name without https?://", "-d", "store"),
@@ -40,7 +39,7 @@ class Module(BaseModule):
             ("dnsdumpster", False, False, "Uses dnsdumpster.com for get DNS map", "--dumpster", "store_true"),
             ("output", False, False, "Save output to workspace", "--output", "store_true"),
         ),
-        "examples": ["dns_search -d example.com --output -e google,bing,yahoo -l 3", "dns_search -d example.com --dumpster --output"]
+        "examples": ("dns_search -d example.com --output -e google,bing,yahoo -l 3", "dns_search -d example.com --dumpster --output")
 
     }
 
@@ -124,6 +123,11 @@ class Module(BaseModule):
             search = self.netcraft(domain_name)
             search.run_crawl()
             fin["netcraft"] = search.dns
+
+        if "yippy" in engines:
+            search = self.yippy(domain_name)
+            search.run_crawl()
+            fin["yippy"] = search.dns
 
         ###### DNSDUMPSTER ######
         # #########################

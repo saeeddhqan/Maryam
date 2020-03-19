@@ -515,7 +515,7 @@ class Framework(cmd.Cmd):
 		mod = self._loaded_modules[self._module_names[tool_name]]
 		meta = mod.meta
 		opts = meta["options"]
-		description = '%s(%s) - \tdescription: %s' % (tool_name, meta["author"], meta["description"])
+		description = '%s(%s) - \tdescription: %s\n' % (tool_name, meta["author"], meta["description"])
 		parser = argparse.ArgumentParser(prog=tool_name, description=description, version=meta["version"])
 		for option in opts:
 			try:
@@ -532,11 +532,11 @@ class Framework(cmd.Cmd):
 
 		# Initialize help menu
 		format_help = parser.format_help()
+		if "sources" in meta:
+			format_help += "\nSources:\n\t%s"%("\n\t".join(meta["sources"]))
 		if "examples" in meta:
-			examples = ""
-			for example in meta["examples"]:
-				examples += " \t%s\n" % example
-			format_help = "%s\nexample:\n%s" % (format_help, examples)
+			format_help += "\nExamples:\n\t%s"%("\n\t".join(meta["examples"]))
+
 		# If args is nothing
 		if not args:
 			print(format_help)

@@ -25,6 +25,7 @@ class Module(BaseModule):
 		"author": "Saeeddqn",
 		"version": "0.4",
 		"description": "Search for find Usernames in social networks. engines[bing,google,yahoo,yandex,metacrawler,ask,startpage]",
+		"sources": ("bing", "google", "yahoo", "yandex", "metacrawler", "ask", "startpage"),
 		"options": (
 			("name", BaseModule._global_options["target"], True, "Company Name,domain name, .. without <PRTCL>://", "-n", "store"),
 			("engines", "google", True, "Search engine names. e.g \"bing,google,..\"", "-e", "store"),
@@ -32,7 +33,7 @@ class Module(BaseModule):
 			("count", 100, False, "Links count in page(min=10, max=100)", "-c", "store"),
 			("output", False, False, "Save output to  workspace", "--output", "store_false"),
 		),
-		"examples": ["social_nets -n microsoft -e google,bing,yahoo -c 50 --output", "social_network -n microsoft.com -e google"]
+		"examples": ("social_nets -n microsoft -e google,bing,yahoo -c 50 --output", "social_network -n microsoft.com -e google")
 
 	}
 

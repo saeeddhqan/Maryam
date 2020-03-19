@@ -24,7 +24,7 @@ class Module(BaseModule):
 		"name": "Web Applications Identifier",
 		"author": "Saeeddqn",
 		"version": "0.2",
-		"description": "Web fingerprinting to identify the applications used with over 100 pyload.",
+		"description": "Web fingerprinting to identify the applications used with over 500 pyload.",
 		"options": (
 			("domain", BaseModule._global_options["target"], True, "Domain string", "-d", "store"),
 			("output", False, False, "Save output to workspace", "--output", "store_true"),

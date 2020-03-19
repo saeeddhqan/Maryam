@@ -15,8 +15,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+
 from core.module import BaseModule
-from lxml.html import fromstring
 
 class Module(BaseModule):
 
@@ -32,7 +32,7 @@ class Module(BaseModule):
 			("limit", 1, False, "The number of pages that open", "-l", "store"),
 			("output", False, False, "Save output to workspace", "--output", "store_true"),
 		),
-		"examples": ["crawler -d <DOMAIN> --output --debug -l 10", "crawler -d <DOMAIN> --crawl --output"]
+		"examples": ("crawler -d <DOMAIN> --output --debug -l 10", "crawler -d <DOMAIN> --crawl --output")
 	}
 
 	def module_run(self):

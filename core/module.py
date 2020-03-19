@@ -35,6 +35,7 @@ from core.util import lang_identify
 from core.util import metacrawler
 from core.util import netcraft
 from core.util import os_identify
+from core.util import onionland
 from core.util import page_parse
 from core.util import rand_uagent
 from core.util import reglib
@@ -45,6 +46,7 @@ from core.util import web_scrap
 from core.util import wapps
 from core.util import yahoo
 from core.util import yandex
+from core.util import yippy
 
 # =================================================
 # MODULE CLASS
@@ -95,7 +97,7 @@ class BaseModule(framework.Framework):
 
 	def show_info(self):
 		self.meta["path"] = os.path.join(
-			"modules", self._modulename) + self.module_extention
+			"modules", self._modulename) + self.module_ext
 		print('')
 		# meta info
 		for item in ["name", "path", "author", "version"]:
@@ -122,6 +124,13 @@ class BaseModule(framework.Framework):
 				print('%s%s' % (self.spacer, textwrap.fill(prefix+comment, 100, subsequent_indent=self.spacer)))
 			print('')
 
+		# sources
+		if "sources" in self.meta:
+			print("\nSources:\n\t%s"%("\n\t".join(self.meta["sources"])))
+
+		# examples
+		if "examples" in self.meta:
+			print("Examples:\n\t%s"%("\n\t".join(self.meta["examples"])))
 	def show_globals(self):
 		self.show_options(self._global_options)
 
@@ -182,6 +191,10 @@ class BaseModule(framework.Framework):
 		_os = os_identify.main(self, content, headers)
 		return _os
 
+	def onionland(self, q, limit=5):
+		search = onionland.main(self, q, limit)
+		return search
+
 	def page_parse(self, page):
 		return page_parse.main(self, page)
 
@@ -216,6 +229,10 @@ class BaseModule(framework.Framework):
 
 	def yandex(self, q, limit=5, cookie=None, count=50):
 		search = yandex.main(self, q, limit, count)
+		return search
+
+	def yippy(self, q):
+		search = yippy.main(self, q)
 		return search
 
 	# ==================================================

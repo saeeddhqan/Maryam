@@ -23,8 +23,10 @@ class Module(BaseModule):
 	meta = {
 		"name": "Email Searcher",
 		"author": "Saeeddqn",
-		"version": "0.3",
-		"description": "Search in search engines for find emails. engines[bing,google,yahoo,yandex,metacrawler,ask,baidu,startpage,hunter]",
+		"version": "0.5",
+		"description": "Search in search engines for find emails.",
+		"sources": ("bing", "google", "yahoo", "yandex", "metacrawler", 
+					"ask", "baidu", "startpage", "hunter", "yippy"),
 		"options": (
 			("query", BaseModule._global_options["target"], True, "Domain Name, Company Name, etc", "-q", "store"),
 			("limit", 3, False, "Search limit", "-l", "store"),
@@ -33,69 +35,65 @@ class Module(BaseModule):
 			("key", None, False, "hunter.io api key", "-k", "store"),
 			("output", False, False, "Save output to  workspace", "--output", "store_false"),
 		),
-		"examples": ["email_search -n microsoft -e google,bing,yahoo -l 3 --output", "email_search -n microsoft.com -e metacrawler --output"]
+		"examples": ("email_search -q microsoft -e google,bing,yahoo -l 3 --output", "email_search -q microsoft.com -e metacrawler --output")
 	}
 
 	def module_run(self):
-		name = self.options["query"].replace("@", "")
+		name = self.options["query"].replace('@', '')
 		limit = self.options["limit"]
 		count = self.options["count"]
-		engines = self.options["engines"].split(",")
-		q = "\"@%s\"" % name
-		wled = {}
+		engines = self.options["engines"].split(',')
+		q = "\"%s40%s\"" % ("%", name)
+		emails = []
 
 		if "google" in engines:
-			search = self.google(name, limit, count)
+			search = self.google(q, limit, count)
 			search.run_crawl()
-			wled["google"] = search.emails
+			emails.extend(search.emails)
 
 		if "bing" in engines:
-			search = self.bing(name, limit, count)
+			search = self.bing(q, limit, count)
 			search.run_crawl()
-			wled["bing"] = search.emails
+			emails.extend(search.emails)
 
 		if "yahoo" in engines:
-			search = self.yahoo(name, limit, count)
+			search = self.yahoo(q, limit, count)
 			search.run_crawl()
-			wled["yahoo"] = search.emails
+			emails.extend(search.emails)
 
 		if "metacrawler" in engines:
-			search = self.metacrawler(name, limit)
+			search = self.metacrawler(q, limit)
 			search.run_crawl()
-			wled["metacrawler"] = search.emails
+			emails.extend(search.emails)
 
 		if "yandex" in engines:
-			search = self.yandex(name, limit, count)
+			search = self.yandex(q, limit, count)
 			search.run_crawl()
-			wled["yandex"] = search.emails
+			emails.extend(search.emails)
 
 		if "startpage" in engines:
-			search = self.startpage(name, limit)
+			search = self.startpage(q, limit)
 			search.run_crawl()
-			wled["startpage"] = search.emails
+			emails.extend(search.emails)
 
 		if "baidu" in engines:
-			search = self.baidu(name, limit)
+			search = self.baidu(q, limit)
 			search.run_crawl()
-			wled["baidu"] = search.emails
-
-		if "netcraft" in engines:
-			search = self.netcraft(name)
-			search.run_crawl()
-			wled["netcraft"] = search.emails
+			emails.extend(search.emails)
 
 		if "hunter" in engines:
 			key = self.options["key"]
-			search = self.hunter(name, key)
+			search = self.hunter(q, key)
 			search.run_crawl()
-			wled["hunter"] = search.emails
+			emails.extend(search.emails)
 
-		uniq = []
-		for eng in wled:
-			self.alert(eng)
-			for email in wled[eng]:
-				if email not in uniq:
-					uniq.append(email)
-					self.output("\t%s"%email)
+		if "yippy" in engines:
+			search = self.yippy(q)
+			search.run_crawl()
+			emails.extend(search.emails)
 
-		self.save_gather({"emails" : uniq}, "osint/email_search", name, output=self.options["output"])
+		emails = list(set(emails))
+		for email in emails:
+			self.output("\t%s" % email)
+
+		self.save_gather({"emails" : emails}, "osint/email_search", name, output=self.options["output"])

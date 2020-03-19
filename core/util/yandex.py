@@ -27,7 +27,7 @@ class main:
 		self.yandex = "yandex.com"
 
 	def run_crawl(self):
-		urls = ["http://%s/search?text=%s&numdoc=%d&p=%d" % (
+		urls = ["https://%s/search?text=%s&numdoc=%d&p=%d" % (
 			self.yandex, self.q, self.count, i) for i in range(1, self.limit)]
 		max_attempt = len(urls)
 		for url in urls:

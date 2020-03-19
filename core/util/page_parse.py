@@ -25,14 +25,15 @@ class main:
 		self.page = page
 
 	def pclean(self):
-		subs = r"<em>|<b>|</b>|</em>|<strong>|</strong>|<wbr>|</wbr>"
+		subs = r"<em>|<b>|</b>|</em>|<strong>|</strong>|<wbr>|</wbr>|<span class=\"vivbold qt0\">|%22"
 		self.page = re.sub(subs, "", self.page)
 		self.page = re.sub(r"%3a", ' ', self.page)
+		self.page = re.sub(r"%2f", ' ', self.page)
 		self.page = re.sub(r"%2f", ' ', self.page)
 
 	def dork_clean(self, host):
 		# Clear Dork's footprints
-		host = re.sub(r"(^[\'|\"]?[\.@])|(['\"]+$)", "", host)
+		host = re.sub(r"([\'\"]+)|(%40|@)", "", host)
 		return host
 
 	def findall(self, reg):
@@ -92,7 +93,6 @@ class main:
 		self.pclean()
 		if "%" in query:
 			query = self.framework.urlib(query).unquote
-		print(query)
 		ext = re.search(r"filetype:([A-z0-9]+)", query)
 		if ext:
 			docs = []

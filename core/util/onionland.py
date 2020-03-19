@@ -16,48 +16,45 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import re
+
 class main:
 
-	def __init__(self, framework, q, limit, count):
+	def __init__(self, framework, q, limit):
 		self.framework = framework
 		self.q = self.framework.urlib(q).quote
-		self.limit = limit
-		self.count = count
-		self._pages = ""
-		self.yahoo = "search.yahoo.com"
+		self.limit = 20 if limit > 20 else limit
+		self._pages = ''
+		self._links = []
+		self.onionlandsearchengine = "onionlandsearchengine.com"
 
 	def run_crawl(self):
-		urls = ["https://%s/search?p=%s&b=%d&pz=%d" % (
-			self.yahoo, self.q, i*10+1, self.count) for i in range(0, self.limit)]
+		urls = ["https://%s/search?q=%s&page=%d" % (self.onionlandsearchengine, self.q, i) for i in range(1, self.limit)]
 		max_attempt = len(urls)
-		for url in urls:
+		plen = 0
+		for i in range(max_attempt):
 			try:
-				req = self.framework.request(url=url)
+				req = self.framework.request(url=urls[i])
 			except Exception as e:
 				self.framework.error(str(e.args))
 				max_attempt -= 1
 				if max_attempt == 0:
-					self.framework.error("yahoo is missed!")
+					self.framework.error("onionland is missed!")
 					break
 			else:
-				page = req.text
-				if "\">Next</a>" not in page:
-					self._pages += page
-					break
-				self._pages += page
+				self._pages += req.text
+				if plen == 0:
+					plen = len(self.framework.reglib(self._pages).search("class=\"page\""))
+				if plen-1 == i:
+					return
 
 	@property
 	def pages(self):
 		return self._pages
 
 	@property
-	def dns(self):
-		return self.framework.page_parse(self._pages).get_dns(self.q)
-
-	@property
-	def emails(self):
-		return self.framework.page_parse(self._pages).get_emails(self.q)
-
-	@property
-	def docs(self):
-		return self.framework.page_parse(self._pages).get_docs(self.q)
+	def links(self):
+		self._links = [x.replace("</span>\n", "") for x in self.framework.reglib(self._pages).search(r"</span>\n(http?://[^\n]+)")]
+		self._links.extend([x.replace("class=\"link\">\n", "") for x in self.framework.reglib(self._pages).search(r"class=\"link\">\n(http?://[^\n]+)")])
+		return self._links
+	
