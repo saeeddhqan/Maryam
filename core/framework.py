@@ -965,7 +965,7 @@ class Framework(cmd.Cmd):
 
 		if arg[0] == "saved":
 			for mod in gdata:
-				self.heading(mod)
+				self.alert(mod)
 				for q in gdata[mod]:
 					print("\t"+q)
 			print()
