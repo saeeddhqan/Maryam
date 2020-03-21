@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from lxml.html import fromstring
-from cookielib import CookieJar
+from http.cookiejar import CookieJar
 import re
 import tempfile
 import webbrowser
