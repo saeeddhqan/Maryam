@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from lxml.html import fromstring
-from http.cookiejar import CookieJar
 import re
 import tempfile
 import webbrowser
@@ -27,7 +26,6 @@ class main:
 	def __init__(self, framework, q, limit, count):
 		self.framework = framework
 		self.q = self.framework.urlib(q).quote
-		self.cookiejar = CookieJar()
 		self.agent = framework.rand_uagent().lynx[0]
 		self._pages = ""
 		self.limit = limit
@@ -46,7 +44,6 @@ class main:
 					url=url,
 					payload=payload,
 					redirect=False,
-					cookie=self.cookiejar,
 					agent=self.agent)
 			except Exception as e:
 				self.framework.error(e)
@@ -56,7 +53,7 @@ class main:
 					continue
 				if req.status_code in [301, 302]:
 					redirect = req.headers["location"]
-					req = self.framework.request(url=redirect, redirect=False, cookie=self.cookiejar, agent=self.agent)
+					req = self.framework.request(url=redirect, redirect=False, agent=self.agent)
 				self._pages += req.text
 				page+=1
 				if self.limit == page:
@@ -66,7 +63,7 @@ class main:
 		# set up the captcha page markup for parsing
 		tree = fromstring(resp.text)
 		# extract and request the captcha image
-		resp = self.framework.request('https://ipv4.google.com' + tree.xpath('//img/@src')[0], redirect=False, cookie=self.cookiejar, agent=self.agent)
+		resp = self.framework.request('https://ipv4.google.com' + tree.xpath('//img/@src')[0], redirect=False, agent=self.agent)
 		# store the captcha image to the file system
 		with tempfile.NamedTemporaryFile(suffix='.jpg') as fp:
 			fp.write(resp.raw)
@@ -85,7 +82,7 @@ class main:
 		for x in ['q', 'continue', 'submit']:
 			_payload[x] = form.xpath('//input[@name="%s"]/@value' % (x))[0]
 		# send the captcha answer
-		return self.framework.request('https://ipv4.google.com/sorry/index', payload=_payload, cookiejar=self.cookiejar, agent=self.agent)
+		return self.framework.request('https://ipv4.google.com/sorry/index', payload=_payload, agent=self.agent)
 
 	@property
 	def pages(self):

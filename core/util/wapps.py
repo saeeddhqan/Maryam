@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import json
 import re
 import requests
-from bs4 import BeautifulSoup
+from lxml.html import fromstring
 import os
 
 class main:
@@ -33,13 +33,16 @@ class main:
 		self.wfile = os.path.join(framework.data_path, "wapps.json")
 
 	def _req_parse(self):
-		parser = soup = BeautifulSoup(self.page, 'html.parser')
+		tree = fromstring(self.page)
 		# Get Script[src] links
-		self.scripts = [script['src'] for script in
-						soup.findAll('script', src=True)]
+		self.scripts = tree.xpath("//script/@src")
 		# Get meta tags
-		self.meta = {meta['name'].lower(): meta['content'] for meta in soup.findAll('meta', attrs=dict(name=True, content=True))
-		}
+		self.meta = {}
+		meta = tree.xpath("//meta")
+		for i in meta:
+			attr = i.attrib
+			if "name" in attr and "content" in attr:
+				self.meta[attr["name"]] = attr["content"]
 
 	def _has_app(self, app):
 		# Search the easiest things first and save the full-text search of the
@@ -91,7 +94,6 @@ class main:
 		"""
 		for name, app in self.apps.items():
 			self._init_app(app)
-
 	
 	def _init_app(self, app):
 		# Ensure these keys' values are lists

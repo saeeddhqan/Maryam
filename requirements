@@ -1,4 +1,2 @@
 requests
 lxml
-bs4
-http.cookiejar
