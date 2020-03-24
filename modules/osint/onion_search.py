@@ -27,7 +27,7 @@ class Module(BaseModule):
 		links.extend(onionland.links)
 
 
-		links = links(set(links))
+		links = list(set(links))
 		if links != []:
 			for i in links:
 				self.output("\t%s" % i, "g")
