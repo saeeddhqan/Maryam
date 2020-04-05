@@ -1,4 +1,3 @@
-# -*- coding: u8 -*-
 """
 OWASP Maryam!
 
@@ -15,10 +14,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-# Based on the Recon-ng: https://github.com/lanmaster53/recon-ng
+# Based on the Recon-ng(https://github.com/lanmaster53/recon-ng)
 
-from __future__ import print_function
-__version__ = "v1.4.0"
+__version__ = "v1.4.5"
+import argparse
 import errno
 import imp
 import os
@@ -26,17 +25,11 @@ import random
 import re
 import shutil
 import sys
+import builtins
+from multiprocessing import Pool,Process
 
 # import framework libs
 from core import framework
-
-# using stdout to spool causes tab complete issues
-# therefore, override print function
-# use a lock for thread safe console and spool output
-try:
-	import __builtin__
-except ImportError:
-	import builtins as __builtin__
 
 from threading import Lock
 _print_lock = Lock()
@@ -45,56 +38,55 @@ _print_lock = Lock()
 def spool_print(*args, **kwargs):
 	with _print_lock:
 		if framework.Framework._spool:
-			framework.Framework._spool.write("%s\n" % (args[0]))
+			framework.Framework._spool.write(f"{args[0]}{os.linesep}")
 			framework.Framework._spool.flush()
 		if "console" in kwargs and kwargs["console"] is False:
 			return
 		# new print function must still use the old print function via the
 		# backup
-		__builtin__._print(*args, **kwargs)
+		builtins._print(*args, **kwargs)
 
 
 # make a builtin backup of the original print function
-__builtin__._print = print
+builtins._print = print
 # override the builtin print function with the new print function
-__builtin__.print = spool_print
-
-# =================================================
-# BASE CLASS
-# =================================================
+builtins.print = spool_print
 
 class Base(framework.Framework):
 
 	def __init__(self):
-		framework.Framework.__init__(self, "base")
+		framework.Framework.__init__(self, 'base')
+		self._history_file = ''
 		self._mode = 0
 		self._config = {
-				"app_name" : "maryam",
-				"module_ext" : ".py",
-				"data_directory_name" : "data",
-				"module_directory_name" : "modules",
-				"workspaces_directory_name" : "workspaces"
+				'name' : 'maryam',
+				'module_ext' : '.py',
+				'data_directory_name' : 'data',
+				'module_directory_name' : 'modules',
+				'workspaces_directory_name' : 'workspaces'
 			}
-		self._name = self._config["app_name"]
-		self._prompt_template = "%s[%s] > "
+		self._name = self._config['name']
+		self._prompt_template = '%s[%s] > '
 		self._base_prompt = self._prompt_template % ('', self._name)
 		# establish dynamic paths for framework elements
-		self.app_path = framework.Framework.app_path = sys.path[0]
+		self.path = framework.Framework.app_path = sys.path[0]
 		self.data_path = framework.Framework.data_path = os.path.join(
-			self.app_path, self._config["data_directory_name"])
+			self.app_path, self._config['data_directory_name'])
 		self.core_path = framework.Framework.core_path = os.path.join(
-			self.app_path, "core")
+			self.app_path, 'core')
 		self.module_path = framework.Framework.module_path = os.path.join(
-			self.app_path, self._config["module_directory_name"])
+			self.app_path, self._config['module_directory_name'])
 		self.module_ext = framework.Framework.module_ext = self._config[
-			"module_ext"]
+			'module_ext']
 		self.module_dirname = framework.Framework.module_dirname = self._config[
-			"module_directory_name"]
-		self.workspaces_dirname = self._config["workspaces_directory_name"]
+			'module_directory_name']
+		self.workspaces_dirname = self._config['workspaces_directory_name']
 		self.options = self._global_options
 		self._init_global_options()
 		self._init_home()
-		self.init_workspace("default")
+		self.init_workspace('default')
+		self._init_var()
+		self._check_version()
 		if self._mode == Mode.CONSOLE:
 			self.show_banner()
 
@@ -103,21 +95,21 @@ class Base(framework.Framework):
 	# ==================================================
 
 	def _init_global_options(self):
-		self.register_option("target", "example.com", True,
-							 "target for DNS interrogation")
-		self.register_option("proxy", None, False,
-							 "proxy server (address:port)")
+		self.register_option('target', 'example.com', True,
+							 'target for DNS interrogation')
+		self.register_option('proxy', None, False,
+							 'proxy server (address:port)')
 		self.register_option(
-			"limit", 10, True, "number of limit (where applicable)")
+			'limit', 10, True, 'number of limit (where applicable)')
 		self.register_option(
-			"agent", "Maryam/Request v2.3", True, "user-agent string")
+			'agent', f'Maryam/{__version__}', True, 'user-agent string')
 		self.register_option(
-			"rand_agent", False, True, "Setting random user-agent")
-		self.register_option("timeout", 10, True, "socket timeout (seconds)")
+			'rand_agent', False, True, 'Setting random user-agent')
+		self.register_option('timeout', 10, True, 'socket timeout (seconds)')
 		self.register_option(
-			"verbosity", '1',True,
-			"verbosity level (0 = minimal, 1 = verbose, 2 = debug)")
-		self.register_option("history", True, False, "Log all console input")
+			'verbosity', '1',True,
+			'verbosity level (0 = minimal, 1 = verbose, 2 = debug)')
+		self.register_option('history', True, False, 'Log all console input')
 
 	def _init_home(self):
 		self._home = framework.Framework._home = os.path.expanduser('~')
@@ -125,54 +117,48 @@ class Base(framework.Framework):
 		if not os.path.exists(self._home):
 			os.makedirs(self._home)
 
-	def _init_history(self, reborn=False):
-		history = os.path.join(self.workspace, "history.dat")
-		# initialize history file
-		if not os.path.exists(history):
-			self._history_file = open(history, 'w')
-		else:
-			self._history_file = open(history, 'a+')
-		# Reborn history file
-		if reborn:self._history_file.truncate()
-
-	def _get_history(self):
-		self._init_history()
-		commands = self._history_file.read().split("\n")
-		commands = ["%d  %s" %(num,name) for num,name in enumerate(commands) if name]
-		return commands
-
-	def _log_commands(self, cmd):
-		if cmd:
-			self._history_file.write("\n%s" %cmd)
-			self._init_history()
+	def _check_version(self):
+		if self._global_options.get('verbosity') >= 1:
+			self.debug('Checking version...')
+			pattern = r"__VERSION__ = '(\d+\.\d+\.\d+[^']*)'"
+			remote = 0
+			local = 0
+			try:
+				remote = re.search(pattern, self.request(\
+					'https://raw.githubusercontent.com/saeeddhqan/maryam/master/maryam').text).group(1)
+				local = re.search(pattern, open('maryam').read()).group(1)
+			except Exception as e:
+				self.error(f"Version check failed ({type(e).__name__}).")
+			if remote != local:
+				self.alert('Your version of Maryam does not match the latest release')
+				self.output(f"Remote version:  {remote}")
+				self.output(f"Local version:   {local}")
 
 	def _load_modules(self):
 		self.loaded_category = {}
 		self._loaded_modules = framework.Framework._loaded_modules
 		# crawl the module directory and build the module tree
-		for path in [os.path.join(x, self.module_dirname)
-					 for x in (self.app_path, self._home)]:
-			for dirpath, dirnames, filenames in os.walk(path):
-				# remove hidden files and directories
-				filenames = [f for f in filenames if not f[0] == '.']
-				dirnames[:] = [d for d in dirnames if not d[0] == '.']
-				if len(filenames) > 0:
-					for filename in [f for f in filenames if f.endswith(
-							self.module_ext)]:
-						is_loaded = self._load_module(dirpath, filename)
-						mod_category = "disabled"
-						if is_loaded:
-							modules_reg = r'/' + \
-								self.module_dirname + r"/([^/]*)"
-							try:
-								mod_category = re.search(
-									modules_reg, dirpath).group(1)
-							except AttributeError:
-								mod_path = os.path.join(dirpath, filename)
-								mod_category = re.search(modules_reg,
-														 mod_path).group(1).replace(
-									self.module_ext,
-									'')
+		for dirpath, dirnames, filenames in os.walk(self.module_path, followlinks=True):
+			# remove hidden files and directories
+			filenames = [f for f in filenames if not f[0] == '.']
+			dirnames[:] = [d for d in dirnames if not d[0] == '.']
+			if len(filenames) > 0:
+				for filename in [f for f in filenames if f.endswith(
+						self.module_ext)]:
+					is_loaded = self._load_module(dirpath, filename)
+					mod_category = "disabled"
+					if is_loaded:
+						modules_reg = r'/' + \
+							self.module_dirname + r"/([^/]*)"
+						try:
+							mod_category = re.search(
+								modules_reg, dirpath).group(1)
+						except AttributeError:
+							mod_path = os.path.join(dirpath, filename)
+							mod_category = re.search(modules_reg,
+													 mod_path).group(1).replace(
+								self.module_ext,
+								'')
 
 						# store the resulting category statistics
 						if mod_category not in self.loaded_category:
@@ -197,42 +183,38 @@ class Base(framework.Framework):
 			return True
 		except ImportError as e:
 			# notify the user of missing dependencies
-			self.error("Module \'%s\' disabled: \'%s\'" % (
-				mod_dispname, str(e.args)))
-		except BaseException:
+			self.error(f"Module \'{mod_dispname}\' disabled. Dependency required: {self.to_unicode_str(e)[16:]}")
+		except:
 			# notify the user of errors
 			self.print_exception()
-			self.error("Module \'%s\' disabled." % (mod_dispname))
+			self.error(f"Module '{mod_dispname}' disabled.")
 		# remove the module from the framework's loaded modules
 		self._loaded_modules.pop(mod_dispname, None)
 		if mod_name in self._module_names:
 			self._module_names.pop(mod_name)
-		return False
 
 	# ==================================================
 	# WORKSPACE METHODS
 	# ==================================================
 
 	def init_workspace(self, workspace):
+		if not workspace:
+			return
 		workspace = os.path.join(self._home, self.workspaces_dirname, workspace)
-		try:
+		if not os.path.exists(workspace):
 			os.makedirs(workspace)
-		except OSError as e:
-			if e.errno != errno.EEXIST:
-				self.error(e.__str__())
-				return False
+
 		# set workspace attributes
 		self.workspace = framework.Framework.workspace = workspace
 		self.prompt = self._prompt_template % (self._base_prompt[:-3], self.workspace.split('/')[-1])
 		# load workspace configuration
-		self._init_global_options()
 		self._init_history()
 		self._load_config()
 		# load modules after config to pop_init_varulate options
 		self._load_modules()
 		return True
 
-	def delete_workspace(self, workspace):
+	def remove_workspace(self, workspace):
 		path = os.path.join(self._home, self.workspaces_dirname, workspace)
 		try:
 			shutil.rmtree(path)
@@ -256,30 +238,24 @@ class Base(framework.Framework):
 		banner = open(os.path.join(self.data_path, "banner.txt")).read()
 		print(banner)
 		# print version
-		print(" "*15 + __version__)
+		print(' '*15 + __version__)
 		print('')
 		if self.loaded_category == {}:
 			print(
-				"%s[0] %s%s" %
-				(framework.Colors.B,
-				 "no module to display".title(),
-				 framework.Colors.N))
+				f'{framework.Colors.B}[0] No Module To Display{framework.Colors.N}')
+
 		else:
 			counts = [(self.loaded_category[x], x)
 					  for x in self.loaded_category] if self.loaded_category != [] else [0]
 			count_len = len(max([str(x[0]) for x in counts], key=len))
 			for count in sorted(counts, reverse=True):
-				cnt = "[%d]" % (count[0])
+				cnt = f'[{count[0]}]'
 				mod_name = count[1].title() if '/' in count[1] else count[1]
-				print("%s%s %s modules%s" % (framework.Colors.B, cnt.ljust(
-					count_len + 2), mod_name, framework.Colors.N))
+				print(f'{framework.Colors.B}{cnt.ljust(count_len + 2)} {mod_name} modules{framework.Colors.N}')
 		print('')
 
 	def show_workspaces(self):
 		self.do_workspaces("list")
-
-	def show_history(self):
-		self.do_history("list")
 
 	#==================================================
 	# HELP METHODS
@@ -287,23 +263,7 @@ class Base(framework.Framework):
 
 	def help_workspaces(self):
 		print(getattr(self, "do_workspaces").__doc__)
-		print('')
-		print("Usage: workspaces [add|select|delete|list]")
-		print('')
-
-	def help_history(self):
-		print(getattr(self, "do_history").__doc__)
-		print('')
-		print("Usage: history [list|from <num>|off|on|status|all]")
-		print('')
-		print("\thistory list\tshow 50 first commands")
-		print("\thistory from <num>\tShow the last <num> commands")
-		print("\thistory off\toff the history logger")
-		print("\thistory on\ton the history logger")
-		print("\thistory status\tfor show history status")
-		print("\thistory all\tshow all of commands")
-		print("If 'from <num>' isn't set, only the last 50 commands will be shown.")
-		print('')
+		print(f'{os.linesep}Usage: workspaces [add|select|delete|list]{os.linesep}')
 
 	# ==================================================
 	# COMMAND METHODS
@@ -311,7 +271,7 @@ class Base(framework.Framework):
 
 	def do_reload(self, params):
 		'''Reloads all modules'''
-		self.output("Reloading...")
+		self.output(f"Reloading...")
 		self._load_modules()
 
 	def do_workspaces(self, params):
@@ -321,71 +281,26 @@ class Base(framework.Framework):
 			return
 		params = params.split()
 		arg = params.pop(0).lower()
-		if arg == "list":
-			header = "\nWorkspaces:\n"
+		if arg == 'list':
+			header = '\nWorkspaces:\n'
 			print(header + self.ruler * len(header[2:]))
 			for i in self._get_workspaces():
 				print(''.ljust(5) + i)
 			print('')
-		elif arg in ["add", "select"]:
+		elif arg in ['add', 'select']:
 			if len(params) == 1:
 				if not self.init_workspace(params[0]):
-					self.output("Unable to initialize \"%s\" workspace." % (params[0]))
+					self.output(f"Unable to initialize '{params[0]}' workspace.")
 			else:
-				print("Usage: workspace [add|select|delete] <name>")
-		elif arg == "delete":
+				print('Usage: workspace [add|select|delete] <name>')
+		elif arg == 'delete':
 			if len(params) == 1:
-				if not self.delete_workspace(params[0]):
-					self.output("Unable to delete \"%s\" workspace." % (params[0]))
+				if not self.remove_workspace(params[0]):
+					self.output(f"Unable to delete '{params[0]}' workspace.")
 			else:
-				print("Usage: workspace delete <name>")
+				print('Usage: workspace delete <name>')
 		else:
 			self.help_workspaces()
-
-	def do_history(self, params):
-		'''Manage history of commands'''
-		if not params:
-			self.help_history()
-			return
-		params = params.split()
-		arg = params.pop(0).lower()
-		cmds = self._get_history()
-		if arg == "list":
-			if len(cmds) > 50:
-				cmds = cmds[:50]
-			header = "\nCommands:\n"
-			print(header + self.ruler * len(header[2:]))
-			for i in cmds:
-				print(''.ljust(5) + i)
-			print('')
-		elif arg == "empty":
-			self._init_history(reborn=True)
-		elif (arg == "from" and params) or arg == "all":
-			try:
-				if params:
-					to = int(params[0])
-				else:
-					# Show all commands
-					to = 0
-			except TypeError:
-				print("Usage: history from <num>")
-			else:
-				header = "\nCommands:\n"
-				print(header + self.ruler * len(header[2:]))
-				# Limit the show commands
-				if len(cmds) > to:
-					cmds = cmds[to:]
-				for i in cmds:
-					print(''.ljust(5) + i)
-				print('')
-		elif arg == "status":
-			print("History logger: %s" % str(self._global_options["history"]))
-		elif arg == "on":
-			self._global_options["history"] = True
-		elif arg == "off":
-			self._global_options["history"] = False
-		else:
-			self.help_history()
 
 	def do_load(self, params):
 		'''Loads specified module'''
@@ -403,9 +318,9 @@ class Base(framework.Framework):
 		# notify the user if none or multiple modules are found
 		if len(modules) != 1:
 			if not modules:
-				self.error("Invalid module name.")
+				self.error('Invalid module name.')
 			else:
-				self.output("Multiple modules match \"%s\"." % params)
+				self.output(f"Multiple modules match '{params}'.")
 				self.show_modules(modules)
 			return
 		# load the module
@@ -441,6 +356,81 @@ class Base(framework.Framework):
 
 	do_use = do_load
 
+	# ==================================================
+	# TOOL/FUNCTION METHODS
+	# ==================================================
+	def opt_proc(self, tool_name, args=None, output=None):
+		mod = self._loaded_modules[self._module_names[tool_name]]
+
+		meta = mod.meta
+		opts = meta['options']
+		description = f'{tool_name} {meta["version"]}({meta["author"]}) - \tdescription: {meta["description"]}\n'
+		parser = argparse.ArgumentParser(prog=tool_name, description=description)
+		for option in opts:
+			try:
+				name, val, req, desc, op, act = option
+			except ValueError as e:
+				self.error(f"{tool_name}CodeError: options is too short. need more than {len(option)} option")
+				return
+			name = f"--{name}" if not name.startswith('-') else name
+			try:
+				parser.add_argument(op, name, help=desc, dest=name, default=val, action=act, required=req)
+			except argparse.ArgumentError as e:
+				self.error(f"ModuleException: {e}")
+		# Initialize help menu
+		format_help = parser.format_help()
+		if 'sources' in meta:
+			format_help += '\nSources:\n\t' + '\n\t'.join(meta['sources'])
+		if 'examples' in meta:
+			format_help += '\nExamples:\n\t' + '\n\t'.join(meta['examples'])
+
+		# If args is nothing
+		if not args:
+			print(format_help)
+		else:
+			# Initialite args
+			clean_args = []
+			for arg in args.split(' '):
+				if arg.startswith('$'):
+					arg = self.get_var(arg[1:])
+				clean_args.append(arg)
+			args = parser.parse_args(clean_args)
+			args = vars(args)
+			# Set options
+			for option in args:
+				mod.options[option[2:]] = args[option]
+
+			# Run the tool
+			spool_flag = 0
+			try:
+				if output:
+					output = 'start ' + output
+					self.do_spool(output)
+					spool_flag = 1
+				mod._validate_options()
+				mod.module_pre()
+				mod.module_run()
+				mod.module_post()
+			except KeyboardInterrupt:
+				return
+			except Exception:
+				self.print_exception()
+			finally:
+				if spool_flag:
+					self.do_spool('stop')
+
+	def run_tool(self, func, tool_name, args, output=None):
+		try:
+			proc = Process(target=getattr(self, func), args=(tool_name, args, output))
+			proc.start()
+			proc.join()
+			# python > 3.7
+			if 'kill' in dir(proc):
+				proc.kill()
+		except KeyboardInterrupt:
+			return
+		except:
+			self.print_exception()
 
 # =================================================
 # SUPPORT CLASSES

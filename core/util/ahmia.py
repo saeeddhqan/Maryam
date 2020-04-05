@@ -1,4 +1,3 @@
-# -*- coding: u8 -*-
 """
 OWASP Maryam!
 
@@ -16,24 +15,30 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import re
+
 class main:
 
 	def __init__(self, framework, q):
+		""" ahmia.fi search engine
+			
+			framework : core attribute
+			q 		  : query for search
+		"""
 		self.framework = framework
 		self.q = self.framework.urlib(q).quote
-		self._pages = ""
+		self._pages = ''
 		self._links = []
-		self.ahmia = "ahmia.fi"
+		self.ahmia = 'ahmia.fi'
 
 	def run_crawl(self):
-		url = "https://%s/search/?q=%s" % (self.ahmia, self.q)
+		url = f"https://{self.ahmia}/search/?q={self.q}"
 		try:
 			req = self.framework.request(url=url)
-		except Exception as e:
-			self.framework.error(str(e.args))
-			self.framework.error("ahmia is missed!")
-		else:
-			self._pages = req.text
+		except:
+			self.framework.print_exception()
+			self.framework.error('Ahmia is missed!')
+		self._pages = req.text
 			
 	@property
 	def pages(self):
@@ -41,4 +46,4 @@ class main:
 
 	@property
 	def links(self):
-		return self.framework.page_parse(self._pages).findall(r"redirect_url=(https?:\/\/[A-z0-9.,:;%/\\?#@$^&*\(\)~\-_+=\"\']+)")
+		return self.framework.page_parse(self._pages).findall(r'redirect_url=(.*?)">')

@@ -1,4 +1,3 @@
-# -*- coding: u8 -*-
 """
 OWASP Maryam!
 
@@ -18,31 +17,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
 import re
-import requests
-from lxml.html import fromstring
 import os
 
 class main:
 
 	def __init__(self, framework, q, page, headers):
+		""" Web application fingerprint for detect apps. like wappalizer
+			
+			framework : core attribute
+			q 		  : domain name
+			page	  : web page
+			headers	  : web headers
+		"""
 		self.framework = framework
 		self.q = q
 		self.page = page
 		self.headers = headers
-		# Wapp json file
-		self.wfile = os.path.join(framework.data_path, "wapps.json")
+		# Wapps json file
+		self.wfile = os.path.join(framework.data_path, 'wapps.json')
 
 	def _req_parse(self):
-		tree = fromstring(self.page)
+		parser = self.framework.page_parse(self.page)
+
+		# tree = fromstring(self.page)
 		# Get Script[src] links
-		self.scripts = tree.xpath("//script/@src")
+		self.scripts = parser.get_jsfiles
 		# Get meta tags
 		self.meta = {}
-		meta = tree.xpath("//meta")
-		for i in meta:
-			attr = i.attrib
-			if "name" in attr and "content" in attr:
-				self.meta[attr["name"]] = attr["content"]
+		meta = parser.get_metatags
+		for attr in meta:
+			if 'name' in attr and 'content' in attr:
+				self.meta[attr['name']] = attr['content']
 
 	def _has_app(self, app):
 		# Search the easiest things first and save the full-text search of the
@@ -58,12 +63,13 @@ class main:
 				content = self.headers[name]
 				if regex.search(content):
 					return True
-					
+
 		# Javascript links
 		for regex in app['script']:
 			for script in self.scripts:
+				search = re.search(script)
 				if regex.search(script):
-					return True
+					return search.group()
 
 		# Meta tags
 		for name, regex in app['meta'].items():
@@ -71,7 +77,7 @@ class main:
 				content = self.meta[name]
 				if regex.search(content):
 					return True
-					
+
 		# Html search
 		for regex in app['html']:
 			if regex.search(self.page):
@@ -82,13 +88,13 @@ class main:
 		try:
 			return re.compile(regex, re.I)
 		except re.error as e:
-			return re.compile(r"(?!x)x")
+			return re.compile(r'(?!x)x')
 
 	def _init_wfile(self):
 		with open(self.wfile) as wf:
 			jload = json.loads(wf.read())
-		self.apps = jload["apps"]
-		self.categories = jload["categories"]
+		self.apps = jload['apps']
+		self.categories = jload['categories']
 		"""
 		Normalize app data, preparing it for the detection phase.
 		"""
@@ -159,8 +165,8 @@ class main:
 		"""
 		Returns a list of the categories for an app name.
 		"""
-		cat_nums = self.apps.get(app_name, {}).get("cats", [])
-		cat_names = [self.categories.get("%s" % cat_num, "")
+		cat_nums = self.apps.get(app_name, {}).get('cats', [])
+		cat_names = [self.categories.get(f'{cat_num}', '')
 					 for cat_num in cat_nums]
 
 		return cat_names
@@ -172,8 +178,10 @@ class main:
 			"""
 			Determine whether the web page matches the app signature.
 			"""
-			if self._has_app(app):
+			has_app = self._has_app(app)
+			if has_app:
 				detected_apps.add(app_name)
+
 		"""
 		Get the set of apps implied by detected_apps
 		"""
@@ -197,6 +205,6 @@ class main:
 		# Add Website creator
 		resp = {}
 		for app in app_list:
-		  resp[app] = self.apps[app]["website"]
+		  resp[app] = self.apps[app].get('website')
  
 		return resp

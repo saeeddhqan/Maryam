@@ -1,4 +1,3 @@
-# -*- coding: u8 -*-
 """
 OWASP Maryam!
 
@@ -32,24 +31,24 @@ class main:
 	domain_s = r"^([A-z0-9]([A-z0-9\-]{0,61}[A-z0-9])?\.)+[A-z]{2,6}(\:[0-9]{1,5})*$"
 	domain_m = r"[A-z0-9\-]{0,61}\.+[A-z]{2,6}"
 	url_s = r"^([A-z0-9]+:\/\/)?(www.|[A-z0-9].)[A-z0-9\-\.]+\.[A-z]{2,6}(\:[0-9]{1,5})*(\/($|[A-z0-9.,;?\'\\+&amp;%$#=~_-]+))*$"
-	url_m = r"ftp|https?://[A-z0-9\-.]{2,255}[\/A-z\.:\-0-9%~@#?&()+_\s;,\']+"
+	url_m = r"ftp|https?://[A-z0-9\-.]{2,255}[\/A-z\.:\-0-9%~@#?&()+_;,\']+"
 	id_s = r"^@[A-z_0-9\.\-]{2,255}$"
 	id_m = r"@[A-z_0-9\.\-]{2,255}"
 	social_network_ulinks = {
-		"Instagram": r"(instagram\.com\/[A-z_0-9.\-]{1,30})",
-		"Facebook": r"(facebook\.com\/[A-z_0-9\-]{2,50})|(fb\.com\/[A-z_0-9\-]{2,50})",
-		"Twitter": r"(twitter\.com\/[A-z_0-9\-.]{2,40})",
-		"Github": r"(github\.com\/[A-z0-9_-]{1,39})",
-		"Github site": r"([A-z0-9_-]{1,39}\.github.(io|com))",
-		"Telegram": r"(telegram\.me/[A-z_0-9]{5,32})",
-		"Youtube": r"(youtube\.com\/user\/[A-z_0-9\-\.]{2,100})",
-		"Linkedin company": r"(linkedin\.com\/company\/[A-z_0-9\.\-]{3,50})",
-		"Linkedin individual": r"(linkedin\.com\/in\/[A-z_0-9\.\-]{3,50})",
-		"Googleplus": r"\.?(plus\.google\.com/[A-z0-9_\-.+]{3,255})",
-		"WordPress": r"([A-z0-9\-]+\.wordpress\.com)",
-		"Reddit": r"(reddit\.com/user/[A-z0-9_\-]{3,20})",
-		"Tumblr": r"([A-z0-9\-]{3,32}\.tumblr\.com)",
-		"Blogger": r"([A-z0-9\-]{3,50}\.blogspot\.com)"
+		'Instagram': r"(instagram\.com\/[A-z_0-9.\-]{1,30})",
+		'Facebook': r"(facebook\.com\/[A-z_0-9\-]{2,50})|(fb\.com\/[A-z_0-9\-]{2,50})",
+		'Twitter': r"(twitter\.com\/[A-z_0-9\-.]{2,40})",
+		'Github': r"(github\.com\/[A-z0-9_-]{1,39})",
+		'Github site': r"([A-z0-9_-]{1,39}\.github.(io|com))",
+		'Telegram': r"(telegram\.me/[A-z_0-9]{5,32})",
+		'Youtube': r"(youtube\.com\/user\/[A-z_0-9\-\.]{2,100})",
+		'Linkedin company': r"(linkedin\.com\/company\/[A-z_0-9\.\-]{3,50})",
+		'Linkedin individual': r"(linkedin\.com\/in\/[A-z_0-9\.\-]{3,50})",
+		'Googleplus': r"\.?(plus\.google\.com/[A-z0-9_\-.+]{3,255})",
+		'WordPress': r"([A-z0-9\-]+\.wordpress\.com)",
+		'Reddit': r"(reddit\.com/user/[A-z0-9_\-]{3,20})",
+		'Tumblr': r"([A-z0-9\-]{3,32}\.tumblr\.com)",
+		'Blogger': r"([A-z0-9\-]{3,50}\.blogspot\.com)"
 		}
 
 	def search(self, regex, _type=list):

@@ -1,4 +1,3 @@
-# -*- coding: u8 -*-
 """
 OWASP Maryam!
 
@@ -16,36 +15,50 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import re
+import webbrowser
+
 class main:
 
-	def __init__(self, framework, q, limit, count):
+	def __init__(self, framework, q, limit=2, count=100):
+		""" yandex.com search engine
+
+			framework : core attribute
+			q 		  : query for search
+			limit	  : count of pages
+			count	  : count of links
+		"""
 		self.framework = framework
 		self.q = self.framework.urlib(q).quote
 		self.count = count
-		self.limit = 30 if limit > 30 else limit
-		self._pages = ""
-		self.yandex = "yandex.com"
+		self.limit = limit
+		self._pages = ''
+		self.yandex = 'yandex.com'
 
 	def run_crawl(self):
-		urls = ["https://%s/search?text=%s&numdoc=%d&p=%d" % (
-			self.yandex, self.q, self.count, i) for i in range(1, self.limit)]
+		urls = [f"https://{self.yandex}/search?text={self.q}&numdoc={self.count}&p={i}" for i in range(1, self.limit+1)]
 		max_attempt = len(urls)
-		for url in urls:
+		for url in range(len(urls)):
+			self.framework.debug(f"[YANDEX] Searching in {url} page...")
 			try:
-				req = self.framework.request(url=url)
-			except Exception as e:
-				self.framework.error(str(e.args))
+				req = self.framework.request(url=urls[url], allow_redirects=True)
+			except:
+				self.framework.error('[YANDEX] ConnectionError')
 				max_attempt -= 1
 				if max_attempt == 0:
-					self.framework.error("yandex is missed!")
+					self.framework.error('Yandex is missed!')
 					break
 			else:
+				if '<title>Oops!</title>' in req.text:
+					self.framework.error("[YANDEX] Yandex CAPTCHA triggered.")
+					return
+
 				page = req.text
-				if "]\">next</a>" not in page:
+				if ']">next</a>' not in page:
 					self._pages += page
 					break
 				self._pages += page
-				
+
 	@property
 	def pages(self):
 		return self._pages

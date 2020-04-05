@@ -1,4 +1,3 @@
-# -*- coding: u8 -*-
 """
 OWASP Maryam!
 
@@ -15,7 +14,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-# Based on the Recon-ng: https://github.com/lanmaster53/recon-ng
+# Based on the Recon-ng(https://github.com/lanmaster53/recon-ng)
 
 from __future__ import print_function
 import os
@@ -28,7 +27,6 @@ from core.util import baidu
 from core.util import bing
 from core.util import cms_identify
 from core.util import exalead
-from core.util import frameworks_identify
 from core.util import google
 from core.util import hunter
 from core.util import lang_identify
@@ -41,6 +39,7 @@ from core.util import rand_uagent
 from core.util import reglib
 from core.util import startpage
 from core.util import urlib
+from core.util import virustotal
 from core.util import waf_identify
 from core.util import web_scrap
 from core.util import wapps
@@ -59,13 +58,11 @@ class BaseModule(framework.Framework):
 		framework.Framework.__init__(self, params)
 		self.options = framework.Options()
 		# register all other specified options
-		if self.meta.get("options"):
-			for option in self.meta["options"]:
+		if self.meta.get('options'):
+			for option in self.meta.get('options'):
 				name, val, req, desc = option[:4]
 				self.register_option(name, val, req, desc)
 		self._reload = 0
-		self._init_var()
-		self._init_history()
 
 	# ==================================================
 	# OPTIONS METHODS
@@ -77,7 +74,7 @@ class BaseModule(framework.Framework):
 		else:
 			sources = [params]
 		if not sources:
-			raise framework.FrameworkException("Source contains no input.")
+			raise framework.FrameworkException('Source contains no input.')
 		return sources
 
 	# ==================================================
@@ -85,7 +82,7 @@ class BaseModule(framework.Framework):
 	# ==================================================
 
 	def show_source(self):
-		for path in [os.path.join(x, "modules", self._modulename) + self.module_extention for x in (self.app_path, self._home)]:
+		for path in [os.path.join(x, 'modules', self._modulename) + self.module_extention for x in (self.app_path, self._home)]:
 			if os.path.exists(path):
 				filename = path
 		with open(filename) as f:
@@ -93,44 +90,43 @@ class BaseModule(framework.Framework):
 			nums = [str(x) for x in range(1, len(content)+1)]
 			num_len = len(max(nums, key=len))
 			for num in nums:
-				print("%s|%s" % (num.rjust(num_len), content[int(num)-1]), end='')
+				print(f'{num.rjust(num_len)}|{content[int(num)-1]}', end='')
 
 	def show_info(self):
-		self.meta["path"] = os.path.join(
-			"modules", self._modulename) + self.module_ext
+		self.meta['path'] = os.path.join(\
+			'modules', self._modulename) + self.module_ext
 		print('')
 		# meta info
-		for item in ["name", "path", "author", "version"]:
+		for item in ('name', 'path', 'author', 'version'):
 			if self.meta.get(item):
-				print("%s: %s" % (item.title().rjust(10), self.meta[item]))
+				print(f'{item.title().rjust(10)}: {self.meta[item]}')
 		print('')
 		# description
-		if "description" in self.meta:
-			print("Description:")
-			print("%s%s" % (self.spacer, textwrap.fill(
-				self.meta["description"], 100, subsequent_indent=self.spacer)))
-			print('')
+		if 'description' in self.meta:
+			print('Description:')
+			print(f"{self.spacer}{textwrap.fill(self.meta['description'], 100, subsequent_indent=self.spacer)}")
 		# options
-		print("Options:", end='')
+		print('Options:', end='')
 		self.show_options()
 		# comments
-		if "comments" in self.meta:
-			print("Comments:")
-			for comment in self.meta["comments"]:
+		if 'comments' in self.meta:
+			print('Comments:')
+			for comment in self.meta['comments']:
 				prefix = '* '
 				if comment.startswith('\t'):
-					prefix = self.spacer+'- '
+					prefix = self.spacer + '- '
 					comment = comment[1:]
-				print('%s%s' % (self.spacer, textwrap.fill(prefix+comment, 100, subsequent_indent=self.spacer)))
+				print(f"{self.spacer}{textwrap.fill(prefix+comment, 100, subsequent_indent=self.spacer)}")
 			print('')
 
-		# sources
-		if "sources" in self.meta:
-			print("\nSources:\n\t%s"%("\n\t".join(self.meta["sources"])))
+		# Show Sources
+		if 'sources' in self.meta:
+			print('\nSources:\n\t' + '\n\t'.join(self.meta.get('sources')))
 
-		# examples
+		# Show Examples
 		if "examples" in self.meta:
-			print("Examples:\n\t%s"%("\n\t".join(self.meta["examples"])))
+			print('\nExamples:\n\t' + '\n\t'.join(self.meta.get('examples')))
+
 	def show_globals(self):
 		self.show_options(self._global_options)
 
@@ -150,24 +146,19 @@ class BaseModule(framework.Framework):
 		search = baidu.main(self, q, limit)
 		return search
 
-	def bing(self, q, limit=5, count=50):
+	def bing(self, q, limit=3, count=50):
 		search = bing.main(self, q, limit, count)
 		return search
 
 	def cms_identify(self, content, headers):
-		_cms = cms_identify.main(self, content, headers)
+		_cms = cms_identify.main(content, headers)
 		return _cms
 
 	def exalead(self, q, limit=3):
 		search = exalead.main(self, q, limit)
 		return search
 
-	def frameworks_identify(self, content, headers):
-		_frameworks = frameworks_identify.main(
-			self, content, headers)
-		return _frameworks
-
-	def google(self, q, limit=5, count=50):
+	def google(self, q, limit=3, count=50):
 		search = google.main(self, q, limit, count)
 		return search
 
@@ -176,20 +167,20 @@ class BaseModule(framework.Framework):
 		return search
 
 	def lang_identify(self, content, headers):
-		_lang = lang_identify.main(self, content, headers)
-		return _lang
+		search = lang_identify.main(content, headers)
+		return search
 
-	def metacrawler(self, q, limit=5):
+	def metacrawler(self, q, limit=3):
 		search = metacrawler.main(self, q, limit)
 		return search
 
-	def netcraft(self, q):
-		search = netcraft.main(self, q)
+	def netcraft(self, q, limit=4):
+		search = netcraft.main(self, q, limit)
 		return search
 
 	def os_identify(self, content, headers):
-		_os = os_identify.main(self, content, headers)
-		return _os
+		search = os_identify.main(content, headers)
+		return search
 
 	def onionland(self, q, limit=5):
 		search = onionland.main(self, q, limit)
@@ -199,7 +190,7 @@ class BaseModule(framework.Framework):
 		return page_parse.main(self, page)
 
 	def rand_uagent(self):
-		return rand_uagent.main(self)
+		return rand_uagent.main
 
 	def reglib(self, page=None):
 		return reglib.main(page)
@@ -207,27 +198,31 @@ class BaseModule(framework.Framework):
 	def urlib(self, url):
 		return urlib.main(url)
 
+	def virustotal(self, q, limit):
+		search = virustotal.main(self, q, limit)
+		return search
+
 	def wapps(self, q, page, headers):
 		search = wapps.main(self, q, page, headers)
 		return search
 
-	def waf_identify(self, content, headers):
-		_waf = waf_identify.main(self, content, headers)
+	def waf_identify(self, req):
+		_waf = waf_identify.main(req)
 		return _waf
 
-	def web_scrap(self, url, force=False, debug=False, limit=20):
-		search = web_scrap.main(self, url, force, debug, limit)
+	def web_scrap(self, url, debug=False, limit=5, threat=1):
+		search = web_scrap.main(self, url, debug, limit, threat)
 		return search
 
 	def startpage(self, q, limit):
 		search = startpage.main(self, q, limit)
 		return search
 
-	def yahoo(self, q, limit=5, cookie=None, count=50):
+	def yahoo(self, q, limit=5, count=50):
 		search = yahoo.main(self, q, limit, count)
 		return search
 
-	def yandex(self, q, limit=5, cookie=None, count=50):
+	def yandex(self, q, limit=5, count=50):
 		search = yandex.main(self, q, limit, count)
 		return search
 
@@ -249,7 +244,7 @@ class BaseModule(framework.Framework):
 		spool_flag = 0
 		try:
 			if params:
-				params = "start " + params
+				params = f'start {params}'
 				self.do_spool(params)
 				spool_flag = 1
 			self._validate_options()
@@ -262,7 +257,7 @@ class BaseModule(framework.Framework):
 			self.print_exception()
 		finally:
 			if spool_flag:
-				self.do_spool("stop")
+				self.do_spool('stop')
 	def module_pre(self):
 		pass
 

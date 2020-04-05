@@ -1,4 +1,3 @@
-# -*- coding : u8 -*-
 """
 OWASP Maryam!
 
@@ -22,32 +21,32 @@ from core.module import BaseModule
 class Module(BaseModule):
 
 	meta = {
-		"name": "Google Dork Search",
-		"author": "Saeeddqn",
-		"version": "0.2",
-		"description": "Search your dork in the google and get result",
-		"sources": ("google",),
-		"options": (
-			("dork", None, True, "Google dork string", "-d", "store"),
-			("limit", 2, False, "Google search limit", "-l", "store"),
-			("count", 50, False, "Link count in page(min=10, max=100)", "-c", "store"),
-			("output", False, False, "Save output to workspace", "--output", "store_false"),
+		'name': 'Google Dork Search',
+		'author': 'Saeeddqn',
+		'version': '0.2',
+		'description': 'Search your dork in the google and get result',
+		'sources': ('google',),
+		'options': (
+			('dork', None, True, 'Google dork string', '-d', 'store'),
+			('limit', 2, False, 'Google search limit', '-l', 'store'),
+			('count', 50, False, 'Link count in page(min=10, max=100)', '-c', 'store'),
+			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-        "examples": ("email_search -d <DORK> -l 15 --output")
+        'examples': ('godork -d <DORK> -l 15 --output',)
 
 	}
 
 	def module_run(self):
-		dork = self.options["dork"]
-		limit = self.options["limit"]
-		count = self.options["count"]
+		dork = self.options['dork']
+		limit = self.options['limit']
+		count = self.options['count']
 		run = self.google(dork, limit, count)
 		run.run_crawl()
 		links = run.links
 		
 		if links == []:
-			self.output("Without result")
+			self.output('Without result')
 		else:
 			for link in links:
-				self.output("\t%s" % link, "g")
-		self.save_gather({"links" : links}, "osint/godork", dork, output=self.options["output"])
+				self.output(f'\t{link}')
+		self.save_gather(links, 'osint/godork', dork, output=self.options['output'])

@@ -1,4 +1,3 @@
-# -*- coding : u8 -*-
 """
 OWASP Maryam!
 
@@ -15,8 +14,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-from core.module import BaseModule
 
+from core.module import BaseModule
+import concurrent.futures
 
 class Module(BaseModule):
 
@@ -28,72 +28,70 @@ class Module(BaseModule):
 		"sources": ("bing", "google", "yahoo", "yandex", "metacrawler", 
 					"ask", "baidu", "startpage", "hunter", "yippy"),
 		"options": (
-			("query", BaseModule._global_options["target"], True, "Domain Name, Company Name, etc", "-q", "store"),
+			("query", BaseModule._global_options["target"], True, "Domain name or company name", "-q", "store"),
 			("limit", 3, False, "Search limit", "-l", "store"),
 			("count", 50, False, "Links count in page(min=10, max=100)", "-c", "store"),
 			("engines", "google,metacrawler", True, "Search engine names. e.g bing,google,..", "-e", "store"),
 			("key", None, False, "hunter.io api key", "-k", "store"),
-			("output", False, False, "Save output to  workspace", "--output", "store_false"),
+			('threat', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store'),
+			("output", False, False, "Save output to  workspace", "--output", "store_true"),
 		),
-		"examples": ("email_search -q microsoft -e google,bing,yahoo -l 3 --output", "email_search -q microsoft.com -e metacrawler --output")
+		"examples": ("email_search -q microsoft.com -e bing --output", "email_search -q owasp.org -e google,bing,yahoo -l 20 -t 3 --output")
 	}
 
+	emails = []
+
+	def threat(self, function, thread_count, engines, domain, q, limit, count, key):
+		threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
+		futures = (threadpool.submit(function, name, domain, q, limit, count, key) for name in engines if name in self.meta['sources'])
+		for _ in concurrent.futures.as_completed(futures):
+			print(f"Count of emails: {len(self.emails)}", end='\r')
+		print('')
+
+	def search(self, name, domain, q, limit, count, key=None):
+
+		try:
+			engine = getattr(self, name)
+		except:
+			self.debug(f"Search engine {name} not found.")
+			return
+		else:
+			varnames = engine.__code__.co_varnames
+			if name == 'ask':
+				q = q.replace('"', '')
+			if 'key' in varnames:
+				if not key:
+					self.error('--key option is require to search for hunter.io')
+					return
+				attr = engine(domain, key)
+				attr.run_crawl()
+				self.emails.extend(attr.json_emails)
+				return
+			if 'limit' in varnames and 'count' in varnames:
+				attr = engine(q, limit, count)
+			elif 'limit' in varnames:
+				attr = engine(q, limit)
+			else:
+				attr = engine(q)
+			attr.run_crawl()
+			self.emails.extend(attr.emails)
+
 	def module_run(self):
-		name = self.options["query"].replace('@', '')
-		limit = self.options["limit"]
-		count = self.options["count"]
-		engines = self.options["engines"].split(',')
-		q = "\"%s40%s\"" % ("%", name)
-		emails = []
+		domain = self.options['query'].replace('@', '')
+		urlib = self.urlib(domain)
+		domain = self.urlib(domain).netroot if '/' in domain else domain
+		limit = self.options['limit']
+		count = self.options['count']
+		engines = self.options['engines'].split(',')
+		q = f'"%40{domain}"'
 
-		if "google" in engines:
-			search = self.google(q, limit, count)
-			search.run_crawl()
-			emails.extend(search.emails)
+		self.threat(self.search, self.options['threat'], engines, domain, q, limit, count, self.options.get('key'))
 
-		if "bing" in engines:
-			search = self.bing(q, limit, count)
-			search.run_crawl()
-			emails.extend(search.emails)
-
-		if "yahoo" in engines:
-			search = self.yahoo(q, limit, count)
-			search.run_crawl()
-			emails.extend(search.emails)
-
-		if "metacrawler" in engines:
-			search = self.metacrawler(q, limit)
-			search.run_crawl()
-			emails.extend(search.emails)
-
-		if "yandex" in engines:
-			search = self.yandex(q, limit, count)
-			search.run_crawl()
-			emails.extend(search.emails)
-
-		if "startpage" in engines:
-			search = self.startpage(q, limit)
-			search.run_crawl()
-			emails.extend(search.emails)
-
-		if "baidu" in engines:
-			search = self.baidu(q, limit)
-			search.run_crawl()
-			emails.extend(search.emails)
-
-		if "hunter" in engines:
-			key = self.options["key"]
-			search = self.hunter(q, key)
-			search.run_crawl()
-			emails.extend(search.emails)
-
-		if "yippy" in engines:
-			search = self.yippy(q)
-			search.run_crawl()
-			emails.extend(search.emails)
-
-		emails = list(set(emails))
+		self.alert('Emails')
+		emails = list(set(self.emails))
+		if emails == []:
+			self.output('No email found', 'O')
 		for email in emails:
-			self.output("\t%s" % email)
+			self.output(f"\t{email}")
 
-		self.save_gather({"emails" : emails}, "osint/email_search", name, output=self.options["output"])
+		self.save_gather(emails, 'osint/email_search', domain, output=self.options['output'])

@@ -1,4 +1,3 @@
-# -*- coding : u8 -*-
 """
 OWASP Maryam!
 
@@ -17,42 +16,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from core.module import BaseModule
-from lxml.html import fromstring
 import re
 
 class Module(BaseModule):
 
 	meta = {
-		"name" : "Crawler Pages",
-		"author" : "Saeeddqn",
-		"version" : "0.6",
-		"description" : "Search to find Keywords,Emails,Usernames,Errors,Meta tags and your regex(if is set) on the page/pages",
-		"options" : (
-			("domain", BaseModule._global_options["target"], True, "Domain string", "-d", "store"),
-			("regex", None, True, "Regex or string for search in the pages", "-r", "store"),
-			("more", False, False, "Extract more information from the pages", "--more", "store_true"),
-			("crawl", False, False, "Crawl in the more pages", "-c", "store_true"),
-			("output", False, False, "Save output to workspace", "--output", "store_true"),
+		'name' : 'Crawler Pages',
+		'author' : 'Saeeddqn',
+		'version' : '0.6',
+		'description' : 'Search to find keywords, emails, usernames,errors, meta tags and your regex(if is set) on the page/pages',
+		'options' : (
+			('domain', BaseModule._global_options['target'], True, 'Domain string', '-d', 'store'),
+			('regex', None, True, 'Regex or string for search in the pages', '-r', 'store'),
+			('more', False, False, 'Extract more information from the pages', '--more', 'store_true'),
+			('limit', 1, False, 'Scraper depth level(default=1)', '-l', 'store'),
+			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-		"examples": ["crawl_pages -d <DOMAIN> -r https?://[A-z0-9\./]+ --output", "crawl_pages -d <DOMAIN> --crawl --more"]
+		'examples': ('crawl_pages -d <DOMAIN> -r https?://[A-z0-9\./]+ --output', 'crawl_pages -d <DOMAIN> --crawl --more')
 	}
 
 	def module_run(self):
-		domain = self.options["domain"]
-		regex = self.options["regex"]
+		domain = self.options['domain']
+		regex = self.options['regex']
 		try:
 			re.compile(regex)
 		except Exception as e:
 			self.error(e)
 			return
-		scrap = self.web_scrap(domain, self.options["crawl"])
+		scrap = self.web_scrap(domain, limit=self.options['limit'])
 		scrap.run_crawl()
 		pages = scrap.pages
 		category_pages = scrap.category_pages
 		# Output flag
 		flag = 0
 		resp = {}
-		output = self.options["output"]
+		output = self.options['output']
 		methods = []
 		resp[regex] = {}
 		out = []
@@ -60,11 +58,11 @@ class Module(BaseModule):
 		###############################
 		if regex:
 			reg_find = {}
-			self.alert("Regex search:")
+			self.alert('Regex search:')
 			regex_cmp = re.compile(regex)
 			for page in category_pages:
 				founds = regex_cmp.findall(category_pages[page])
-				self.output("\tRegex \"%s\" search at \"%s\":" % (regex, page))
+				self.output(f'\tRegex {regex} search at {page}:')
 				resp[regex].update({page : founds})
 				for i in founds:
 					if i not in reg_find.keys():
@@ -73,18 +71,17 @@ class Module(BaseModule):
 						reg_find[i] = reg_find[i] + 1
 
 				for i in reg_find:
-					self.output("\t\tFound \"%s\" Repeated %s times" %
-								(i, reg_find[i]), "g")
+					self.output(f"\t\tFound '{i}' Repeated {reg_find[i]} times", 'g')
 				if reg_find:
-					if flag == 0:flag = 1
+					if not flag:flag = 1
 				reg_find = {}
 
-			if flag == 0:
-				self.output("\tNo response")
+			if not flag:
+				self.output(f'\tNo response\n')
 
 
-		if not self.options["more"]:
-			self.save_gather(resp, "footprint/crawl_pages", domain, output=self.options["output"])
+		if not self.options['more']:
+			self.save_gather(resp, 'footprint/crawl_pages', domain, output=self.options['output'])
 			return
 		resp[regex]["more"] = {}
 		methods.append("more")
@@ -139,111 +136,59 @@ class Module(BaseModule):
 					"Stack trace:"]
 
 		page_parse = self.page_parse(pages)
-		meta_reg_template = r"<meta %s=[\'\"]{1}%s[\'\"]{1}\scontent=[\'\"]{1}(.{0,255})[\'\"]{1}"
 
-		## H1 Tags ##
-		#############
-		# find h1 tags
-		try:
-			tree = fromstring(pages)
-		except:
-			pass
-		else:
-			h1 = tree.xpath("//h1")
-			self.alert("H1 tag values:")
-			flag = 0
-			out = []
-			for i in h1:
-				value = i.text
-				if value not in out:
-					out.append(value)
-					self.output("\t\"%s\"" % value, "g")
-					if flag == 0:flag = 1
-			if flag == 0:
-				self.output("\t..")
-			if output:
-				resp[regex]["more"]["H1"] = out
-			out = []
-
-		resp[regex]["more"]["meta"] = {}
-		## META TAG PROPERTY SEARCH ##
-		##############################
-		meta_propery = ["og:locale", "og:type"]
-		self.alert("Meta tag property:")
-		flag = 0
-		resp[regex]["more"]["meta"]["meta_property"] = {}
-		for i in meta_propery:
-			reg = meta_reg_template % ("property", i)
-			value = page_parse.findall(reg)
-			self.output("\tmeta property \"%s\":" % i)
-
-			for j in value:
-				if j not in out:
-					out.append(j)
-					self.output("\t\t\"%s\"" % j, "g")
-					if flag == 0:flag = 1
-			resp[regex]["more"]["meta"]["meta_property"].update({i:out})
-			if flag == 0:
-				self.output("\t\t..")
-			else:
-				flag = 0
-		out = []
-
-		## META TAG NAME ##
-		###################
-		meta_name = ["keywords", "author", "generator"]
-		self.alert("Meta tag name:")
-		flag = 0
-		resp[regex]["more"]["meta_name"] = {}
-		for i in meta_name:
-			reg = meta_reg_template % ("name", i)
-			value = page_parse.findall(reg)
-			self.output("\tmeta name \"%s\":" % i)
-			for j in value:
-				if j not in out:
-					out.append(j)
-					self.output("\t\t\"%s\"" % j, "g")
-					if flag == 0:flag = 1
-			resp[regex]["more"]["meta_name"].update({i:out})
-			if flag == 0:
-				self.output("\t\t..")
+		resp[regex]['more']['meta'] = {}
+		get_meta = page_parse.get_metatags
+		for key,attrs in enumerate(get_meta):
+			self.alert(f'META {key}:')
+			for attr_name in attrs:
+				self.output(f'\t{attr_name} : {attrs[attr_name]}')
 
 		## EMAILS ##
 		############
 		emails = page_parse.all_emails
 		if emails != []:
-			self.alert("Emails:")
+			self.alert('Emails:')
 			for i in emails:
-				self.output("\t\"%s\"" % i, "g")
-		resp[regex]["more"]["emails"] = emails
+				self.output(f"\t'{i}'", 'g')
+		resp[regex]['more']['emails'] = emails
 
 		## SOCIAL NETWORK ##
 		####################
-		ids = page_parse.social_nets
-		self.alert("Social Networks:")
-		for i in ids:
-			self.output("\t%s:" % i.title())
-			if ids[i] != []:
-				for j in ids[i]:
-					self.output("\t\t%s"%str(j), "g")
-			else:
-				self.output("\t\t..")
-		resp[regex]["more"]["social_networks"] = ids
+		usernames = page_parse.get_networks
+		users = []
+		self.alert('Social Networks:')
+		for net in usernames:
+			lst = list(set(usernames[net]))
+			if lst != []:
+				self.alert(net)
+				for link in lst:
+					if type(link) is tuple:
+						link = list(link)
+						for mic in link:
+							if len(mic) > 2 and mic != '':
+								users.append(mic)
+								self.output(f'\t{str(mic)}', 'G')
+					else:
+						users.append(link)
+						self.output(f'\t{str(link)}', 'G')
+		resp[regex]['more']['social_networks'] = users
 
 		flag = 0
 		## ERRORS ##
 		############
-		resp[regex]["more"]["errors"] = {}
-		self.alert("Errors:")
+		resp[regex]['more']['errors'] = {}
+		self.alert('Errors:')
 		for page in category_pages:
-			resp[regex]["more"]["errors"][page] = []
+			resp[regex]['more']['errors'][page] = []
 			for patt in patterns:
 				if re.search(patt, category_pages[page]):
-					self.output("\t\"%s\" found at %s" % (patt, page), "g")
-					resp[regex]["more"]["errors"][page].append(patt)
-					if flag == 0:flag = 1
+					self.output(f"\t'{patt}' found at {page}", 'g')
+					resp[regex]['more']['errors'][page].append(patt)
+					if not flag:
+						flag = 1
 
-		if flag == 0:
-			self.output("\t..")
+		if not flag:
+			self.output('\t..')
 
-		self.save_gather(resp, "footprint/crawl_pages", domain, output=self.options["output"])
+		self.save_gather(resp, 'footprint/crawl_pages', domain, output=self.options['output'])

@@ -1,4 +1,3 @@
-# -*- coding: u8 -*-
 """
 OWASP Maryam!
 
@@ -16,31 +15,37 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-
 class main:
 
-	def __init__(self, framework, q, limit):
+	def __init__(self, framework, q, limit=2):
+		""" ask.com search engine
+
+			framework : core attribute
+			q 		  : query for search
+			limit	  : count of pages
+		"""
 		self.framework = framework
 		self.q = self.framework.urlib(q).quote
-		self.limit = 20 if limit > 20 else limit
-		self._pages = ""
-		self.ask = "ask.com"
+		self.limit = limit
+		self._pages = ''
+		self.ask = 'www.ask.com'
 
 	def run_crawl(self):
-		urls = ["https://%s/web?q=%s&page=%d" % (self.ask, self.q, i) for i in range(1, self.limit)]
+		urls = [f"https://{self.ask}/web?q={self.q}&page={i}" for i in range(1, self.limit+1)]
 		max_attempt = len(urls)
-		for url in urls:
+		for url in range(len(urls)):
+			self.framework.verbose(f"[ASK] Searching in {url} page...")
 			try:
-				req = self.framework.request(url=url)
-			except Exception as e:
-				self.framework.error(str(e.args))
+				req = self.framework.request(url=urls[url])
+			except:
+				self.framework.error('[ASK] ConnectionError')
 				max_attempt -= 1
 				if max_attempt == 0:
-					self.framework.error("ask is missed!")
+					self.framework.error('Ask is missed!')
 					break
 			else:
 				page = req.text
-				if ">Next</li>" not in page:
+				if '>Next</li>' not in page:
 					self._pages += page
 					break
 				self._pages += page

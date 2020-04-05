@@ -1,4 +1,3 @@
-# -*- coding: u8 -*-
 """
 OWASP Maryam!
 
@@ -18,30 +17,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class main:
 
-	def __init__(self, framework, q, limit, count):
+	def __init__(self, framework, q, limit=2, count=50):
+		""" baidu.com search engine
+			
+			framework : core attribute
+			q 		  : query for search
+			limit	  : count of pages
+			count	  : count of links
+		"""
 		self.framework = framework
 		self.q = self.framework.urlib(q).quote
-		self.limit = 20 if limit > 20 else limit
+		self.limit = limit
 		self.count = count
-		self._pages = ""
-		self.bing = "bing.com"
+		self._pages = ''
+		self.bing = 'bing.com'
 
 	def run_crawl(self):
-		urls = ["https://%s/search?q=%s&count=%d&first=1%d" % (
-			self.bing, self.q, self.count, i*11) for i in range(0, self.limit)]
+		set_page = lambda x: x*11
+		urls = [f"https://{self.bing}/search?q={self.q}&count={self.count}&first={set_page(i)}" for i in range(1, self.limit+1)]
 		max_attempt = len(urls)
-		for url in urls:
+
+		for url in range(len(urls)):
+			self.framework.verbose(f"[BING] Searching in {url} page...")
 			try:
-				req = self.framework.request(url=url)
-			except Exception as e:
-				self.framework.error(str(e.args))
+				req = self.framework.request(url=urls[url])
+			except:
+				self.framework.error('[BING] ConnectionError')
 				max_attempt -= 1
 				if max_attempt == 0:
-					self.framework.error("Bing is missed!")
+					self.framework.error('Bing is missed!')
 					break
 			else:
 				page = req.text
-				if "<div class=\"sw_next\">Next</div>" not in page:
+				if '<div class="sw_next">Next</div>' not in page:
 					self._pages += page
 					break
 				self._pages += page

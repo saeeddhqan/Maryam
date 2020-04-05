@@ -1,4 +1,3 @@
-# -*- coding: u8 -*-
 """
 OWASP Maryam!
 
@@ -20,24 +19,28 @@ from re import search, I
 
 class main:
 
-	def __init__(self, framework, content, headers):
-		self.framework = framework
+	def __init__(self, content, headers):
+		""" baidu.com search engine
+
+			content	  : web content
+			headers	  : web headers
+		"""
 		self.content = content
 		self.headers = headers
 		self._cms = None
 
 	def run_crawl(self):
-		for i in dir(self):
-			con1 = not i.startswith("__")
-			con2 = not i.endswith("__")
-			con3 = i not in ("_cms", "content", "headers",
-							 "framework", "cms", "run_crawl")
+		for attr in dir(self):
+			con1 = not attr.startswith('__')
+			con2 = not attr.endswith('__')
+			con3 = attr not in ('_cms', 'content', 'headers',
+							 'cms', 'run_crawl')
 			if con1 and con2 and con3:
-				getattr(self, i)()
-
+				getattr(self, attr)()
+		
 	def adobeaem(self):
 		M = False
-		M |= search(
+		M = search(
 			r"<link[^>]*stylesheet[^>]*etc\/designs\/[^>]*\>[^<]*", self.content, I) is not None
 		M |= search(
 			r"<link[^>]*etc\/clientlibs\/[^>]*\>[^<]*", self.content, I) is not None
@@ -46,7 +49,7 @@ class main:
 		M |= search(
 			r"<script[^>]*\/granite\/[^>]*(\.js\")+\>[^<]*", self.content, I) is not None
 		if M:
-			self._cms = "Adobe AEM: Stack is based on Apache Sling + Apache Felix OSGi container + JCR Repo + Java"
+			self._cms = 'Adobe AEM: Stack is based on Apache Sling + Apache Felix OSGi container + JCR Repo + Java'
 
 	def drupal(self):
 		M = False
@@ -88,7 +91,7 @@ class main:
 		M |= search(
 			r"Powered by \<a href\=\"http://www.joomla.org\"\>Joomla!\<\/a\>.", self.content, I) is not None
 		if M:
-			self._cms = "Joomla"
+			self._cms = 'Joomla'
 
 	def magento(self):
 		M = False
@@ -106,7 +109,7 @@ class main:
 		M |= search(
 			r"Magento is a trademark of Magento Inc. Copyright &copy; ([0-9]{4}) Magento Inc", self.content, I) is not None
 		if(M):
-			self._cms = "Magento"
+			self._cms = 'Magento'
 
 	def plone(self):
 		M = False
@@ -161,7 +164,7 @@ class main:
 		M |= search(r'/packages/concrete5_theme/themes/',
 					   self.content) is not None
 		if M:
-			self._cms = "Concrete5"
+			self._cms = 'Concrete5'
 
 	def typo3(self):
 		M = False
@@ -172,7 +175,7 @@ class main:
 			r'"generator" content="TYPO3 CMS">|/typo3temp/assets/',
 			self.content) is not None
 		if M:
-			self._cms = "TYPO3"
+			self._cms = 'TYPO3'
 
 	def hubspot(self):
 		M = False
@@ -183,7 +186,7 @@ class main:
 		alert = "HubSpot"
 		if M2:
 			M |= True
-			alert = "HubSpot version " + M2.group(1)
+			alert = f"HubSpot version {M2.group(1)}"
 		if M:
 			self._cms = alert
 
@@ -192,7 +195,7 @@ class main:
 		M = search(r"<!-- This is Squarespace. -->",
 					  self.content) is not None
 		if M:
-			self._cms = "Squarespace"
+			self._cms = 'Squarespace'
 
 	@property
 	def cms(self):

@@ -1,4 +1,3 @@
-# -*- coding : u8 -*-
 """
 OWASP Maryam!
 
@@ -17,89 +16,73 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from core.module import BaseModule
-import re
+import concurrent.futures
 
 class Module(BaseModule):
 
 	meta = {
-		"name": "Documentations Search",
-		"author": "Saeeddqn",
-		"version": "0.5",
-		"description": "Search in engines for find related documents. filetypes[pdf,doc,docx,ppt,pptx,xlsx,txt, ..]",
-		"sources": ("bing", "google", "yahoo", "yandex", "metacrawler", "ask", "startpage", "exalead"),
-		"options": (
-			("query", BaseModule._global_options["target"], True, "Host Name, Company Name, , keyword, query, etc", "-q", "store"),
-			("type", "pdf|doc", True, "File Type [pdf,doc,docx,ppt,pptx,xlsx,txt]. set with '|' separator", "-t", "store"),
-			("limit", 2, False, "Limit for search(min=1)", "-l", "store"),
-			("count", 50, False, "Links count in page(min=10)", "-c", "store"),
-			("site", False, False, "If this is set, search just limited to the site", "-s", "store_false"),
-			("engines", "google,bing", True, "Search engines with comma separator", "-e", "store"),
-			("output", False, False, "Save output to workspace", "--output", "store_false"),
+		'name': 'Documentations Search',
+		'author': 'Saeeddqn',
+		'version': '0.8',
+		'description': 'Search in engines for find related documents. filetypes[pdf,doc,docx,ppt,pptx,xlsx,txt, ..]',
+		'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'startpage', 'exalead'),
+		'options': (
+			('query', BaseModule._global_options['target'], True, 'Host Name, Company Name, , keyword, query, etc', '-q', 'store'),
+			('file', 'pdf', True, 'File Type [pdf,doc,docx,ppt,pptx,xlsx,txt]. set with \'|\' separator', '-f', 'store'),
+			('limit', 2, False, 'Limit for search(min=1)', '-l', 'store'),
+			('count', 50, False, 'Links count in page(min=10)', '-c', 'store'),
+			('site', False, False, 'If this is set, search just limited to the site', '-s', 'store_false'),
+			('engines', 'exalead,bing', True, 'Search engines with comma separator', '-e', 'store'),
+			('threat', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store'),
+			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-		"examples": ("docs_search -q amazon -t pdf -e google,bing,metacrawler", "docs_search -q amazon -t pdf -e google,bing,metacrawler -l 3")
+		'examples': ('docs_search -q amazon -f pdf -e google,bing,metacrawler --threat 3', 'docs_search -q amazon -f pdf -e google,bing,metacrawler -l 3')
 	}
+	
+	docs = []
+
+	def threat(self, function, thread_count, engines, q, limit, count):
+		threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
+		futures = (threadpool.submit(function, name, q, limit, count) for name in engines if name in self.meta['sources'])
+		for _ in concurrent.futures.as_completed(futures):
+			pass
+
+	def search(self, name, q, limit, count):
+		try:
+			engine = getattr(self, name)
+		except:
+			self.debug(f"Search engine {name} not found.")
+			return
+		else:
+			varnames = engine.__code__.co_varnames
+			if 'limit' in varnames and 'count' in varnames:
+				attr = engine(q, limit, count)
+			elif 'limit' in varnames:
+				attr = engine(q, limit)
+			else:
+				attr = engine(q)
+			attr.run_crawl()
+			self.docs.extend(attr.docs)
 
 	def module_run(self):
-		q = self.options["query"]
-		_type = self.options["type"].lower()
-		limit = self.options["limit"]
-		count = self.options["count"]
-		engines = self.options["engines"].lower().split(',')
-		docx = []
+		q = self.options['query']
+		_type = self.options['file'].lower()
+		limit = self.options['limit']
+		count = self.options['count']
+		engines = self.options['engines'].lower().split(',')
 		# Make dork
-		if self.options["site"]:
-			dork = self.urlib("\"%s\" filetype:%s site:%s" % (q, _type, self.options["site"])).quote
+		if self.options['site']:
+			dork = self.urlib(f"filetype:{_type} site:{self.options['site']} {q}").quote
 		else:
-			dork = "%s filetype:%s" % (q, _type)
+			dork = f"{q} filetype:{_type}"
 
-		# Search to the engines
-		if "google" in engines:
-			search = self.google(dork, limit, count)
-			search.run_crawl()
-			docx.extend(search.links)
+		self.threat(self.search, self.options['threat'], engines, dork, limit, count)
 
-		if "bing" in engines:
-			search = self.bing(dork, limit, count)
-			search.run_crawl()
-			docx.extend(search.docs)
-
-		if "yahoo" in engines:
-			search = self.yahoo(dork, limit, count)
-			search.run_crawl()
-			docx.extend(search.docs)
-
-		if "metacrawler" in engines:
-			search = self.metacrawler(dork, limit)
-			search.run_crawl()
-			docx.extend(search.links)
-
-		if "yandex" in engines:
-			search = self.yandex(dork, limit, count)
-			search.run_crawl()
-			docx.extend(search.docs)
-
-		if "startpage" in engines:
-			search = self.startpage(dork, limit)
-			search.run_crawl()
-			docx.extend(search.docs)
-
-		if "baidu" in engines:
-			search = self.baidu(dork, limit)
-			search.run_crawl()
-			docx.extend(search.docs)
-
-		if "ask" in engines:
-			search = self.ask(dork, limit)
-			search.run_crawl()
-			docx.extend(search.docs)
-
-		if "exalead" in engines:
-			search = self.exalead(dork, limit)
-			search.run_crawl()
-			docx.extend(search.docs)
-
-		docx = list(set(docx))
-		for doc in docx:
-			self.output("\t%s" % doc)
-
-		# self.save_gather({_type : docx}, "osint/docs_search", q, [_type], output=self.options["output"])
+		self.docs = list(set(self.docs))
+		self.alert(_type.upper())
+		if self.docs != []:
+			for doc in self.docs:
+				self.output(f'\t{doc}')
+		else:
+			self.output('\tNo documentation found.')
+		self.save_gather({_type : self.docs}, 'osint/docs_search', q, [_type], output=self.options['output'])

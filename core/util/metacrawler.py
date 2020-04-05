@@ -1,4 +1,3 @@
-# -*- coding: u8 -*-
 """
 OWASP Maryam!
 
@@ -18,31 +17,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class main:
 
-	def __init__(self, framework, q, limit):
+	def __init__(self, framework, q, limit=3):
+		""" metacrawler.com search engine
+
+			framework : core attribute
+			q 		  : query for search
+			limit	  : count of pages
+		"""
 		self.framework = framework
 		self.q = self.framework.urlib(q).quote
 		self.limit = limit
-		self._pages = ""
-		self.metacrawler = "metacrawler.com"
+		self._pages = ''
+		self.metacrawler = 'metacrawler.com'
 
 	def run_crawl(self):
-		urls = ["http://%s/serp?q=%s&page=%d" % (
-			self.metacrawler, self.q, i) for i in range(0, self.limit)]
+		urls = [f"http://{self.metacrawler}/serp?q={self.q}&page={i}" for i in range(1, self.limit+1)]
 		max_attempt = len(urls)
-		for url in urls:
+
+		for url in range(len(urls)):
+			self.framework.verbose(f"[METACRAWLER] Searching in {url} page...")
 			try:
-				req = self.framework.request(url=url)
-			except Exception as e:
-				self.framework.error(str(e.args))
+				req = self.framework.request(url=urls[url])
+			except:
+				self.framework.error('[METACRAWLER] ConnectionError')
 				max_attempt -= 1
 				if max_attempt == 0:
-					self.framework.error("metacrawler is missed!")
+					self.framework.error('Metacrawler is missed!')
 					break
 			else:
-				page = unicode(req.text)
-				if ">Next</" not in page:
-					self._pages += page
-					break
+				page = self.framework.to_unicode(req.text)
+				if 'To continue, please respond below:' in page:
+					self.framework.error("[METACRAWLER] Google CAPTCHA triggered.")
+					return
+				if url > 0:
+					if 'Next »' not in page:
+						self._pages += page
+						break
 				self._pages += page
 
 	@property
@@ -51,7 +61,7 @@ class main:
 
 	@property
 	def links(self):
-		return self.framework.reglib(self._pages).search(r"<a class=\"web-bing__title\" href=\"([A-z0-9.,:;%/\\?#@$^&*\(\)~\-_+=\"\']+)\"")
+		links = self.framework.page_parse(self._pages).findall(r'<a class="web-bing__title" href="(.*)?"\s')
 
 	@property
 	def dns(self):

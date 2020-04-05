@@ -14,37 +14,37 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+
 from core.module import BaseModule
 
 class Module(BaseModule):
 
 	meta = {
-		'name': 'Onions Network Search',
+		'name': 'WAF(Web Application Firewall) Identifier',
 		'author': 'Saeeddqn',
-		'version': '0.4',
-		'description': 'onion_search is to create the premier search engine for services residing on the Tor anonymity network.',
-		'sources': ('ahmia','onionland'),
+		'version': '0.1',
+		'description': 'Identify web application firewalls. It can detect over 200 firewall',
+		'sources': ('github.com/EnableSecurity/wafw00f',),
 		'options': (
-			('query', BaseModule._global_options['target'], True, 'Domain Name, Company Name, keyword, etc', '-q', 'store'),
+			('domain', BaseModule._global_options.get('target'), True, 'Domain string', '-d', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-		'examples': ('onion_search -q <KEYWORD|COMPANY>', 'onion_search -q <KEYWORD|COMPANY> --output')
+		'examples': ('waf -d <DOMAIN>',)
 	}
 
 	def module_run(self):
-		q = self.options['query']
-		ahmia = self.ahmia(q)
-		ahmia.run_crawl()
-		links = ahmia.links
-		onionland = self.onionland(q, limit=5)
-		onionland.run_crawl()
-		links.extend(onionland.links)
+		domain = self.options['domain']
+		req = self.request(domain)
+		_wafs = self.waf_identify(req)
+		_wafs.run_crawl()
 
-		links = list(set(links))
-		if links != []:
-			for link in links:
-				self.output(f'\t{link}')
+		wafs = _wafs.waf
+
+		self.alert('WAFs')
+		if wafs != []:
+			for scheme in wafs:
+				self.output(f"\t{scheme}", 'g')
 		else:
-			self.output('No result.')
-			return
-		self.save_gather({'links' : links}, 'osint/onion_search', q, output=self.options['output'])
+			self.output('\tNo result')
+
+		self.save_gather(wafs, 'footprint/waf', domain, output=self.options['output'])

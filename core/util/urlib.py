@@ -1,4 +1,3 @@
-# -*- coding: u8 -*-
 """
 OWASP Maryam!
 
@@ -15,19 +14,18 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-try:
-	from urllib import parse as urlparse
-	from urllib.parse import quote
-except:
-	import urlparse
-	from urllib import quote
 
+from urllib import parse as urlparse
 import re
 from socket import gethostbyname, gethostbyaddr
 
 class main:
 
 	def __init__(self, url):
+		""" url parser
+
+			url 	: url string for parse
+		"""
 		self.url = url
 
 	def join(self, urjoin):
@@ -39,33 +37,50 @@ class main:
 	def unparse(self, urparse):
 		return urlparse.urlunparse(urparse)
 
-	def sub_service(self, serv):
-		serv = re.sub(r"://", '', serv)
-		urparse = re.split(r"://", self.url)
-		if len(urparse) == 2:
-			del urparse[0]
-			if serv != '':
-				url = "%s://%s" % (serv, "".join(urparse))
-			else:
-				url = ''.join(urparse)
+	def sub_service(self, serv=None):
+		'''Add protocol to url or replace it or clean it'''
+		urparse = re.split(r'://', self.url)
+		if not serv:
+			# Clean protocol
+			url = ''.join(urparse)
 		else:
-			url = "%s://%s" % (serv, urparse[0])
+			# Add protocol
+			serv = re.sub(r'://', '', serv)
+			if len(urparse) == 2:
+				del urparse[0]
+				url = f"{serv}://{''.join(urparse)}"
+			else:
+				url = f"{serv}://{urparse[0]}"
+		self.url = url
 		return url
-	
+
+	def check_urlfile(self, file):
+		reg = re.compile(r"\."+file+r"[^\w]")
+		reg2 = re.compile(r"\."+file+r"[^\w]?$")
+		if reg.search(self.url) or reg2.search(self.url):
+			return True
+		return False
+
 	@property
 	def quote(self):
-		if "%" not in self.url:
-			return quote(self.url)
+		if '%' not in self.url:
+			self.url = urlparse.quote(self.url)
+			return self.url
 		else:
 			return self.url
-			
+
 	@property
 	def unquote(self):
+		self.url = urlparse.unquote(self.url)
 		return urlparse.unquote(self.url)
 
 	@property
 	def ip(self):
-		return gethostbyname(self.netloc)
+		if re.match(r"^\d+.\d+.\d+.\d+$", self.url):
+			return self.url
+		else:	
+			loc = self.netloc
+			return gethostbyname(self.netloc)
 
 	@property
 	def host(self):
@@ -103,3 +118,24 @@ class main:
 	@property
 	def fragment(self):
 		return self.parse().fragment
+
+	def self_params(self, url):
+		url = urlparse.unquote(url)
+		queries = urlparse.urlparse(url).query
+		page = url.replace('?'+queries, '')
+		params = {}
+		params[page] = {}
+		if not queries:
+			return {}
+
+		if '&' in queries:
+			queries = queries.split('&')
+		else:
+			queries = [queries]
+		for query in queries:
+			if not query:continue
+			query = query.split('=')+['']
+			name=query[0]
+			value=query[1]
+			params[page][name] = value
+		return params

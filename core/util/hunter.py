@@ -1,4 +1,3 @@
-# -*- coding: u8 -*-
 """
 OWASP Maryam!
 
@@ -18,25 +17,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class main:
 
-	def __init__(self, framework, q, key, limit):
+	def __init__(self, framework, q, key, limit=100):
+		""" hunter.io search engine
+
+			framework : core attribute
+			q 		  : query for search
+			key 	  : hunter.io api key
+			limit	  : count of pages
+		"""
 		self.framework = framework
 		self.q = q
 		self.limit = limit
 		self.key = key
-		self._pages = ""
-		self._json_pages = ""
-		self.hunter_api = "https://api.hunter.io/v2/domain-search?domain=%s&api_key=%s&limit=%d" \
-			%(self.q, self.key, self.limit)
-
+		self._pages = ''
+		self._json_pages = ''
+		self.hunter_api = f"https://api.hunter.io/v2/domain-search?domain={self.q}&api_key={self.key}&limit={self.limit}"
+		self.acceptable = False
 	def run_crawl(self):
+		self.verbose('[HUNTER] Searching in hunter...')
 		try:
 			req = self.framework.request(self.hunter_api)
-		except Exception as e:
-			self.framework.error(str(e.args))
-			self.framework.error("hunter is missed!")
+		except:
+			self.framework.debug('[HUNTER] ConnectionError')
+			self.framework.error('Hunter is missed!')
+			return
+		self._pages = req.text
+		self._json_pages = req.json()
+
+		# Key validation
+		if 'errors' in self._json_pages:
+			self.framework.error(f"[HUNTER] api key is incurrect:'self.key'")
+			self.acceptable = False
+			return
+
+		# Request validation
+		if not self._json_pages.get('data').get('accept_all'):
+			self.framework.verbose('[HUNTER] request was not accepted!')
 		else:
-			self._pages = req.text
-			self._json_pages = req.json
+			self.acceptable = True
 
 	@property
 	def pages(self):
@@ -50,6 +68,15 @@ class main:
 	def emails(self):
 		return self.framework.page_parse(self._pages).get_emails(self.q)
 
+	@property
+	def json_emails(self):
+		emails = []
+		if self.acceptable:
+			for email in self._json_pages.get('data')['emails']:
+				emails.append(email.get('value'))
+			return emails
+		return []
+	
 	@property
 	def dns(self):
 		return self.framework.page_parse(self._pages).get_dns(self.q)

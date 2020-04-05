@@ -1,4 +1,3 @@
-# -*- coding: u8 -*-
 """
 OWASP Maryam!
 
@@ -16,73 +15,95 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from lxml.html import fromstring
 import re
-import tempfile
-import webbrowser
+import os
 
 class main:
 
-	def __init__(self, framework, q, limit, count):
+	def __init__(self, framework, q, limit=2, count=50, google_api=None, google_cx=None):
+		""" google.com search engine
+
+			framework  : core attribute
+			q          : query for search
+			limit      : count of pages
+			google_api : google api(if you need to use api_run_crawl)
+			google_cx  : google cx(if you need to use api_run_crawl)
+		"""
 		self.framework = framework
 		self.q = self.framework.urlib(q).quote
 		self.agent = framework.rand_uagent().lynx[0]
-		self._pages = ""
+		self._pages = ''
 		self.limit = limit
-		# count links in page
 		self.num = count
+		self.google_api = google_api
+		self.google_cx = google_cx
 		self._links = []
 
 	def run_crawl(self):
 		page = 1
-		url = "http://google.com/search"
-		payload = {"num" : self.num, "start" : page, "ie" : "utf-8", "oe" : "utf-8", "q" : self.q}
+		url = 'http://google.com/search'
+		set_page = lambda x: (x - 1) * self.num
+		payload = {'num' : self.num, 'start' : set_page(page), 'ie' : 'utf-8', 'oe' : 'utf-8', 'q' : self.q, 'filter': '0'}
 		max_attempt = 0
+		headers = {'User-Agent': self.agent}
+
 		while True:
+			self.framework.verbose(f'[GOOGLE] Searching in {page} page...', end='\r')
 			try:
 				req = self.framework.request(
 					url=url,
-					payload=payload,
-					redirect=False,
-					agent=self.agent)
-			except Exception as e:
-				self.framework.error(e)
-			else:
-				if req.status_code == 503:
-					req = self.captcha(req)
-					continue
-				if req.status_code in [301, 302]:
-					redirect = req.headers["location"]
-					req = self.framework.request(url=redirect, redirect=False, agent=self.agent)
-				self._pages += req.text
-				page+=1
-				if self.limit == page:
-					break
-
-	def captcha(self, resp):
-		# set up the captcha page markup for parsing
-		tree = fromstring(resp.text)
-		# extract and request the captcha image
-		resp = self.framework.request('https://ipv4.google.com' + tree.xpath('//img/@src')[0], redirect=False, agent=self.agent)
-		# store the captcha image to the file system
-		with tempfile.NamedTemporaryFile(suffix='.jpg') as fp:
-			fp.write(resp.raw)
-			fp.flush()
-			# open the captcha image for viewing in gui environments
-			w = webbrowser.get()
-			w.open('file://' + fp.name)
-			self.framework.alert(fp.name)
-			try:
-				_payload = {'captcha': raw_input('[CAPTCHA] Answer: ')}
+					params=payload,
+					allow_redirects=False,
+					headers=headers)
 			except:
-				_payload = {'captcha': input('[CAPTCHA] Answer: ')}
-			# temporary captcha file removed on close
-		# extract the form elements for the capctah answer request
-		form = tree.xpath('//form[@action="index"]')[0]
-		for x in ['q', 'continue', 'submit']:
-			_payload[x] = form.xpath('//input[@name="%s"]/@value' % (x))[0]
-		# send the captcha answer
-		return self.framework.request('https://ipv4.google.com/sorry/index', payload=_payload, agent=self.agent)
+				self.framework.error('[GOOGLE] ConnectionError')
+				return
+			if req.status_code == 503:
+				req = self.framework.error('Google CAPTCHA triggered.')
+				break
+
+			if req.status_code in [301, 302]:
+				redirect = req.headers['location']
+				req = self.framework.request(url=redirect, allow_redirects=False, headers=headers)
+			self._pages += req.text
+			page += 1
+			payload['start'] = set_page(page)
+			if page >= self.limit:
+				break
+		parser = self.framework.page_parse(self._pages)
+		links = parser.get_links
+		for link in links:
+			cond1 = re.compile(r'/url\?q=[^/]').match(link) != None
+			cond2 = 'http://webcache.googleusercontent.com' not in link
+			if cond1 and cond2:
+				link = re.sub(r'/url\?q=', '', link)
+				self._links.append(link)
+
+	def api_run_crawl(self):
+		if not (self.google_api and self.google_cx):
+			self.framework.error('[GOOGLEAPI] google api needs google_api and google_cx variable')
+			return
+
+		url = 'https://www.googleapis.com/customsearch/v1'
+		payload = {'alt': 'json', 'prettyPrint': 'false', 'key': self.google_api, 'cx': self.google_cx, 'q': query}
+		page = 0
+		self.verbose(f"[GOOGLEAPI] Searching Google API for: {self.q}")
+		while True:
+			self.framework.verbose(f'[GOOGLE] Searching in {page} page...', end='\r')
+			resp = self.framework.request(url, params=payload)
+			if resp.json() == None:
+				raise self.framework.FrameworkException(f"Invalid JSON response.{os.linesep}{resp.text}")
+			# add new results
+			if 'items' in resp.json():
+				self._links.extend(resp.json()['items'])
+			# increment and check the limit
+			page += 1
+			if limit == page:
+				break
+			# check for more pages
+			if not 'nextPage' in resp.json()['queries']:
+				break
+			payload['start'] = resp.json()['queries']['nextPage'][0]['startIndex']
 
 	@property
 	def pages(self):
@@ -90,20 +111,7 @@ class main:
 
 	@property
 	def links(self):
-		try:
-			tree = fromstring(self._pages)
-		except:
-			return self._links
-		else:
-			links = tree.xpath("//a/@href")
-			for link in links:
-				cond1 = re.compile(r"/url\?q=[^/]").match(link) != None
-				cond2 = "http://webcache.googleusercontent.com" not in link
-				cond3 = link not in self._links
-				if cond1 and cond2 and cond3:
-					link = re.sub(r"/url\?q=", "", link)
-					self._links.append(link)
-			return self._links
+		return self._links
 
 	@property
 	def dns(self):
@@ -115,4 +123,4 @@ class main:
 
 	@property
 	def docs(self):
-		return self.framework.page_parse(self._pages).get_docs(self.q, self.get_links)
+		return self.framework.page_parse(self._pages).get_docs(self.q, self.links)

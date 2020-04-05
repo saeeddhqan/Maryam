@@ -1,4 +1,3 @@
-# -*- coding: u8 -*-
 """
 OWASP Maryam!
 
@@ -16,33 +15,37 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from lxml.html import fromstring
-
 class main:
 
-	def __init__(self, framework, q, limit):
+	def __init__(self, framework, q, limit=2):
+		""" startpage.com search engine
+
+			framework : core attribute
+			q 		  : query for search
+			limit	  : count of pages
+		"""
 		self.framework = framework
 		self.q = self.framework.urlib(q).quote
 		self.limit = limit
-		self._pages = ""
-		self.startpage = "startpage.com"
+		self._pages = ''
+		self.startpage = 'startpage.com'
 
 	def run_crawl(self):
-		urls = ["https://%s/sp/search?query=%s&page=%d" % (self.startpage, self.q, i) for i in range(0, self.limit)]
-		print(urls)
+		urls = [f"https://{self.startpage}/sp/search?query={self.q}&page={i}" for i in range(1, self.limit+1)]
 		max_attempt = len(urls)
-		for url in urls:
+		for url in range(len(urls)):
+			self.framework.verbose(f"[STARTPAGE] Searching in {url} page...")
 			try:
-				req = self.framework.request(url=url)
-			except Exception as e:
-				self.framework.error(str(e.args))
+				req = self.framework.request(url=urls[url])
+			except:
+				self.framework.error('[STARTPAGE] ConnectionError')
 				max_attempt -= 1
 				if max_attempt == 0:
-					self.framework.error("startpage is missed!")
+					self.framework.error('Startpage is missed!')
 					break
 			else:
 				page = req.text
-				if "> Next <" not in page:
+				if '> Next <' not in page:
 					self._pages += page
 					break
 				self._pages += page
@@ -57,8 +60,8 @@ class main:
 
 	@property
 	def emails(self):
-		return self.framework.page_parse(self._pages).get_emails(self.query)
+		return self.framework.page_parse(self._pages).get_emails(self.q)
 
 	@property
 	def docs(self):
-		return self.framework.page_parse(self._pages).get_docs(self.query)
+		return self.framework.page_parse(self._pages).get_docs(self.q)

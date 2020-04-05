@@ -1,4 +1,3 @@
-# -*- coding: u8 -*-
 """
 OWASP Maryam!
 
@@ -20,31 +19,34 @@ from re import search
 
 class main:
 
-	def __init__(self, framework, q, limit):
+	def __init__(self, framework, q, limit=2):
+		""" baidu.com search engine
+			
+			framework : core attribute
+			q 		  : query for search
+			limit	  : count of pages
+		"""
 		self.framework = framework
 		self.q = self.framework.urlib(q).quote
-		self.limit = 20 if limit > 20 else limit
-		self._pages = ""
-		self.baidu = "baidu.com"
+		self.limit = 25 if limit > 25 else limit
+		self._pages = ''
+		self.baidu = 'baidu.com'
 
 	def run_crawl(self):
-		urls = ["http://%s/s?wd=%s&oq=%s&pn=%d&ie=utf-8" % (
-				self.baidu, self.q, self.q, i*10) for i in range(1, self.limit)]
+		set_page = lambda x: x*10
+		urls = [f"http://{self.baidu}/s?wd={self.q}&oq={self.q}&pn={set_page(i)}&ie=utf-8" for i in range(1, self.limit)]
 		max_attempt = len(urls)
-		for url in urls:
+		for url in range(len(urls)):
+			self.framework.verbose(f"[BAIDU] Searching in {url} page...")
 			try:
-				req = self.framework.request(url=url)
-			except Exception as e:
-				self.framework.error(str(e.args))
+				req = self.framework.request(url=urls[url])
+			except:
+				self.framework.error('[BAIDU] ConnectionError')
 				max_attempt -= 1
 				if max_attempt == 0:
-					self.framework.error("baidu is missed!")
+					self.framework.error('Baidu is missed!')
 					break
 			else:
-				# If not the next page then:
-				if not search(r" class=\"n\">[\w&;]+</a>", req.text):
-					self._pages += req.text
-					break 
 				self._pages += req.text
 
 	@property

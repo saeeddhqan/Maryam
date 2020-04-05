@@ -1,4 +1,3 @@
-# -*- coding: u8 -*-
 """
 OWASP Maryam!
 
@@ -20,64 +19,68 @@ from re import search, I
 
 class main:
 
-	def __init__(self, framework, content, headers):
-		self.framework = framework
+	def __init__(self, content, headers):
+		""" Detect operation system
+
+			content 	: web page content
+			headers		: web page headers
+		"""
 		self.content = content
 		self.headers = headers
 		self._os = None
 
 	def run_crawl(self):
-		for i in dir(self):
-			con1 = not i.startswith("__")
-			con2 = not i.endswith("__")
-			con3 = i not in ("_os", "content", "headers",
-							 "framework", "os", "run_crawl")
+		for attr in dir(self):
+			con1 = not attr.startswith('__')
+			con2 = not attr.endswith('__')
+			con3 = attr not in ('_os', 'content', 'headers',
+							 'framework', 'os', 'run_crawl')
 			if con1 and con2 and con3:
-				getattr(self, i)()
-
+				getattr(self, attr)()
+		
 	def windows(self):
-		os = ["windows", "win32"]
-		for i in os:
+		OSes = ('windows', 'win32')
+		for os in OSes:
 			for header in self.headers.items():
-				if search(i, header[1], I):
-					self._os = i.title()
+				if search(os, header[1], I):
+					self._os = os.title()
 
 	def bsd(self):
 		for header in self.headers.items():
 			if search(r'^bsd', header[1], I):
-				self._os = "BSD"
+				self._os = 'BSD'
 
 	def ibm(self):
-		os = ['IBM', 'Lotus-Domino', 'WebSEAL']
-		for i in os:
+		OSes = ('IBM', 'Lotus-Domino', 'WebSEAL')
+		for os in OSes:
 			for header in self.headers.items():
-				if search(i, header[1], I):
-					self._os = "IBM"
+				if search(os, header[1], I):
+					self._os = 'IBM'
 
 	def linux(self):
-		os = ["linux", "ubuntu", "gentoo", "debian", "dotdeb", "centos", "redhat", "sarge", "etch",
-			  "lenny", "squeeze", "wheezy", "jessie", "red hat", "scientific linux"]
-		for i in os:
+		OSes = ('linux', 'ubuntu', 'gentoo', 'debian', 'dotdeb', 'centos', 'redhat', 'sarge', 'etch',
+			  'lenny', 'squeeze', 'wheezy', 'jessie', 'red hat', 'scientific linux')
+		for os in OSes:
 			for header in self.headers.items():
-				if search(i, header[1], I):
-					self._os = i.title()
+				if search(os, header[1], I):
+					self._os = os.title()
 
 	def mac(self):
 		for header in self.headers.items():
 			if search(r'^mac|^macos', header[1], I):
-				self._os = "MacOS"
+				self._os = 'MacOS'
 
 	def solaris(self):
-		os = ["solaris", "sunos", "opensolaris", "sparc64", "sparc"]
-		for o in os:
+		OSes = ('solaris', 'sunos', 'opensolaris', 'sparc64', 'sparc')
+		for os in OSes:
 			for header in self.headers.items():
-				if search(o, header[1], I):
-					self._os = o.title()
+				if search(os, header[1], I):
+					self._os = os.title()
 
 	def unix(self):
 		for header in self.headers.items():
 			if search(r'^unix', header[1], I):
-				self._os = "Unix"
+				self._os = 'Unix'
 
 	@property
 	def os(self):

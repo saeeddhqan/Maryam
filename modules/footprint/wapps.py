@@ -1,4 +1,3 @@
-# -*- coding : u8 -*-
 """
 OWASP Maryam!
 
@@ -21,65 +20,49 @@ from core.module import BaseModule
 class Module(BaseModule):
 
 	meta = {
-		"name": "Web Applications Identifier",
-		"author": "Saeeddqn",
-		"version": "0.2",
-		"description": "Web fingerprinting to identify the applications used with over 500 pyload.",
-		"options": (
-			("domain", BaseModule._global_options["target"], True, "Domain string", "-d", "store"),
-			("output", False, False, "Save output to workspace", "--output", "store_true"),
+		'name': 'Web Applications Identifier',
+		'author': 'Saeeddqn',
+		'version': '0.3',
+		'description': 'Web fingerprinting to identify the applications used with over 1000 pyload.',
+		'sources': ('wappalyzer.com',),
+		'options': (
+			('domain', BaseModule._global_options.get('target'), True, 'Domain string', '-d', 'store'),
+			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-		"examples": ["wapps -d <DOMAIN>"]
+		'examples': ('wapps -d <DOMAIN>',)
 	}
 
 	def module_run(self):
-		domain = self.options["domain"]
+		domain = self.options['domain']
 		req = self.request(domain)
 		headers = req.headers
 		text = req.text
 		resp = {}
+		
 		v = self.wapps(domain, text, headers)
 		wapps = v.run_crawl()
-		self.alert("WAPPS:")
-		resp["wapps"] = []
+		self.alert('WAPPS')
+		resp['wapps'] = []
 		for i in wapps:
-			self.output("\t%s : %s"%(i,wapps[i]), "g")
-			resp["wapps"].append((i,wapps[i]))
+			self.output(f'\t{i} : {wapps[i]}', 'g')
+			resp['wapps'].append((i,wapps[i]))
 
 		_os = self.os_identify(text, headers)
 		_os.run_crawl()
-		_os = _os.os if _os.os != None else "unknow"
-		resp["os"] = _os
-		self.alert("Used \"%s\" operating system" % _os)
+		if _os.os:
+			resp['os'] = _os.os
+			self.alert(f"Used '{_os.os}' operating system")
 
-		_cms = self.cms_identify(text, headers)
-		_cms.run_crawl()
-		cms = _cms.cms if _cms.cms != None else "unknow"
-		resp["cms"] = cms
-		self.alert("Web CMS is \"%s\"" % cms)
+		cms = self.cms_identify(text, headers)
+		cms.run_crawl()
+		if cms.cms:
+			resp['cms'] = cms.cms
+			self.alert(f"Used '{cms.cms}' content management")
 
-		_lang = self.lang_identify(text, headers)
-		_lang.run_crawl()
-		lang = _lang.lang if _lang.lang != None else "unknow"
-		resp["lang"] = lang
-		self.alert("Web Language is \"%s\"" % lang)
-	  
-		resp["frameworks"] = []
-		_frameworks = self.frameworks_identify(text, headers)
-		_frameworks.run_crawl()
-		frameworks = _frameworks.frameworks
-		for i in frameworks:
-			self.output("Use \"%s\"" % (i))
-			resp["frameworks"].append(i)
+		lang = self.lang_identify(text, headers)
+		lang.run_crawl()
+		if lang.lang:
+			resp['lang'] = lang.lang
+			self.alert(f"Used '{lang.lang}' programming language")
 
-		resp["waf"] = []
-		_waf = self.waf_identify(text, headers)
-		_waf.run_crawl()
-		waf = _waf.waf
-		if waf != []:
-			self.alert("WAF: ")
-			for i in waf:
-				resp["waf"].append(i)
-				self.output("\t\"%s\"" % i, "g")
-					
-		self.save_gather(resp, "footprint/wapps", domain, output=self.options["output"])
+		self.save_gather(resp, 'footprint/wapps', domain, output=self.options['output'])

@@ -1,5 +1,4 @@
-#! /usr/bin/python
-# -*- coding: u8 -*-
+#! /usr/bin/python3
 """
 OWASP Maryam!
 
@@ -17,14 +16,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+__VERSION__ = '1.4.5'
+
 import sys
 import platform
-from core import base
-from core.framework import Colors
 
 # Check the OS
-if platform.system() not in ["Linux", "Darwin"]:
-	print(Colors.R + "This tool is designed for Linux and Darwin. maybe not work!" + Colors.N)
+if platform.system() not in ('Linux', 'Darwin'):
+	print('[!] This tool is designed for Linux and Darwin. maybe not work!')
+
+# Check the version
+if sys.version_info.major != 3:
+	print('[!] Maryam migrated to python3.')
+	exit(0)
+
+# Import framework
+from core import base
 
 sys.dont_write_bytecode = True
 

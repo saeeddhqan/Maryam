@@ -1,4 +1,3 @@
-# -*- coding : u8 -*-
 """
 OWASP Maryam!
 
@@ -16,46 +15,51 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import re
-import time
-
 class main:
 
-    def __init__(self, framework, q, limit):
-        self.framework = framework
-        self.q = q
-        self._pages = ""
-        self.exalead = 'www.exalead.com'
-        self.limit = limit
+	def __init__(self, framework, q, limit):
+		""" exalead.com search engine
 
-    def run_crawl(self):
-        urls = ["https://%s/search/web/results/?q=%s&element_per_page=50&start_index=%d" % (self.exalead, self.q.replace(" ","%20"), x*10) for x in range(self.limit+1)]
-        max_attempt = len(urls)
-        for url in urls:
-            try:
-                req = self.framework.request(url=url)
-            except Exception as e:
-                self.framework.error(str(e.args))
-                max_attempt -= 1
-                if max_attempt == 0:
-                    self.framework.error("exalead is missed!")
-                    break
-            else:
-                self._pages += req.text
-                time.sleep(2)
-    @property
-    def pages(self):
-        return self._pages
+			framework : core attribute
+			q         : query for search
+			limit     : count of pages
+		"""
+		self.framework = framework
+		self.q = q
+		self._pages = ''
+		self.exalead = 'www.exalead.com'
+		self.limit = limit
 
-    @property
-    def dns(self):
-        return self.framework.page_parse(self._pages).get_dns(self.q)
+	def run_crawl(self):
+		set_page = lambda x:x*10
+		urls = [f"https://{self.exalead}/search/web/results/?q={self.q.replace(' ', '%20')}&elements_per_page=50&start_index={set_page(i)}" 
+					for i in range(self.limit+1)]
+		max_attempt = len(urls)
+		for url in range(max_attempt):
+			self.framework.debug(f"[EXALEAD] Searching in {url} page...")
+			try:
+				req = self.framework.request(url=urls[url])
+			except:
+				self.framework.error('[EXALEAD] ConnectionError')
+				max_attempt -= 1
+				if max_attempt == 0:
+					self.framework.error('Exalead is missed!')
+					break
+			else:
+				self._pages += req.text
 
-    @property
-    def emails(self):
-        return self.framework.page_parse(self._pages).get_emails(self.q)
+	@property
+	def pages(self):
+		return self._pages
 
-    @property
-    def docs(self):
-        return self.framework.page_parse(self._pages).get_docs(self.q)
-    
+	@property
+	def dns(self):
+		return self.framework.page_parse(self._pages).get_dns(self.q)
+
+	@property
+	def emails(self):
+		return self.framework.page_parse(self._pages).get_emails(self.q)
+
+	@property
+	def docs(self):
+		return self.framework.page_parse(self._pages).get_docs(self.q)
