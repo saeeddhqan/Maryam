@@ -22,14 +22,14 @@ import concurrent.futures
 
 class main:
 
-	def __init__(self, framework, url, debug=False, limit=1, threat_count=1):
-		""" web scraper with threat support
+	def __init__(self, framework, url, debug=False, limit=1, thread_count=1):
+		""" web scraper with thread support
 
 			framework 	 : core attribute
 			url		  	 : first page address
 			debug	  	 : show the result at moment
 			limit	  	 : web scrap level(if it's 1 that's mean just search in first page)
-			threat_count : count of links for open at per lap
+			thread_count : count of links for open at per lap
 		"""
 		self.framework = framework
 		# ADD http:// 
@@ -37,7 +37,7 @@ class main:
 		self.urlib = self.framework.urlib
 		self.debug = debug
 		self.limit = limit
-		self.threat_count = threat_count
+		self.thread_count = thread_count
 		self._CATEGORY_PAGES = {}
 		self._PAGES = ''
 		self._LINKS = []
@@ -171,7 +171,6 @@ class main:
 				self._JS = self.rept(join, self._JS)
 				continue
 			elif urparse.check_urlfile('css'):
-				# re.search(r'\.css[^\w]?', join):
 				self.debuger(f'css: {join}')
 				self._CSS = self.rept(join, self._CSS)
 				continue
@@ -247,7 +246,7 @@ class main:
 		links = list(links)
 		threadpool = concurrent.futures.ThreadPoolExecutor(
 				max_workers=thread_count)
-		futures = (threadpool.submit(function, link) for link in links)
+		futures = (threadpool.submit(function, link) for link in links if link not in self.passed)
 		for i, _ in enumerate(concurrent.futures.as_completed(futures)):
 			if i + 1 == len(links) or (i + 1) % thread_count == 0:
 				print(f'Progress: {i+1}/{len(links)}',
@@ -277,7 +276,7 @@ class main:
 
 			print(f"{self.limit} Level {depth+1}: {len(links)} URLs", end='\r')
 			try:
-				self.attack(self.get_source, links, self.threat_count)
+				self.attack(self.get_source, list(set(self._LINKS)), self.thread_count)
 			except KeyboardInterrupt:
 				print('')
 				break

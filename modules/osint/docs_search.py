@@ -33,15 +33,15 @@ class Module(BaseModule):
 			('count', 50, False, 'Links count in page(min=10)', '-c', 'store'),
 			('site', False, False, 'If this is set, search just limited to the site', '-s', 'store_false'),
 			('engines', 'exalead,bing', True, 'Search engines with comma separator', '-e', 'store'),
-			('threat', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store'),
+			('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-		'examples': ('docs_search -q amazon -f pdf -e google,bing,metacrawler --threat 3', 'docs_search -q amazon -f pdf -e google,bing,metacrawler -l 3')
+		'examples': ('docs_search -q amazon -f pdf -e google,bing,metacrawler --thread 3', 'docs_search -q amazon -f pdf -e google,bing,metacrawler -l 3')
 	}
 	
 	docs = []
 
-	def threat(self, function, thread_count, engines, q, limit, count):
+	def thread(self, function, thread_count, engines, q, limit, count):
 		threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
 		futures = (threadpool.submit(function, name, q, limit, count) for name in engines if name in self.meta['sources'])
 		for _ in concurrent.futures.as_completed(futures):
@@ -76,7 +76,7 @@ class Module(BaseModule):
 		else:
 			dork = f"{q} filetype:{_type}"
 
-		self.threat(self.search, self.options['threat'], engines, dork, limit, count)
+		self.thread(self.search, self.options['thread'], engines, dork, limit, count)
 
 		self.docs = list(set(self.docs))
 		self.alert(_type.upper())

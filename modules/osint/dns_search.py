@@ -34,7 +34,7 @@ class Module(BaseModule):
 			('limit', 3, False, 'Search limit', '-l', 'store'),
 			('count', 30, False, 'Links count in page(min=10, max=100)', '-c', 'store'),
 			('engines', None, True, 'Search engine names. e.g bing,google,..', '-e', 'store'),
-			('threat', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store'),
+			('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
 		'examples': ('dns_search -d example.com --output', 'dns_search -d example.com -e google,bing,yahoo -l 3 -t 3 --output')
@@ -80,7 +80,7 @@ class Module(BaseModule):
 				self.hostnames.append(host)
 		return 'otx'
 
-	def threat(self, function, thread_count, engines, q, limit, count):
+	def thread(self, function, thread_count, engines, q, limit, count):
 		threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
 		futures = (threadpool.submit(function, name, q, limit, count) for name in engines if name in self.meta['sources'])
 		for _ in concurrent.futures.as_completed(futures):
@@ -115,7 +115,7 @@ class Module(BaseModule):
 		count = self.options['count']
 		engines = self.options['engines'].lower().split(',')
 
-		self.threat(self.search, self.options['threat'], engines, domain_name, limit, count)
+		self.thread(self.search, self.options['thread'], engines, domain_name, limit, count)
 		self.hostnames = list(set(self.hostnames))
 		self.alert('Hostnames')
 		if self.hostnames == []:

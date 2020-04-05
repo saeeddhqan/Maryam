@@ -210,8 +210,8 @@ class BaseModule(framework.Framework):
 		_waf = waf_identify.main(req)
 		return _waf
 
-	def web_scrap(self, url, debug=False, limit=5, threat=1):
-		search = web_scrap.main(self, url, debug, limit, threat)
+	def web_scrap(self, url, debug=False, limit=5, thread=1):
+		search = web_scrap.main(self, url, debug, limit, thread)
 		return search
 
 	def startpage(self, q, limit):

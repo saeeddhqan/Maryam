@@ -76,7 +76,7 @@ class main:
 		self.pclean()
 		host = self.dork_clean(host + '.' if '.' not in host else host)
 		emails = re.findall(r"[A-z0-9.\-]+@[A-z0-9\-\.]{0,255}?%s(?:[A-z]+)?" % host, self.page)
-		return list(set(emails))
+		return [x.replace('\\', '') for x in list(set(emails))]
 
 	@property
 	def all_emails(self):

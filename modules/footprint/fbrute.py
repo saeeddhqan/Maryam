@@ -26,7 +26,7 @@ class Module(BaseModule):
 		'name': 'File Brute Force',
 		'author': 'Saeeddqn',
 		'version': '1.0',
-		'description': 'File/Directory brute force attack with threat supporting',
+		'description': 'File/Directory brute force attack with thread supporting',
 		'comments': ('wordlist option can be an url',),
 		'options': (
 			('domain', BaseModule._global_options['target'],
@@ -35,7 +35,7 @@ class Module(BaseModule):
 								 '-c', 'store'),
 			('wordlist', os.path.join(BaseModule.data_path, 'dnsnames.txt'), False, 
 								'wordlist address. default is dnsnames.txt in data folder', '-w', 'store'),
-			('threat', 8, False, 'The number of links that open per round(default=8)', '-t', 'store'),
+			('thread', 8, False, 'The number of links that open per round(default=8)', '-t', 'store'),
 			('wordlists', False, False, 'List of most common DNS wordlists', '-l', 'store_true'),
 			('status_codes', '200,201,204', False, 'List of good status codes(default="200,201,204")', '-s', 'store_true'),
 			('redirect', True, False, 'Allow redirection(default=True)', '-r', 'store_true'),
@@ -47,7 +47,7 @@ class Module(BaseModule):
 
 	hostnames = []
 
-	def threat(self, function, hostname, wordlist, thread_count, status_codes):
+	def thread(self, function, hostname, wordlist, thread_count, status_codes):
 		threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
 		futures = (threadpool.submit(function, hostname, word, status_codes) for word in wordlist if not word.startswith("#"))
 		counter = 1
@@ -136,6 +136,6 @@ class Module(BaseModule):
 			count = dlen if count > dlen else count
 
 		self.heading(f"Starting File/Dir brute force with {count} payload", level=0)
-		self.threat(self.request_checker, domain, dlist[:count], self.options['threat'], status_codes)
+		self.thread(self.request_checker, domain, dlist[:count], self.options['thread'], status_codes)
 
 		self.save_gather(self.hostnames, 'footprint/fbrute', domain, output=self.options['output'])

@@ -1,4 +1,4 @@
-'''
+"""
 OWASP Maryam!
 
 This program is free software: you can redistribute it and/or modify
@@ -13,7 +13,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
 from core.module import BaseModule
 import re
@@ -33,7 +33,7 @@ class Module(BaseModule):
 			('apache', False, False, 'Apache status check(28 payload', '--apache', 'store_true'),
 			('admin', False, False, 'Admin panel check(482 payload)', '--admin', 'store_true'),
 			('soap', False, False, 'SOAP and REST-based web services(3 payload)', '--soap', 'store_true'),
-			('threat', 8, False, 'The number of links that open per round(default=8)', '-t', 'store'),
+			('thread', 8, False, 'The number of links that open per round(default=8)', '-t', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
 		'examples': ('fbrute -d <DOMAIN> --log --admin',
@@ -42,7 +42,7 @@ class Module(BaseModule):
 
 	resp = {}
 
-	def threat(self, function, hostname, wordlist, thread_count, method, header=(), content=[], status_codes=[], not_status_codes=[]):
+	def thread(self, function, hostname, wordlist, thread_count, method, header=(), content=[], status_codes=[], not_status_codes=[]):
 		threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
 		futures = (threadpool.submit(function, hostname, word, method, header, content, status_codes, not_status_codes) for word in wordlist if not '#' in word)
 		counter = 1
@@ -90,7 +90,7 @@ class Module(BaseModule):
 	def module_run(self):
 		url = self.urlib(self.options['domain']).sub_service('https')
 		methods = []
-		thread_count = self.options['threat']
+		thread_count = self.options['thread']
 		### Common Files ####
 		######################
 		self.resp['common'] = []
@@ -110,12 +110,12 @@ class Module(BaseModule):
 						 'phpinfo1.php', 'phpInfo1.php', 'info1.php', 'PHPversion.php', 'test', 'php', 'a.php', 'x.php', 'xx.php', 'xxx.php']
 
 		self.alert('Common files')
-		self.threat(self.default, url, list(tops.items()), thread_count, 'common', not_status_codes=[301, 404])
+		self.thread(self.default, url, list(tops.items()), thread_count, 'common', not_status_codes=[301, 404])
 
 		# phpinfo
 		self.alert('PHPINFO')
 		self.resp['phpinfo'] = []
-		self.threat(self.default, url, php_info_list, thread_count, 'phpinfo', status_codes=[200, 201, 204, 202, 206])
+		self.thread(self.default, url, php_info_list, thread_count, 'phpinfo', status_codes=[200, 201, 204, 202, 206])
 
 		### LOGS Files ####
 		##############################
@@ -126,7 +126,7 @@ class Module(BaseModule):
 					 'php5-fpm.log', 'php_errors.log', 'security.txt']
 
 			self.alert('log files')
-			self.threat(self.default, url, php_info_list, 4, 'logs', status_codes=[200, 201, 204, 202, 206], header=('Content-Type', 'text/plain'))
+			self.thread(self.default, url, php_info_list, 4, 'logs', status_codes=[200, 201, 204, 202, 206], header=('Content-Type', 'text/plain'))
 
 		## BACKUP Brute Force ##
 		########################
@@ -137,7 +137,7 @@ class Module(BaseModule):
 					 'database.sql.bck', 'database.sql.bkp', '~backup', 'backup', 'database.sql.copy', 'database.sql.gz', 'database.sql.old', 'database.sql.orig', 'database.sql.rar', 'database.sql.sav', 'database.sql.save', 'database.sql.tar', 'database.sql.tar.bz2', 'database.sql.tar.gz', 'database.sql.tgz', 'database.sql.tmp', 'database.sql.txt', 'database.sql.zip', 'database.tar', 'database.tar.bz2', 'database.tar.gz', 'database.tgz', 'database.tmp', 'database.txt', 'database.zip', 'site.back', 'site.backup', 'site.bak', 'site.bck', 'site.bkp', 'site.copy', 'site.gz', 'site.old', 'site.orig', 'site.rar', 'site.sav', 'site.save', 'site.tar', 'site.tar.bz2', 'site.tar.gz', 'site.tgz', 'site.zip', 'sql.zip.back', 'sql.zip.backup', 'sql.zip.bak', 'sql.zip.bck', 'sql.zip.bkp', 'sql.zip.copy', 'sql.zip.gz', 'sql.zip.old', 'sql.zip.orig', 'sql.zip.save', 'sql.zip.tar', 'sql.zip.tar.bz2', 'sql.zip.tar.gz', 'sql.zip.tgz', 'upload.back', 'upload.backup', 'upload.bak', 'upload.bck', 'upload.bkp', 'upload.copy', 'upload.gz', 'upload.old', 'upload.orig', 'upload.rar', 'upload.sav', 'upload.save', 'upload.tar', 'upload.tar.bz2', 'upload.tar.gz', 'upload.tgz', 'upload.zip']
 
 			self.alert('Backup files')
-			self.threat(self.default, url, backup_payloads, thread_count, 'backup', status_codes=[200, 201, 204, 202, 206], header=('Content-Type', 'text/plain'))
+			self.thread(self.default, url, backup_payloads, thread_count, 'backup', status_codes=[200, 201, 204, 202, 206], header=('Content-Type', 'text/plain'))
 			
  		## APACHE Brute Force ##
 		########################
@@ -151,7 +151,7 @@ class Module(BaseModule):
 					 'printenv', 'status', 'test-cgi', 'tmp', 'php.ini']
 
 			self.alert('Apache Status')			
-			self.threat(self.default, url, apache_payloads, thread_count, 'apache', status_codes=[200, 201, 204, 202, 206])
+			self.thread(self.default, url, apache_payloads, thread_count, 'apache', status_codes=[200, 201, 204, 202, 206])
 
 		## SOAP Brute Force ##
 		########################
@@ -162,7 +162,7 @@ class Module(BaseModule):
 			soap_payloads = ['GetAccount', 'GetUser', 'GetCCN']
 
 			self.alert('SOAP')
-			self.threat(self.default, url, soap_payloads, thread_count, 'soap', status_codes=[200, 201, 204, 202, 206])
+			self.thread(self.default, url, soap_payloads, thread_count, 'soap', status_codes=[200, 201, 204, 202, 206])
 
 		# ## ADMIN Brute Force ###
 		# ########################
@@ -174,6 +174,6 @@ class Module(BaseModule):
 					'database_administration', 'Database_Administration', 'db/admin.php', 'directadmin', 'dir', 'edit.php', 'evmsadmin', 'ezsqliteadmin', 'fileadmin', 'fileadmin.asp', 'fileadmin.html', 'fileadmin.php', 'formslogin', 'forum/admin', 'globes_admin', 'home.asp', 'home.html', 'hpwebjetadmin', 'include/admin.php', 'includes/login.php', 'Indy_admin', 'instadmin', 'interactive/admin.php', 'irc', 'links/login.php', 'LiveUser_Admin', 'login', 'login1', 'login_db', 'loginflat', 'login/login.php', 'login.php', 'redirect', 'logins', 'us', 'logon', 'logo_sysadmin', 'Lotus_Domino_Admin', 'mag/admin', 'maintenance', 'manage_admin.php', 'manager', 'manager/ispmgr', 'manuallogin', 'memberadmin', 'memberadmin.asp', 'memberadmin.php', 'members', 'memlogin', 'meta_login', 'modelsearch', 'modelsearch/admin.html', 'modelsearch/admin.php', 'modelsearch/index.asp', 'modelsearch/index.html', 'index.php', 'modelsearch/login.asp', 'modelsearch/login.html', 'modelsearch/login.php', 'moderator', 'moderator/admin.asp', 'moderator/admin.html', 'moderator/admin.php', 'moderator.asp', 'moderator.html', 'moderator/login.asp', 'moderator/login.html', 'moderator/login.php', 'moderator.php', 'myadmin', 'navSiteAdmin', 'newsadmin', 'nsw/admin/login.php', 'openvpnadmin', 'pages/admin/admin', 'login.php /panel', 'panel', 'administracion/admin.asp', 'administracion/admin.html', 'paneldecontrol', 'panel.php', 'pgadmin', 'phpldapadmin', 'phppgadmin', 'phpSQLiteAdmin', 'platz_login', 'pma', 'power_user', 'project', 'pureadmin', 'radmind', 'rcLogin', 'server', 'ServerAdministrator', 'server_admin_small', 'Server.asp', 'Server.html', 'showlogin', 'simpleLogin', 'site/admin', 'siteadmin', 'siteadmin/index.asp', 'siteadmin/index.php', 'siteadmin/login.asp', 'siteadmin/login.html', 'site_admin/login.php', 'siteadmin/login.php', 'smblogin', 'sql', 'sshadmin', 'ss_vms_admin_sm', 'staradmin', 'sub', 'sysadmins', 'system_administration', 'system', 'user.html', 'utility_login', 'vadmind', 'vmailadmin', 'webadmin/admin.html', 'webadmin/admin.php', 'webadmin.asp', 'webadmin.html', 'webadmin/index.asp', 'webadmin/index.html', 'webadmin/index.php', 'webadmin/login.asp', 'webadmin/login.html', 'webadmin/login.php', 'webadmin.php']
 
 			self.title('Admin Panel')
-			self.threat(self.default, url, apache_payloads, thread_count, 'backup', status_codes=[200, 401, 403, 201, 202, 204, 206])
+			self.thread(self.default, url, apache_payloads, thread_count, 'backup', status_codes=[200, 401, 403, 201, 202, 204, 206])
 
 		self.save_gather(self.resp, 'footprint/interest_files', url, output=self.options['output'])

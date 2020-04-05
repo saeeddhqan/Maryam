@@ -24,7 +24,7 @@ class Module(BaseModule):
 		'name': 'Google Dork Search',
 		'author': 'Saeeddqn',
 		'version': '0.2',
-		'description': 'Search your dork in the google and get result',
+		'description': 'Search your dork in the google and get result.',
 		'sources': ('google',),
 		'options': (
 			('dork', None, True, 'Google dork string', '-d', 'store'),

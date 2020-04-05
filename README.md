@@ -1,27 +1,52 @@
-![Version 1.4.0](https://img.shields.io/badge/Version-1.4.0-green.svg)
+![Version 1.4.5](https://img.shields.io/badge/Version-1.4.5-green.svg)
 [![GPLv3 License](https://img.shields.io/badge/License-GPLv3-red.svg)
+![Python 3.x](https://img.shields.io/badge/Python-3.x-green.svg)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/40d81c48b3444ee78ffc6c5c8639134c)](https://www.codacy.com/manual/saeeddhqan/Maryam?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=saeeddhqan/Maryam&amp;utm_campaign=Badge_Grade)
 
 <img src="https://owasp.org/assets/images/logo.png">
 
-OWASP Maryam
-====
+# OWASP Maryam
 
-[![asciicast](https://asciinema.org/a/310985.svg)](https://asciinema.org/a/310985)
+[![asciicast](https://asciinema.org/a/316888.svg)](https://asciinema.org/a/316888)
 
 OWASP Maryam is an Open-source intelligence(OSINT) and Web-based Footprinting modular/tool framework based on the Recon-ng and written in Python.
 If you have skill in Metasploit or Recon-ng, you can easily use it without prerequisites. And if not, please read the [Quick Guide](https://github.com/saeeddhqan/Maryam/wiki#quick-guide).
 
-## What can be done
-**If you want**
-* Extracts Emails, Docs, Subdomains, Social networks from search engines
-* Extracts Links, CSS and JS files, CDN links, Emails, Keywords from Web Source
-* Find and Brute force DNS, TLD and important directs
-* Crawl Web Pages and search your RegExp
-* Identify WebApps, WAF, Interesting and important files
-* And get report with several format
+## Tools
+**OSINT**
 
-**Use Maryam**
+ - dns_search
+	> Search in the search engines and other sources for find DNS.
+ - email_search
+	> Search in search engines for find emails.
+ - docs_search
+	> Search in engines for find related documents. 
+ - onion_search
+	> onion_search is to create the premier search engine for services residing on the Tor anonymity network.
+ - godork	
+	> Search your dork in the google and get result
+ - social_nets
+	> Search for find usernames in social networks.
+ - crawler
+	> Crawl web pages for find links, JS Files, CSS files, Comments And everything else interesting with thread supporting
+	
+**FOOTPRINT**
+ - crawl_pages
+	> Search to find keywords, emails, usernames, errors, meta tags and regex on the page/pages
+ - dbrute 
+	> DNS brute force attack with thread supporting
+ - fbrute 
+	> File/Directory brute force attack with thread supporting
+ - tldbrute
+	> TLD brute force attack with thread supporting
+ - waf 		
+	> Identify web application firewalls. It can detect over 200 firewall
+ - wapps        
+	> Web fingerprinting to identify the applications used with over 1000 pyload.
+ - interest_files
+	> Search hosts for interesting files in predictable locations and brute force it.
+ - entry_points
+	> Crawl web pages for find entry points(inputs, urls with param)
 
 ## links
 ### [OWASP](https://www.owasp.org/index.php/OWASP_Maryam_Project)

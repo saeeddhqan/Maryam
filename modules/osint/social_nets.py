@@ -31,15 +31,15 @@ class Module(BaseModule):
 			('engines', 'google,bing', False, 'Search engine names. e.g `bing,google,..`', '-e', 'store'),
 			('limit', 5, False, 'Limit for page search', '-l', 'store'),
 			('count', 100, False, 'Links count in page(min=10, max=100)', '-c', 'store'),
-			('threat', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store'),
+			('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store'),
 			('output', False, False, 'Save output to  workspace', '--output', 'store_true'),
 		),
-		'examples': ('social_nets -n microsoft -e google,bing,yahoo -c 50 --output', 'social_nets -n microsoft.com -e google')
+		'examples': ('social_nets -n microsoft -e google,bing,yahoo -c 50 -t 3 --output', 'social_nets -n microsoft.com -e google')
 	}
 
 	pages = ''
 
-	def threat(self, function, thread_count, engines, q, limit, count):
+	def thread(self, function, thread_count, engines, q, limit, count):
 		threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
 		futures = (threadpool.submit(function, name, q, limit, count) for name in engines if name in self.meta['sources'])
 		for _ in concurrent.futures.as_completed(futures):
@@ -73,7 +73,7 @@ class Module(BaseModule):
 			page = ''
 		self.pages += page
 		if engines != []:
-			self.threat(self.search, self.options['threat'], engines, query, limit, count)
+			self.thread(self.search, self.options['thread'], engines, query, limit, count)
 		usernames = self.page_parse(self.pages).get_networks
 		links = []
 		for net in usernames:

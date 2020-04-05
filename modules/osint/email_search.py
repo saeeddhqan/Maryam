@@ -33,7 +33,7 @@ class Module(BaseModule):
 			("count", 50, False, "Links count in page(min=10, max=100)", "-c", "store"),
 			("engines", "google,metacrawler", True, "Search engine names. e.g bing,google,..", "-e", "store"),
 			("key", None, False, "hunter.io api key", "-k", "store"),
-			('threat', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store'),
+			('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store'),
 			("output", False, False, "Save output to  workspace", "--output", "store_true"),
 		),
 		"examples": ("email_search -q microsoft.com -e bing --output", "email_search -q owasp.org -e google,bing,yahoo -l 20 -t 3 --output")
@@ -41,7 +41,7 @@ class Module(BaseModule):
 
 	emails = []
 
-	def threat(self, function, thread_count, engines, domain, q, limit, count, key):
+	def thread(self, function, thread_count, engines, domain, q, limit, count, key):
 		threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
 		futures = (threadpool.submit(function, name, domain, q, limit, count, key) for name in engines if name in self.meta['sources'])
 		for _ in concurrent.futures.as_completed(futures):
@@ -85,7 +85,7 @@ class Module(BaseModule):
 		engines = self.options['engines'].split(',')
 		q = f'"%40{domain}"'
 
-		self.threat(self.search, self.options['threat'], engines, domain, q, limit, count, self.options.get('key'))
+		self.thread(self.search, self.options['thread'], engines, domain, q, limit, count, self.options.get('key'))
 
 		self.alert('Emails')
 		emails = list(set(self.emails))

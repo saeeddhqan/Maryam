@@ -29,7 +29,7 @@ class Module(BaseModule):
 			('domain', BaseModule._global_options['target'], True, 'Domain string', '-d', 'store'),
 			('debug', False, False, 'debug the scraper', '--debug', 'store_true'),
 			('limit', 1, False, 'Scraper depth level', '-l', 'store'),
-			('threat', 1, False, 'The number of links that open per round', '-t', 'store'),
+			('thread', 1, False, 'The number of links that open per round', '-t', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
 		'examples': ('entry_points -d <DOMAIN>', 'entry_points -d <DOMAIN> --output --debug -l 10 -t 3')
@@ -37,7 +37,7 @@ class Module(BaseModule):
 
 	def module_run(self):
 		domain = self.options['domain']
-		run = self.web_scrap(domain, self.options['debug'], self.options['limit'], self.options['threat'])
+		run = self.web_scrap(domain, self.options['debug'], self.options['limit'], self.options['thread'])
 		run.run_crawl()
 		get = run.query_links
 		parser = self.page_parse(run.pages)
