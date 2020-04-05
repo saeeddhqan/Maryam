@@ -48,6 +48,15 @@ If you have skill in Metasploit or Recon-ng, you can easily use it without prere
  - entry_points
 	> Crawl web pages for find entry points(inputs, urls with param)
 
+## News
+**What is news in 1.4.5?**
+
+ - Using python3
+ - Added dbrute, fbrute, tldbrute, entry_points and waf to footprint
+ - Added Thread supporting to modules
+ - Added csv format output
+ - Rewrite utils
+ 
 ## links
 ### [OWASP](https://www.owasp.org/index.php/OWASP_Maryam_Project)
 ### [Wiki](https://github.com/saeeddhqan/maryam/wiki)
