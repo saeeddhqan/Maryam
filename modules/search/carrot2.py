@@ -21,32 +21,30 @@ from core.module import BaseModule
 class Module(BaseModule):
 
 	meta = {
-		'name': 'Google Dork Search',
+		'name': 'Carrot2 Search',
 		'author': 'Saeeddqn',
-		'version': '0.2',
-		'description': 'Search your dork in the google and get result.',
-		'sources': ('google',),
+		'version': '0.1',
+		'description': 'Search your query in the carrot2.org and get result.',
+		'sources': ('carrot2',),
 		'options': (
-			('dork', None, True, 'Google dork string', '-d', 'store'),
-			('limit', 2, False, 'Search limit(count of pages)', '-l', 'store'),
-			('count', 50, False, 'Number of links per page(min=10, max=100)', '-c', 'store'),
+			('query', None, True, 'Query string', '-q', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-        'examples': ('godork -d <DORK> -l 15 --output',)
-
+        'examples': ('carrot2 -q <QUERY>',)
 	}
 
 	def module_run(self):
-		dork = self.options['dork']
-		limit = self.options['limit']
-		count = self.options['count']
-		run = self.google(dork, limit, count)
+		query = self.options['query']
+		run = self.carrot2(query)
 		run.run_crawl()
-		links = run.links
-		
-		if links == []:
+		json_links = run.json_links
+		out = 0
+		for link in json_links:
+			self.output(link.get('title'), 'C')
+			self.output(f"\t{link.get('url')}")
+			out = 1
+
+		if not out:
 			self.output('Without result')
-		else:
-			for link in links:
-				self.output(f'\t{link}')
-		self.save_gather(links, 'osint/godork', dork, output=self.options['output'])
+
+		self.save_gather(json_links, 'search/carrot2', query, output=self.options['output'])

@@ -61,7 +61,7 @@ class main:
 
 	@property
 	def links(self):
-		reg = r"RU=(https?%3a%2f%2f[^/]+)"
+		reg = r"RU=(https?%3a%2f%2f[^/]+)/"
 		tmp = self.framework.page_parse(self._pages).findall(reg)
 		links = []
 		for link in tmp:

@@ -26,6 +26,7 @@ import re
 import shutil
 import sys
 import builtins
+import shlex
 from multiprocessing import Pool,Process
 
 # import framework libs
@@ -394,7 +395,9 @@ class Base(framework.Framework):
 				if arg.startswith('$'):
 					arg = self.get_var(arg[1:])
 				clean_args.append(arg)
-			args = parser.parse_args(clean_args)
+			clean_args = ' '.join(clean_args)
+
+			args = parser.parse_args(shlex.split(clean_args))
 			args = vars(args)
 			# Set options
 			for option in args:

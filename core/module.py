@@ -26,6 +26,7 @@ from core.util import ask
 from core.util import baidu
 from core.util import bing
 from core.util import cms_identify
+from core.util import carrot2
 from core.util import exalead
 from core.util import google
 from core.util import hunter
@@ -142,7 +143,7 @@ class BaseModule(framework.Framework):
 		search = ask.main(self, q, limit)
 		return search
 
-	def baidu(self, q, limit=10):
+	def baidu(self, q, limit=3):
 		search = baidu.main(self, q, limit)
 		return search
 
@@ -153,6 +154,10 @@ class BaseModule(framework.Framework):
 	def cms_identify(self, content, headers):
 		_cms = cms_identify.main(content, headers)
 		return _cms
+
+	def carrot2(self, q):
+		search = carrot2.main(self, q)
+		return search
 
 	def exalead(self, q, limit=3):
 		search = exalead.main(self, q, limit)

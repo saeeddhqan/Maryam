@@ -21,32 +21,38 @@ from core.module import BaseModule
 class Module(BaseModule):
 
 	meta = {
-		'name': 'Google Dork Search',
+		'name': 'Yippy Search',
 		'author': 'Saeeddqn',
 		'version': '0.2',
-		'description': 'Search your dork in the google and get result.',
-		'sources': ('google',),
+		'description': 'Search your query in the Yippy.com and get result.',
+		'sources': ('yippy',),
 		'options': (
-			('dork', None, True, 'Google dork string', '-d', 'store'),
-			('limit', 2, False, 'Search limit(count of pages)', '-l', 'store'),
-			('count', 50, False, 'Number of links per page(min=10, max=100)', '-c', 'store'),
+			('query', None, True, 'Query string', '-q', 'store'),
+			('method', None, False, 'Yippy policy("webpages", "images", "news", "video"). default=None', '-m', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-        'examples': ('godork -d <DORK> -l 15 --output',)
-
+        'examples': ('yippy -q <QUERY>', 'yippy -q <QUERY> -m images')
 	}
 
 	def module_run(self):
-		dork = self.options['dork']
-		limit = self.options['limit']
-		count = self.options['count']
-		run = self.google(dork, limit, count)
-		run.run_crawl()
+		query = self.options['query']
+		method = self.options['method'].lower()
+		run = self.yippy(query)
+		if method:
+			if method == 'webpages':
+				run.crawl_with_response_filter(method)
+				run.run_crawl()
+			else:
+				if method in ('images', 'news', 'video'):
+					run.crawl_with_response_filter(method)
+		else:	
+			run.run_crawl()
 		links = run.links
-		
+
 		if links == []:
 			self.output('Without result')
 		else:
 			for link in links:
 				self.output(f'\t{link}')
-		self.save_gather(links, 'osint/godork', dork, output=self.options['output'])
+				print('')
+		self.save_gather(links, 'search/yippy', query, output=self.options['output'])

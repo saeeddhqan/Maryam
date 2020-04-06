@@ -21,22 +21,22 @@ import concurrent.futures
 class Module(BaseModule):
 
 	meta = {
-		"name": "Email Searcher",
-		"author": "Saeeddqn",
-		"version": "0.5",
-		"description": "Search in search engines for find emails.",
-		"sources": ("bing", "google", "yahoo", "yandex", "metacrawler", 
-					"ask", "baidu", "startpage", "hunter", "yippy"),
-		"options": (
-			("query", BaseModule._global_options["target"], True, "Domain name or company name", "-q", "store"),
-			("limit", 3, False, "Search limit", "-l", "store"),
-			("count", 50, False, "Links count in page(min=10, max=100)", "-c", "store"),
-			("engines", "google,metacrawler", True, "Search engine names. e.g bing,google,..", "-e", "store"),
-			("key", None, False, "hunter.io api key", "-k", "store"),
+		'name': 'Email Searcher',
+		'author': 'Saeeddqn',
+		'version': '0.5',
+		'description': 'Search in search engines for find emails.',
+		'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 
+					'ask', 'baidu', 'startpage', 'hunter', 'yippy'),
+		'options': (
+			('query', BaseModule._global_options['target'], True, 'Domain name or company name', '-q', 'store'),
+			('limit', 3, False, 'Search limit', '-l', 'store'),
+			('count', 50, False, 'Links count in page(min=10, max=100)', '-c', 'store'),
+			('engines', 'google,metacrawler', True, 'Search engine names. e.g bing,google,..', '-e', 'store'),
+			('key', None, False, 'hunter.io api key', '-k', 'store'),
 			('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store'),
-			("output", False, False, "Save output to  workspace", "--output", "store_true"),
+			('output', False, False, 'Save output to  workspace', '--output', 'store_true'),
 		),
-		"examples": ("email_search -q microsoft.com -e bing --output", "email_search -q owasp.org -e google,bing,yahoo -l 20 -t 3 --output")
+		'examples': ('email_search -q microsoft.com -e bing --output', 'email_search -q owasp.org -e google,bing,yahoo -l 20 -t 3 --output')
 	}
 
 	emails = []

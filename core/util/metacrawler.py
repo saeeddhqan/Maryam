@@ -61,7 +61,8 @@ class main:
 
 	@property
 	def links(self):
-		links = self.framework.page_parse(self._pages).findall(r'<a class="web-bing__title" href="(.*)?"\s')
+		links = self.framework.page_parse(self._pages).findall(r'<a class="web-bing__title" href="(.*)"\sdata-thash')
+		return links
 
 	@property
 	def dns(self):

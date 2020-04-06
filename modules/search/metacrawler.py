@@ -21,32 +21,30 @@ from core.module import BaseModule
 class Module(BaseModule):
 
 	meta = {
-		'name': 'Google Dork Search',
+		'name': 'MetaCrawler Search',
 		'author': 'Saeeddqn',
 		'version': '0.2',
-		'description': 'Search your dork in the google and get result.',
-		'sources': ('google',),
+		'description': 'Search your query in the metacrawler.com and get result.',
+		'sources': ('metacrawler',),
 		'options': (
-			('dork', None, True, 'Google dork string', '-d', 'store'),
-			('limit', 2, False, 'Search limit(count of pages)', '-l', 'store'),
-			('count', 50, False, 'Number of links per page(min=10, max=100)', '-c', 'store'),
+			('query', None, True, 'Query string', '-q', 'store'),
+			('limit', 1, False, 'Search limit(count of pages)', '-l', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-        'examples': ('godork -d <DORK> -l 15 --output',)
-
+        'examples': ('metacrawler -q <QUERY> -l 15 --output',)
 	}
 
 	def module_run(self):
-		dork = self.options['dork']
+		query = self.options['query']
 		limit = self.options['limit']
-		count = self.options['count']
-		run = self.google(dork, limit, count)
+		run = self.metacrawler(query, limit)
 		run.run_crawl()
 		links = run.links
-		
+
 		if links == []:
 			self.output('Without result')
 		else:
 			for link in links:
 				self.output(f'\t{link}')
-		self.save_gather(links, 'osint/godork', dork, output=self.options['output'])
+				print('')
+		self.save_gather(links, 'search/metacrawler', query, output=self.options['output'])

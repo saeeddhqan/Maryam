@@ -25,7 +25,7 @@ class Module(BaseModule):
 		'author': 'Saeeddqn',
 		'version': '0.8',
 		'description': 'Search in engines for find related documents. filetypes[pdf,doc,docx,ppt,pptx,xlsx,txt, ..]',
-		'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'startpage', 'exalead'),
+		'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'startpage', 'exalead', 'carrot2'),
 		'options': (
 			('query', BaseModule._global_options['target'], True, 'Host Name, Company Name, , keyword, query, etc', '-q', 'store'),
 			('file', 'pdf', True, 'File Type [pdf,doc,docx,ppt,pptx,xlsx,txt]. set with \'|\' separator', '-f', 'store'),
@@ -51,7 +51,7 @@ class Module(BaseModule):
 		try:
 			engine = getattr(self, name)
 		except:
-			self.debug(f"Search engine {name} not found.")
+			self.verbose(f"Search engine {name} not found.")
 			return
 		else:
 			varnames = engine.__code__.co_varnames
