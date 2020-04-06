@@ -58,7 +58,7 @@ If you have skill in Metasploit or Recon-ng, you can easily use it without prere
  - Rewrite utils
  
 ## links
-### [OWASP](https://www.owasp.org/index.php/OWASP_Maryam_Project)
+### [OWASP](https://owasp.org/www-project-maryam/)
 ### [Wiki](https://github.com/saeeddhqan/maryam/wiki)
 ### [Install](https://github.com/saeeddhqan/maryam/wiki#install)
 ### [Modules Guide](https://github.com/saeeddhqan/maryam/wiki/modules)
