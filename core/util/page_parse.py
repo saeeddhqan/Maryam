@@ -87,10 +87,16 @@ class main:
 	def get_dns(self, host):
 		self.pclean()
 		resp = []
-		reg = r"[A-z0-9\.\-%s]+\.%s" % ('%',host.replace('"', '').replace("'", ''))
-		for i in re.findall(reg, self.page):
+		reg = r"[A-z0-9\.\-%s]+\.%s" % ('%', host.replace('"', '').replace("'", ''))
+		for i in re.findall(reg, re.sub(r'\\n', '', self.page)):
 			i = i.replace('\\', '').replace('www.', '')
 			if i not in resp and '%' not in resp:
+				if i.lower().count(host) > 1:
+					i = i.split(host)
+					for j in i:
+						j = f"{j}{host}"
+						resp.append(j)
+					continue
 				resp.append(i)
 
 		return resp

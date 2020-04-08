@@ -27,7 +27,7 @@ class Module(BaseModule):
 		'version': '1.7',
 		'description': 'Search in the search engines and other sources for find DNS.',
 		'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'baidu', 'startpage',
-					'netcraft', 'threatcrowd', 'virustotal', 'yippy', 'otx', 'carrot2'),
+					'netcraft', 'threatcrowd', 'virustotal', 'yippy', 'otx', 'carrot2', 'crt'),
 		'options': (
 			('domain', BaseModule._global_options['target'],
 			 True, 'Domain name without https?://', '-d', 'store'),
@@ -84,9 +84,7 @@ class Module(BaseModule):
 		threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
 		futures = (threadpool.submit(function, name, q, limit, count) for name in engines if name in self.meta['sources'])
 		for _ in concurrent.futures.as_completed(futures):
-			print(f"Count of hostnames: {len(self.hostnames)}", end='\r')
-
-		print('')
+			pass
 
 	def search(self, name, q, limit, count):
 		try:

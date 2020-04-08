@@ -26,6 +26,7 @@ from core.util import ask
 from core.util import baidu
 from core.util import bing
 from core.util import cms_identify
+from core.util import crt
 from core.util import carrot2
 from core.util import exalead
 from core.util import google
@@ -154,6 +155,10 @@ class BaseModule(framework.Framework):
 	def cms_identify(self, content, headers):
 		_cms = cms_identify.main(content, headers)
 		return _cms
+
+	def crt(self, q):
+		search = crt.main(self, q)
+		return search
 
 	def carrot2(self, q):
 		search = carrot2.main(self, q)

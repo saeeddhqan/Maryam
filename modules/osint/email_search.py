@@ -45,8 +45,7 @@ class Module(BaseModule):
 		threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
 		futures = (threadpool.submit(function, name, domain, q, limit, count, key) for name in engines if name in self.meta['sources'])
 		for _ in concurrent.futures.as_completed(futures):
-			print(f"Count of emails: {len(self.emails)}", end='\r')
-		print('')
+			pass
 
 	def search(self, name, domain, q, limit, count, key=None):
 

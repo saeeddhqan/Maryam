@@ -34,7 +34,7 @@ class main:
 		self.hunter_api = f"https://api.hunter.io/v2/domain-search?domain={self.q}&api_key={self.key}&limit={self.limit}"
 		self.acceptable = False
 	def run_crawl(self):
-		self.verbose('[HUNTER] Searching in hunter...')
+		self.framework.verbose('[HUNTER] Searching in hunter...')
 		try:
 			req = self.framework.request(self.hunter_api)
 		except:
@@ -79,4 +79,4 @@ class main:
 	
 	@property
 	def dns(self):
-		return self.framework.page_parse(self._pages).get_dns(self.q)
+		return self.framework.page_parse(self.pages).get_dns(self.q)

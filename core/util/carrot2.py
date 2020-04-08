@@ -21,12 +21,10 @@ import webbrowser
 class main:
 
 	def __init__(self, framework, q):
-		""" yandex.com search engine
+		""" carrot2.org search engine
 
 			framework : core attribute
 			q 		  : query for search
-			limit	  : count of pages
-			count	  : count of links
 		"""
 		self.framework = framework
 		self.q = q

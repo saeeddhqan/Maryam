@@ -304,7 +304,7 @@ class Framework(cmd.Cmd):
 			print(f"{self.spacer}{line.title()}")
 			print(f"{self.spacer}{self.ruler*len(line)}")
 
-	def table(self, data, header, title=''):
+	def table(self, data, header, title='', liner=False, sep='-'):
 		'''Accepts a list of rows and outputs a table.'''
 		tdata = list(data)
 		if header:
@@ -315,7 +315,8 @@ class Framework(cmd.Cmd):
 		cols = len(tdata[0])
 		# create a list of max widths for each column
 		for i in range(0, cols):
-			lens.append(len(max([self.to_unicode_str(x[i]) if x[i] != None else '' for x in tdata], key=len)))
+			async = [self.to_unicode_str(x[i]) if x[i] != None else '' for x in tdata]
+			lens.append(len(max(async, key=len)))
 		# calculate dynamic widths based on the title
 		title_len = len(title)
 		tdata_len = sum(lens) + (3*(cols-1))
@@ -328,8 +329,8 @@ class Framework(cmd.Cmd):
 				lens[x] += 1
 		# build ascii table
 		if len(tdata) > 0:
-			separator_str = f"{self.spacer}+-{'%s---'*(cols-1)}%s-+"
-			separator_sub = tuple(['-'*x for x in lens])
+			separator_str = f"{self.spacer}+{sep}{f'%s{sep*3}'*(cols-1)}%s{sep}+"
+			separator_sub = tuple([sep*x for x in lens])
 			separator = separator_str % separator_sub
 			data_str = f"{self.spacer}| {'%s | '*(cols-1)}%s |"
 			# top of ascii table
@@ -347,8 +348,11 @@ class Framework(cmd.Cmd):
 			for rdata in tdata:
 				data_sub = tuple([self.to_unicode_str(rdata[i]).ljust(lens[i]) if rdata[i] != None else ''.ljust(lens[i]) for i in range(0,cols)])
 				print(data_str % data_sub)
-			# bottom of ascii table
-			print(separator)
+				if liner:
+					print(separator)
+			if not liner:
+				# bottom of ascii table
+				print(separator)
 			print('')
 
 	# ==================================================
