@@ -47,6 +47,23 @@ If you have skill in Metasploit or Recon-ng, you can easily use it without prere
 	> Search hosts for interesting files in predictable locations and brute force it.
  - entry_points
 	> Crawl web pages for find entry points(inputs, urls with param)
+**SEARCH**
+ - google
+	> Google.com search
+ - metacrawler 
+	> Metacrawler.com search
+ - yippy 
+	> Yippy.com search
+ - crt
+	> Crt.sh search
+ - carrot2
+	> carrot2.org search
+ - bing
+	> bing.com search
+ - twitter
+	> twitter.com search
+ - linkedin
+	> linkedin.com search
 
 ## News
 **What is news in 1.4.5?**

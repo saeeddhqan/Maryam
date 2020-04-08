@@ -28,8 +28,9 @@ class main:
 		self.framework = framework
 		self.page = page.decode('utf-8') if isinstance(page, bytes) else page
 
+	@property
 	def pclean(self):
-		subs = r'<em>|<b>|</b>|</em>|<strong>|</strong>|<wbr>|</wbr>|<span class="vivbold qt0">|%22'
+		subs = r'<em>|<b>|</b>|</em>|<strong>|</strong>|<wbr>|</wbr>|<span class="vivbold qt0">|%22|<span dir="[\w]+">|</span>|<h\d>|</h\d>'
 		self.page = re.sub(subs, '', self.page)
 		self.page = re.sub(r'%3a', ' ', self.page)
 		self.page = re.sub(r'%2f', ' ', self.page)
@@ -45,7 +46,7 @@ class main:
 
 	@property
 	def sites(self):
-		self.pclean()
+		self.pclean
 		reg = re.compile(r'<cite>(.*?)</cite>')
 		resp = []
 		for itr in reg.findall(self.page):
@@ -59,7 +60,7 @@ class main:
 
 	@property
 	def get_networks(self):
-		self.pclean()
+		self.pclean
 		reg_id = self.framework.reglib().social_network_ulinks
 		resp = {}
 		page = self.page.replace('www.', '')
@@ -73,19 +74,19 @@ class main:
 		return resp
 
 	def get_emails(self, host):
-		self.pclean()
+		self.pclean
 		host = self.dork_clean(host + '.' if '.' not in host else host)
 		emails = re.findall(r"[A-z0-9.\-]+@[A-z0-9\-\.]{0,255}?%s(?:[A-z]+)?" % host, self.page)
 		return [x.replace('\\', '') for x in list(set(emails))]
 
 	@property
 	def all_emails(self):
-		self.pclean()
+		self.pclean
 		emails = self.framework.reglib(self.page).emails
 		return emails
 
 	def get_dns(self, host):
-		self.pclean()
+		self.pclean
 		resp = []
 		reg = r"[A-z0-9\.\-%s]+\.%s" % ('%', host.replace('"', '').replace("'", ''))
 		for i in re.findall(reg, re.sub(r'\\n', '', self.page)):
@@ -102,7 +103,7 @@ class main:
 		return resp
 
 	def get_docs(self, query, urls=None):
-		self.pclean()
+		self.pclean
 		if '%' in query:
 			query = self.framework.urlib(query).unquote
 		ext = re.search(r'filetype:([A-z0-9]+)', query)

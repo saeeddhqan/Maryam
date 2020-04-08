@@ -17,8 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class main:
 
-	def __init__(self, framework, q, limit=2, count=50):
-		""" baidu.com search engine
+	def __init__(self, framework, q, limit=1, count=10):
+		""" bing.com search engine
 			
 			framework : core attribute
 			q 		  : query for search
@@ -36,11 +36,10 @@ class main:
 		set_page = lambda x: x*11
 		urls = [f"https://{self.bing}/search?q={self.q}&count={self.count}&first={set_page(i)}" for i in range(1, self.limit+1)]
 		max_attempt = len(urls)
-
-		for url in range(len(urls)):
+		for url in range(max_attempt):
 			self.framework.verbose(f"[BING] Searching in {url} page...")
 			try:
-				req = self.framework.request(url=urls[url])
+				req = self.framework.request(url=urls[url], allow_redirects=True)
 			except:
 				self.framework.error('[BING] ConnectionError')
 				max_attempt -= 1
@@ -69,7 +68,21 @@ class main:
 	@property
 	def sites(self):
 		return self.framework.page_parse(self._pages).sites
-	
+
+	@property
+	def links(self):
+		parser = self.framework.page_parse(self._pages)
+		parser.pclean
+		return parser.findall(r'<a href="([^"]+)" h="ID=SERP,[\d\.]+">')
+
+	@property
+	def links_with_title(self):
+		parser = self.framework.page_parse(self._pages)
+		parser.pclean
+		links = parser.findall(r'<a href="([^"]+)" h="ID=SERP,[\d\.]+">([^<]+){1,150}</a>')
+		links = [x for x in links if x[0].startswith('http')]
+		return links
+
 	@property
 	def docs(self):
-		return self.framework.page_parse(self._pages).get_docs(self.q)
+		return self.framework.page_parse(self._pages).get_docs(self.links)

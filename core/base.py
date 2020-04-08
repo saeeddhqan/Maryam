@@ -119,7 +119,7 @@ class Base(framework.Framework):
 			os.makedirs(self._home)
 
 	def _check_version(self):
-		if self._global_options.get('verbosity') >= 1:
+		if self._global_options.get('verbosity') > 0:
 			self.debug('Checking version...')
 			pattern = r"__VERSION__ = '(\d+\.\d+\.\d+[^']*)'"
 			remote = 0

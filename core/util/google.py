@@ -20,7 +20,7 @@ import os
 
 class main:
 
-	def __init__(self, framework, q, limit=2, count=50, google_api=None, google_cx=None):
+	def __init__(self, framework, q, limit=1, count=10, google_api=None, google_cx=None):
 		""" google.com search engine
 
 			framework  : core attribute
@@ -30,7 +30,7 @@ class main:
 			google_cx  : google cx(if you need to use api_run_crawl)
 		"""
 		self.framework = framework
-		self.q = self.framework.urlib(q).quote
+		self.q = q
 		self.agent = framework.rand_uagent().lynx[0]
 		self._pages = ''
 		self.limit = limit
@@ -58,8 +58,9 @@ class main:
 			except:
 				self.framework.error('[GOOGLE] ConnectionError')
 				return
+
 			if req.status_code == 503:
-				req = self.framework.error('Google CAPTCHA triggered.')
+				req = self.framework.error('[GOOGLE] Google CAPTCHA triggered.')
 				break
 
 			if req.status_code in [301, 302]:
@@ -75,7 +76,8 @@ class main:
 		for link in links:
 			cond1 = re.compile(r'/url\?q=[^/]').match(link) != None
 			cond2 = 'http://webcache.googleusercontent.com' not in link
-			if cond1 and cond2:
+			cond3 = 'https://accounts.google.com/' not in link.lower()
+			if cond1 and cond2 and cond3:
 				link = re.sub(r'/url\?q=', '', link)
 				self._links.append(link)
 

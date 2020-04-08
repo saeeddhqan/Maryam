@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class main:
 
-	def __init__(self, framework, q, limit=3):
+	def __init__(self, framework, q, limit=1):
 		""" metacrawler.com search engine
 
 			framework : core attribute

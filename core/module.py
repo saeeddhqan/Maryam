@@ -148,7 +148,7 @@ class BaseModule(framework.Framework):
 		search = baidu.main(self, q, limit)
 		return search
 
-	def bing(self, q, limit=3, count=50):
+	def bing(self, q, limit=1, count=10):
 		search = bing.main(self, q, limit, count)
 		return search
 
@@ -168,7 +168,7 @@ class BaseModule(framework.Framework):
 		search = exalead.main(self, q, limit)
 		return search
 
-	def google(self, q, limit=3, count=50):
+	def google(self, q, limit=1, count=10):
 		search = google.main(self, q, limit, count)
 		return search
 
@@ -180,7 +180,7 @@ class BaseModule(framework.Framework):
 		search = lang_identify.main(content, headers)
 		return search
 
-	def metacrawler(self, q, limit=3):
+	def metacrawler(self, q, limit=1):
 		search = metacrawler.main(self, q, limit)
 		return search
 
@@ -228,11 +228,11 @@ class BaseModule(framework.Framework):
 		search = startpage.main(self, q, limit)
 		return search
 
-	def yahoo(self, q, limit=5, count=50):
+	def yahoo(self, q, limit=2, count=50):
 		search = yahoo.main(self, q, limit, count)
 		return search
 
-	def yandex(self, q, limit=5, count=50):
+	def yandex(self, q, limit=2, count=50):
 		search = yandex.main(self, q, limit, count)
 		return search
 
