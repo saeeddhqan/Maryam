@@ -39,7 +39,7 @@ If you have skill in Metasploit or Recon-ng, you can easily use it without prere
 	> File/Directory brute force attack with thread supporting
  - tldbrute
 	> TLD brute force attack with thread supporting
- - waf 		
+ - waf
 	> Identify web application firewalls. It can detect over 200 firewall
  - wapps        
 	> Web fingerprinting to identify the applications used with over 1000 pyload.
@@ -47,6 +47,7 @@ If you have skill in Metasploit or Recon-ng, you can easily use it without prere
 	> Search hosts for interesting files in predictable locations and brute force it.
  - entry_points
 	> Crawl web pages for find entry points(inputs, urls with param)
+
 **SEARCH**
  - google
 	> Google.com search
