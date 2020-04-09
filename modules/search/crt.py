@@ -54,4 +54,4 @@ class Module(BaseModule):
 		self.table(items, header=['crt.sh ID', 'Logged at', 'Not Before', 'Not After', 'Maching Identities', 'Issuer Name'], liner=True, sep='_')
 
 
-		self.save_gather(json_links, 'search/crt', query, output=self.options['output'])
+		self.save_gather({'json': json_items}, 'search/crt', query, output=self.options['output'])
