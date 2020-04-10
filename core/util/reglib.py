@@ -56,7 +56,7 @@ class main:
 		regex = re.compile(regex)
 		regex = regex.findall(self.string)
 		return regex
-	
+
 	def sub(self, regex, sub_string):
 		data = re.sub(regex, sub_string, str(self.string))
 		return data

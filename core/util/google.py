@@ -75,11 +75,11 @@ class main:
 		links = parser.get_links
 		for link in links:
 			cond1 = re.compile(r'/url\?q=[^/]').match(link) != None
-			cond2 = 'http://webcache.googleusercontent.com' not in link
+			cond2 = 'webcache.googleusercontent.com' not in link.lower()
 			cond3 = 'https://accounts.google.com/' not in link.lower()
 			if cond1 and cond2 and cond3:
 				link = re.sub(r'/url\?q=', '', link)
-				self._links.append(link)
+				self._links.append(self.framework.urlib(link[:link.find('&amp;')]).unquote_plus)
 
 	def api_run_crawl(self):
 		if not (self.google_api and self.google_cx):

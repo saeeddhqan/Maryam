@@ -58,7 +58,7 @@ class main:
 			'cfa', 'cpp', 'cs', 'csv', 'doc', 'docx', 'f4a', 'f4b', 'f4p', 'f4v', 'flac', 'flv', 'gif', 'gif', 'gifv', 'gz',
 			'ico', 'java', 'jfif', 'jpeg', 'jpg', 'm2v', 'm4a', 'm4p', 'm4v', 'md', 'mkv', 'mng', 'mov', 'mp2', 'mp3',
 			'mp4', 'mpeg', 'mpg', 'mpv', 'pdf', 'pl', 'png', 'ppt', 'pptx', 'pptx', 'py', 'rar', 'rm', 'roq', 'svg', 'svi',
-			'tar.gz', 'tiff', 'vmo', 'vob', 'w64', 'wav', 'webm', 'wma', 'wmv', 'wmv', 'wrk', 'wvavi', 'xlsx',
+			'tar.gz', 'tiff', 'vmo', 'vob', 'w64', 'wav', 'webm', 'wma', 'wmv', 'wmv', 'woff2', 'wrk', 'wvavi', 'xlsx',
 			'yaml', 'yml', 'zip')
 		self.passed = []
 

@@ -14,9 +14,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-# Based on the Recon-ng(https://github.com/lanmaster53/recon-ng)
+# Based on the Recon-ng(https://github.com/lanmaster53/recon-ng) CORE
 
-__version__ = "v1.4.5"
+__version__ = "v1.4.6"
 import argparse
 import errno
 import imp

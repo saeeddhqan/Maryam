@@ -72,7 +72,12 @@ class main:
 	@property
 	def unquote(self):
 		self.url = urlparse.unquote(self.url)
-		return urlparse.unquote(self.url)
+		return self.url
+
+	@property
+	def unquote_plus(self):
+		self.url = urlparse.unquote_plus(self.url)
+		return self.url
 
 	@property
 	def ip(self):
