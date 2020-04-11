@@ -1,4 +1,4 @@
-![Version 1.4.5](https://img.shields.io/badge/Version-1.4.5-green.svg)
+![Version 1.4.6](https://img.shields.io/badge/Version-1.4.6-green.svg)
 [![GPLv3 License](https://img.shields.io/badge/License-GPLv3-red.svg)
 ![Python 3.x](https://img.shields.io/badge/Python-3.x-green.svg)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/40d81c48b3444ee78ffc6c5c8639134c)](https://www.codacy.com/manual/saeeddhqan/Maryam?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=saeeddhqan/Maryam&amp;utm_campaign=Badge_Grade)

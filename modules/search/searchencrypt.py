@@ -23,8 +23,8 @@ class Module(BaseModule):
 	meta = {
 		'name': 'searchencrypt Search',
 		'author': 'Saeeddqn',
-		'version': '0.2',
-		'description': 'Search your query in the searchencrypt.com and get result.',
+		'version': '0.1',
+		'description': 'Search your query in the searchencrypt.com and get result(without limit).',
 		'sources': ('searchencrypt',),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
