@@ -25,7 +25,7 @@ class Module(BaseModule):
 		'author': 'Saeeddqn',
 		'version': '0.8',
 		'description': 'Search in engines for find related documents. filetypes[pdf,doc,docx,ppt,pptx,xlsx,txt, ..]',
-		'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'startpage', 'exalead', 'carrot2'),
+		'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'startpage', 'exalead', 'carrot2', 'searchencrypt'),
 		'options': (
 			('query', BaseModule._global_options['target'], True, 'Host Name, Company Name, , keyword, query, etc', '-q', 'store'),
 			('file', 'pdf', True, 'File Type [pdf,doc,docx,ppt,pptx,xlsx,txt]. set with \'|\' separator', '-f', 'store'),

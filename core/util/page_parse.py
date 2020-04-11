@@ -85,11 +85,16 @@ class main:
 		emails = self.framework.reglib(self.page).emails
 		return emails
 
-	def get_dns(self, host):
-		self.pclean
+	def get_dns(self, host, urls=None):
+		if urls:
+			data = self.dork_clean(str(urls))
+		else:
+			self.pclean
+			data = self.page
+
 		resp = []
 		reg = r"[A-z0-9\.\-%s]+\.%s" % ('%', host.replace('"', '').replace("'", ''))
-		for i in re.findall(reg, re.sub(r'\\n', '', self.page)):
+		for i in re.findall(reg, re.sub(r'\\n', '', data)):
 			i = i.replace('\\', '').replace('www.', '')
 			if i not in resp and '%' not in resp:
 				if i.lower().count(host) > 1:

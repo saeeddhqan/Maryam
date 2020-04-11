@@ -27,7 +27,7 @@ class Module(BaseModule):
 		'version': '1.7',
 		'description': 'Search in the search engines and other sources for find DNS.',
 		'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'baidu', 'startpage',
-					'netcraft', 'threatcrowd', 'virustotal', 'yippy', 'otx', 'carrot2', 'crt'),
+					'netcraft', 'threatcrowd', 'virustotal', 'yippy', 'otx', 'carrot2', 'crt', 'searchencrypt'),
 		'options': (
 			('domain', BaseModule._global_options['target'],
 			 True, 'Domain name without https?://', '-d', 'store'),

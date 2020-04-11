@@ -19,7 +19,7 @@ import re
 
 class main:
 
-	def __init__(self, framework, q, limit=5, count=50):
+	def __init__(self, framework, q):
 		""" yippy.com search engine
 
 			framework : core attribute
@@ -105,4 +105,4 @@ class main:
 
 	@property
 	def docs(self):
-		return self.framework.page_parse(self._pages).get_docs(self.q)
+		return self.framework.page_parse(self._pages).get_docs(self.q, self.links)

@@ -39,6 +39,7 @@ from core.util import onionland
 from core.util import page_parse
 from core.util import rand_uagent
 from core.util import reglib
+from core.util import searchencrypt
 from core.util import startpage
 from core.util import urlib
 from core.util import virustotal
@@ -222,6 +223,10 @@ class BaseModule(framework.Framework):
 
 	def web_scrap(self, url, debug=False, limit=5, thread=1):
 		search = web_scrap.main(self, url, debug, limit, thread)
+		return search
+
+	def searchencrypt(self, q, count=50):
+		search = searchencrypt.main(self, q, count)
 		return search
 
 	def startpage(self, q, limit):

@@ -65,15 +65,18 @@ If you have skill in Metasploit or Recon-ng, you can easily use it without prere
 	> twitter.com search
  - linkedin
 	> linkedin.com search
+ - searchencrypt
+	> searchencrypt.com search without limit
 
 ## News
-**What is news in 1.4.5?**
+**What is new?**
 
  - Using python3
  - Added dbrute, fbrute, tldbrute, entry_points and waf to footprint
  - Added Thread supporting to modules
  - Added csv format output
  - Rewrite utils
+ - Added Search submodule
  
 ## links
 ### [OWASP](https://owasp.org/www-project-maryam/)

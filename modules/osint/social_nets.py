@@ -25,7 +25,7 @@ class Module(BaseModule):
 		'author': 'Saeeddqn',
 		'version': '0.8',
 		'description': 'Search for find Usernames in social networks.',
-		'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'startpage'),
+		'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'startpage', 'searchencrypt'),
 		'options': (
 			('name', BaseModule._global_options['target'], True, 'Company Name,domain name, .. without <PRTCL>://', '-n', 'store'),
 			('engines', 'google,bing', False, 'Search engine names. e.g `bing,google,..`', '-e', 'store'),
