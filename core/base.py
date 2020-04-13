@@ -64,7 +64,7 @@ class Base(framework.Framework):
 				'module_ext' : '.py',
 				'data_directory_name' : 'data',
 				'module_directory_name' : 'modules',
-				'workspaces_directory_name' : 'workspaces'
+				'workspaces_directory_name' : '.maryam/workspaces'
 			}
 		self._name = self._config['name']
 		self._prompt_template = '%s[%s] > '

@@ -126,7 +126,7 @@ class Framework(cmd.Cmd):
 		self._modulename = params
 		self.ruler = '-'
 		self.spacer = '  '
-		self.nohelp = f'{Colors.R}[!] No help on {Colors.N}'
+		self.nohelp = f'{Colors.R}[!] No help on %s{Colors.N}'
 		self.do_help.__func__.__doc__ = '''Displays this menu'''
 		self.doc_header = 'Commands (type [help|?] <topic>):'
 		self._exit = 0
