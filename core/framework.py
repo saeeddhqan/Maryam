@@ -315,7 +315,7 @@ class Framework(cmd.Cmd):
 		cols = len(tdata[0])
 		# create a list of max widths for each column
 		for i in range(0, cols):
-            lens.append(len(max([self.to_unicode_str(x[i]) if x[i] != None else '' for x in tdata], key=len)))
+			lens.append(len(max([self.to_unicode_str(x[i]) if x[i] != None else '' for x in tdata], key=len)))
 		# calculate dynamic widths based on the title
 		title_len = len(title)
 		tdata_len = sum(lens) + (3*(cols-1))
