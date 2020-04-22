@@ -384,11 +384,11 @@ class Framework(cmd.Cmd):
 						if i in data[module][target]:
 							data[module][target][i] = value[i]
 						else:
-							data[module][target].update({i : value[i]})
+							data[module][target].update({i: value[i]})
 			else:
-				data[module].update({target : value})
+				data[module].update({target: value})
 		else:
-			data.update({module : {target : value}})
+			data.update({module: {target: value}})
 		# update gather file
 		file = self._is_readable(gather_file, 'w')
 		json.dump(data, file, indent=4)
@@ -400,44 +400,21 @@ class Framework(cmd.Cmd):
 		json_obj_type = type(json_obj)
 
 		if json_obj_type is list:
-			res = ''
 			for sub_elem in json_obj:
 				result_list.append(self.json2xml(sub_elem, line_padding))
-			for i in range(len(result_list)):
-				res += f"\t{line_padding}<item{i}>{result_list[i]}</item{i}>\n"
-			return res[:-1]
+			return os.linesep.join(result_list)
 
 		if json_obj_type is dict:
 			for tag_name in json_obj:
 				sub_obj = json_obj[tag_name]
-				result_list.append(f"\t{line_padding}<{tag_name}>")
+				tag_name = re.sub(r"[\W]+", '_', tag_name)
+				result_list.append(f"{line_padding}\t<{tag_name}>")
 				result_list.append(self.json2xml(sub_obj, '\t' + line_padding))
-				result_list.append(f"\t{line_padding}</{tag_name}>")
+				result_list.append(f"{line_padding}\t</{tag_name}>")
 
-			return f"<root>{os.linesep}{os.linesep.join(result_list)}{os.linesep}</root>"
+			return f"{os.linesep}{os.linesep.join(result_list)}{os.linesep}"
 
-		return f'{json_obj}'
-
-	def json2txt(self, json_obj, line_padding=''):
-		result_list = list()
-
-		json_obj_type = type(json_obj)
-
-		if json_obj_type is list:
-			for sub_elem in json_obj:
-				result_list.append(self.json2txt(sub_elem, line_padding))
-
-			return '\n'.join(result_list)
-
-		if json_obj_type is dict:
-			for title_name in json_obj:
-				sub_obj = json_obj[title_name]
-				result_list.append(f'{title_name}')
-				result_list.append(self.json2txt(sub_obj, '\t' + line_padding))
-
-			return '\n'.join(result_list)
-
-		return f'{line_padding}{json_obj}'
+		return f'\t{line_padding}{json_obj}'
 
 	def json2csv(self, json_obj, separator=';', parent='.'):
 		titles = list(json_obj.keys())
@@ -493,9 +470,10 @@ class Framework(cmd.Cmd):
 				text = self.json2xml(datasets)
 				file.write(text)
 			else:
-				# Default method
-				text = self.json2txt(datasets)
-				file.write(text)
+				# Default method is txt
+				json_string = json.dumps(datasets, indent=4)
+				json2txt = re.sub(r"[\"']+", '', str(json_string))
+				file.write(json2txt)
 
 			file.close()
 			return filename
@@ -1020,7 +998,7 @@ class Framework(cmd.Cmd):
 		output_file = os.path.join(self.workspace, arg[1])
 		get_export = self.exporter(output, f"{output_file}.{_format}", _format)
 		if get_export:
-			self.output(f"Report saved at {get_export} .")
+			self.output(f"Report saved at {get_export}")
 
 	def do_load(self, params):
 		'''Loads selected module'''
