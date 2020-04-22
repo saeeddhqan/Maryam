@@ -94,8 +94,8 @@ class Module(BaseModule):
 		if self.options["wordlists"]:
 			self.alert('common DNS wordlists')
 			lists = {"https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/DNS/subdomains-top1million-5000.txt": 'small',
-					 "https://github.com/danielmiessler/SecLists/blob/master/Discovery/DNS/fierce-hostlist.txt": 'small',
-					 "https://github.com/danielmiessler/SecLists/blob/master/Discovery/DNS/namelist.txt": 'small',
+					 "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/DNS/fierce-hostlist.txt": 'small',
+					 "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/DNS/namelist.txt": 'small',
 					 "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/DNS/subdomains-top1million-20000.txt": 'mediom',
 					 "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/DNS/subdomains-top1million-110000.txt": 'large',
 					 "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/DNS/deepmagic.com-prefixes-top50000.txt": 'large',
