@@ -21,10 +21,10 @@ import re
 class Module(BaseModule):
 
 	meta = {
-		'name': 'Twitter Search',
+		'name': 'Facebook Search',
 		'author': 'Saeeddqn',
-		'version': '0.3',
-		'description': 'Search your query in the twitter.com and get result.',
+		'version': '0.1',
+		'description': 'Search your query in the facebook.com and get result.',
 		'sources': ('google','carrot2','bing'),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
@@ -33,7 +33,7 @@ class Module(BaseModule):
 			('engine', 'google', False, 'Engine names for search(default=google)', '-e', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-        'examples': ('twitter -q <QUERY> -l 15 --output',)
+        'examples': ('facebook -q <QUERY> -l 15 --output',)
 	}
 
 	def module_run(self):
@@ -41,12 +41,13 @@ class Module(BaseModule):
 		limit = self.options['limit']
 		count = self.options['count']
 		engine = self.options['engine'].split(',')
-		q = f"site:twitter.com {query}"
+		q = f"site:www.facebook.com {query}"
 		run = self.google(q, limit, count)
 		run.run_crawl()
 		links = run.links
 		people = []
 		hashtags = []
+		groups = []
 		pages = run.pages
 
 		if 'bing' in engine:
@@ -72,7 +73,7 @@ class Module(BaseModule):
 
 		usernames = self.page_parse(pages).get_networks
 		self.alert('People')
-		for _id in list(set(usernames.get('Twitter'))):
+		for _id in list(set(usernames.get('Facebook'))):
 			if type(_id) is tuple:
 				_id = _id[0]
 				_id = f"@{_id[_id.find('/')+1:]}"
@@ -89,13 +90,22 @@ class Module(BaseModule):
 			self.alert('Hashtags')
 			for link in links:
 				if '/hashtag/' in link:
-					link = link.replace('https://twitter.com/hashtag/', '')
-					if re.search(r'^[\w\d_\-]+$', link):
+					link = link.replace('https://www.facebook.com/hashtag/', '').replace('/', '')
+					if re.search(r'^[\w\d_\-\/]+$', link):
 						hashtags.append(link)
 						self.output(f"\t#{link}", 'G')
 
-			self.alert('links')
+			self.alert('Groups')
+			for link in links:
+				if '/groups/' in link:
+					link = link.replace('https://www.facebook.com/groups/', '').replace('/', '')
+					if re.search(r'^[\w\d_\-\/]+$', link):
+						groups.append(link)
+						self.output(f"\t{link}", 'G')
+
+			self.alert('Links')
 			for link in links:
 				self.output(f'\t{link}')
 
-		self.save_gather({'links': links, 'people': people, 'hashtags': hashtags}, 'search/twitter', query, output=self.options.get('output'))
+		self.save_gather({'links': links, 'people': people, 'hashtags': hashtags, 'groups': groups},
+			'search/facebook', query, output=self.options.get('output'))

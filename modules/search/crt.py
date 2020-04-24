@@ -51,7 +51,7 @@ class Module(BaseModule):
 					items.append((i_d, entry_timestamp, not_before, not_after, line, issuer))
 				continue
 			items.append((i_d, entry_timestamp, not_before, not_after, nvalue, issuer))
-		self.table(items, header=['crt.sh ID', 'Logged at', 'Not Before', 'Not After', 'Maching Identities', 'Issuer Name'], liner=True, sep='_')
+		self.table(items, header=['crt.sh ID', 'Logged at', 'Not Before', 'Not After', 'Maching Identities', 'Issuer Name'], linear=True, sep='_')
 
 
 		self.save_gather({'json': json_items}, 'search/crt', query, output=self.options['output'])

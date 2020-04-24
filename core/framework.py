@@ -304,7 +304,7 @@ class Framework(cmd.Cmd):
 			print(f"{self.spacer}{line.title()}")
 			print(f"{self.spacer}{self.ruler*len(line)}")
 
-	def table(self, data, header, title='', liner=False, sep='-'):
+	def table(self, data, header, title='', linear=False, sep='-'):
 		'''Accepts a list of rows and outputs a table.'''
 		tdata = list(data)
 		if header:
@@ -347,9 +347,9 @@ class Framework(cmd.Cmd):
 			for rdata in tdata:
 				data_sub = tuple([self.to_unicode_str(rdata[i]).ljust(lens[i]) if rdata[i] != None else ''.ljust(lens[i]) for i in range(0,cols)])
 				print(data_str % data_sub)
-				if liner:
+				if linear:
 					print(separator)
-			if not liner:
+			if not linear:
 				# bottom of ascii table
 				print(separator)
 			print('')
