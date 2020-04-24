@@ -65,9 +65,10 @@ If you have skill in Metasploit or Recon-ng, you can easily use it without prere
 	> twitter.com search
  - linkedin
 	> linkedin.com search
+ - facebook
+	> facebook.com search
  - searchencrypt
 	> searchencrypt.com search without limit
-
 ## News
 **What is new?**
 
