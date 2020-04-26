@@ -619,10 +619,10 @@ class Framework(cmd.Cmd):
 		# process headers
 		headers = kwargs.get('headers') or {}
 		# set the User-Agent header
-		if 'agent' not in [h.lower() for h in headers]:
-			if self._global_options['rand_agent']:
-				headers['user-agent'] = rand_uagent.main().get
-			headers['user-agent'] = self._global_options['agent']
+		if self._global_options['rand_agent']:
+			headers['user-agent'] = rand_uagent.main().get
+		else:
+			headers['user-agent'] = headers.get('user_agent', False) or self._global_options['agent']
 		# normalize capitalization of the User-Agent header
 		headers = {k.title(): v for k, v in headers.items()}
 		kwargs['headers'] = headers

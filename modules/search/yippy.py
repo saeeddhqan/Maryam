@@ -28,7 +28,7 @@ class Module(BaseModule):
 		'sources': ('yippy',),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
-			('method', None, False, 'Yippy policy("webpages", "images", "news", "video"). default=None', '-m', 'store'),
+			('method', 'webpages', False, 'Yippy methods("webpages", "images", "news", "video"). default=None', '-m', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
         'examples': ('yippy -q <QUERY>', 'yippy -q <QUERY> -m images')

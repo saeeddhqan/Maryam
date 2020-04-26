@@ -24,10 +24,11 @@ class Module(BaseModule):
 		'name': 'searchencrypt Search',
 		'author': 'Saeeddqn',
 		'version': '0.1',
-		'description': 'Search your query in the searchencrypt.com and get result(without limit).',
+		'description': 'Search your query in the searchencrypt.com and get result.',
 		'sources': ('searchencrypt',),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
+			('method', 'webpages', False, 'Qwant methods("webpages", "images", "news"). default=None', '-m', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
         'examples': ('searchencrypt -q <QUERY>', 'searchencrypt -q <QUERY> -m images')
@@ -36,11 +37,16 @@ class Module(BaseModule):
 	def module_run(self):
 		query = self.options['query']
 		run = self.searchencrypt(query)
-		run.run_crawl()
+		method = self.options['method'].lower()
+		if method not in ('webpages', 'images', 'news'):
+			self.error(f'Method name "{method}" is incurrect!')
+			self.verbose('Running with "webpages" method...')
+			method = 'webpages'
+		run.run_crawl(method)
 		links = run.links_with_title
 
 		if links == {}:
-			self.output('Without result')
+			self.output('Nothing to Declare')
 		else:
 			for item in links:
 				self.output(f"\t{item.replace('<b>','').replace('</b>', '')}", 'C')

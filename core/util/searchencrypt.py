@@ -75,6 +75,8 @@ class main:
 	@property
 	def links_with_title(self):
 		results = self.json.get('Results')
+		if not results:
+			return {}
 		self._links_with_title = {x.get('Title'): x.get('ClickUrl') for x in results}
 		return self._links_with_title
 

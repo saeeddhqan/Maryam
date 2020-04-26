@@ -103,7 +103,7 @@ class Base(framework.Framework):
 		self.register_option(
 			'limit', 10, True, 'number of limit (where applicable)')
 		self.register_option(
-			'agent', f'Maryam/{__version__}', True, 'user-agent string')
+			'agent', f'Mozilla/5.0 (X11; Linux x86_64; rv:75.0) Gecko/20100101 Firefox/75.0', True, 'user-agent string')
 		self.register_option(
 			'rand_agent', False, True, 'Setting random user-agent')
 		self.register_option('timeout', 10, True, 'socket timeout (seconds)')
