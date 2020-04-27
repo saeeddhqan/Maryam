@@ -1083,16 +1083,6 @@ class main:
 		if all(i for i in s):
 			self._waf.append('AliYunDun (Alibaba Cloud Computing)')
 
-	def Cloudflare(self):
-		s = [
-			self.header_check(('server', 'cloudflare')),
-			self.header_check(('server', r'cloudflare[-_]nginx')),
-			self.header_check(('cf-ray', r'.+?')),
-			self.cookie_check('__cfduid')
-		]
-		if any(s):
-			self._waf.append('Cloudflare (Cloudflare Inc.)')
-
 	def Comodo_cWatch(self):
 		s = [
 			self.header_check(('Server', r'Protected by COMODO WAF(.+)?'))

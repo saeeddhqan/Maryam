@@ -30,9 +30,11 @@ class Module(BaseModule):
 			('regex', None, True, 'Regex or string for search in the pages', '-r', 'store'),
 			('more', False, False, 'Extract more information from the pages', '--more', 'store_true'),
 			('limit', 1, False, 'Scraper depth level(default=1)', '-l', 'store'),
+			('debug', False, False, 'debug the scraper', '--debug', 'store_true'),
+			('thread', 1, False, 'The number of links that open per round', '-t', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-		'examples': ('crawl_pages -d <DOMAIN> -r https?://[A-z0-9\./]+ --output', 'crawl_pages -d <DOMAIN> --crawl --more')
+		'examples': ('crawl_pages -d <DOMAIN> -r "https?://[A-z0-9\./]+" --output', 'crawl_pages -d <DOMAIN> --crawl --more')
 	}
 
 	def module_run(self):
@@ -43,7 +45,7 @@ class Module(BaseModule):
 		except Exception as e:
 			self.error(e)
 			return
-		scrap = self.web_scrap(domain, limit=self.options['limit'])
+		scrap = self.web_scrap(domain, self.options['debug'], self.options['limit'], self.options['thread'])
 		scrap.run_crawl()
 		pages = scrap.pages
 		category_pages = scrap.category_pages
