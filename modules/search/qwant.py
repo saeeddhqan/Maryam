@@ -17,38 +17,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from core.module import BaseModule
 
-
 class Module(BaseModule):
 
 	meta = {
-		'name': 'Bing Search',
+		'name': 'Qwant Search',
 		'author': 'Saeeddqn',
 		'version': '0.1',
-		'description': 'Search your query in the bing.com and get result.',
-		'sources': ('bing',),
+		'description': 'Search your query in the qwant.com and get result(without limit).',
+		'sources': ('qwant',),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
-			('limit', 1, False, 'Search limit(count of pages, default=1)', '-l', 'store'),
-			('count', 50, False, 'Number of results per page(min=10, max=100, default=50)', '-c', 'store'),
+			('method', 'webpages', False, 'Qwant methods("webpages", "images", "news", "videos", "social"). default=None', '-m', 'store'),
+			('limit', 2, False, 'Search limit(number of pages, default=2)', '-l', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-        'examples': ('bing -q <QUERY> -l 15 --output',)
+        'examples': ('qwant -q <QUERY>', 'qwant -q <QUERY> -m images -l 3')
 	}
 
 	def module_run(self):
 		query = self.options['query']
-		limit = self.options['limit']
-		count = self.options['count']
-		run = self.bing(query, limit, count)
-		run.run_crawl()
+		run = self.qwant(query, self.options['limit'])
+		method = self.options['method'].lower()
+		if method not in ('webpages', 'images', 'news', 'videos', 'social'):
+			self.error(f'Method name "{method}" is incurrect!')
+			self.verbose('Running with "webpages" method...')
+			method = 'webpages'
+
+		run.run_crawl(method)
 		links = run.links_with_title
 
-		if links == []:
-			self.output('Without result')
+		if links == {}:
+			self.output('Nothing to declare')
 		else:
 			for item in links:
-				link,title = item
-				self.output(f'\t{title}', 'C')
-				self.output(f'\t\t{link}')
+				self.output(f"\t{item.replace('<b>','').replace('</b>', '')}", 'C')
+				self.output(f"\t\t{links[item]}")
 				print('')
-		self.save_gather(links, 'search/bing', query, output=self.options['output'])
+
+		self.save_gather(links, 'search/qwant', query, output=self.options['output'])

@@ -24,17 +24,18 @@ class Module(BaseModule):
 		'name': 'Get Usernames in Social Networks',
 		'author': 'Saeeddqn',
 		'version': '0.8',
-		'description': 'Search for find Usernames in social networks.',
+		'description': 'Search to find Usernames in social networks.',
 		'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'startpage', 'searchencrypt'),
 		'options': (
 			('name', BaseModule._global_options['target'], True, 'Company Name,domain name, .. without <PRTCL>://', '-n', 'store'),
 			('engines', 'google,bing', False, 'Search engine names. e.g `bing,google,..`', '-e', 'store'),
-			('limit', 5, False, 'Limit for page search', '-l', 'store'),
-			('count', 100, False, 'Links count in page(min=10, max=100)', '-c', 'store'),
+			('limit', 5, False, 'Search limit(number of pages, default=5)', '-l', 'store'),
+			('count', 100, False, 'number of results per page(min=10, max=100, default=100)', '-c', 'store'),
 			('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store'),
 			('output', False, False, 'Save output to  workspace', '--output', 'store_true'),
 		),
-		'examples': ('social_nets -n microsoft -e google,bing,yahoo -c 50 -t 3 --output', 'social_nets -n microsoft.com -e google')
+		'examples': ('social_nets -n microsoft -e google,bing,yahoo -c 50 -t 3 --output',
+			'social_nets -n microsoft.com -e google')
 	}
 
 	pages = ''

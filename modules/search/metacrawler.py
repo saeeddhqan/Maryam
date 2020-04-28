@@ -28,7 +28,7 @@ class Module(BaseModule):
 		'sources': ('metacrawler',),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
-			('limit', 1, False, 'Search limit(count of pages)', '-l', 'store'),
+			('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
         'examples': ('metacrawler -q <QUERY> -l 15 --output',)

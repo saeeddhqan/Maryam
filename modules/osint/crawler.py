@@ -23,7 +23,7 @@ class Module(BaseModule):
 		'name': 'Web Crawler',
 		'author': 'Saeeddqn',
 		'version': '0.5',
-		'description': 'Crawl web pages for find links, JS Files, CSS files, Comments And everything else interesting with thread supporting',
+		'description': 'Crawl web pages to find links, JS Files, CSS files, Comments and everything else that interesting with thread supporting',
 		'options': (
 			('domain', BaseModule._global_options['target'], True, 'Domain string', '-d', 'store'),
 			('debug', False, False, 'debug the scraper', '--debug', 'store_true'),
@@ -31,7 +31,8 @@ class Module(BaseModule):
 			('thread', 1, False, 'The number of links that open per round', '-t', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-		'examples': ('crawler -d <DOMAIN>', 'crawler -d <DOMAIN> -l 10 -t 3 --output --debug')
+		'examples': ('crawler -d <DOMAIN>',
+			'crawler -d <DOMAIN> -l 10 -t 3 --output --debug')
 	}
 
 	def module_run(self):

@@ -24,19 +24,21 @@ class Module(BaseModule):
 		'name': 'Documentations Search',
 		'author': 'Saeeddqn',
 		'version': '0.8',
-		'description': 'Search in engines for find related documents. filetypes[pdf,doc,docx,ppt,pptx,xlsx,txt, ..]',
-		'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'startpage', 'exalead', 'carrot2', 'searchencrypt'),
+		'description': 'Search in open sources to find relevant documents. filetypes[pdf,doc,docx,ppt,pptx,xlsx,txt,..]',
+		'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask',
+			'startpage', 'exalead', 'carrot2', 'searchencrypt', 'qwant', 'millionshort'),
 		'options': (
-			('query', BaseModule._global_options['target'], True, 'Host Name, Company Name, , keyword, query, etc', '-q', 'store'),
-			('file', 'pdf', True, 'File Type [pdf,doc,docx,ppt,pptx,xlsx,txt]. set with \'|\' separator', '-f', 'store'),
-			('limit', 2, False, 'Limit for search(min=1)', '-l', 'store'),
-			('count', 50, False, 'Links count in page(min=10)', '-c', 'store'),
+			('query', BaseModule._global_options['target'], True, 'Host Name, Company Name, keyword, query, etc', '-q', 'store'),
+			('file', 'pdf', True, 'Filetype [pdf,doc,docx,ppt,pptx,xlsx,txt,..]', '-f', 'store'),
+			('limit', 2, False, 'Search limit(number of pages, default=2)', '-l', 'store'),
+			('count', 50, False, 'number of results per page(min=10)', '-c', 'store'),
 			('site', False, False, 'If this is set, search just limited to the site', '-s', 'store_false'),
 			('engines', 'exalead,bing', True, 'Search engines with comma separator', '-e', 'store'),
 			('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-		'examples': ('docs_search -q amazon -f pdf -e google,bing,metacrawler --thread 3', 'docs_search -q amazon -f pdf -e google,bing,metacrawler -l 3')
+		'examples': ('docs_search -q amazon -f pdf -e google,bing,metacrawler --thread 3',
+			'docs_search -q amazon -f pdf -e google,bing,metacrawler -l 3')
 	}
 	
 	docs = []

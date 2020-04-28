@@ -21,34 +21,31 @@ from core.module import BaseModule
 class Module(BaseModule):
 
 	meta = {
-		'name': 'Bing Search',
+		'name': 'Millionshort Search',
 		'author': 'Saeeddqn',
 		'version': '0.1',
-		'description': 'Search your query in the bing.com and get result.',
-		'sources': ('bing',),
+		'description': 'Million Short started out as an experimental web search engine that allows you to filter and refine your search results set',
+		'sources': ('millionshort',),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
-			('limit', 1, False, 'Search limit(count of pages, default=1)', '-l', 'store'),
-			('count', 50, False, 'Number of results per page(min=10, max=100, default=50)', '-c', 'store'),
+			('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-        'examples': ('bing -q <QUERY> -l 15 --output',)
+        'examples': ('millionshort -q <QUERY> -l 15 --output',)
 	}
 
 	def module_run(self):
 		query = self.options['query']
 		limit = self.options['limit']
-		count = self.options['count']
-		run = self.bing(query, limit, count)
+		run = self.millionshort(query, limit)
 		run.run_crawl()
 		links = run.links_with_title
-
-		if links == []:
-			self.output('Without result')
+		if links == {}:
+			self.output('Nothing to declare')
 		else:
 			for item in links:
-				link,title = item
-				self.output(f'\t{title}', 'C')
-				self.output(f'\t\t{link}')
+				self.output(f"\t{item.replace('<b>','').replace('</b>', '')}", 'C')
+				self.output(f"\t\t{links[item]}")
 				print('')
-		self.save_gather(links, 'search/bing', query, output=self.options['output'])
+
+		self.save_gather(links, 'search/millionshort', query, output=self.options['output'])

@@ -33,10 +33,12 @@ from core.util import google
 from core.util import hunter
 from core.util import lang_identify
 from core.util import metacrawler
+from core.util import millionshort
 from core.util import netcraft
 from core.util import os_identify
 from core.util import onionland
 from core.util import page_parse
+from core.util import qwant
 from core.util import rand_uagent
 from core.util import reglib
 from core.util import searchencrypt
@@ -185,6 +187,10 @@ class BaseModule(framework.Framework):
 		search = metacrawler.main(self, q, limit)
 		return search
 
+	def millionshort(self, q, limit=2):
+		search = millionshort.main(self, q, limit)
+		return search
+
 	def netcraft(self, q, limit=4):
 		search = netcraft.main(self, q, limit)
 		return search
@@ -199,6 +205,10 @@ class BaseModule(framework.Framework):
 
 	def page_parse(self, page):
 		return page_parse.main(self, page)
+
+	def qwant(self, q, limit=2):
+		search = qwant.main(self, q, limit)
+		return search
 
 	def rand_uagent(self):
 		return rand_uagent.main

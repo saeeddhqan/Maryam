@@ -28,7 +28,7 @@ class Module(BaseModule):
 		'sources': ('searchencrypt',),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
-			('method', 'webpages', False, 'Qwant methods("webpages", "images", "news"). default=None', '-m', 'store'),
+			('method', 'webpages', False, 'Searchencrypt methods("webpages", "images", "news"). default=None', '-m', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
         'examples': ('searchencrypt -q <QUERY>', 'searchencrypt -q <QUERY> -m images')
@@ -46,7 +46,7 @@ class Module(BaseModule):
 		links = run.links_with_title
 
 		if links == {}:
-			self.output('Nothing to Declare')
+			self.output('Nothing to declare')
 		else:
 			for item in links:
 				self.output(f"\t{item.replace('<b>','').replace('</b>', '')}", 'C')

@@ -28,8 +28,8 @@ class Module(BaseModule):
 		'sources': ('google',),
 		'options': (
 			('dork', None, True, 'Google dork string', '-d', 'store'),
-			('limit', 2, False, 'Search limit(count of pages)', '-l', 'store'),
-			('count', 50, False, 'Number of links per page(min=10, max=100)', '-c', 'store'),
+			('limit', 2, False, 'Search limit(number of pages, default=2)', '-l', 'store'),
+			('count', 50, False, 'number of results per page(min=10, max=100, default=50)', '-c', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
         'examples': ('godork -d <DORK> -l 15 --output',)

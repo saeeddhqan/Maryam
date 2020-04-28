@@ -28,8 +28,8 @@ class Module(BaseModule):
 		'sources': ('google','carrot2','bing'),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
-			('limit', 1, False, 'Search limit(count of pages)', '-l', 'store'),
-			('count', 50, False, 'Number of links per page(min=10, max=100)', '-c', 'store'),
+			('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store'),
+			('count', 50, False, 'Number of links per page(min=10, max=100, default=50)', '-c', 'store'),
 			('engine', 'google', False, 'Engine names for search(default=google)', '-e', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
