@@ -90,7 +90,7 @@ class Module(BaseModule):
 		self.alert('Emails')
 		emails = list(set(self.emails))
 		if emails == []:
-			self.output('No email found', 'O')
+			self.output('Nothing to declare', 'O')
 		for email in emails:
 			self.output(f"\t{email}")
 

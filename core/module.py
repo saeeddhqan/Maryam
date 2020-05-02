@@ -14,7 +14,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-# Based on the Recon-ng(https://github.com/lanmaster53/recon-ng)
+# Based on the Recon-ng core(https://github.com/lanmaster53/recon-ng)
 
 from __future__ import print_function
 import os
@@ -31,6 +31,7 @@ from core.util import carrot2
 from core.util import exalead
 from core.util import google
 from core.util import hunter
+from core.util import keywords
 from core.util import lang_identify
 from core.util import metacrawler
 from core.util import millionshort
@@ -179,6 +180,10 @@ class BaseModule(framework.Framework):
 		search = hunter.main(self, q, key, limit)
 		return search
 
+	def keywords(self, q):
+		search = keywords.main(self, q)
+		return search
+
 	def lang_identify(self, content, headers):
 		search = lang_identify.main(content, headers)
 		return search
@@ -242,6 +247,7 @@ class BaseModule(framework.Framework):
 	def startpage(self, q, limit):
 		search = startpage.main(self, q, limit)
 		return search
+
 
 	def yahoo(self, q, limit=2, count=50):
 		search = yahoo.main(self, q, limit, count)

@@ -14,9 +14,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-# Based on the Recon-ng(https://github.com/lanmaster53/recon-ng)
+# Based on the Recon-ng core(https://github.com/lanmaster53/recon-ng)
 
-__version__ = "v1.4.6"
+__version__ = "v1.4.7"
 import argparse
 import errno
 import imp
@@ -27,6 +27,7 @@ import shutil
 import sys
 import builtins
 import shlex
+import textwrap
 from multiprocessing import Pool,Process
 
 # import framework libs
@@ -380,6 +381,16 @@ class Base(framework.Framework):
 				self.error(f"ModuleException: {e}")
 		# Initialize help menu
 		format_help = parser.format_help()
+		# comments
+		if 'comments' in meta:
+			format_help += 'Comments:'
+			for comment in meta['comments']:
+				prefix = '* '
+				if comment.startswith('\t'):
+					prefix = self.spacer + '- '
+					comment = comment[1:]
+				format_help += f"\n{self.spacer}{textwrap.fill(prefix+comment, 100, subsequent_indent=self.spacer)}"
+			format_help += '\n'
 		if 'sources' in meta:
 			format_help += '\nSources:\n\t' + '\n\t'.join(meta['sources'])
 		if 'examples' in meta:

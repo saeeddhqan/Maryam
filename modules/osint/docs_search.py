@@ -86,5 +86,5 @@ class Module(BaseModule):
 			for doc in self.docs:
 				self.output(f'\t{doc}')
 		else:
-			self.output('\tNo documentation found.')
+			self.output('\tNothing to declare')
 		self.save_gather({_type : self.docs}, 'osint/docs_search', q, [_type], output=self.options['output'])

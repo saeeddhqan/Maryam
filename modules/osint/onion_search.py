@@ -45,6 +45,6 @@ class Module(BaseModule):
 			for link in links:
 				self.output(f'\t{link}')
 		else:
-			self.output('No result.')
+			self.output('Nothing to declare', 'O')
 			return
 		self.save_gather({'links' : links}, 'osint/onion_search', q, output=self.options['output'])

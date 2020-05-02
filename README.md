@@ -1,4 +1,4 @@
-![Version 1.4.6](https://img.shields.io/badge/Version-1.4.6-green.svg)
+![Version 1.4.7](https://img.shields.io/badge/Version-1.4.6-green.svg)
 [![GPLv3 License](https://img.shields.io/badge/License-GPLv3-red.svg)
 ![Python 3.x](https://img.shields.io/badge/Python-3.x-green.svg)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/40d81c48b3444ee78ffc6c5c8639134c)](https://www.codacy.com/manual/saeeddhqan/Maryam?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=saeeddhqan/Maryam&amp;utm_campaign=Badge_Grade)
@@ -29,6 +29,8 @@ If you have skill in Metasploit or Recon-ng, you can easily use it without prere
 	> Search for find usernames in social networks.
  - crawler
 	> Crawl web pages for find links, JS Files, CSS files, Comments And everything else interesting with thread supporting
+ - suggest
+ 	> Get search engine suggestions
 	
 **FOOTPRINT**
  - crawl_pages
@@ -58,21 +60,21 @@ If you have skill in Metasploit or Recon-ng, you can easily use it without prere
  - crt
 	> Crt.sh search
  - carrot2
-	> carrot2.org search
+	> Carrot2.org search
  - bing
-	> bing.com search
+	> Bing.com search
  - twitter
-	> twitter.com search
+	> Twitter.com search
  - linkedin
-	> linkedin.com search
+	> Linkedin.com search
  - facebook
-	> facebook.com search
+	> Facebook.com search
  - searchencrypt
-	> searchencrypt.com search
+	> Searchencrypt.com search
  - millionshort
-	> millionshort.com
+	> Millionshort.com
  - qwant
-	> qwant.com
+	> Qwant.com
 ## News
 **What is new?**
 

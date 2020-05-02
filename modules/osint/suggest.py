@@ -21,32 +21,31 @@ from core.module import BaseModule
 class Module(BaseModule):
 
 	meta = {
-		'name': 'Google Dork Search',
-		'author': 'Saeeddqn',
-		'version': '0.2',
-		'description': 'Search your dork in the google and get result.',
-		'sources': ('google',),
+		'name': 'Search engine suggestions',
+		'author': 'Qux',
+		'version': '0.1',
+		'description': 'Keyword autocompleter to find suggestions in search engines',
+		'sources': ('google', 'bing', 'yahoo', 'searx', 'peekier', 'gigablast', 'zapmeta', 'millionshort'),
+		'comments': (
+			"""example: query='google' out: ['google docs', 'google summer of code', 'google maps', 'google mail', 'google news', ..]""",
+		),
 		'options': (
-			('dork', None, True, 'Google dork string', '-d', 'store'),
-			('limit', 2, False, 'Search limit(number of pages, default=2)', '-l', 'store'),
-			('count', 50, False, 'number of results per page(min=10, max=100, default=50)', '-c', 'store'),
+			('query', None, True, 'keyword, domain name, company name, etc', '-q', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-        'examples': ('godork -d <DORK> -l 15 --output',)
+        'examples': ('suggest -q amazon --output',)
 
 	}
 
 	def module_run(self):
-		dork = self.options['dork']
-		limit = self.options['limit']
-		count = self.options['count']
-		run = self.google(dork, limit, count)
+		q = self.options['query']
+		run = self.keywords(q)
 		run.run_crawl()
-		links = run.links
+		suggests = run.keys
 		
-		if links == []:
+		if suggests == []:
 			self.output('Nothing to declare')
 		else:
-			for link in links:
-				self.output(f'\t{link}')
-		self.save_gather(links, 'osint/godork', dork, output=self.options['output'])
+			for suggest in suggests:
+				self.output(f'\t{suggest}')
+		self.save_gather(suggests, 'osint/suggest', q, output=self.options['output'])
