@@ -24,11 +24,11 @@ class Module(BaseModule):
 	meta = {
 		'name': 'DNS Searcher',
 		'author': 'Saeeddqn',
-		'version': '1.7',
+		'version': '1.8',
 		'description': 'Search in the open-sources to find subdomans.',
 		'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'baidu', 'startpage',
 					'netcraft', 'threatcrowd', 'virustotal', 'yippy', 'otx', 'carrot2', 'crt',
-					'searchencrypt', 'qwant', 'millionshort'),
+					'searchencrypt', 'qwant', 'millionshort', 'threatminer', 'jldc', 'bufferover'),
 		'options': (
 			('domain', BaseModule._global_options['target'],
 			 True, 'Domain name without https?://', '-d', 'store'),
@@ -66,6 +66,45 @@ class Module(BaseModule):
 					host = host[1:]
 				self.hostnames.append(host)
 		return 'threatcrowd'
+
+	def threatminer(self, q):
+		self.verbose('Searching in threatminer...')
+		try:
+			req = self.request(
+				f'https://api.threatminer.org/v2/domain.php?q={q}&rt=5')
+		except:
+			self.error('ThreatMiner is missed!')
+		else:
+			j = req.json()['results'] or []
+			self.hostnames.extend(j)
+		return 'threatminer'
+
+	def jldc(self, q):
+		self.verbose('[JLDC] Searching in jldc.me...')
+		try:
+			req = self.request(
+				f'https://jldc.me/anubis/subdomains/{q}')
+		except:
+			self.error('JLDC is missed!')
+		else:
+			if 'Too many request' in req.text:
+				self.error('[JLDC] Too many request please try again later')
+				return 'jldc'
+			j = list(req.json()) or []
+			self.hostnames.extend(j)
+		return 'jldc'
+
+	def bufferover(self, q):
+		self.verbose('Searching in bufferover.run...')
+		try:
+			req = self.request(
+				f'https://dns.bufferover.run/dns?q=.{q}')
+		except:
+			self.error('BufferOver is missed!')
+		else:
+			j = list(req.json()['FDNS_A']) or []
+			self.hostnames.extend([x.replace(',', ', ') for x in j])
+		return 'bufferover'
 
 	def otx(self, q):
 		self.verbose('Searching in otx.alienvault...')
@@ -116,11 +155,12 @@ class Module(BaseModule):
 
 		self.thread(self.search, self.options['thread'], engines, domain_name, limit, count)
 		self.hostnames = list(set(self.hostnames))
-		self.alert('Hostnames')
-		if self.hostnames == []:
-			self.output('\tNo hostname found', 'O')
-		else:
-			for host in self.hostnames:
-				self.output(f"\t{host}")
+		if not self.options['output']:
+			self.alert('Hostnames')
+			if self.hostnames == []:
+				self.output('\tNo hostname found', 'O')
+			else:
+				for host in self.hostnames:
+					self.output(f"\t{host}")
 
 		self.save_gather(self.hostnames, 'osint/dns_search', domain_name, output=self.options['output'])

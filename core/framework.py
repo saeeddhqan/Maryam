@@ -14,7 +14,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-# Based on the Recon-ng(https://github.com/lanmaster53/recon-ng)
+# Based on the Recon-ng core(https://github.com/lanmaster53/recon-ng)
 
 import cmd
 import codecs
@@ -26,6 +26,7 @@ import sys
 import signal
 import traceback
 import requests
+import shlex
 from core.util import rand_uagent
 from io import StringIO
 
@@ -392,7 +393,7 @@ class Framework(cmd.Cmd):
 		# update gather file
 		file = self._is_readable(gather_file, 'w')
 		json.dump(data, file, indent=4)
-		self.debug(f"{file} => Done")
+		self.debug(f"{file.name} => Done")
 
 	def json2xml(self, json_obj, line_padding=''):
 		result_list = list()
