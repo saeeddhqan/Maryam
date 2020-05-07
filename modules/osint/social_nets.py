@@ -23,11 +23,11 @@ class Module(BaseModule):
 	meta = {
 		'name': 'Get Usernames in Social Networks',
 		'author': 'Saeeddqn',
-		'version': '0.8',
+		'version': '0.9',
 		'description': 'Search to find Usernames in social networks.',
 		'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'startpage', 'searchencrypt'),
 		'options': (
-			('name', BaseModule._global_options['target'], True, 'Company Name,domain name, .. without <PRTCL>://', '-n', 'store'),
+			('name', BaseModule._global_options['target'], True, 'Company Name', '-n', 'store'),
 			('engines', 'google,bing', False, 'Search engine names. e.g `bing,google,..`', '-e', 'store'),
 			('limit', 5, False, 'Search limit(number of pages, default=5)', '-l', 'store'),
 			('count', 100, False, 'number of results per page(min=10, max=100, default=100)', '-c', 'store'),
@@ -64,7 +64,7 @@ class Module(BaseModule):
 			self.pages += attr.pages
 
 	def module_run(self):
-		query = self.options['name']
+		query = '@'+self.options['name']
 		limit = self.options['limit']
 		count = self.options['count']
 		engines = self.options['engines'].lower().split(',')
