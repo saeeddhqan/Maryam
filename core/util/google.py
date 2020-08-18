@@ -41,20 +41,17 @@ class main:
 
 	def run_crawl(self):
 		page = 1
-		url = 'http://google.com/search'
+		url = 'https://google.com/search'
 		set_page = lambda x: (x - 1) * self.num
 		payload = {'num' : self.num, 'start' : set_page(page), 'ie' : 'utf-8', 'oe' : 'utf-8', 'q' : self.q, 'filter': '0'}
 		max_attempt = 0
-		headers = {'User-Agent': self.agent}
-
 		while True:
 			self.framework.verbose(f'[GOOGLE] Searching in {page} page...', end='\r')
 			try:
 				req = self.framework.request(
 					url=url,
 					params=payload,
-					allow_redirects=False,
-					headers=headers)
+					allow_redirects=False)
 			except:
 				self.framework.error('[GOOGLE] ConnectionError')
 				return
@@ -65,21 +62,18 @@ class main:
 
 			if req.status_code in [301, 302]:
 				redirect = req.headers['location']
-				req = self.framework.request(url=redirect, allow_redirects=False, headers=headers)
+				req = self.framework.request(url=redirect, allow_redirects=False)
+
 			self._pages += req.text
 			page += 1
 			payload['start'] = set_page(page)
 			if page >= self.limit:
 				break
-		parser = self.framework.page_parse(self._pages)
-		links = parser.get_links
+		links = self.framework.page_parse(self._pages).findall(r'a href="([^"]+)" onmousedown')
 		for link in links:
-			cond1 = re.compile(r'/url\?q=[^/]').match(link) != None
-			cond2 = 'webcache.googleusercontent.com' not in link.lower()
-			cond3 = 'https://accounts.google.com/' not in link.lower()
-			if cond1 and cond2 and cond3:
-				link = re.sub(r'/url\?q=', '', link)
-				self._links.append(self.framework.urlib(link[:link.find('&amp;')]).unquote_plus)
+			cond1 = 'https://support.google.com/' not in link.lower()
+			if cond1:
+				self._links.append(self.framework.urlib(link).unquote_plus)
 
 	def api_run_crawl(self):
 		if not (self.google_api and self.google_cx):

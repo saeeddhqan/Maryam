@@ -1190,3 +1190,9 @@ class Framework(cmd.Cmd):
 		options = sorted(self._get_show_names())
 		return [x for x in options if x.startswith(text)]
 
+	def complete_options(self, text, line, *ignored):
+		arg, params = self._parse_params(line.split(' ', 1)[1])
+		subs = self._parse_subcommands('options')
+		if arg in subs:
+			return getattr(self, '_complete_options_'+arg)(text, params)
+		return [sub for sub in subs if sub.startswith(text)]
