@@ -16,19 +16,19 @@ If you have skill in Metasploit or Recon-ng, you can easily use it without prere
 **OSINT**
 
  - dns_search
-	> Search in the search engines and other sources for find DNS.
+	> Search in the search engines and other sources to find DNS.
  - email_search
-	> Search in search engines for find emails.
+	> Search in search engines to find emails.
  - docs_search
-	> Search in engines for find related documents. 
+	> Search in engines to find related documents. 
  - onion_search
-	> onion_search is to create the premier search engine for services residing on the Tor anonymity network.
+	> onion_search is used to create the premier search engine for services residing on the Tor anonymity network.
  - godork	
-	> Search your dork in the google and get result
+	> Search google for your dork and get result
  - social_nets
-	> Search for find usernames in social networks.
+	> Search to find usernames in social networks.
  - crawler
-	> Crawl web pages for find links, JS Files, CSS files, Comments And everything else interesting with thread supporting
+	> Crawl web pages to find links, JS Files, CSS files, Comments and everything else interesting, supports threads
  - suggest
  	> Get search engine suggestions
 	
@@ -36,19 +36,19 @@ If you have skill in Metasploit or Recon-ng, you can easily use it without prere
  - crawl_pages
 	> Search to find keywords, emails, usernames, errors, meta tags and regex on the page/pages
  - dbrute 
-	> DNS brute force attack with thread supporting
+	> DNS brute force attack, supports threads
  - fbrute 
-	> File/Directory brute force attack with thread supporting
+	> File/Directory brute force attack, supports threads
  - tldbrute
-	> TLD brute force attack with thread supporting
+	> TLD brute force attack, supports threads
  - waf
-	> Identify web application firewalls. It can detect over 200 firewall
+	> Identify web application firewalls. It can detect over 200 firewalls
  - wapps        
 	> Web fingerprinting to identify the applications used with over 1000 pyload.
  - interest_files
 	> Search hosts for interesting files in predictable locations and brute force it.
  - entry_points
-	> Crawl web pages for find entry points(inputs, urls with param)
+	> Crawl web pages to find entry points(inputs, urls with param)
 
 **SEARCH**
  - google
@@ -78,11 +78,11 @@ If you have skill in Metasploit or Recon-ng, you can easily use it without prere
 ## News
 **What is new?**
 
- - Using python3
+ - Uses python3
  - Added dbrute, fbrute, tldbrute, entry_points and waf to footprint
- - Added Thread supporting to modules
+ - Added Thread support to modules
  - Added csv format output
- - Rewrite utils
+ - Rewrote utils
  - Added Search submodule
  
 ## links
@@ -92,4 +92,4 @@ If you have skill in Metasploit or Recon-ng, you can easily use it without prere
 ### [Modules Guide](https://github.com/saeeddhqan/maryam/wiki/modules)
 ### [Development Guide](https://github.com/saeeddhqan/maryam/wiki/Development-Guide)
 
-Bugs, requests, or any other issues please [contact me](mailto:saeed.dehghan@owasp.org)
+To report bugs, requests, or any other issues please [contact me](mailto:saeed.dehghan@owasp.org)
