@@ -92,4 +92,4 @@ If you have skill in Metasploit or Recon-ng, you can easily use it without prere
 ### [Modules Guide](https://github.com/saeeddhqan/maryam/wiki/modules)
 ### [Development Guide](https://github.com/saeeddhqan/maryam/wiki/Development-Guide)
 
-To report bugs, requests, or any other issues please [contact me](mailto:saeed.dehghan@owasp.org)
+To report bugs, requests, or any other issues please [create an issue](https://github.com/saeeddhqan/maryam/issues).
