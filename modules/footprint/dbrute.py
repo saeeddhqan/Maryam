@@ -26,8 +26,8 @@ class Module(BaseModule):
 		'name': 'DNS Brute Force',
 		'author': 'Saeeddqn',
 		'version': '1.1',
-		'description': 'DNS brute force attack with thread supporting',
-		'comments': ('wordlist option can be an url',),
+		'description': 'DNS brute force attack, supports concurrency.',
+		'comments': ('The wordlist option can be an url',),
 		'options': (
 			('domain', BaseModule._global_options['target'],
 			 False, 'Domain name without https?://', '-d', 'store'),

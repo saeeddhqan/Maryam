@@ -24,7 +24,7 @@ class Module(BaseModule):
 		'name': 'Documentations Search',
 		'author': 'Saeeddqn',
 		'version': '0.8',
-		'description': 'Search in open sources to find relevant documents. filetypes[pdf,doc,docx,ppt,pptx,xlsx,txt,..]',
+		'description': 'Search in open-sources to find relevant documents. filetypes[pdf,doc,docx,ppt,pptx,xlsx,txt,..].',
 		'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask',
 			'startpage', 'exalead', 'carrot2', 'searchencrypt', 'qwant', 'millionshort'),
 		'options': (

@@ -23,7 +23,7 @@ class Module(BaseModule):
 		'name': 'WAF(Web Application Firewall) Identifier',
 		'author': 'Saeeddqn',
 		'version': '0.1',
-		'description': 'Identify web application firewalls. It can detect over 200 firewall',
+		'description': 'Identify web application firewalls. It can detect over 200 firewalls.',
 		'sources': ('github.com/EnableSecurity/wafw00f',),
 		'options': (
 			('domain', BaseModule._global_options.get('target'), True, 'Domain string', '-d', 'store'),

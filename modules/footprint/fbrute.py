@@ -26,8 +26,8 @@ class Module(BaseModule):
 		'name': 'File Brute Force',
 		'author': 'Saeeddqn',
 		'version': '1.0',
-		'description': 'File/Directory brute force attack with thread supporting',
-		'comments': ('wordlist option can be an url',),
+		'description': 'File/Directory brute force attack, supports cocurrency.',
+		'comments': ('The wordlist option can be an url.',),
 		'options': (
 			('domain', BaseModule._global_options['target'],
 			 False, 'Domain name without https?://', '-d', 'store'),

@@ -24,7 +24,7 @@ class Module(BaseModule):
 		'name': 'Web Entry Points',
 		'author': 'Saeeddqn',
 		'version': '0.1',
-		'description': 'Crawl web pages for find entry points(inputs, urls with param)',
+		'description': 'Crawl web pages to find entry points(inputs, urls with param).',
 		'options': (
 			('domain', BaseModule._global_options['target'], True, 'Domain string', '-d', 'store'),
 			('debug', False, False, 'debug the scraper', '--debug', 'store_true'),

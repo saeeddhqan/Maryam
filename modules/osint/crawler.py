@@ -23,7 +23,7 @@ class Module(BaseModule):
 		'name': 'Web Crawler',
 		'author': 'Saeeddqn',
 		'version': '0.5',
-		'description': 'Crawl web pages to find links, JS Files, CSS files, Comments and everything else that interesting with thread supporting',
+		'description': 'Crawl web pages to find links, JS Files, CSS files, Comments and everything else interesting, supports concurrency.',
 		'options': (
 			('domain', BaseModule._global_options['target'], True, 'Domain string', '-d', 'store'),
 			('debug', False, False, 'debug the scraper', '--debug', 'store_true'),

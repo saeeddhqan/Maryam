@@ -23,7 +23,7 @@ class Module(BaseModule):
 	meta = {
 		'name': 'Linkedin Search',
 		'author': 'Saeeddqn',
-		'version': '0.3',
+		'version': '0.4',
 		'description': 'Search your query in the linkedin.com and get result.',
 		'sources': ('google','carrot2','bing'),
 		'options': (
@@ -54,9 +54,8 @@ class Module(BaseModule):
 			pages += run.pages 
 			for item in run.links_with_title:
 				link,title = item
-				self.verbose(f'\t{title}', 'C')
-				self.verbose(f'\t\t{link}')
-				print('')
+				self.verbose(f'{title}', 'C')
+				self.verbose(f'\t{link}')
 				links.append(link)
 
 		if 'carrot2' in engine:
@@ -81,13 +80,13 @@ class Module(BaseModule):
 						for mic in link:
 							if len(mic) > 2:
 								mic = mic[mic.find('/')+1:]
-								mic = mic.replace('company/', '').replace('in/', '')
+								mic = mic.replace('company/', '').replace('in/', '').replace('\\x22', '')
 								mic = f"@{mic}"
 								people.append(mic)
 								self.output(f'\t{mic}', 'G')
 					else:
 						link = link[link.find('/')+1:]
-						link = link.replace('company/', '').replace('in/', '')
+						link = link.replace('company/', '').replace('in/', '').replace('\\x22', '')
 						link = f"@{link}"
 						people.append(link)
 						self.output(f'\t{link}', 'G')

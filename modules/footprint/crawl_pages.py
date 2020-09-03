@@ -24,7 +24,7 @@ class Module(BaseModule):
 		'name' : 'Crawler Pages',
 		'author' : 'Saeeddqn',
 		'version' : '0.6',
-		'description' : 'Search to find keywords, emails, usernames, errors, meta tags and regex(if is set) on the page/pages',
+		'description' : 'Search to find keywords, emails, usernames, errors, meta tags and regex on the page/pages.',
 		'options' : (
 			('domain', BaseModule._global_options['target'], True, 'Domain string', '-d', 'store'),
 			('regex', None, True, 'Regex or string for search in the pages', '-r', 'store'),

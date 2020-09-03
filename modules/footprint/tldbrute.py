@@ -26,7 +26,7 @@ class Module(BaseModule):
 		'name': 'DNS Brute Force',
 		'author': 'Saeeddqn',
 		'version': '1.1',
-		'description': 'TLD brute force attack with thread supporting',
+		'description': 'TLD brute force attack, supports cocurrency.',
 		'comments': ('wordlist option can be an url',),
 		'options': (
 			('domain', BaseModule._global_options['target'],

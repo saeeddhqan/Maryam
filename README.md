@@ -16,65 +16,65 @@ If you have skill in Metasploit or Recon-ng, you can easily use it without prere
 **OSINT**
 
  - dns_search
-	> Search in the search engines and other sources to find DNS.
+	> Search in the open-sources to find subdomans.
  - email_search
-	> Search in search engines to find emails.
+	> Search in open-sources to find emails.
  - docs_search
-	> Search in engines to find related documents. 
+	> Search in open-sources to find relevant documents. filetypes[pdf,doc,docx,ppt,pptx,xlsx,txt,..].
  - onion_search
 	> onion_search is used to create the premier search engine for services residing on the Tor anonymity network.
  - godork	
-	> Search google for your dork and get result
+	> Search google for your dork and get result.
  - social_nets
 	> Search to find usernames in social networks.
  - crawler
-	> Crawl web pages to find links, JS Files, CSS files, Comments and everything else interesting, supports threads
+	> Crawl web pages to find links, JS Files, CSS files, Comments and everything else interesting, supports concurrency.
  - suggest
- 	> Get search engine suggestions
+ 	> Keyword autocompleter to find suggestions in search engines.
 	
 **FOOTPRINT**
  - crawl_pages
-	> Search to find keywords, emails, usernames, errors, meta tags and regex on the page/pages
+	> Search to find keywords, emails, usernames, errors, meta tags and regex on the page/pages.
  - dbrute 
-	> DNS brute force attack, supports threads
+	> DNS brute force attack, supports concurrency.
  - fbrute 
-	> File/Directory brute force attack, supports threads
+	> File/Directory brute force attack, supports concurrency.
  - tldbrute
-	> TLD brute force attack, supports threads
+	> TLD brute force attack, supports cocurrency.
  - waf
-	> Identify web application firewalls. It can detect over 200 firewalls
+	> Identify web application firewalls. It can detect over 200 firewalls.
  - wapps        
 	> Web fingerprinting to identify the applications used with over 1000 pyload.
  - interest_files
 	> Search hosts for interesting files in predictable locations and brute force it.
  - entry_points
-	> Crawl web pages to find entry points(inputs, urls with param)
+	> Crawl web pages to find entry points(inputs, urls with param).
 
 **SEARCH**
  - google
-	> Google.com search
+	> Google.com search.
  - metacrawler 
-	> Metacrawler.com search
+	> Metacrawler.com search.
  - yippy 
-	> Yippy.com search
+	> Yippy.com search.
  - crt
-	> Crt.sh search
+	> Crt.sh search.
  - carrot2
-	> Carrot2.org search
+	> Carrot2.org search.
  - bing
-	> Bing.com search
+	> Bing.com search.
  - twitter
-	> Twitter.com search
+	> Twitter.com search.
  - linkedin
-	> Linkedin.com search
+	> Linkedin.com search.
  - facebook
-	> Facebook.com search
+	> Facebook.com search.
  - searchencrypt
-	> Searchencrypt.com search
+	> Searchencrypt.com search.
  - millionshort
-	> Millionshort.com search
+	> Millionshort.com search.
  - qwant
-	> Qwant.com search
+	> Qwant.com search.
 ## News
 **What is new?**
 

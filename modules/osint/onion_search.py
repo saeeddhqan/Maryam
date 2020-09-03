@@ -22,7 +22,7 @@ class Module(BaseModule):
 		'name': 'Onions Network Search',
 		'author': 'Saeeddqn',
 		'version': '0.4',
-		'description': 'onion_search is to create the premier search engine for services residing on the Tor anonymity network.',
+		'description': 'onion_search is used to create the premier search engine for services residing on the Tor anonymity network.',
 		'sources': ('ahmia','onionland'),
 		'options': (
 			('query', BaseModule._global_options['target'], True, 'Domain Name, Company Name, keyword, etc', '-q', 'store'),
