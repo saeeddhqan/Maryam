@@ -12,7 +12,6 @@
 OWASP Maryam is an Open-source intelligence(OSINT) and Web-based Footprinting optional/modular framework based on the Recon-ng core and written in Python.
 If you have skill in Metasploit or Recon-ng, you can easily use it without prerequisites and if not, please read the [Quick Guide](https://github.com/saeeddhqan/Maryam/wiki#quick-guide).
 
-<b>Follow the project on [Twitter](https://twitter.com/OWASP_Maryam).</b>
 
 ## Modules
 **OSINT**
@@ -93,5 +92,7 @@ If you have skill in Metasploit or Recon-ng, you can easily use it without prere
 ### [Install](https://github.com/saeeddhqan/maryam/wiki#install)
 ### [Modules Guide](https://github.com/saeeddhqan/maryam/wiki/modules)
 ### [Development Guide](https://github.com/saeeddhqan/maryam/wiki/Development-Guide)
+
+Liked the project? Donate Bitcoin: 1oGzx7wrstYxzan2n38CzxPk3uqgisA6i
 
 To report bugs, requests, or any other issues please [create an issue](https://github.com/saeeddhqan/maryam/issues).
