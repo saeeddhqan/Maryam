@@ -7,9 +7,7 @@
 
 # OWASP Maryam
 
-![Header](https://raw.githubusercontent.com/OWASP/www-project-maryam/master/assets/images/Header.gif)
-
-
+[![asciicast](https://asciinema.org/a/357588.svg)](https://asciinema.org/a/357588)
 
 OWASP Maryam is an Open-source intelligence(OSINT) and Web-based Footprinting optional/modular framework based on the Recon-ng core and written in Python.
 If you have skill in Metasploit or Recon-ng, you can easily use it without prerequisites and if not, please read the [Quick Guide](https://github.com/saeeddhqan/Maryam/wiki#quick-guide).
@@ -26,7 +24,7 @@ If you have skill in Metasploit or Recon-ng, you can easily use it without prere
 	> Search in open-sources to find relevant documents. filetypes[pdf,doc,docx,ppt,pptx,xlsx,txt,..].
  - onion_search
 	> onion_search is used to create the premier search engine for services residing on the Tor anonymity network.
- - godork	
+ - godork
 	> Search google for your dork and get result.
  - social_nets
 	> Search to find usernames in social networks.
