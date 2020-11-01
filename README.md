@@ -1,4 +1,4 @@
-![Version 1.4.7](https://img.shields.io/badge/Version-1.4.7-green.svg)
+![Version 1.4.8](https://img.shields.io/badge/Version-1.4.8-green.svg)
 [![GPLv3 License](https://img.shields.io/badge/License-GPLv3-red.svg)
 ![Python 3.x](https://img.shields.io/badge/Python-3.x-green.svg)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/40d81c48b3444ee78ffc6c5c8639134c)](https://www.codacy.com/manual/saeeddhqan/Maryam?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=saeeddhqan/Maryam&amp;utm_campaign=Badge_Grade)
@@ -31,7 +31,7 @@ If you have skill in Metasploit or Recon-ng, you can easily use it without prere
  - crawler
 	> Crawl web pages to find links, JS Files, CSS files, Comments and everything else interesting, supports concurrency.
  - suggest
- 	> Keyword autocompleter to find suggestions in search engines.
+        > Keyword autocompleter to find suggestions in search engines.
 	
 **FOOTPRINT**
  - crawl_pages
@@ -79,12 +79,12 @@ If you have skill in Metasploit or Recon-ng, you can easily use it without prere
 ## News
 **What is new?**
 
+ - Added three new source rapiddns, certspotter and sublist3r for dns_search
  - Uses python3
  - Added dbrute, fbrute, tldbrute, entry_points and waf to footprint
  - Added Thread support to modules
  - Added csv format output
  - Rewrote utils
- - Added Search submodule
  
 ## links
 ### [OWASP](https://owasp.org/www-project-maryam/)

@@ -45,7 +45,7 @@ class Module(BaseModule):
 			 'emails' : run.emails, 'phones' : run.phones, 'media' : run.media}
 
 		for obj in e:
-			self.alert(obj)
+			self.alert(f"{obj}({len(e[obj])})")
 			if e[obj] == []:
 				self.output('\t..')
 			else:
