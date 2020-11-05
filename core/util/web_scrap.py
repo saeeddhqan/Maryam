@@ -54,12 +54,12 @@ class main:
 		self._CREDIT_CARDS = []
 		self._NETWORKS = {}
 		self.numerator = 0
-		self.media_exts = ('aa', 'aac', 'aif', 'aiff', 'amr', 'amv', 'amz', 'ape', 'asf', 'au', 'bash', 'bat', 'bmp', 'c',
-			'cfa', 'cpp', 'cs', 'csv', 'doc', 'docx', 'f4a', 'f4b', 'f4p', 'f4v', 'flac', 'flv', 'gif', 'gif', 'gifv', 'gz',
-			'ico', 'java', 'jfif', 'jpeg', 'jpg', 'm2v', 'm4a', 'm4p', 'm4v', 'md', 'mkv', 'mng', 'mov', 'mp2', 'mp3',
-			'mp4', 'mpeg', 'mpg', 'mpv', 'pdf', 'pl', 'png', 'ppt', 'pptx', 'pptx', 'py', 'rar', 'rm', 'roq', 'svg', 'svi',
-			'tar.gz', 'tiff', 'vmo', 'vob', 'w64', 'wav', 'webm', 'wma', 'wmv', 'wmv', 'woff2', 'wrk', 'wvavi', 'xlsx',
-			'yaml', 'yml', 'zip')
+		self.media_exts = ('3gp', '7z', 'aa', 'aac', 'ace', 'aif', 'aiff', 'amr', 'amv', 'amz', 'ape', 'arj', 'asf', 'asf', 'au', 'avi', 'bash', 'bat', 'bin',   
+		'bmp', 'bz2', 'c', 'cfa', 'cpp', 'cs', 'csv', 'doc', 'docx', 'f4a', 'f4b', 'f4p', 'f4v', 'flac', 'flv', 'gif', 'gif', 'gifv', 'gz', 
+		'gzipico', 'img', 'iso', 'java', 'jfif', 'jpeg', 'jpg', 'lzh', 'm2v', 'm4a', 'm4p', 'm4v', 'md', 'mkv', 'mng', 'mov', 'mp2', 'mp3', 
+		'mp4', 'mpa', 'mpe', 'mpeg', 'mpg', 'msi', 'msumpv', 'ogg', 'ogv', 'pdf', 'pl', 'plj', 'png', 'pps', 'ppt', 'ppt', 'pptx', 'pptx', 'py'  
+		, 'qt', 'rar', 'rm', 'rm', 'rmvb', 'roq', 'sea', 'sit', 'sitx', 'svg', 'svi', 'tar', 'tar.gz', 'tif', 'tiff', 'tiff', 'vmo', 'vob', '  w64', 
+		'wav', 'webm', 'wma', 'wmv', 'wmv', 'woff2', 'wrk', 'wvavi', 'xlsx', 'yaml', 'yml', 'z', 'zip')
 		self.passed = []
 
 	# If key not in links append it
