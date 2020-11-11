@@ -1,6 +1,6 @@
 [![OWASP Flagship](https://img.shields.io/badge/OWASP-Flagship%20Project-48A646.svg)](https://owasp.org/projects/#div-flagships)
 ![Version 1.4.8](https://img.shields.io/badge/Version-1.4.8-green.svg)
-[![GPLv3 License](https://img.shields.io/badge/License-GPLv3-red.svg)
+[![GPLv3 License](https://img.shields.io/badge/License-GPLv3-green.svg)
 ![Python 3.8.x](https://img.shields.io/badge/Python-3.8.x-green.svg)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/40d81c48b3444ee78ffc6c5c8639134c)](https://www.codacy.com/manual/saeeddhqan/Maryam?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=saeeddhqan/Maryam&amp;utm_campaign=Badge_Grade)
 
