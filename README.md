@@ -31,7 +31,8 @@ If you have skill in Metasploit or Recon-ng, you can easily use it without prere
  - crawler
 	> Crawl web pages to find links, JS Files, CSS files, Comments and everything else interesting, supports concurrency.
  - suggest
-        > Keyword autocompleter to find suggestions in search engines.
+	> Keyword autocompleter to find suggestions in search engines.
+
 	
 **FOOTPRINT**
  - crawl_pages
