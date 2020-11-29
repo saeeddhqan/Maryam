@@ -55,38 +55,41 @@ If you have skill in Metasploit or Recon-ng, you can easily use it without prere
 
 **SEARCH**
  - google
-	> Google.com search.
+	> Google.com search
  - metacrawler 
-	> Metacrawler.com search.
+	> Metacrawler.com search
  - yippy 
-	> Yippy.com search.
+	> Yippy.com search
  - crt
-	> Crt.sh search.
+	> Crt.sh search
  - carrot2
-	> Carrot2.org search.
+	> Carrot2.org search
  - bing
-	> Bing.com search.
+	> Bing.com search
  - twitter
-	> Twitter.com search.
- - linkedin
-	> Linkedin.com search.
+	> Twitter.com search
+ - linkedIn
+	> Linkedin.com search
  - facebook
-	> Facebook.com search.
+	> Facebook.com search
  - searchencrypt
-	> Searchencrypt.com search.
+	> Searchencrypt.com search
  - millionshort
-	> Millionshort.com search.
+	> Millionshort.com search
  - qwant
-	> Qwant.com search.
+	> Qwant.com search
+ - youtube
+	> YouTube.com search
 ## News
 **What is new?**
 
+ - Added youtube search module
  - Added three new source rapiddns, certspotter and sublist3r for dns_search
  - Uses python3
  - Added dbrute, fbrute, tldbrute, entry_points and waf to footprint
  - Added Thread support to modules
  - Added csv format output
- - Rewrote utils
+
  
 ## links
 ### [OWASP](https://owasp.org/www-project-maryam/)

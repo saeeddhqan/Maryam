@@ -22,8 +22,8 @@ class Module(BaseModule):
 	
 	meta = {
 		'name': 'Youtube Search',
-		'author': 'Saeeddqn',
-		'version': '0.3',
+		'author': 'Aman Rawat',
+		'version': '0.1',
 		'description': 'Search your query in the youtube.com and get result.',
 		'sources': ('google', 'carrot2', 'bing'),
 		'options': (
