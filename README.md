@@ -80,10 +80,12 @@ If you have skill in Metasploit or Recon-ng, you can easily use it without prere
 	> Qwant.com search
  - youtube
 	> YouTube.com search
+ - quora
+	> quora.com search
 ## News
 **What is new?**
 
- - Added youtube search module
+ - Added youtube and quora search module
  - Added three new source rapiddns, certspotter and sublist3r for dns_search
  - Uses python3
  - Added dbrute, fbrute, tldbrute, entry_points and waf to footprint
