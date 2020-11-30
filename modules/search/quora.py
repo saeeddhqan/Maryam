@@ -82,14 +82,14 @@ class Module(BaseModule):
 					profiles.append(link)
 					self.output(f"\t{link}", 'G')
 
-			self.alert('titles with links')
+			self.alert('raw results')
 			for link in links:
 				if 'www.quora.com' in link and 'www.quora.com/profile' not in link:
 					title = link.replace('https://www.quora.com/', '').replace('/', '')
 					title = title.replace('-', ' ')
 					title =requests.utils.unquote(title)
 					titles.append(title)
-					self.output(f'\t{title} \n\t{link}')
+					self.output(f'\t{title} \n\t\t{link}')
 				
 
 		self.save_gather({'links': links, 'title': titles, 'profiles': profiles},
