@@ -19,7 +19,7 @@ import re
 
 class main:
 
-	def __init__(self, framework, q):
+	def __init__(self, framework, q, limit=2, count=100):
 		""" yippy.com search engine
 
 			framework : core attribute
