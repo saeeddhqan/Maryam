@@ -82,7 +82,6 @@ class main:
 		parser.pclean
 		links = parser.findall(r'<a href="([^"]+)" h="ID=SERP,[\d\.]+">([^<]+){1,150}</a>')
 		links = [x for x in links if x[0].startswith('http') and "http://www.microsofttranslator.com" not in x[0] and "Translate this page" not in x[1]]
-		print(links)
 		return links
 
 	@property
