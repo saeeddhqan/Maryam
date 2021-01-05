@@ -27,7 +27,7 @@ jobs:
       python: 3.8
       os: freebsd
 install:
- - "pip install --upgrade -r requirements"
+ - "pip install -r requirements"
 script:
   - python maryam -h
   - python maryam -e linkedin -q "OWASP"
