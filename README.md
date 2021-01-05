@@ -18,7 +18,7 @@ library
  - FreeBSD
  - OSX
 
-### Prerequisites
+### Prerequires
  - Python 3.8.x or 3.9.x (NOT 3.7, ..)
  - requests module
 
@@ -48,3 +48,4 @@ python3 maryam -e help
 ### [Development Guide](https://github.com/saeeddhqan/maryam/wiki/Development-Guide)
 
 To report bugs, requests, or any other issues please [create an issue](https://github.com/saeeddhqan/maryam/issues).
+
