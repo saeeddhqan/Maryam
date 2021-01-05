@@ -29,7 +29,7 @@ jobs:
       python: 3.8
       os: freebsd
 install:
- - "pip install --user -r requirements.txt --use-feature=2020-resolver"
+ - "pip install -r requirements.txt"
 script:
   - python maryam -h
   - python maryam -e linkedin -q "OWASP"
