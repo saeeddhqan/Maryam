@@ -5,9 +5,14 @@ jobs:
       python: 3.8
     - name: "Python 3.8.0 on macOS"
       os: osx
-      python: 3
+      # python: 3.8
+      # language: python
       osx_image: xcode11.2
       language: shell
+      script:
+        - python3 maryam -h
+        - python3 maryam -e linkedin -q "OWASP"
+        - python3 maryam -e show modules
     # - name: "Python 3.8.0 on Windows" Needs some change in the project
     #   os: windows
     #   language: shell
