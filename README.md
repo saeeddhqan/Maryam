@@ -46,6 +46,12 @@ Contributes are welcome! Here is a start guide: [Development Guide](https://gith
 You can add a new search engine to the util classes or use current search engines to write a new module.
 The best help to write a new module is by checking the current modules.
  
+## Roadmap
+
+ - Write a complete metacrawler engine based on OSINT by using the current search engines
+ - Add new sources for dns_search module
+ - Compatible with Windows OS
+
 ## links
 ### [OWASP](https://owasp.org/www-project-maryam/)
 ### [Wiki](https://github.com/saeeddhqan/maryam/wiki)
