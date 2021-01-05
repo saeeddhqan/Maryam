@@ -28,6 +28,7 @@ pip install -r requirements
 cd maryam
 python3 maryam -e help
 ```
+[![asciicast](https://asciinema.org/a/382779.svg)](https://asciinema.org/a/382779?speed=2)
 
 ## News
 **What is new?**
