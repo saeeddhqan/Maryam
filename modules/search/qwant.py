@@ -23,7 +23,7 @@ class Module(BaseModule):
 		'name': 'Qwant Search',
 		'author': 'Saeeddqn',
 		'version': '0.1',
-		'description': 'Search your query in the qwant.com and get result(without limit).',
+		'description': 'Search your query in the qwant.com and show the results(without limit).',
 		'sources': ('qwant',),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
@@ -47,11 +47,11 @@ class Module(BaseModule):
 		links = run.links_with_title
 
 		if links == {}:
-			self.output('Nothing to declare')
+			self.output('Without result')
 		else:
 			for item in links:
-				self.output(f"\t{item.replace('<b>','').replace('</b>', '')}", 'C')
-				self.output(f"\t\t{links[item]}")
+				self.output(f"{item.replace('<b>','').replace('</b>', '')}", 'G')
+				self.output(f"\t{links[item]}")
 				print('')
 
 		self.save_gather(links, 'search/qwant', query, output=self.options['output'])

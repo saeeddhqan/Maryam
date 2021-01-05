@@ -24,7 +24,7 @@ class Module(BaseModule):
 		'name': 'Twitter Search',
 		'author': 'Saeeddqn',
 		'version': '0.3',
-		'description': 'Search your query in the twitter.com and get result.',
+		'description': 'Search your query in the twitter.com and show the results.',
 		'sources': ('google', 'carrot2', 'bing'),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),

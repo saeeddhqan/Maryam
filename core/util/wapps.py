@@ -205,6 +205,7 @@ class main:
 		# Add Website creator
 		resp = {}
 		for app in app_list:
-		  resp[app] = self.apps[app].get('website')
+			app = re.split(r"\\?;", app)[0]
+			resp[app] = self.apps[app].get('website')
  
 		return resp

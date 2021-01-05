@@ -24,7 +24,7 @@ class Module(BaseModule):
 		'name': 'Yippy Search',
 		'author': 'Saeeddqn',
 		'version': '0.2',
-		'description': 'Search your query in the Yippy.com and get result.',
+		'description': 'Search your query in the Yippy.com and show the results.',
 		'sources': ('yippy',),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),

@@ -24,7 +24,7 @@ class Module(BaseModule):
 		'name': 'Millionshort Search',
 		'author': 'Saeeddqn',
 		'version': '0.1',
-		'description': 'Million Short started out as an experimental web search engine that allows you to filter and refine your search results set',
+		'description': 'Million Short started out as an experimental web search engine that allows you to filter and refine your search results set.',
 		'sources': ('millionshort',),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
@@ -41,11 +41,11 @@ class Module(BaseModule):
 		run.run_crawl()
 		links = run.links_with_title
 		if links == {}:
-			self.output('Nothing to declare')
+			self.output('Without result')
 		else:
 			for item in links:
-				self.output(f"\t{item.replace('<b>','').replace('</b>', '')}", 'C')
-				self.output(f"\t\t{links[item]}")
+				self.output(f"{item.replace('<b>','').replace('</b>', '')}", 'G')
+				self.output(f"\t{links[item]}")
 				print('')
 
 		self.save_gather(links, 'search/millionshort', query, output=self.options['output'])

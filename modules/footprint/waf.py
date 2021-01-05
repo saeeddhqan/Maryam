@@ -38,7 +38,7 @@ class Module(BaseModule):
 		_wafs = self.waf_identify(req)
 		_wafs.run_crawl()
 
-		wafs = _wafs.waf
+		wafs = _wafs._waf
 
 		self.alert('WAFs')
 		if wafs != []:

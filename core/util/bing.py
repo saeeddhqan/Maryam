@@ -34,7 +34,7 @@ class main:
 
 	def run_crawl(self):
 		set_page = lambda x: x*11
-		urls = [f"https://{self.bing}/search?q={self.q}&count={self.count}&first={set_page(i)}" for i in range(1, self.limit+1)]
+		urls = [f"https://www.{self.bing}/search?q={self.q}&count={self.count}&first={set_page(i)}&form=QBLH&pq={self.q.lower()}" for i in range(1, self.limit+1)]
 		max_attempt = len(urls)
 		for url in range(max_attempt):
 			self.framework.verbose(f"[BING] Searching in {url} page...")
@@ -48,7 +48,7 @@ class main:
 					break
 			else:
 				page = req.text
-				if '<div class="sw_next">Next</div>' not in page:
+				if 'title="Next page"' not in page:
 					self._pages += page
 					break
 				self._pages += page
@@ -73,14 +73,16 @@ class main:
 	def links(self):
 		parser = self.framework.page_parse(self._pages)
 		parser.pclean
-		return parser.findall(r'<a href="([^"]+)" h="ID=SERP,[\d\.]+">')
+		l = parser.findall(r'<a href="([^"]+)" h="ID=SERP,[\d\.]+">')
+		l = [x for x in l if "http://www.microsofttranslator.com" not in x]
 
 	@property
 	def links_with_title(self):
 		parser = self.framework.page_parse(self._pages)
 		parser.pclean
 		links = parser.findall(r'<a href="([^"]+)" h="ID=SERP,[\d\.]+">([^<]+){1,150}</a>')
-		links = [x for x in links if x[0].startswith('http')]
+		links = [x for x in links if x[0].startswith('http') and "http://www.microsofttranslator.com" not in x[0] and "Translate this page" not in x[1]]
+		print(links)
 		return links
 
 	@property

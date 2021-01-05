@@ -23,7 +23,7 @@ class Module(BaseModule):
 		'name': 'CRT Search',
 		'author': 'Saeeddqn',
 		'version': '0.1',
-		'description': 'Search your query in the crt.sh and get result.',
+		'description': 'Search your query in the crt.sh and show the results.',
 		'sources': ('crt',),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),

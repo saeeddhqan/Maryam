@@ -29,7 +29,7 @@ class Module(BaseModule):
 		'description': 'Search in the open-sources to find subdomans.',
 		'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'baidu', 'startpage',
 					'netcraft', 'threatcrowd', 'virustotal', 'yippy', 'otx', 'carrot2', 'crt',
-					'searchencrypt', 'qwant', 'millionshort', 'threatminer', 'jldc', 'bufferover', 'rapiddns', 'certspotter', 'sublist3r'),
+					'qwant', 'millionshort', 'threatminer', 'jldc', 'bufferover', 'rapiddns', 'certspotter', 'sublist3r'),
 		'options': (
 			('domain', BaseModule._global_options['target'],
 			 True, 'Domain name without https?://', '-d', 'store'),

@@ -25,7 +25,7 @@ class Module(BaseModule):
 		'name': 'Quora Search',
 		'author': 'Aman Rawat',
 		'version': '0.1',
-		'description': 'Search your query in the quora.com and get result.',
+		'description': 'Search your query in the quora.com and show the results.',
 		'sources': ('yahoo', 'yippy', 'bing', 'google'),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),

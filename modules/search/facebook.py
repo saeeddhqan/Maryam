@@ -24,7 +24,7 @@ class Module(BaseModule):
 		'name': 'Facebook Search',
 		'author': 'Saeeddqn',
 		'version': '0.1',
-		'description': 'Search your query in the facebook.com and get result.',
+		'description': 'Search your query in the facebook.com and show the results.',
 		'sources': ('google','carrot2','bing'),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),

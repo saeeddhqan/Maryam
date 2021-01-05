@@ -24,7 +24,7 @@ class Module(BaseModule):
 		'name': 'Bing Search',
 		'author': 'Saeeddqn',
 		'version': '0.1',
-		'description': 'Search your query in the bing.com and get result.',
+		'description': 'Search your query in the bing.com and show the results.',
 		'sources': ('bing',),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
@@ -48,7 +48,7 @@ class Module(BaseModule):
 		else:
 			for item in links:
 				link,title = item
-				self.output(f'\t{title}', 'C')
-				self.output(f'\t\t{link}')
+				self.output(f'{title}', 'G')
+				self.output(f'\t{link}')
 				print('')
 		self.save_gather(links, 'search/bing', query, output=self.options['output'])

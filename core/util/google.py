@@ -31,9 +31,9 @@ class main:
 		"""
 		self.framework = framework
 		self.q = q
-		self.agent = framework.rand_uagent().lynx[0]
+		self.agent = framework.rand_uagent().lynx[7]
 		self._pages = ''
-		self.limit = limit
+		self.limit = limit+1
 		self.num = count
 		self.google_api = google_api
 		self.google_cx = google_cx
@@ -41,7 +41,7 @@ class main:
 
 	def run_crawl(self):
 		page = 1
-		url = 'https://google.com/search'
+		url = 'https://www.google.com/search'
 		set_page = lambda x: (x - 1) * self.num
 		payload = {'num' : self.num, 'start' : set_page(page), 'ie' : 'utf-8', 'oe' : 'utf-8', 'q' : self.q, 'filter': '0'}
 		max_attempt = 0
@@ -51,6 +51,7 @@ class main:
 				req = self.framework.request(
 					url=url,
 					params=payload,
+					headers={"User-Agent":self.agent},
 					allow_redirects=False)
 			except:
 				self.framework.error('[GOOGLE] ConnectionError')
@@ -69,10 +70,13 @@ class main:
 			payload['start'] = set_page(page)
 			if page >= self.limit:
 				break
-		links = self.framework.page_parse(self._pages).findall(r'a href="([^"]+)" onmousedown')
+		links = self.framework.page_parse(self._pages).findall(r'a href="([^"]+)"')
+
 		for link in links:
 			cond1 = 'https://support.google.com/' not in link.lower()
-			if cond1:
+			cond2 = 'https://www.google.com/webhp' not in link.lower()
+			cond3 = "://" in link
+			if cond1 and cond2 and cond3:
 				self._links.append(self.framework.urlib(link).unquote_plus)
 
 	def api_run_crawl(self):

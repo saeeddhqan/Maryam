@@ -24,7 +24,7 @@ class Module(BaseModule):
 		'name': 'Carrot2 Search',
 		'author': 'Saeeddqn',
 		'version': '0.1',
-		'description': 'Search your query in the carrot2.org and get result.',
+		'description': 'Search your query in the carrot2.org and show the results.',
 		'sources': ('carrot2',),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
@@ -40,7 +40,7 @@ class Module(BaseModule):
 		json_links = run.json_links
 		out = 0
 		for link in json_links:
-			self.output(link.get('title'), 'C')
+			self.output(link.get('title'), 'G')
 			self.output(f"\t{link.get('url')}")
 			out = 1
 

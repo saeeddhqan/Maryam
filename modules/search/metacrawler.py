@@ -24,7 +24,7 @@ class Module(BaseModule):
 		'name': 'MetaCrawler Search',
 		'author': 'Saeeddqn',
 		'version': '0.2',
-		'description': 'Search your query in the metacrawler.com and get result.',
+		'description': 'Search your query in the metacrawler.com and show the results.',
 		'sources': ('metacrawler',),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
@@ -40,11 +40,10 @@ class Module(BaseModule):
 		run = self.metacrawler(query, limit)
 		run.run_crawl()
 		links = run.links
-
+		print('')
 		if links == []:
 			self.output('Without result')
 		else:
 			for link in links:
-				self.output(f'\t{link}')
-				print('')
+				self.output(f'{link}')
 		self.save_gather(links, 'search/metacrawler', query, output=self.options['output'])

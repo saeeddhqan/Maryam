@@ -172,8 +172,8 @@ class main:
 		for tag in find:
 			tag_attrs = self.get_attrs(tag, ['src'])
 			for attr in tag_attrs:
-				if 'src' in tag_attrs[attr]:
-					src = tag_attrs[attr].get('src')
+				if 'src' in tag_attrs:
+					src = tag_attrs[attr]
 					urlib = self.framework.urlib(src)
 					if urlib.check_urlfile('js'):
 						resp.append(src)

@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 # Based on the Recon-ng core(https://github.com/lanmaster53/recon-ng)
 
-__version__ = "v1.4.8"
+__version__ = "v1.4.9"
 import argparse
 import errno
 import imp
@@ -244,7 +244,7 @@ class Base(framework.Framework):
 		print('')
 		if self.loaded_category == {}:
 			print(
-				f'{framework.Colors.B}[0] No Module To Display{framework.Colors.N}')
+				f'{framework.Colors.B}[0] No module to display{framework.Colors.N}')
 
 		else:
 			counts = [(self.loaded_category[x], x)

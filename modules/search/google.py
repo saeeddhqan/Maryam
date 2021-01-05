@@ -24,7 +24,7 @@ class Module(BaseModule):
 		'name': 'Google Search',
 		'author': 'Saeeddqn',
 		'version': '0.2',
-		'description': 'Search your query in the google.com and get result.',
+		'description': 'Search your query in the google.com and show the results.',
 		'sources': ('google',),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
