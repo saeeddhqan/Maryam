@@ -18,7 +18,7 @@ library
  - FreeBSD
  - OSX
 
-### Prerequires
+### Prerequisites
  - Python 3.8.x or 3.9.x (NOT 3.7, ..)
  - requests module
 
