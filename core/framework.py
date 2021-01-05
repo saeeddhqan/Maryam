@@ -846,7 +846,6 @@ class Framework(cmd.Cmd):
 			self.help_resource()
 			return
 		if code:
-			print(code)
 			sys.stdin = code
 			Framework._script = 1
 		else:

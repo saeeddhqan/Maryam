@@ -21,8 +21,6 @@ install:
  - "pip install --upgrade flake8"
  - "pip install --upgrade -r requirements"
 script:
-  - python maryam
-  - help
-  - show modules
-  - bing
-  - exit
+  - python maryam -h
+  - python maryam -e linkedin -q "OWASP"
+  - python maryam -e show modules

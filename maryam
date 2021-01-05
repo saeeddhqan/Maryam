@@ -20,10 +20,11 @@ __VERSION__ = '1.4.8'
 
 import sys
 import platform
+import argparse
 
 # Check the OS
 if platform.system() not in ('Linux', 'Darwin'):
-	print('[!] This tool is designed for Linux and Darwin. maybe not work!')
+	print('[!] This tool is designed for Linux and Darwin. Maybe not work!')
 
 # Check the version
 if sys.version_info.major != 3:
@@ -35,8 +36,25 @@ from core import base
 
 sys.dont_write_bytecode = True
 
-def cui():
-	x = base.Base()
+def cui(args, format_help):
+	x = base.Base
+	if args:
+		option = args[0]
+		if option in ["-v", "--version"]:
+			print(f"OWASP MARYAM V.{__VERSION__}")
+			exit(0)
+		command = " ".join(args[1:])
+		if not v or option not in ["-e", "--execute", "-s", "--start"]:
+			print(format_help)
+			exit(0)
+		x = x()
+		if option in ["-e", "--execute"]:
+			x.onecmd(command)
+			exit(0)
+		elif args[0] in ["-s", "--start"]:
+			x.onecmd(command)
+	else:
+		x = x()
 	try:
 		x.cmdloop()
 	except KeyboardInterrupt:
@@ -44,4 +62,16 @@ def cui():
 	except Exception as e:
 		raise e
 
-cui()
+
+desc = "maryam -h"
+parse = argparse.ArgumentParser(description=desc)
+parse.add_argument("-e", help="execute a command and exit", metavar="execute", dest="execute", action="store")
+parse.add_argument("-s", help="run a command without exit", metavar="start", dest="start", action="store")
+parse.add_argument("-v", help="show version and exit", action="version", version=f"OWASP MARYAM V.{__VERSION__}")
+format_help = parse.format_help()
+argv = sys.argv[1:]
+for k,v in enumerate(argv):
+	if " " in v:
+		argv[k] = f'"{v}"'
+
+cui(argv, format_help)
