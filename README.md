@@ -40,6 +40,11 @@ python3 maryam -e help
  - Added three new source rapiddns, certspotter and sublist3r for dns_search
  - Added dbrute, fbrute, tldbrute, entry_points and waf to footprint
 
+## Contribution
+
+Contributes are welcome! Here is a start guide: [Development Guide](https://github.com/saeeddhqan/maryam/wiki/Development-Guide)
+You can add a new search engine to the util classes or use current search engines to write a new module.
+The best help to write a new module is by checking the current modules.
  
 ## links
 ### [OWASP](https://owasp.org/www-project-maryam/)
