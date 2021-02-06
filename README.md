@@ -25,8 +25,8 @@ library
 
 ```bash
 git clone https://github.com/saeeddhqan/maryam.git
-pip install -r requirements
 cd maryam
+pip install -r requirements
 python3 maryam -e help
 ```
 [![asciicast](https://asciinema.org/a/382779.svg)](https://asciinema.org/a/382779?speed=2)
