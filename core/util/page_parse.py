@@ -125,7 +125,9 @@ class main:
 			self.framework.error("Filetype not specified. Concat 'filetype:doc' to the query")
 			return []
 
-	def get_attrs(self, tag, attrs=[]):
+	def get_attrs(self, tag, attrs=None):
+		if attrs is None:
+			attrs = []
 		reg = r"['\"\s]([^=][\w\-\d_]+)="
 		# Find all attribute names
 		if not attrs:

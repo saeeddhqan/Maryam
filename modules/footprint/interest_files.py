@@ -42,7 +42,13 @@ class Module(BaseModule):
 
 	resp = {}
 
-	def thread(self, function, hostname, wordlist, thread_count, method, header=(), content=[], status_codes=[], not_status_codes=[]):
+	def thread(self, function, hostname, wordlist, thread_count, method, header=(), content=None, status_codes=None, not_status_codes=None):
+		if content is None:
+			content = []
+		if status_codes is None:
+			status_codes = []
+		if not_status_codes is None:
+			not_status_codes = []
 		threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
 		futures = (threadpool.submit(function, hostname, word, method, header, content, status_codes, not_status_codes) for word in wordlist if not '#' in word)
 		counter = 1

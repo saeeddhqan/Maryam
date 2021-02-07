@@ -359,7 +359,9 @@ class Framework(cmd.Cmd):
 	# EXPORT METHODS
 	# ==================================================
 
-	def save_gather(self, value, module, target, method=[], output=True):
+	def save_gather(self, value, module, target, method=None, output=True):
+		if method is None:
+			method = []
 		if not output:
 			return
 		self.debug('Saving data to the gather file...')
