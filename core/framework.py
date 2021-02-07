@@ -359,7 +359,9 @@ class Framework(cmd.Cmd):
 	# EXPORT METHODS
 	# ==================================================
 
-	def save_gather(self, value, module, target, method=[], output=True):
+	def save_gather(self, value, module, target, method=None, output=True):
+		if method is None:
+			method = []
 		if not output:
 			return
 		self.debug('Saving data to the gather file...')
@@ -542,7 +544,6 @@ class Framework(cmd.Cmd):
 				if self.options.required[option] is True and not self.options[option]:
 					raise FrameworkException(
 						f"Value required for the '{option.upper()}' option.")
-		return
 
 	def _load_config(self):
 		config_path = os.path.join(self.workspace, 'config.dat')
@@ -1185,7 +1186,7 @@ class Framework(cmd.Cmd):
 					x for x in Framework._loaded_modules if x.startswith(
 						args[2])]
 			else:
-				return [x for x in Framework._loaded_modules]
+				return list(Framework._loaded_modules)
 		options = sorted(self._get_show_names())
 		return [x for x in options if x.startswith(text)]
 
