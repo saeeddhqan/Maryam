@@ -1187,7 +1187,7 @@ class Framework(cmd.Cmd):
 					x for x in Framework._loaded_modules if x.startswith(
 						args[2])]
 			else:
-				return [x for x in Framework._loaded_modules]
+				return list(Framework._loaded_modules)
 		options = sorted(self._get_show_names())
 		return [x for x in options if x.startswith(text)]
 
