@@ -544,7 +544,6 @@ class Framework(cmd.Cmd):
 				if self.options.required[option] is True and not self.options[option]:
 					raise FrameworkException(
 						f"Value required for the '{option.upper()}' option.")
-		return
 
 	def _load_config(self):
 		config_path = os.path.join(self.workspace, 'config.dat')
