@@ -449,7 +449,7 @@ class Base(framework.Framework):
 # =================================================
 # SUPPORT CLASSES
 # =================================================
-class Mode(object):
+class Mode:
 	'''Contains constants that represent the state of the interpreter.'''
 	CONSOLE = 0
 	CLI = 1

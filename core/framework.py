@@ -34,7 +34,7 @@ class FrameworkException(Exception):
 	def __init__(self, message):
 		Exception.__init__(self, message)
 
-class Colors(object):
+class Colors:
 	N = '\033[m'  # native
 	R = '\033[91m'  # red
 	G = '\033[92m'  # green
