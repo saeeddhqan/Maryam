@@ -264,7 +264,7 @@ class Base(framework.Framework):
 	#==================================================
 
 	def help_workspaces(self):
-		print(getattr(self, "do_workspaces").__doc__)
+		print(self.do_workspaces.__doc__)
 		print(f'{os.linesep}Usage: workspaces [add|select|delete|list]{os.linesep}')
 
 	# ==================================================
