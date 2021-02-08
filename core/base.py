@@ -264,7 +264,7 @@ class Base(framework.Framework):
 	#==================================================
 
 	def help_workspaces(self):
-		print(getattr(self, "do_workspaces").__doc__)
+		print(self.do_workspaces.__doc__)
 		print(f'{os.linesep}Usage: workspaces [add|select|delete|list]{os.linesep}')
 
 	# ==================================================
@@ -449,7 +449,7 @@ class Base(framework.Framework):
 # =================================================
 # SUPPORT CLASSES
 # =================================================
-class Mode(object):
+class Mode:
 	'''Contains constants that represent the state of the interpreter.'''
 	CONSOLE = 0
 	CLI = 1
