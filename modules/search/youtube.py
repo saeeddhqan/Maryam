@@ -45,7 +45,6 @@ class Module(BaseModule):
 		run = self.google(q, limit, count)
 		run.run_crawl()
 		links = run.links
-		people = []
 		channels = []
 		pages = run.pages
 
@@ -70,7 +69,7 @@ class Module(BaseModule):
 				self.verbose(f"\t{link}")
 				links.append(link)
 
-		self.alert('username')
+		self.alert('usernames')
 		if links == []:
 			self.output('Without result')
 		else:
@@ -83,3 +82,6 @@ class Module(BaseModule):
 			self.alert('links')
 			for link in links:
 				self.output(f'\t{link}')
+
+		self.save_gather({'links': links, 'channels': channels}, 'search/youtube', query, output=self.options.get('output'))
+
