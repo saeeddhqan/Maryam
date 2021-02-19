@@ -14,42 +14,39 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import json
+
 class main:
 
-	def __init__(self, framework, q, key, limit=10):
+	def __init__(self, framework, q, key, limit=100):
 		""" hunter.io search engine
 
 			framework : core attribute
 			q 		  : query for search
 			key 	  : hunter.io api key
-			limit	  : max number of email addresses (Limited to 10 on Free Plan)
+			limit	  : count of pages
 		"""
 		self.framework = framework
 		self.q = q
 		self.limit = limit
 		self.key = key
-		self.check = ''
 		self._pages = ''
 		self._json_pages = ''
-		self.hunter_api = f"https://api.hunter.io/v2/domain-search?domain={self.q}&api_key={self.key}"
+		self.hunter_api = f"https://api.hunter.io/v2/domain-search?domain={self.q}&api_key={self.key}&limit={self.limit}"
 		self.acceptable = False
 	def run_crawl(self):
 		self.framework.verbose('[HUNTER] Searching in hunter...')
 		try:
-			req = self.framework.request(self.hunter_api)
+			req = requests.get(self.hunter_api)
 		except:
 			self.framework.debug('[HUNTER] ConnectionError')
 			self.framework.error('Hunter is missed!')
 			return
 		self._pages = req.text
-		#print(self._pages)
 		self._json_pages = req.json()
-		print(self._json_pages)
-        # Key validation
+
+		# Key validation
 		if 'errors' in self._json_pages:
-			self.check = self._json_pages['details']
-			self.framework.error(f"[HUNTER] email extraction error:{self.log}")
+			self.framework.error(f"[HUNTER] api key is incurrect:'self.key'")
 			self.acceptable = False
 			return
 
@@ -82,4 +79,4 @@ class main:
 	
 	@property
 	def dns(self):
-		return self.framework.page_parse(self._pages).get_dns(self.q)
+		return self.framework.page_parse(self.pages).get_dns(self.q)
