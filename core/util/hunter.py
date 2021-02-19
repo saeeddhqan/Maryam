@@ -36,7 +36,7 @@ class main:
 	def run_crawl(self):
 		self.framework.verbose('[HUNTER] Searching in hunter...')
 		try:
-			req = requests.get(self.hunter_api)
+			req = self.framework.request(self.hunter_api)
 		except:
 			self.framework.debug('[HUNTER] ConnectionError')
 			self.framework.error('Hunter is missed!')
