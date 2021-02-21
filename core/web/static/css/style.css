@@ -1,0 +1,62 @@
+.container{
+	position: absolute;
+	display: block;
+	justify-content: center;
+	padding: 5px;
+	align-items: center;
+}
+
+nav{
+	display: flex;
+	justify-content: center;
+	padding: 10px;
+}
+
+.table{
+	border: 1px solid black;
+	align-self: center;
+	border-spacing: 0;
+	margin: 1rem;
+	background-color: #f5f5f5; 
+}
+.table__row:nth-child(even) {
+	background-color: #e5e5e5;
+	border: 1px solid black;
+}
+
+.table__header{
+	text-align: left;
+	border: 1px solid black;
+}
+
+.table__cell{
+	padding: 8px;
+	border: 1px solid black;
+}
+
+.table__data{
+	padding: 10px;
+	border: 1px solid black;
+}
+
+.output{
+	flex-wrap: wrap;
+	display: inline-flex;
+	padding: 5px;
+}
+ul{
+	flex-wrap: wrap;
+	list-style: none;
+	display: inline-flex;
+  	margin: 10px;
+}
+
+li {
+  display: inline-block;
+  /* inline block hack for IE 6&7 */
+  zoom: 1;
+  *display: inline;
+  padding: 4px;
+  text-decoration: underline;
+  color: blue;
+}

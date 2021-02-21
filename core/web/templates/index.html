@@ -3,10 +3,36 @@
 <head>
 	<title>Maryam Web Interface</title>
 	<meta charset="utf-8">
-	<link rel="stylesheet" type="text/css" href="/static/css/style.css">
-	<script type="text/javascript" src="/static/js/script.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+	<script type="text/javascript" src="{{ url_for('static', filename='js/script.js') }}"></script>
 </head>
-<body>
 
+<body>
+	<div class = "container">
+		<div class = "nav">
+			<div class="cell" id="nav">
+                <div class="content-left">
+                    <a href="{{ url_for('index') }}">[Maryam]</a>
+                    <span>[</span>
+                    <select id="workspace" onChange="getSummary(this.value)">
+                    {% for workspace in workspaces %}
+                        <option value="{{ workspace }}"{% if workspace == config.WORKSPACE %}selected=true{% endif %}>{{ workspace }}</option>
+                    {% endfor %}
+                    </select>
+                    <span>]</span>
+                </div>
+            </div>
+		</div><!--Nav end -->
+		<div class="content">
+			<table class="table" id="dataTable">
+				<tr class = "table__header">
+					{% for header in headings %}
+					<th class="table__cell">{{ header }}</th>
+					{% endfor %}
+				</tr>
+			</table>
+		</div>
+	</div>
 </body>
 </html> 
