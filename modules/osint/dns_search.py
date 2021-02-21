@@ -35,7 +35,7 @@ class Module(BaseModule):
 			 True, 'Domain name without https?://', '-d', 'store'),
 			('limit', 3, False, 'Search limit(number of pages, default=3)', '-l', 'store'),
 			('count', 30, False, 'number of results per page(min=10, max=100, default=30)', '-c', 'store'),
-			('engines', None, False, 'Search engine names. e.g bing,google,..', '-e', 'store'),
+			('engines', 'otx', False, 'Search engine names. e.g bing,google,...[otx by default]', '-e', 'store'),
 			('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store'),
 			('max', False, False, 'Using all of sources(max limit=15, max count=50)', '--max', 'store_true'),
 			('validate', False, False, 'Validate the domains(Remove dead subdomains) found and display their IP(default=False)', '--validate', 'store_true'),
@@ -200,8 +200,8 @@ class Module(BaseModule):
 		engines = self.options['engines']
 		if self.options['silent']:
 			self._global_options['verbosity'] = 0
-		if not engines:
-			engines = 'threatcrowd,otx'
+		if engines == None:
+			engines = 'otx'
 
 		engines = self.meta['sources'] if MAX else self.options['engines'].lower().split(',')
 		self.thread(self.search, self.options['thread'], engines, domain_name, limit, count)
