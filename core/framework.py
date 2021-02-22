@@ -729,8 +729,8 @@ class Framework(cmd.Cmd):
 		arg = params.pop(0).lower()
 		cmds = self._get_history()
 		if arg == 'list':
-			if len(cmds) > 50:
-				cmds = cmds[:50]
+			if len(cmds) > 100:
+				cmds = cmds[100:]
 			header = '\nCommands:\n'
 			print(header + self.ruler * len(header[2:]))
 			for i in cmds:
