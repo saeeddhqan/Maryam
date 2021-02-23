@@ -31,7 +31,7 @@ class main:
 		self.key = key
 		self._pages = ''
 		self._json_pages = ''
-		self.hunter_api = f"https://api.hunter.io/v2/domain-search?domain={self.q}&api_key={self.key}&limit={self.limit}"
+		self.hunter_api = f"https://api.hunter.io/v2/email-finder?domain={self.q}&limit={self.limit}&api_key={self.key}"
 		self.acceptable = False
 	def run_crawl(self):
 		self.framework.verbose('[HUNTER] Searching in hunter...')
@@ -46,7 +46,7 @@ class main:
 
 		# Key validation
 		if 'errors' in self._json_pages:
-			self.framework.error(f"[HUNTER] api key is incurrect:'self.key'")
+			self.framework.error(f"[HUNTER] api key is incorrect:'self.key'")
 			self.acceptable = False
 			return
 
