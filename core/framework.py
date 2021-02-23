@@ -359,9 +359,7 @@ class Framework(cmd.Cmd):
 	# EXPORT METHODS
 	# ==================================================
 
-	def save_gather(self, value, module, target, method=None, output=True):
-		if method is None:
-			method = []
+	def save_gather(self, value, module, target, method=[], output=True):
 		if not output:
 			return
 		self.debug('Saving data to the gather file...')
@@ -501,7 +499,9 @@ class Framework(cmd.Cmd):
 		# initialize history file
 		if not os.path.exists(history):
 			self._is_readable(history,'w').close()
-		if write:
+		if reborn:
+			mode = 'w'
+		elif write:
 			mode = 'a+'
 		else:
 			mode = 'r'
@@ -729,8 +729,7 @@ class Framework(cmd.Cmd):
 		arg = params.pop(0).lower()
 		cmds = self._get_history()
 		if arg == 'list':
-			if len(cmds) > 100:
-				cmds = cmds[100:]
+			cmds = cmds[:50]
 			header = '\nCommands:\n'
 			print(header + self.ruler * len(header[2:]))
 			for i in cmds:
@@ -1094,41 +1093,42 @@ class Framework(cmd.Cmd):
 	# ==================================================
 
 	def help_history(self):
-		print(self.do_history.__doc__)
-		print(f'{os.linesep}Usage: history [list|from <num>|off|on|status|all]')
-		print('\thistory list\tshow 50 first commands')
+		print(getattr(self, 'do_history').__doc__)
+		print(f'{os.linesep}Usage: history [list|from <num>|off|on|status|all|clear]')
+		print('\thistory list\tShow 50 first commands')
 		print('\thistory from <num>\tShow the last <num> commands')
-		print('\thistory off\toff the history logger')
-		print('\thistory on\ton the history logger')
-		print('\thistory status\tfor show history status')
-		print('\thistory all\tshow all of commands')
+		print('\thistory off\tTurn off the history logger')
+		print('\thistory on\tTurn on the history logger')
+		print('\thistory status\tTo show history status')
+		print('\thistory all\tShow all of commands')
+		print('\thistory clear\tClear the history')
 		print(f'Note: If \'from <num>\' is not set, only the last 50 commands will be shown.{os.linesep}')
 
 	def help_load(self):
-		print(self.do_load.__doc__)
+		print(getattr(self, 'do_load').__doc__)
 		print(f'{os.linesep}Usage: [load|use] <module>{os.linesep}')
 
 	help_use = help_load
 
 	def help_resource(self):
-		print(self.do_resource.__doc__)
+		print(getattr(self, 'do_resource').__doc__)
 		print(f'{os.linesep}Usage: resource <filename>{os.linesep}')
 
 	def help_var(self):
-		print(self.do_var.__doc__)
+		print(getattr(self, 'do_var').__doc__)
 		print(f'{os.linesep}Usage: var <$name> <value> || var [delete] <name> || var [list]{os.linesep}')
 
 
 	def help_record(self):
-		print(self.do_record.__doc__)
+		print(getattr(self, 'do_record').__doc__)
 		print(f'{os.linesep}Usage: record [start <filename>|stop|status]{os.linesep}')
 
 	def help_spool(self):
-		print(self.do_spool.__doc__)
+		print(getattr(self, 'do_spool').__doc__)
 		print(f'{os.linesep}Usage: spool [start <filename>|stop|status]{os.linesep}')
 
 	def help_report(self):
-		print(self.do_report.__doc__)
+		print(getattr(self, 'do_report').__doc__)
 		print(f'{os.linesep}Usage    : report [<format> <filename> [<module_name> or <module_name> <query(hostname,domain name, keywords,etc)>]]')
 		print('or       : report [saved] => for show queries')
 		print('Example  : report json pdf_docs(without extention) osint/docs_search company.com')
@@ -1136,27 +1136,27 @@ class Framework(cmd.Cmd):
 		print(f'formats  : xml,json,csv and txt{os.linesep}')
 
 	def help_search(self):
-		print(self.do_search.__doc__)
+		print(getattr(self, "do_search").__doc__)
 		print(f'{os.linesep}Usage: search <string>{os.linesep}')
 
 	def help_set(self):
-		print(self.do_set.__doc__)
+		print(getattr(self, "do_set").__doc__)
 		print(f'{os.linesep}Usage: set <option> <value>')
 		self.show_options()
 
 	def help_unset(self):
-		print(self.do_unset.__doc__)
+		print(getattr(self, "do_unset").__doc__)
 		print(f'{os.linesep}Usage: unset <option>')
 		self.show_options()
 
 	def help_shell(self):
-		print(self.do_shell.__doc__)
+		print(getattr(self, "do_shell").__doc__)
 		print(f'{os.linesep}Usage: [shell|!] <command>')
 		print(f'   or: just type a command at the prompt.{os.linesep}')
 
 	def help_show(self):
 		options = sorted(self._get_show_names())
-		print(self.do_show.__doc__)
+		print(getattr(self, "do_show").__doc__)
 		print(f'{os.linesep}Usage: show [{"|".join(options)}]{os.linesep}')
 
 	# ==================================================
@@ -1187,7 +1187,7 @@ class Framework(cmd.Cmd):
 					x for x in Framework._loaded_modules if x.startswith(
 						args[2])]
 			else:
-				return list(Framework._loaded_modules)
+				return [x for x in Framework._loaded_modules]
 		options = sorted(self._get_show_names())
 		return [x for x in options if x.startswith(text)]
 
