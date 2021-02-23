@@ -98,20 +98,19 @@ class Base(framework.Framework):
 
 	def _init_global_options(self):
 		self.register_option('target', 'example.com', True,
-							 'target for DNS interrogation')
+							 'target for default hostname')
 		self.register_option('proxy', None, False,
 							 'proxy server (address:port)')
 		self.register_option(
-			'limit', 10, True, 'number of limit (where applicable)')
-		self.register_option(
 			'agent', f'Mozilla/5.0 (X11; Linux x86_64; rv:75.0) Gecko/20100101 Firefox/75.0', True, 'user-agent string')
 		self.register_option(
-			'rand_agent', False, True, 'Setting random user-agent')
+			'rand_agent', False, True, 'setting random user-agent')
 		self.register_option('timeout', 10, True, 'socket timeout (seconds)')
 		self.register_option(
 			'verbosity', '1',True,
 			'verbosity level (0 = minimal, 1 = verbose, 2 = debug)')
-		self.register_option('history', True, False, 'Log all console input')
+		self.register_option('history', True, False, 'logging all console inputs')
+		self.register_option('update_check', True, False, 'checking the framework version before running')
 
 	def _init_home(self):
 		self._home = framework.Framework._home = os.path.expanduser('~')
@@ -120,7 +119,7 @@ class Base(framework.Framework):
 			os.makedirs(self._home)
 
 	def _check_version(self):
-		if self._global_options.get('verbosity') > 0:
+		if self._global_options.get('update_check'):
 			self.debug('Checking version...')
 			pattern = r"__VERSION__ = '(\d+\.\d+\.\d+[^']*)'"
 			remote = 0
@@ -264,7 +263,7 @@ class Base(framework.Framework):
 	#==================================================
 
 	def help_workspaces(self):
-		print(self.do_workspaces.__doc__)
+		print(getattr(self, "do_workspaces").__doc__)
 		print(f'{os.linesep}Usage: workspaces [add|select|delete|list]{os.linesep}')
 
 	# ==================================================
@@ -449,7 +448,7 @@ class Base(framework.Framework):
 # =================================================
 # SUPPORT CLASSES
 # =================================================
-class Mode:
+class Mode(object):
 	'''Contains constants that represent the state of the interpreter.'''
 	CONSOLE = 0
 	CLI = 1
