@@ -7,8 +7,8 @@ from pathlib import Path
 
 home = str(Path.home())
 
-resources = Blueprint('resources',__name__,url_prefix="/api")
-api=Api()
+resources = Blueprint('resources', __name__, url_prefix='/api')
+API = Api()
 api.init_app(resources)
 
 class WorkspaceSummary(Resource):
@@ -16,7 +16,7 @@ class WorkspaceSummary(Resource):
         workspace = request.json['workspace']
         current_app.config['WORKSPACE'] = workspace
         try:
-            filename = os.path.join(home,'.maryam/workspaces/',workspace,'gather.dat')
+            filename = os.path.join(home, '.maryam/workspaces/', workspace, 'gather.dat')
             file = open(filename , 'r')
             data = json.loads(file.read())
         except:

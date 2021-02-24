@@ -5,21 +5,21 @@ import os
 
 cli.show_server_banner = lambda *x: None
 
-recon = base.Base()
+base_obj = base.Base()
 
 SWAGGER = {
-	'title' : "Swagger",
-	'info' : {
+	'title': "Swagger",
+	'info': {
 		'title': 'Maryam-Api',
 		'description': 'A RESTful API for Maryam'
 	},
 	'specs_route': '/api/'
 }
 
-WORKSPACE = recon.workspace.split('/')[-1]
+WORKSPACE = base_obj.workspace.split('/')[-1]
 print((f" * Workspace initialized: {WORKSPACE}"))
 
-headings = ("Type","Modules","Targets","Results")
+headings = ("Type", "Modules", "Targets", "Results")
 def create_app():
 
     # setting the static_url_path to blank serves static files from the web root
