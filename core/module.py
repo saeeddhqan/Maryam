@@ -30,6 +30,7 @@ from core.util import crt
 from core.util import carrot2
 from core.util import exalead
 from core.util import google
+from core.util import duckduckgo
 from core.util import hunter
 from core.util import keywords
 from core.util import lang_identify
@@ -173,6 +174,10 @@ class BaseModule(framework.Framework):
 
 	def google(self, q, limit=1, count=10):
 		search = google.main(self, q, limit, count)
+		return search
+
+	def duckduckgo(self, q, limit=1, count=10):
+		search = duckduckgo.main(self, q, limit, count)
 		return search
 
 	def hunter(self, q, key, limit=100):

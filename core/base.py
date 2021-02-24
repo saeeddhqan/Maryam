@@ -330,7 +330,6 @@ class Base(framework.Framework):
 		while True:
 			y = self._loaded_modules[mod_dispname]
 			mod_loadpath = os.path.abspath(sys.modules[y.__module__].__file__)
-
 			# return the loaded module if in command line mode
 			if self._mode == Mode.CLI:
 				return y
@@ -374,6 +373,7 @@ class Base(framework.Framework):
 				self.error(f"{tool_name}CodeError: options is too short. need more than {len(option)} option")
 				return
 			name = f"--{name}" if not name.startswith('-') else name
+			#name = name if name.startswith('-') else f"--{name}"	# more readable
 			try:
 				parser.add_argument(op, name, help=desc, dest=name, default=val, action=act, required=req)
 			except argparse.ArgumentError as e:
