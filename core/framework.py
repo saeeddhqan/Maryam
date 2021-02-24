@@ -515,16 +515,15 @@ class Framework(cmd.Cmd):
 	def _get_history(self):
 		self._init_history(write=False)
 		commands = self._history_file.read().split('\n')
-		print(self._history_file.read())
+		self._history_file.close()
 		commands = [f'{num}  {name}' for num,name in enumerate(commands) if name]
 		return commands
 
 	def _log_commands(self, cmd):
-		self._init_history(True)
+		self._init_history()
 		if cmd and cmd != 'EOF':
 			self._history_file.write(f"\n{cmd}")
 			self._history_file.close()
-			self._init_history(False)
 
 	# ==================================================
 	# OPTIONS METHODS
