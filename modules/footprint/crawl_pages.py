@@ -34,7 +34,7 @@ class Module(BaseModule):
 			('thread', 1, False, 'The number of links that open per round', '-t', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-		'examples': ('crawl_pages -d <DOMAIN> -r "https?://[A-z0-9\./]+" --output', 'crawl_pages -d <DOMAIN> --crawl --more')
+		'examples': ('crawl_pages -d <DOMAIN> -r "https?://[A-z0-9\./]+" --output', 'crawl_pages -d <DOMAIN> --limit 2 --more')
 	}
 
 	def module_run(self):
