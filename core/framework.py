@@ -322,7 +322,7 @@ class Framework(cmd.Cmd):
 		tdata_len = sum(lens) + (3*(cols-1))
 		diff = title_len - tdata_len
 		if diff > 0:
-			diff_per = diff / cols
+			diff_per = diff // cols
 			lens = [x+diff_per for x in lens]
 			diff_mod = diff % cols
 			for x in range(0, diff_mod):
@@ -911,6 +911,8 @@ class Framework(cmd.Cmd):
 		elif arg == 'status':
 			status = 'started' if Framework._record else 'stopped'
 			self.output(f'Command recording is {status}.')
+		else:
+			self.help_record()
 
 	def do_spool(self, params):
 		'''Spools output to a file'''
@@ -922,7 +924,7 @@ class Framework(cmd.Cmd):
 			if not Framework._spool:
 				if len(arg.split()) > 1:
 					filename = ' '.join(arg.split()[1:])
-					if not self._is_readable(filename):
+					if not self._is_readable(filename,'w'):
 						self.output(f"Cannot spool output to \'{filename}\'.")
 					else:
 						Framework._spool = codecs.open(filename, 'ab', encoding='utf-8')

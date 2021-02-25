@@ -87,7 +87,7 @@ class BaseModule(framework.Framework):
 	# ==================================================
 
 	def show_source(self):
-		for path in [os.path.join(x, 'modules', self._modulename) + self.module_extention for x in (self.app_path, self._home)]:
+		for path in [os.path.join(x, 'modules', self._modulename) + self.module_ext for x in (self.app_path, self._home)]:
 			if os.path.exists(path):
 				filename = path
 		with open(filename) as f:
