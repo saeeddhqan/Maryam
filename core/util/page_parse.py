@@ -277,7 +277,7 @@ class main:
 
 				type_attr = inp_attrs['type'].lower()
 				# Set default submit value
-				if type_attr == 'submnt' and 'value' not in inp_attrs:
+				if type_attr == 'submit' and 'value' not in inp_attrs:
 					inp_attrs['value'] = 'Submit Query'
 
 				if type_attr in resp[form]['inputs']:
