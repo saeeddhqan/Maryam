@@ -41,7 +41,7 @@ class Module(BaseModule):
 		limit = self.options['limit']
 		count = self.options['count']
 		engine = self.options['engine'].split(',')
-		q = f"site:www.instagram.com {query}"
+		q = f"site:www.instagram.com inurl:{query}"
 		run = self.google(q, limit, count)
 		run.run_crawl()
 		links = run.links
