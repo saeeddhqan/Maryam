@@ -34,12 +34,12 @@ python3 maryam -e help
 ## News
 **What is new?**
 
+ - Added instagram search module
  - Fixed bing and google search
  - Deleted searchencrypt engine
  - Running modules with options(Without entering to program) 
  - Added youtube and quora search module
  - Added three new source rapiddns, certspotter and sublist3r for dns_search
- - Added dbrute, fbrute, tldbrute, entry_points and waf to footprint
 
 ## Contribution
 
