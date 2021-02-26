@@ -31,8 +31,8 @@ python3 maryam -e help
 ```
 [![asciicast](https://asciinema.org/a/382779.svg)](https://asciinema.org/a/382779?speed=2)
 
-## News
-**What is new?**
+## Updates
+**Last Updates**
 
  - Added instagram search module
  - Fixed bing and google search
@@ -52,6 +52,7 @@ The best help to write a new module is by checking the current modules.
  - Write a complete metacrawler engine based on OSINT by using the current search engines
  - Add new sources for dns_search module
  - Compatible with Windows OS
+ - Web User Interface
 
 ## links
 ### [OWASP](https://owasp.org/www-project-maryam/)
