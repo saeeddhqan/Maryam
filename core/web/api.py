@@ -9,7 +9,7 @@ home = str(Path.home())
 
 resources = Blueprint('resources', __name__, url_prefix='/api')
 API = Api()
-api.init_app(resources)
+API.init_app(resources)
 
 class WorkspaceSummary(Resource):
     def post(self):
@@ -23,4 +23,4 @@ class WorkspaceSummary(Resource):
             data = {}
         return data
 
-api.add_resource(WorkspaceSummary, '/workspaces/')
+API.add_resource(WorkspaceSummary, '/workspaces/')

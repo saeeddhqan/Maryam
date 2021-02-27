@@ -30,7 +30,7 @@ def create_app():
 
     @app.route('/')
     def index():
-        return render_template('index.html', workspaces=recon._get_workspaces(),headings=headings)
+        return render_template('index.html', workspaces=base_obj._get_workspaces(),headings=headings)
 
     from core.web.api import resources
     app.register_blueprint(resources)
