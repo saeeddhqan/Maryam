@@ -139,7 +139,6 @@ class Framework(cmd.Cmd):
 	# ==================================================
 
 	def preloop(self):
-		self._init_history()
 		history = self._history_file.name
 		if readline and os.path.exists(history):
 			readline.read_history_file(history)
