@@ -8,7 +8,7 @@ cli.show_server_banner = lambda *x: None
 base_obj = base.Base()
 
 SWAGGER = {
-	'title': "Swagger",
+	'title': 'Swagger',
 	'info': {
 		'title': 'Maryam-Api',
 		'description': 'A RESTful API for Maryam'
@@ -19,7 +19,7 @@ SWAGGER = {
 WORKSPACE = base_obj.workspace.split('/')[-1]
 print((f" * Workspace initialized: {WORKSPACE}"))
 
-headings = ("Type", "Modules", "Targets", "Results")
+headings = ('Type', 'Modules', 'Targets', 'Results')
 def create_app():
 
     # setting the static_url_path to blank serves static files from the web root
@@ -30,7 +30,7 @@ def create_app():
 
     @app.route('/')
     def index():
-        return render_template('index.html', workspaces=base_obj._get_workspaces(),headings=headings)
+        return render_template('index.html', workspaces=base_obj._get_workspaces(), headings=headings)
 
     from core.web.api import resources
     app.register_blueprint(resources)
