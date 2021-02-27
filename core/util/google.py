@@ -51,7 +51,7 @@ class main:
 				req = self.framework.request(
 					url=url,
 					params=payload,
-					headers={"User-Agent":self.agent},
+					headers={"User-Agent": self.agent},
 					allow_redirects=False)
 			except:
 				self.framework.error('[GOOGLE] ConnectionError')
@@ -85,20 +85,20 @@ class main:
 			return
 
 		url = 'https://www.googleapis.com/customsearch/v1'
-		payload = {'alt': 'json', 'prettyPrint': 'false', 'key': self.google_api, 'cx': self.google_cx, 'q': query}
+		payload = {'alt': 'json', 'prettyPrint': 'false', 'key': self.google_api, 'cx': self.google_cx, 'q': self.q}
 		page = 0
 		self.verbose(f"[GOOGLEAPI] Searching Google API for: {self.q}")
 		while True:
 			self.framework.verbose(f'[GOOGLE] Searching in {page} page...', end='\r')
 			resp = self.framework.request(url, params=payload)
-			if resp.json() == None:
+			if resp.json() is None:
 				raise self.framework.FrameworkException(f"Invalid JSON response.{os.linesep}{resp.text}")
 			# add new results
 			if 'items' in resp.json():
 				self._links.extend(resp.json()['items'])
 			# increment and check the limit
 			page += 1
-			if limit == page:
+			if self.limit == page:
 				break
 			# check for more pages
 			if not 'nextPage' in resp.json()['queries']:

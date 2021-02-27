@@ -31,15 +31,15 @@ python3 maryam -e help
 ```
 [![asciicast](https://asciinema.org/a/382779.svg)](https://asciinema.org/a/382779?speed=2)
 
-## News
-**What is new?**
+## Updates
+**Last Updates**
 
+ - Added instagram search module
  - Fixed bing and google search
  - Deleted searchencrypt engine
  - Running modules with options(Without entering to program) 
  - Added youtube and quora search module
  - Added three new source rapiddns, certspotter and sublist3r for dns_search
- - Added dbrute, fbrute, tldbrute, entry_points and waf to footprint
 
 ## Contribution
 
@@ -52,6 +52,7 @@ The best help to write a new module is by checking the current modules.
  - Write a complete metacrawler engine based on OSINT by using the current search engines
  - Add new sources for dns_search module
  - Compatible with Windows OS
+ - Web User Interface
 
 ## links
 ### [OWASP](https://owasp.org/www-project-maryam/)

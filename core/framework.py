@@ -23,16 +23,17 @@ import os
 import re
 import subprocess
 import sys
-import signal
 import traceback
 import requests
-import shlex
+import readline
 from core.util import rand_uagent
 from io import StringIO
+
 
 class FrameworkException(Exception):
 	def __init__(self, message):
 		Exception.__init__(self, message)
+
 
 class Colors(object):
 	N = '\033[m'  # native
@@ -122,6 +123,7 @@ class Framework(cmd.Cmd):
 	_summary_counts = {}
 	Colors = Colors
 	_history_file = ''
+
 	def __init__(self, params):
 		cmd.Cmd.__init__(self)
 		self._modulename = params
@@ -135,6 +137,11 @@ class Framework(cmd.Cmd):
 	# ==================================================
 	# CMD OVERRIDE METHODS
 	# ==================================================
+
+	def preloop(self):
+		history = self._history_file.name
+		if readline and os.path.exists(history):
+			readline.read_history_file(history)
 
 	def default(self, line):
 		self.do_shell(line)
@@ -162,7 +169,7 @@ class Framework(cmd.Cmd):
 
 	def onecmd(self, line):
 		line = self.to_unicode(line)
-		# Log commant into the history file if 'history' is true
+		# Log command into the history file if 'history' is true
 		if self._global_options['history']:
 			self._log_commands(line)
 		cmd, arg, line = self.parseline(line)
