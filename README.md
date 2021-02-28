@@ -34,12 +34,13 @@ python3 maryam -e help
 ## Updates
 **Last Updates**
 
+ - Deleted godork module(Due to redundancy with the google search module)
+ - Added stackoverflow search module
  - Added instagram search module
  - Fixed bing and google search
  - Deleted searchencrypt engine
  - Running modules with options(Without entering to program) 
- - Added youtube and quora search module
- - Added three new source rapiddns, certspotter and sublist3r for dns_search
+
 
 ## Contribution
 
