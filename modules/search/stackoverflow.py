@@ -18,13 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from core.module import BaseModule
 import re
-import requests
 
 
 class Module(BaseModule):
 
 	meta = {
-		'name': 'Stackoverflow Search',
+		'name': 'StackOverFlow Search',
 		'author': 'Sanjiban Sengupta',
 		'version': '0.1',
 		'description': 'Search your query in the stackoverflow.com and show the results.',
@@ -35,9 +34,9 @@ class Module(BaseModule):
 			('count', 50, False,
 			 'Number of results per page(min=10, max=100, default=50)', '-c', 'store'),
 			('engine', 'google', False, 'Engine names for search(default=google)', '-e', 'store'),
-			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
+			('output', False, False, 'Save output to the workspace', '--output', 'store_true'),
 		),
-		'examples': ('stackoverflow -q <QUERY> -l 15 --output',)
+		'examples': ('stackoverflow -q "joining dicts py3" -l 15 --output',)
 	}
 
 	def module_run(self):
@@ -60,8 +59,8 @@ class Module(BaseModule):
 			pages += run.pages
 			for item in run.links_with_title:
 				link, title = item
-				self.verbose(f'\t{title}', 'C')
-				self.verbose(f'\t\t{link}')
+				self.verbose(f"\t{title}", 'C')
+				self.verbose(f"\t\t{link}")
 				self.verbose('')
 				links.append(link)
 
@@ -71,7 +70,7 @@ class Module(BaseModule):
 			links = run.links
 
 		if 'yippy' in engine:
-			run = self.yippy(f'www.stackoverflow.com {query}')
+			run = self.yippy(f"www.stackoverflow.com {query}")
 			run.run_crawl()
 			links = run.links
 
@@ -99,10 +98,10 @@ class Module(BaseModule):
 			self.alert('raw results')
 			for link in links:
 				if 'www.stackoverflow.com' in link and 'https://stackoverflow.com/users/' not in link:
-					title = link.replace('https://stackoverflow.com/users/', '').replace('/', '')
+					title = re.sub(r'https?://(www\.)?stackoverflow.com/users/', '', link).replace('/', '')
 					title = title.replace('-', ' ')
-					title = requests.utils.unquote(title)
-					titles.append(title)
+					title = self.urlib(title).unquote
+					titles.append(title.title())
 					self.output(f'\t{title} \n\t\t{link}')
 			
 			self.alert('tags')
@@ -113,6 +112,6 @@ class Module(BaseModule):
 						tags.append(link)
 						self.output(f"\t#{link}", 'G')
 
-		self.save_gather({'links': links, 'title': titles, 'profiles': profiles,'tags':tags},
+		self.save_gather({'links': links, 'titles': titles, 'profiles': profiles, 'tags': tags},
 			'search/stackoverflow', query, output=self.options.get('output'))
 
