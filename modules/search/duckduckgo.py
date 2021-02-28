@@ -39,7 +39,7 @@ class Module(BaseModule):
 		query = self.options['query']
 		limit = self.options['limit']
 		count = self.options['count']
-		run = self.google(query, limit, count)
+		run = self.duckduckgo(query, limit, count)
 		run.run_crawl()
 		links = run.links
 

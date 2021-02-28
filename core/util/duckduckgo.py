@@ -20,7 +20,7 @@ import os
 
 class main:
 
-	def __init__(self, framework, q, limit=1, count=10, google_api=None, google_cx=None):
+	def __init__(self, framework, q, limit=1, count=10):
 		""" google.com search engine
 
 			framework  : core attribute
@@ -34,76 +34,29 @@ class main:
 		self.agent = framework.rand_uagent().lynx[7]
 		self._pages = ''
 		self.limit = limit+1
-		self.num = count
-		self.google_api = google_api
-		self.google_cx = google_cx
 		self._links = []
 
 	def run_crawl(self):
-		page = 1
-		url = 'https://www.google.com/search'
-		set_page = lambda x: (x - 1) * self.num
-		payload = {'num' : self.num, 'start' : set_page(page), 'ie' : 'utf-8', 'oe' : 'utf-8', 'q' : self.q, 'filter': '0'}
-		max_attempt = 0
-		while True:
-			self.framework.verbose(f'[GOOGLE] Searching in {page} page...', end='\r')
-			try:
-				req = self.framework.request(
+		#url = f"https://api.duckduckgo.com/?q={self.q}&ia=web"
+		url =f"https://html.duckduckgo.com/html?q={self.q}&t=h_&ia=web"
+		#url = f"https://www.google.com/search?q={self.q}"
+		print(self.q)
+		self.framework.verbose(f'[DUCKDUCKGO] Processing your request...', end='\r')
+		try:
+			req = self.framework.request(
 					url=url,
-					params=payload,
-					headers={"User-Agent":self.agent},
-					allow_redirects=False)
-			except:
-				self.framework.error('[GOOGLE] ConnectionError')
-				return
-
-			if req.status_code == 503:
-				req = self.framework.error('[GOOGLE] Google CAPTCHA triggered.')
-				break
-
-			if req.status_code in [301, 302]:
-				redirect = req.headers['location']
-				req = self.framework.request(url=redirect, allow_redirects=False)
-
-			self._pages += req.text
-			page += 1
-			payload['start'] = set_page(page)
-			if page >= self.limit:
-				break
-		links = self.framework.page_parse(self._pages).findall(r'a href="([^"]+)"')
-
-		for link in links:
-			cond1 = 'https://support.google.com/' not in link.lower()
-			cond2 = 'https://www.google.com/webhp' not in link.lower()
-			cond3 = "://" in link
-			if cond1 and cond2 and cond3:
-				self._links.append(self.framework.urlib(link).unquote_plus)
-
-	def api_run_crawl(self):
-		if not (self.google_api and self.google_cx):
-			self.framework.error('[GOOGLEAPI] google api needs google_api and google_cx variable')
+					headers={"User-Agent":self.agent})
+		except:
+			self.framework.error('[DUCKDUCKGO] ConnectionError')
 			return
+		print(req.text)
+		links = self.framework.page_parse(req.text).findall(r'href="([^"]+)"')
+		#print(links)
 
-		url = 'https://www.googleapis.com/customsearch/v1'
-		payload = {'alt': 'json', 'prettyPrint': 'false', 'key': self.google_api, 'cx': self.google_cx, 'q': query}
-		page = 0
-		self.verbose(f"[GOOGLEAPI] Searching Google API for: {self.q}")
-		while True:
-			self.framework.verbose(f'[GOOGLE] Searching in {page} page...', end='\r')
-			resp = self.framework.request(url, params=payload)
-			if resp.json() == None:
-				raise self.framework.FrameworkException(f"Invalid JSON response.{os.linesep}{resp.text}")
-			# add new results
-			if 'items' in resp.json():
-				self._links.extend(resp.json()['items'])
-			# increment and check the limit
-			page += 1
-			if limit == page:
-				break
-			# check for more pages
-			if not 'nextPage' in resp.json()['queries']:
-				break
-			payload['start'] = resp.json()['queries']['nextPage'][0]['startIndex']
+		for link in set(links):
+			self._links.append(self.framework.urlib(link).unquote_plus)
+
+
 
 	@property
 	def pages(self):
