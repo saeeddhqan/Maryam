@@ -2,7 +2,41 @@ $(document).ready(function(e) {
     var workspace = document.getElementById("workspace").value;
     getSummary(workspace);
  });
-var summary;
+
+
+//Notification
+(async () => {
+    // create and show the notification
+    const showNotification = () => {
+        // create a new notification
+        const notification = new Notification('Instruction', {
+            body: 'To save outputs of modules use --output after command',
+        });
+
+        // close the notification after 5 seconds
+        setTimeout(() => {
+            notification.close();
+        }, 5 * 1000);
+    }
+    let granted = false;
+
+	if (Notification.permission === 'granted') {
+	    granted = true;
+	} else if (Notification.permission !== 'denied') {
+	    let permission = await Notification.requestPermission();
+	    granted = permission === 'granted' ? true : false;
+	}
+
+	// show notification or the error message 
+	granted ? showNotification() : showError();
+
+})();
+
+
+
+
+//Summary
+var summary; // saving data from workspace in summary globally
 
 function outputData(module){
 	document.getElementById(`row-${module}`).deleteCell(-1);
@@ -10,7 +44,7 @@ function outputData(module){
 	var selected = document.getElementById(`target-${module}`).value;
 	var output = document.getElementById(`row-${module}`).insertCell(-1);
 	output.className = "table__data";
-	output.innerHTML = `<ul class="output" id = "output-${module}-${selected}"></ul>`
+	output.innerHTML = `<ul class="output" id = "output-${module}-${selected}" onclick="this.style.height==='100%' ? this.style.height='40px' : this.style.height='100%'"><a onclick="this.innerText ==='▼' ? this.innerText='▲' : this.innerText='▼'">▼</a></ul>`
 	var expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
 	var regex = new RegExp(expression);
 	for(result in data[module][selected]){

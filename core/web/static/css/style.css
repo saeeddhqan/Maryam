@@ -13,36 +13,40 @@ nav{
 }
 
 .table{
-	border: 1px solid black;
+	border: 1px solid grey;
 	align-self: center;
 	border-spacing: 0;
 	margin: 1rem;
-	background-color: #f5f5f5; 
+	background-color: #f5f5f5;
 }
 .table__row:nth-child(even) {
 	background-color: #e5e5e5;
-	border: 1px solid black;
+	border: 1px solid grey;
 }
 
 .table__header{
 	text-align: left;
-	border: 1px solid black;
+	border: 1px solid grey;
 }
 
 .table__cell{
 	padding: 8px;
-	border: 1px solid black;
+	border: 1px solid grey;
 }
 
 .table__data{
 	padding: 10px;
-	border: 1px solid black;
+	border: 1px solid grey;
 }
 
 .output{
 	flex-wrap: wrap;
 	display: inline-flex;
 	padding: 5px;
+	table-layout: fixed;
+  	width: 100%;
+  	overflow: hidden;
+  	height: 40px;
 }
 ul{
 	flex-wrap: wrap;
