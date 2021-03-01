@@ -74,16 +74,16 @@ class Module(BaseModule):
 		usernames = self.page_parse(pages).get_networks
 		self.alert('People')
 		for _id in list(set(usernames.get('Facebook'))):
-			if isinstance(_id, tuple):
+			if isinstance(_id, tuple) or isinstance(_d, list):
 				_id = _id[0]
 				_id = f"@{_id[_id.find('/')+1:]}"
-				people.append(_id)
-				self.output(f'\t{_id}', 'G')
 			else:
 				_id = f"@{_id[_id.find('/')+1:]}"
+			if _id not in people:
 				people.append(_id)
 				self.output(f'\t{_id}', 'G')
 
+		links = list(set(links))
 		if links == []:
 			self.output('Without result')
 		else:
