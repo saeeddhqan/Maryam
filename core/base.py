@@ -121,7 +121,7 @@ class Base(framework.Framework):
 	def _check_version(self):
 		if self._global_options.get('update_check'):
 			self.debug('Checking version...')
-			pattern = r"__VERSION__ = '(\d+\.\d+\.\d+[^']*)'"
+			pattern = r"__VERSION__ = '(\d+\.\d+[^']*)'"
 			remote = 0
 			local = 0
 			try:

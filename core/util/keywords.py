@@ -45,8 +45,8 @@ class main:
 
 	def run_crawl(self):
 		keys = {}
-		for source in ('yahoo', 'google', 'bing', 'millionshort',\
-						'zapmeta', 'searx', 'peekier', 'gigablast'):
+		for source in ('yahoo', 'google', 'bing', 'millionshort', \
+						 'zapmeta', 'searx', 'peekier', 'gigablast'):
 			attr = getattr(self, '_'+source)
 			if isinstance(attr, dict):
 				url = attr['url']
@@ -69,8 +69,8 @@ class main:
 		keys['google'] = [re.sub(r"<b>|<\\/b>|</b>", '', x[0]) for x in google]
 		keys['bing'] = re.findall(r'<span class="sa_tm_text">([^<]+)</span>', re.sub(r'<.?strong>', '', keys['bing'].text))
 		keys['millionshort'] = keys['millionshort'].json().get('suggestions', [])
-		keys['zapmeta'] = [x[0] for x in keys['zapmeta'].json()]
-		keys['searx'] = keys['searx'].json()
+		keys['zapmeta'] = [x[0] for x in keys['zapmeta']]
+		keys['searx'] = [i[0] for i in keys['searx'].json()]
 		keys['peekier'] = keys['peekier'].json()['results']
 		keys['gigablast'] = re.findall(r'" >([^\n]+?)</td', keys['gigablast'].text)
 		self._keys_category = keys
@@ -84,4 +84,4 @@ class main:
 
 	@property
 	def keys(self):
-		return list(set(self._keys))
+		return list((self._keys))
