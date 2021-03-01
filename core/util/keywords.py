@@ -90,5 +90,4 @@ class main:
 
 	@property
 	def keys(self):
-		print(self._keys)
 		return list(set(self._keys))
