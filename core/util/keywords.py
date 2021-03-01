@@ -38,7 +38,7 @@ class main:
 		self._google = 'https://www.google.com/complete/search?q=<Q>&cp=&client=psy-ab&xssi=t&gs_ri=gws-wiz&hl=&authuser=0&psi='
 		self._bing = 'https://www.bing.com/AS/Suggestions?pt=&mkt=de-de&qry=<Q>&cp=0&css=0&cvid=1'
 		self._millionshort = 'https://millionshort.com/api/suggestions?q=<Q>'
-		self._zapmeta = 'https://www.zapmeta.com/jx?q=<Q>&limit=100&hl=1&r=0'
+		self._zapmeta = 'https://www.zapmeta.com/suggest?q=<Q>'
 		self._searx = 'https://searx.be/autocompleter?q=<Q>'
 		self._peekier = {'url': 'https://search.peekier.com/suggestions', 'payload': {'q': '<Q>', 'region': ''}, 'method': 'POST'}
 		self._gigablast = 'http://gigablast.com/qs?rwp=0&lang=en&q=<Q>'
@@ -60,17 +60,23 @@ class main:
 			try:
 				req = self.framework.request(url, method=method, data=data)
 			except Exception as e:
-				self.framework.error('Keywords connection error!')
+				self.framework.error('[KEYWORDS] connection error!')
 				self.framework.print_exception()
-			keys[source] = req or ''
+			keys[source] = req
 
 		keys['yahoo'] = [x['k'] for x in keys['yahoo'].json().get('r', [])]
-		google = json.loads(f"{keys['google'].text[5:]}")[0]
-		keys['google'] = [re.sub(r"<b>|<\\/b>|</b>", '', x[0]) for x in google]
+		try:
+			google = json.loads(f"{keys['google'].text[5:]}")[0]
+			keys['google'] = [re.sub(r"<b>|<\\/b>|</b>", '', x[0]) for x in google]
+		except:
+			keys['google'] = []
 		keys['bing'] = re.findall(r'<span class="sa_tm_text">([^<]+)</span>', re.sub(r'<.?strong>', '', keys['bing'].text))
-		keys['millionshort'] = keys['millionshort'].json().get('suggestions', [])
-		keys['zapmeta'] = [x[0] for x in keys['zapmeta'].json()]
-		keys['searx'] = keys['searx'].json()
+		keys['zapmeta'] = [x[0] for x in keys['zapmeta'].json()] if hasattr(keys['zapmeta'], 'json') else []
+		keys['millionshort'] = keys['millionshort'].json().get('suggestions', []) if hasattr(keys['millionshort'], 'json') else []
+		try:
+			keys['searx'] = keys['searx'].json()[self.q]
+		except:
+			keys['searx'] = []
 		keys['peekier'] = keys['peekier'].json()['results']
 		keys['gigablast'] = re.findall(r'" >([^\n]+?)</td', keys['gigablast'].text)
 		self._keys_category = keys
