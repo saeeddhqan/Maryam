@@ -58,7 +58,7 @@ class Module(BaseModule):
 		print('')
 
 	def default(self, hostname, item, method, header, content, status_codes, not_status_codes):
-		if type(item) is tuple:
+		if isinstance(item, tuple):
 			content = [item[1]]
 			urjoin = self.urlib(hostname).join(item[0])
 		else:

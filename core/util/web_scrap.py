@@ -64,7 +64,7 @@ class main:
 
 	# If key not in links append it
 	def rept(self, key, _list):
-		if type(key) is list:
+		if isinstance(key, list):
 			for i in key:
 				i = str(i)
 				if i not in _list:

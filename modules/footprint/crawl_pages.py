@@ -165,10 +165,10 @@ class Module(BaseModule):
 			if lst != []:
 				self.alert(net)
 				for link in lst:
-					if type(link) is tuple:
+					if isinstance(link, (tuple, list)):
 						link = list(link)
 						for mic in link:
-							if len(mic) > 2 and mic != '':
+							if len(mic) > 2:
 								users.append(mic)
 								self.output(f'\t{str(mic)}', 'G')
 					else:
