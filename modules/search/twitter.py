@@ -73,15 +73,14 @@ class Module(BaseModule):
 		usernames = self.page_parse(pages).get_networks
 		self.alert('People')
 		for _id in list(set(usernames.get('Twitter'))):
-			if isinstance(_id, tuple) or isinstance(_id, list):
+			if isinstance(_id, (tuple, list)):
 				_id = _id[0]
-				_id = f"@{_id[_id.find('/')+1:]}"
-				people.append(_id)
-				self.output(f'\t{_id}', 'G')
+				_id = f"@{_id[_id.find('/') + 1:]}"
 			else:
-				_id = f"@{_id[_id.find('/')+1:]}"
-				people.append(_id)
-				self.output(f'\t{_id}', 'G')
+				_id = f"@{_id[_id.find('/') + 1:]}"
+			people.append(_id)
+			self.output(f"\t{_id}", 'G')
+
 		links = list(set(links))
 		if links == []:
 			self.output('Without result')
