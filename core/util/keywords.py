@@ -48,7 +48,7 @@ class main:
 		for source in ('yahoo', 'google', 'bing', 'millionshort',\
 						'zapmeta', 'searx', 'peekier', 'gigablast'):
 			attr = getattr(self, '_'+source)
-			if type(attr) is dict:
+			if isinstance(attr, dict):
 				url = attr['url']
 				method = 'POST'
 				data = attr.get('payload', {'q':'<Q>'})

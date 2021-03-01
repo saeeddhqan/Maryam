@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/saeeddhqan/maryam.svg?branch=master)](https://travis-ci.com/saeeddhqan/maryam)
-![Version 1.4.9](https://img.shields.io/badge/Version-1.4.9-green.svg)
+![Version 1.5](https://img.shields.io/badge/Version-1.5-green.svg)
 ![GPLv3 License](https://img.shields.io/badge/License-GPLv3-green.svg)
 ![Python 3.8.x](https://img.shields.io/badge/Python-3.8.x-green.svg)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/40d81c48b3444ee78ffc6c5c8639134c)](https://www.codacy.com/manual/saeeddhqan/Maryam?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=saeeddhqan/Maryam&amp;utm_campaign=Badge_Grade)
@@ -34,12 +34,13 @@ python3 maryam -e help
 ## Updates
 **Last Updates**
 
+ - Deleted godork module(Due to redundancy with the google search module)
+ - Added stackoverflow search module
  - Added instagram search module
  - Fixed bing and google search
  - Deleted searchencrypt engine
  - Running modules with options(Without entering to program) 
- - Added youtube and quora search module
- - Added three new source rapiddns, certspotter and sublist3r for dns_search
+
 
 ## Contribution
 

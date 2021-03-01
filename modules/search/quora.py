@@ -64,13 +64,14 @@ class Module(BaseModule):
 		if 'google' in engine:
 			run = self.google(q)
 			run.run_crawl()
-			links = run.links
+			links += run.links
 
 		if 'yippy' in engine:
 			run = self.yippy(f'www.quora.com {query}')
 			run.run_crawl()
-			links = run.links
+			links += run.links
 
+		links = set(links)
 		
 		if links == []:
 		 	self.output('Without result')
@@ -90,7 +91,6 @@ class Module(BaseModule):
 					title =requests.utils.unquote(title)
 					titles.append(title)
 					self.output(f'\t{title} \n\t\t{link}')
-				
 
-		self.save_gather({'links': links, 'title': titles, 'profiles': profiles},
+		self.save_gather({'links': links, 'titles': titles, 'profiles': profiles},
 			'search/quora', query, output=self.options.get('output'))

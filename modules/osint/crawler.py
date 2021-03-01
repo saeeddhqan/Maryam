@@ -59,7 +59,7 @@ class Module(BaseModule):
 			if lst != []:
 				self.alert(net)
 				for link in lst:
-					if type(link) is tuple:
+					if isinstance(link, (tuple, list)):
 						link = list(link)
 						for mic in link:
 							if len(mic) > 4 and mic != '':

@@ -82,7 +82,7 @@ class Module(BaseModule):
 			if lst != []:
 				self.alert(net)
 				for link in lst:
-					if type(link) is list:
+					if isinstance(link, list):
 						link = list(link).pop(link.index(''))
 						for mic in link:
 							if len(mic) > 2:

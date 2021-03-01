@@ -21,9 +21,9 @@ class main:
 		""" bing.com search engine
 			
 			framework : core attribute
-			q 		  : query for search
-			limit	  : count of pages
-			count	  : count of links
+			q 		  : the query for search
+			limit	  : the number of pages
+			count	  : the number of links
 		"""
 		self.framework = framework
 		self.q = self.framework.urlib(q).quote
@@ -73,14 +73,15 @@ class main:
 	def links(self):
 		parser = self.framework.page_parse(self._pages)
 		parser.pclean
-		l = parser.findall(r'<a href="([^"]+)" h="ID=SERP,[\d\.]+">')
+		l = parser.findall(r'<a target="_blank" href="([^"]+)" h="ID=SERP,[\d\.]+">')
 		l = [x for x in l if "http://www.microsofttranslator.com" not in x]
+		return l
 
 	@property
 	def links_with_title(self):
 		parser = self.framework.page_parse(self._pages)
 		parser.pclean
-		links = parser.findall(r'<a href="([^"]+)" h="ID=SERP,[\d\.]+">([^<]+){1,150}</a>')
+		links = parser.findall(r'<a target="_blank" href="([^"]+)" h="ID=SERP,[\d\.]+">([^<]+)</a>')
 		links = [x for x in links if x[0].startswith('http') and "http://www.microsofttranslator.com" not in x[0] and "Translate this page" not in x[1]]
 		return links
 

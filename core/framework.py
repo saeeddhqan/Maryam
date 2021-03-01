@@ -25,7 +25,6 @@ import subprocess
 import sys
 import traceback
 import requests
-import readline
 from core.util import rand_uagent
 from io import StringIO
 
@@ -138,11 +137,6 @@ class Framework(cmd.Cmd):
 	# CMD OVERRIDE METHODS
 	# ==================================================
 
-	def preloop(self):
-		history = self._history_file.name
-		if readline and os.path.exists(history):
-			readline.read_history_file(history)
-
 	def default(self, line):
 		self.do_shell(line)
 
@@ -215,7 +209,7 @@ class Framework(cmd.Cmd):
 
 	def to_unicode_str(self, obj, encoding='utf-8'):
 		# converts non-stringish types to unicode
-		if type(obj) not in (str, bytes):
+		if not isinstance(obj, (str, bytes)):
 			obj = str(obj)
 		obj = self.to_unicode(obj, encoding)
 		return obj
@@ -507,7 +501,7 @@ class Framework(cmd.Cmd):
 		history = os.path.join(self.workspace, 'history.dat')
 		# initialize history file
 		if not os.path.exists(history):
-			self._is_readable(history,'w').close()
+			self._is_readable(history, 'w').close()
 		if reborn:
 			mode = 'w'
 		elif write:
@@ -548,7 +542,7 @@ class Framework(cmd.Cmd):
 	def _validate_options(self):
 		for option in self.options:
 			# if value type is bool or int, then we know the options is set
-			if not type(self.options[option]) in [bool, int]:
+			if not isinstance(self.options[option], (bool, int)):
 				if self.options.required[option] is True and not self.options[option]:
 					raise FrameworkException(
 						f"Value required for the '{option.upper()}' option.")
@@ -1173,8 +1167,10 @@ class Framework(cmd.Cmd):
 	# COMPLETE METHODS
 	# ==================================================
 
-	def complete_load(self, text, *ignored):
-		return [x for x in Framework._loaded_modules if x.startswith(text)]
+	def complete_load(self, text, line, *ignored):
+		args = line.partition(' ')
+		offs = len(args[2]) - len(text)
+		return [x[offs:] for x in Framework._loaded_modules if x.startswith(args[2])]
 
 	complete_use = complete_load
 
@@ -1193,8 +1189,9 @@ class Framework(cmd.Cmd):
 		args = line.split()
 		if len(args) > 1 and args[1].lower() == 'modules':
 			if len(args) > 2:
+				offs = len(args[2]) - len(text)
 				return [
-					x for x in Framework._loaded_modules if x.startswith(
+					x[offs:] for x in Framework._loaded_modules if x.startswith(
 						args[2])]
 			else:
 				return [x for x in Framework._loaded_modules]
