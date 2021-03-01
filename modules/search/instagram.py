@@ -23,14 +23,14 @@ class Module(BaseModule):
 	meta = {
 		'name': 'Instagram Search',
 		'author': 'Aman Singh',
-		'version': '0.1',
+		'version': '0.2',
 		'description': 'Search your query in the Instagram and show the results.',
-		'sources': ('google','carrot2','bing'),
+		'sources': ('google', 'carrot2', 'bing', 'yippy'),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
 			('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store'),
 			('count', 50, False, 'Number of links per page(min=10, max=100, default=50)', '-c', 'store'),
-			('engine', 'google', False, 'Engine names for search(default=google)', '-e', 'store'),
+			('engine', 'google,carrot2', False, 'Engine names for search(default=google)', '-e', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
         'examples': ('instagram -q <QUERY> -l 15 --output',)
@@ -41,27 +41,31 @@ class Module(BaseModule):
 		limit = self.options['limit']
 		count = self.options['count']
 		engine = self.options['engine'].split(',')
-		q = f"site:www.instagram.com inurl:{query}"
-		run = self.google(q, limit, count)
+		google_q = f"site:www.instagram.com inurl:{query}"
+		bing_q = f"site:www.instagram.com {query}"
+		yippy_q = f"www.instagram.com {query}"
+
+		run = self.google(google_q, limit, count)
 		run.run_crawl()
 		links = run.links
 		people = []
 		hashtags = []
+		posts = []
 		pages = run.pages
 
 		if 'bing' in engine:
-			run = self.bing(q, limit, count)
+			run = self.bing(bing_q, limit, count)
 			run.run_crawl()
 			pages += run.pages
 			for item in run.links_with_title:
 				link,title = item
-				self.verbose(f'\t{title}', 'C')
-				self.verbose(f'\t\t{link}')
+				self.verbose(f"\t{title}", 'C')
+				self.verbose(f"\t\t{link}")
 				self.verbose('')
 				links.append(link)
 
 		if 'carrot2' in engine:
-			run = self.carrot2(q)
+			run = self.carrot2(google_q)
 			run.run_crawl()
 			pages += run.pages
 			for item in run.json_links:
@@ -70,32 +74,45 @@ class Module(BaseModule):
 				self.verbose(f"\t{link}")
 				links.append(link)
 
+		if 'yippy' in engine:
+			run = self.yippy(yippy_q)
+			run.run_crawl()
+			links += run.links
+
 		usernames = self.page_parse(pages).get_networks
 		self.alert('People')
 		for _id in list(set(usernames.get('Instagram'))):
-			if isinstance(_id, tuple):
+			if isinstance(_id, tuple) or isinstance(_id, list):
 				_id = _id[0]
+				if _id[-2:] == "/p" or _id[-8:] == '/explore':
+					continue
 				_id = f"@{_id[_id.find('/')+1:]}"
-				people.append(_id)
-				self.output(f'\t{_id}', 'G')
 			else:
+				if _id[-2:] == "/p" or _id[-8:] == '/explore':
+					continue
 				_id = f"@{_id[_id.find('/')+1:]}"
+
+			if _id not in people:
 				people.append(_id)
 				self.output(f'\t{_id}', 'G')
 
 		if links == []:
 			self.output('Without result')
 		else:
+			links = list(set(links))
 			self.alert('Hashtags')
 			for link in links:
 				if '/explore/tags/' in link:
-					link = link.replace('https://www.instagram.com/explore/tags/', '').replace('/', '')
-					if re.search(r'^[\w\d_\-\/]+$', link):
-						hashtags.append(link)
-						self.output(f"\t#{link}", 'G')
+					tag = link.replace('https://www.instagram.com/explore/tags/', '').replace('/', '')
+					if re.search(r'^[\w\d_\-\/]+$', tag):
+						hashtags.append(tag)
+						self.output(f"\t#{tag}", 'G')
 
-			self.alert('Links')
+			self.alert('Posts')
 			for link in links:
-				self.output(f'\t{link}')
+				if re.search(r'instagram\.com/p/[\w_\-0-9]+/', link):
+					post = link.replace('https://www.', '')
+					posts.append(post)
+					self.output(f'\t{post}', 'G')
 
-		self.save_gather({'links': links, 'people': people, 'hashtags': hashtags}, 'search/instagram', query, output=self.options.get('output'))
+		self.save_gather({'posts': posts, 'people': people, 'hashtags': hashtags}, 'search/instagram', query, output=self.options.get('output'))
