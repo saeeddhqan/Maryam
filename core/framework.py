@@ -215,7 +215,7 @@ class Framework(cmd.Cmd):
 
 	def to_unicode_str(self, obj, encoding='utf-8'):
 		# converts non-stringish types to unicode
-		if type(obj) not in (str, bytes):
+		if not isinstance(obj, (str, bytes)):
 			obj = str(obj)
 		obj = self.to_unicode(obj, encoding)
 		return obj
@@ -548,7 +548,7 @@ class Framework(cmd.Cmd):
 	def _validate_options(self):
 		for option in self.options:
 			# if value type is bool or int, then we know the options is set
-			if not type(self.options[option]) in [bool, int]:
+			if not isinstance(self.options[option], (bool, int)):
 				if self.options.required[option] is True and not self.options[option]:
 					raise FrameworkException(
 						f"Value required for the '{option.upper()}' option.")

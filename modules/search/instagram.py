@@ -73,7 +73,7 @@ class Module(BaseModule):
 		usernames = self.page_parse(pages).get_networks
 		self.alert('People')
 		for _id in list(set(usernames.get('Instagram'))):
-			if type(_id) is tuple:
+			if isinstance(_id, tuple):
 				_id = _id[0]
 				_id = f"@{_id[_id.find('/')+1:]}"
 				people.append(_id)
