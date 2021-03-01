@@ -82,7 +82,7 @@ class Module(BaseModule):
 		usernames = self.page_parse(pages).get_networks
 		self.alert('People')
 		for _id in list(set(usernames.get('Instagram'))):
-			if isinstance(_id, tuple) or isinstance(_id, list):
+			if isinstance(_id, (tuple, list)):
 				_id = _id[0]
 				if _id[-2:] == "/p" or _id[-8:] == '/explore':
 					continue
@@ -96,10 +96,10 @@ class Module(BaseModule):
 				people.append(_id)
 				self.output(f'\t{_id}', 'G')
 
+		links = list(set(links))
 		if links == []:
 			self.output('Without result')
 		else:
-			links = list(set(links))
 			self.alert('Hashtags')
 			for link in links:
 				if '/explore/tags/' in link:
