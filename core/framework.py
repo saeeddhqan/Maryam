@@ -139,9 +139,10 @@ class Framework(cmd.Cmd):
 	# ==================================================
 
 	def preloop(self):
-		history = self._history_file.name
-		if readline and os.path.exists(history):
-			readline.read_history_file(history)
+		if hasattr(self._history_file, "name"):
+			history = self._history_file.name
+			if readline and os.path.exists(history):
+				readline.read_history_file(history)
 
 	def default(self, line):
 		self.do_shell(line)
