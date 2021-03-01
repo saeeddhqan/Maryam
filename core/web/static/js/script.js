@@ -44,7 +44,7 @@ function outputData(module){
 	var selected = document.getElementById(`target-${module}`).value;
 	var output = document.getElementById(`row-${module}`).insertCell(-1);
 	output.className = "table__data";
-	output.innerHTML = `<ul class="output" id = "output-${module}-${selected}" onclick="this.style.height==='100%' ? this.style.height='40px' : this.style.height='100%'"><a onclick="this.innerText ==='▼' ? this.innerText='▲' : this.innerText='▼'">▼</a></ul>`
+	output.innerHTML = `<ul class="output" id = "output-${module}-${selected}" onclick="this.style.height==='100%' ? this.style.height='40px' : this.style.height='100%'"><a data-toggle="tooltip" data-placement="bottom" title="Expand" onclick="this.innerText ==='▼' ? this.innerText='▲' : this.innerText='▼'">▼</a></ul>`
 	var expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
 	var regex = new RegExp(expression);
 	for(result in data[module][selected]){
