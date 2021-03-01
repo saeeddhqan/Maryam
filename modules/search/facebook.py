@@ -74,7 +74,7 @@ class Module(BaseModule):
 		usernames = self.page_parse(pages).get_networks
 		self.alert('People')
 		for _id in list(set(usernames.get('Facebook'))):
-			if isinstance(_id, tuple) or isinstance(_d, list):
+			if isinstance(_id, (tuple, list)):
 				_id = _id[0]
 				_id = f"@{_id[_id.find('/')+1:]}"
 			else:
