@@ -1174,12 +1174,10 @@ class Framework(cmd.Cmd):
 	# COMPLETE METHODS
 	# ==================================================
 
-	def complete_load(self, text, line, begidx, endidx, *ignored):
-		# return [x for x in Framework._loaded_modules if x.startswith(text)]
-		mline = line.partition(' ')[2]
-		offs = len(mline) - len(text)
-		return [x[offs:] for x in Framework._loaded_modules if x.startswith(mline)]
-
+	def complete_load(self, text, line, *ignored):
+		args = line.partition(' ')
+		offs = len(args[2]) - len(text)
+		return [x[offs:] for x in Framework._loaded_modules if x.startswith(args[2])]
 
 	complete_use = complete_load
 
