@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 # Based on the Recon-ng core(https://github.com/lanmaster53/recon-ng)
 
-__version__ = "v1.5"
+__version__ = "v1.5.0"
 import argparse
 import errno
 import imp
@@ -121,7 +121,7 @@ class Base(framework.Framework):
 	def _check_version(self):
 		if self._global_options.get('update_check'):
 			self.debug('Checking version...')
-			pattern = r"__VERSION__ = '(\d+\.\d+[^']*)'"
+			pattern = r"__VERSION__ = '(\d+\.\d+\.\d+[^']*)'"
 			remote = 0
 			local = 0
 			try:
