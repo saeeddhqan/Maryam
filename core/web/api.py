@@ -17,7 +17,7 @@ class WorkspaceSummary(Resource):
         current_app.config['WORKSPACE'] = workspace
         try:
             filename = os.path.join(home, '.maryam/workspaces/', workspace, 'gather.dat')
-            file = open(filename , 'r')
+            file = open(filename)
             data = json.loads(file.read())
         except:
             data = {}
