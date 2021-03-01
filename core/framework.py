@@ -25,7 +25,6 @@ import subprocess
 import sys
 import traceback
 import requests
-import readline
 from core.util import rand_uagent
 from io import StringIO
 
@@ -137,12 +136,6 @@ class Framework(cmd.Cmd):
 	# ==================================================
 	# CMD OVERRIDE METHODS
 	# ==================================================
-
-	def preloop(self):
-		if hasattr(self._history_file, "name"):
-			history = self._history_file.name
-			if readline and os.path.exists(history):
-				readline.read_history_file(history)
 
 	def default(self, line):
 		self.do_shell(line)
@@ -508,7 +501,7 @@ class Framework(cmd.Cmd):
 		history = os.path.join(self.workspace, 'history.dat')
 		# initialize history file
 		if not os.path.exists(history):
-			self._is_readable(history,'w').close()
+			self._is_readable(history, 'w').close()
 		if reborn:
 			mode = 'w'
 		elif write:
