@@ -53,7 +53,7 @@ class Module(BaseModule):
 			run.run_crawl()
 			pages += run.pages 
 			for item in run.links_with_title:
-				link,title = item
+				link, title = item
 				self.verbose(f'{title}', 'C')
 				self.verbose(f'\t{link}')
 				links.append(link)
@@ -75,7 +75,7 @@ class Module(BaseModule):
 			if lst != []:
 				self.alert(net)
 				for link in lst:
-					if isinstance(link, tuple):
+					if isinstance(link, tuple) or isinstance(link, list):
 						link = list(link).pop(link.index(''))
 						for mic in link:
 							if len(mic) > 2:
@@ -91,11 +91,11 @@ class Module(BaseModule):
 						people.append(link)
 						self.output(f'\t{link}', 'G')
 		self.alert('links')
+		links = list(set(links))
 		if links == []:
 			self.output('Without result')
 		else:
-
 			for link in links:
 				self.output(f'\t{link}')
 
-		self.save_gather(links, 'search/linkedin', query, output=self.options.get('output'))
+		self.save_gather({'links': links, 'people': people}, 'search/linkedin', query, output=self.options.get('output'))
