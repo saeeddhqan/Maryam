@@ -92,5 +92,5 @@ class Module(BaseModule):
 					titles.append(title)
 					self.output(f'\t{title} \n\t\t{link}')
 
-		self.save_gather({'links': links, 'title': titles, 'profiles': profiles},
+		self.save_gather({'links': links, 'titles': titles, 'profiles': profiles},
 			'search/quora', query, output=self.options.get('output'))
