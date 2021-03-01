@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 # Based on the Recon-ng core(https://github.com/lanmaster53/recon-ng)
 
-__version__ = "v1.4.9"
+__version__ = "v1.5"
 import argparse
 import errno
 import imp

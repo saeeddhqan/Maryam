@@ -36,7 +36,7 @@ class main:
 	def run_crawl(self):
 		reg = r"<a href=\"(https://?[^\"]+)\" class=\"title\""
 		geturl = f"http://{self.yippy}/search?query={self.q}"
-		self.framework.verbose('Opening the yippy.com domain...', end='\r')
+		self.framework.verbose('[YIPPY] Searching in the yippy.com...', end='\r')
 		try:
 			req = self.framework.request(url=geturl)
 		except:
@@ -57,7 +57,6 @@ class main:
 			file = file.group()
 			root = re.sub(r'[\d]+-[\d]+', '0-8000', root)
 			newurl = f"https://yippy.com/ysa/cgi-bin/query-meta?v{file};v:state=root|" + root.replace('">next</', '')
-			self.framework.verbose('Making next page link...', end='\r')
 			try:
 				req = self.framework.request(url=newurl)
 			except:

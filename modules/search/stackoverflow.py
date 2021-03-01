@@ -25,9 +25,9 @@ class Module(BaseModule):
 	meta = {
 		'name': 'StackOverFlow Search',
 		'author': 'Sanjiban Sengupta',
-		'version': '0.1',
+		'version': '0.2',
 		'description': 'Search your query in the stackoverflow.com and show the results.',
-		'sources': ('yahoo', 'yippy', 'bing', 'google', 'carrot2'),
+		'sources': ('yippy', 'bing', 'google', 'carrot2'),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
 			('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store'),
@@ -36,7 +36,7 @@ class Module(BaseModule):
 			('engine', 'google', False, 'Engine names for search(default=google)', '-e', 'store'),
 			('output', False, False, 'Save output to the workspace', '--output', 'store_true'),
 		),
-		'examples': ('stackoverflow -q "joining dicts py3" -l 15 --output',)
+		'examples': ('stackoverflow -q "syntax error" -l 15 --output',)
 	}
 
 	def module_run(self):
@@ -64,11 +64,6 @@ class Module(BaseModule):
 				self.verbose('')
 				links.append(link)
 
-		if 'google' in engine:
-			run = self.google(q)
-			run.run_crawl()
-			links = run.links
-
 		if 'yippy' in engine:
 			run = self.yippy(f"www.stackoverflow.com {query}")
 			run.run_crawl()
@@ -84,9 +79,24 @@ class Module(BaseModule):
 				self.verbose(f"\t{link}")
 				links.append(link)
 
+		links = list(set(links))
 		if links == []:
 		 	self.output('Without result')
 		else:
+			self.alert('Questions')
+			for link in links:
+				first_type = re.search(r'stackoverflow\.com/questions/[\d]+/([\w\d\-_]+)/?', link)
+				second_type = re.search(r'stackoverflow\.com/a/[\d+]/?', link)
+				if first_type:
+					title = first_type.group(1).replace("-", " ").title()
+					title = self.urlib(title).unquote
+					titles.append(title.title())
+					self.output(title, 'C')
+					self.output(f'\t{link}')
+				elif second_type:
+					self.output('Without Title', 'C')
+					self.output(f'\t{link}')
+
 			self.alert('profiles')
 			for link in links:
 				link = link.replace('https://stackoverflow.com/users/',
@@ -95,16 +105,7 @@ class Module(BaseModule):
 					profiles.append(link)
 					self.output(f"\t{link}", 'G')
 
-			self.alert('raw results')
-			for link in links:
-				if 'www.stackoverflow.com' in link and 'https://stackoverflow.com/users/' not in link:
-					title = re.sub(r'https?://(www\.)?stackoverflow.com/users/', '', link).replace('/', '')
-					title = title.replace('-', ' ')
-					title = self.urlib(title).unquote
-					titles.append(title.title())
-					self.output(f'\t{title} \n\t\t{link}')
-			
-			self.alert('tags')
+			self.alert('Tags')
 			for link in links:
 				if '/tag/' in link:
 					link = link.replace('https://stackoverflow.com/tags/', '')
