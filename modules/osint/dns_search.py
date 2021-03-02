@@ -58,7 +58,7 @@ class Module(BaseModule):
 		try:
 			req = self.request(
 				'https://threatcrowd.org/searchApi/v2/domain/report/?domain=' + q)
-		except:
+		except Exception as e:
 			self.error('ThreatCrowd is missed!')
 		else:
 			txt = re.sub(r'[\t\n ]+', '', req.text)
@@ -77,7 +77,7 @@ class Module(BaseModule):
 		try:
 			req = self.request(
 				f'https://api.threatminer.org/v2/domain.php?q={q}&rt=5')
-		except:
+		except Exception as e:
 			self.error('ThreatMiner is missed!')
 		else:
 			j = req.json()['results'] or []
@@ -89,7 +89,7 @@ class Module(BaseModule):
 		try:
 			req = self.request(
 					'https://rapiddns.io/subdomain/' + q + '?full=1')
-		except:
+		except Exception as e:
 			self.error('Rapiddns is missed!')
 		else:
 			j = self.page_parse(req.text).get_dns(q) or []
@@ -129,7 +129,7 @@ class Module(BaseModule):
 		try:
 			req = self.request(
 				f'https://jldc.me/anubis/subdomains/{q}')
-		except:
+		except Exception as e:
 			self.error('JLDC is missed!')
 		else:
 			if 'Too many request' in req.text:
@@ -144,7 +144,7 @@ class Module(BaseModule):
 		try:
 			req = self.request(
 				f'https://dns.bufferover.run/dns?q=.{q}')
-		except:
+		except Exception as e:
 			self.error('BufferOver is missed!')
 		else:
 			j = list(req.json()['FDNS_A']) or []
@@ -155,7 +155,7 @@ class Module(BaseModule):
 		self.verbose('[OTX] Searching in otx.alienvault...')
 		try:
 			req = self.request(f'https://otx.alienvault.com/api/v1/indicators/domain/{q}/passive_dns')
-		except:
+		except Exception as e:
 			self.error("OTX is missed!")
 		else:
 			parser = self.page_parse(req.text).get_dns(q)
@@ -174,8 +174,8 @@ class Module(BaseModule):
 	def search(self, name, q, limit, count):
 		try:
 			engine = getattr(self, name)
-		except:
-			self.debug(f"Search engine {name} not found.")
+		except Exception as e:
+			self.debug(f"Search engine {name} has not found.")
 			return
 		else:
 			varnames = engine.__code__.co_varnames
