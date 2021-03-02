@@ -101,7 +101,7 @@ class Module(BaseModule):
 		try:
 			req = self.request(
 				f'https://api.certspotter.com/v1/issuances?domain={q}&include_subdomains=true&expand=dns_names')
-		except exception as e:
+		except Exception as e:
 			self.error('CERTSPOTTER is missed!')
 		else:
 			text = req.text
@@ -117,7 +117,7 @@ class Module(BaseModule):
 		try:
 			req = self.request(
 				'https://api.sublist3r.com/search.php?domain=' + q)
-		except exception as e:
+		except Exception as e:
 			self.error('SUBLIST3R is missed!')
 		else:
 			text = json.loads(req.text)
