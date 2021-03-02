@@ -192,20 +192,24 @@ class Module(BaseModule):
 				self.set_data(attr.dns)
 
 	def reverse_dns(self, domain):
-		try:
-			host = socket.gethostbyaddr(domain)
-			print(f"HOSTNAME")
-			print(f"{host[0]}\n")
-			print("ALIAS LIST")
-			if host[1]:
-				for alias in host[1]: print(f"*{alias}")
-				print("\n")
-			else:
-				print("Empty\n")
-			print('IP ADDRESS LIST')
-			for address in host[2]: print(f"*{address}")
-		except:
-			print('domain should be a valid IP address')
+		ips = domain.split(",")
+		for i, ip in enumerate(ips):
+			try:
+				print(f"\nHOSTNAME {i+1}")
+				hostname, aliaslist, addrlist = socket.gethostbyaddr(ip)
+				print(f"{hostname}\n")
+				print("ALIAS LIST")
+				if aliaslist:
+					for alias in aliaslist: print(f"*{alias}")
+					print("\n")
+				else:
+					print("Empty\n")
+				print('IP ADDRESS LIST')
+				for address in addrlist: print(f"*{address}")
+				print("----------------")
+			except: 
+				print("Domain isn't a valid IP address")
+				continue
 
 	def module_run(self):
 		domain = self.options['domain']
