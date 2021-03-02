@@ -19,6 +19,7 @@ from core.module import BaseModule
 import re
 import concurrent.futures
 import json
+import socket
 
 class Module(BaseModule):
 
@@ -41,6 +42,7 @@ class Module(BaseModule):
 			('validate', False, False, 'Validate the domains(Remove dead subdomains) found and display their IP(default=False)', '--validate', 'store_true'),
 			('silent', False, False, 'Output without any color and message([Warn]This sets the value of verbosity to zero!, default=False)', '--silent', 'store_true'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
+			('reverse', False, False, 'Use reverse DNS search', '--reverse', 'store_true')
 		),
 		'examples': ('dns_search -d example.com --output', 'dns_search -d example.com -e google,bing,yahoo -l 3 -t 3 --output', 
 					 'dns_search -d example.com --max --validate --silent --output')
@@ -189,8 +191,28 @@ class Module(BaseModule):
 				attr.run_crawl()
 				self.set_data(attr.dns)
 
+	def reverse_dns(self, domain):
+		try:
+			host = socket.gethostbyaddr(domain)
+			print(f"HOSTNAME")
+			print(f"{host[0]}\n")
+			print("ALIAS LIST")
+			if host[1]:
+				for alias in host[1]: print(f"*{alias}")
+				print("\n")
+			else:
+				print("Empty\n")
+			print('IP ADDRESS LIST')
+			for address in host[2]: print(f"*{address}")
+		except:
+			print('domain should be a valid IP address')
+
 	def module_run(self):
 		domain = self.options['domain']
+		reverse = self.options['reverse']
+		if reverse:
+			self.reverse_dns(domain)
+			return
 		domain_attr = self.urlib(domain)
 		domain = domain_attr.sub_service('http')
 		domain_name = self.urlib(domain).netloc
