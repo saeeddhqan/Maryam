@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from core.module import BaseModule
 import re
-import requests
 
 
 class Module(BaseModule):
@@ -26,7 +25,7 @@ class Module(BaseModule):
         'author': 'Kunal Khandelwal',
         'version': '0.1',
         'description': 'Search your query in the Reddit and show the results.',
-        'sources': ('google', 'yahoo', 'bing  '),
+        'sources': ('google', 'yahoo', 'bing'),
         'options': (
             ('query', None, True, 'Query string', '-q', 'store'),
             ('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store'),
@@ -49,12 +48,10 @@ class Module(BaseModule):
         run = self.google(q, limit, count)
         run.run_crawl()
         links = run.links
-        pages = run.pages
 
         if 'bing' in engine:
             run = self.bing(q, limit, count)
             run.run_crawl()
-            pages += run.pages
             for item in run.links_with_title:
                 link, title = item
                 links.append(link)
@@ -62,40 +59,37 @@ class Module(BaseModule):
         if 'yahoo' in engine:
             run = self.yahoo(q, limit, count)
             run.run_crawl()
-            pages += run.pages
             links += run.links
-            pages += run.pages
 
         links = list(set(links))
         if links is None:
             self.output('Without result')
         else:
-            links = [link for link in links if link.startswith('https://www.reddit.com/')]
-
+            links = [link for link in links if re.search('https?://(www.)?reddit.com/', link)]
             self.alert('Usernames')
             for link in links:
-                link = link.replace('https://www.reddit.com/user/', '')
-                if re.search(r'^[\w\d_\-\/]+$', link):
-                    link = link.rsplit('/')
-                    if link[0] not in usernames:
-                        usernames.append(link[0])
-                        self.output(f"\t{link[0]}", 'G')
+                if re.search(r"https?://(www.)?reddit.com/user/", link):
+                    link = re.sub('https?://(www.)?reddit.com/user/', '', link)
+                    if re.search(r'^[\w\d_\-\/]+$', link):
+                        link = link.rsplit('/')
+                        if link[0] not in usernames:
+                            usernames.append(link[0])
+                            self.output(f"\t{link[0]}", 'G')
 
             self.alert('Posts')
             for link in links:
-                is_post = bool(re.match('https://www.reddit.com/r/', link))
-                if is_post:
-                    post_url = link.replace('https://www.reddit.com/r/', '')
+                if re.search(r"https?://(www.)?reddit.com/r/", link):
+                    post_url = re.sub('https?://(www.)?reddit.com/r/', '', link)
                     post_url = post_url.rsplit('/')
                     subreddit = post_url[0]
                     try:
                         post = post_url[3]
-                    except Exception:
+                    except Exception as e:
                         continue
 
                     post = post.replace('_', ' ')
-                    post = requests.utils.unquote(post)
+                    post = self.urlib(post).unquote
                     self.output(f'\t{post.title()} --> r/{subreddit} \n\t\t{link}')
 
-        self.save_gather({'links': links, 'Usernames': usernames},
+        self.save_gather({'links': links, 'usernames': usernames},
                          'search/reddit', query, output=self.options.get('output'))
