@@ -19,20 +19,22 @@ from core.module import BaseModule
 import re
 import concurrent.futures
 import json
+from socket import gethostbyaddr
 
 class Module(BaseModule):
 
 	meta = {
 		'name': 'DNS Searcher',
 		'author': 'Saeeddqn',
-		'version': '2.0',
+		'version': '2.5',
 		'description': 'Search in the open-sources to find subdomans.',
 		'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'baidu', 'startpage',
 					'netcraft', 'threatcrowd', 'virustotal', 'yippy', 'otx', 'carrot2', 'crt',
-					'qwant', 'millionshort', 'threatminer', 'jldc', 'bufferover', 'rapiddns', 'certspotter', 'sublist3r'),
+					'qwant', 'millionshort', 'threatminer', 'jldc', 'bufferover', 'rapiddns', 'certspotter',
+					'sublist3r', 'riddler', 'sitedossier'),
 		'options': (
 			('domain', BaseModule._global_options['target'],
-			 True, 'Domain name without https?://', '-d', 'store'),
+			 False, 'Domain name without https?://', '-d', 'store'),
 			('limit', 3, False, 'Search limit(number of pages, default=3)', '-l', 'store'),
 			('count', 30, False, 'number of results per page(min=10, max=100, default=30)', '-c', 'store'),
 			('engines', 'otx', False, 'Search engine names. e.g bing,google,...[otx by default]', '-e', 'store'),
@@ -40,10 +42,15 @@ class Module(BaseModule):
 			('max', False, False, 'Using all of sources(max limit=15, max count=50)', '--max', 'store_true'),
 			('validate', False, False, 'Validate the domains(Remove dead subdomains) found and display their IP(default=False)', '--validate', 'store_true'),
 			('silent', False, False, 'Output without any color and message([Warn]This sets the value of verbosity to zero!, default=False)', '--silent', 'store_true'),
-			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
+			('reverse', None, False, 'Use reverse DNS search. \
+				Input could be a list of ip addresses(with comma separator)\
+				 or could be a filename that contains ip addresses', '-r', 'store'),
+			('output', False, False, 'Save output to workspace', '--output', 'store_true')
 		),
 		'examples': ('dns_search -d example.com --output', 'dns_search -d example.com -e google,bing,yahoo -l 3 -t 3 --output', 
-					 'dns_search -d example.com --max --validate --silent --output')
+					 'dns_search -d example.com --max --validate --silent --output',
+					 'dns_search --reverse 1.1.1.1,2.2.2.2,3.3.3.3',
+					 'dns_search --reverse ips.txt')
 	}
 
 	hostnames = []
@@ -53,12 +60,49 @@ class Module(BaseModule):
 			if '%' not in sub:
 				self.hostnames.append(sub)		
 
+	def riddler(self, q):
+		self.verbose('[RIDDLER] Searching in reddler...')
+		try:
+			req = self.request(
+				f"https://riddler.io/search?q=pld:{q}&view_type=data_table")
+		except Exception as e:
+			self.error('Riddler is missed!')
+		else:
+			j = self.page_parse(req.text).get_dns(q) or []
+			self.hostnames.extend(j)
+		return 'riddler'
+
+	def sitedossier(self, q):
+		self.verbose('[SITEDOSSIER] Searching in reddler...')
+		next_page = ''
+		while True:
+			try:
+				req = self.request(
+					f"http://www.sitedossier.com/parentdomain/{q}/{next_page}")
+			except Exception as e:
+				self.error('Sitedossier is missed!')
+				break
+			else:
+				text = req.text
+				if 'We apologise for any inconvenience this may cause.' in text:
+					self.verbose('[SITEDOSSIER] Unusual Activity!')
+					break
+				next_page = re.search(r'<a href="/parentdomain/[\w\.\-]+/([\d]+)">', req.text)
+				if next_page:
+					next_page = next_page.group(1)
+				j = self.page_parse(req.text).get_dns(q) or []
+				self.hostnames.extend(j)
+				if next_page == None:
+					break
+				self.output(f"[SITEDOSSIER] Searching in the {next_page} page...")
+		return 'sitedossier'
+
 	def threatcrowd(self, q):
 		self.verbose('[THREATCROWD] Searching in threatcrowd...')
 		try:
 			req = self.request(
 				'https://threatcrowd.org/searchApi/v2/domain/report/?domain=' + q)
-		except:
+		except Exception as e:
 			self.error('ThreatCrowd is missed!')
 		else:
 			txt = re.sub(r'[\t\n ]+', '', req.text)
@@ -76,8 +120,8 @@ class Module(BaseModule):
 		self.verbose('[THREATMINER] Searching in threatminer...')
 		try:
 			req = self.request(
-				f'https://api.threatminer.org/v2/domain.php?q={q}&rt=5')
-		except:
+				f"https://api.threatminer.org/v2/domain.php?q={q}&rt=5")
+		except Exception as e:
 			self.error('ThreatMiner is missed!')
 		else:
 			j = req.json()['results'] or []
@@ -89,7 +133,7 @@ class Module(BaseModule):
 		try:
 			req = self.request(
 					'https://rapiddns.io/subdomain/' + q + '?full=1')
-		except:
+		except Exception as e:
 			self.error('Rapiddns is missed!')
 		else:
 			j = self.page_parse(req.text).get_dns(q) or []
@@ -100,8 +144,9 @@ class Module(BaseModule):
 		self.verbose('[CERTSPOTTER] Searching in certspotter...')
 		try:
 			req = self.request(
-				f'https://api.certspotter.com/v1/issuances?domain={q}&include_subdomains=true&expand=dns_names')
-		except exception as e:
+				f"https://api.certspotter.com/v1/issuances?domain=\
+				{q}&include_subdomains=true&expand=dns_names")
+		except Exception as e:
 			self.error('CERTSPOTTER is missed!')
 		else:
 			text = req.text
@@ -117,7 +162,7 @@ class Module(BaseModule):
 		try:
 			req = self.request(
 				'https://api.sublist3r.com/search.php?domain=' + q)
-		except exception as e:
+		except Exception as e:
 			self.error('SUBLIST3R is missed!')
 		else:
 			text = json.loads(req.text)
@@ -128,8 +173,8 @@ class Module(BaseModule):
 		self.verbose('[JLDC] Searching in jldc.me...')
 		try:
 			req = self.request(
-				f'https://jldc.me/anubis/subdomains/{q}')
-		except:
+				'https://jldc.me/anubis/subdomains/' + q)
+		except Exception as e:
 			self.error('JLDC is missed!')
 		else:
 			if 'Too many request' in req.text:
@@ -144,7 +189,7 @@ class Module(BaseModule):
 		try:
 			req = self.request(
 				f'https://dns.bufferover.run/dns?q=.{q}')
-		except:
+		except Exception as e:
 			self.error('BufferOver is missed!')
 		else:
 			j = list(req.json()['FDNS_A']) or []
@@ -154,8 +199,9 @@ class Module(BaseModule):
 	def otx(self, q):
 		self.verbose('[OTX] Searching in otx.alienvault...')
 		try:
-			req = self.request(f'https://otx.alienvault.com/api/v1/indicators/domain/{q}/passive_dns')
-		except:
+			req = self.request(
+				f"https://otx.alienvault.com/api/v1/indicators/domain/{q}/passive_dns")
+		except Exception as e:
 			self.error("OTX is missed!")
 		else:
 			parser = self.page_parse(req.text).get_dns(q)
@@ -174,8 +220,8 @@ class Module(BaseModule):
 	def search(self, name, q, limit, count):
 		try:
 			engine = getattr(self, name)
-		except:
-			self.debug(f"Search engine {name} not found.")
+		except Exception as e:
+			self.debug(f"Search engine {name} has not found.")
 			return
 		else:
 			varnames = engine.__code__.co_varnames
@@ -189,8 +235,41 @@ class Module(BaseModule):
 				attr.run_crawl()
 				self.set_data(attr.dns)
 
+	def reverse_dns(self, ips):
+		reg_ip = self.reglib().ip_m
+		if not re.search(reg_ip, ips):
+			r = self._is_readable(ips)
+			if not r:
+				self.output("Invalid filename: " + ips)
+				return
+			ips = [x.replace('\n', '') for x in r.readlines() if re.search(reg_ip, x)]
+		else:
+			ips = ips.split(',')
+
+		data = []
+		titles = ['hostnames', 'ip_address_list', 'alias_list']
+		for i, ip in enumerate(ips):
+			tire = ()
+			try:
+				hostname, alias_list, addr_list = gethostbyaddr(ip)
+				tire += (hostname,)
+				tire += (','.join(addr_list),)
+				tire += (','.join(aliaslist),) if alias_list else ('-',)
+				data.append(tire)
+			except: 
+				self.output('Invalid IP address: ' + ip)
+				continue
+		self.table(data, header=titles, title='REVERSE DNS')
+
 	def module_run(self):
 		domain = self.options['domain']
+		reverse = self.options['reverse']
+		if reverse:
+			self.reverse_dns(reverse)
+			return
+		if not domain:
+			self.output('Domain name has not been set.', 'R')
+			return
 		domain_attr = self.urlib(domain)
 		domain = domain_attr.sub_service('http')
 		domain_name = self.urlib(domain).netloc
@@ -198,6 +277,7 @@ class Module(BaseModule):
 		limit = 15 if MAX else self.options['limit']
 		count = 50 if MAX else self.options['count']
 		engines = self.options['engines']
+		verb = self._global_options['verbosity']
 		if self.options['silent']:
 			self._global_options['verbosity'] = 0
 		if engines == None:
@@ -228,4 +308,5 @@ class Module(BaseModule):
 				for host in self.hostnames:
 					print(f"{host}")
 
+		self._global_options['verbosity'] = verb
 		self.save_gather(self.hostnames, 'osint/dns_search', domain_name, output=self.options['output'])
