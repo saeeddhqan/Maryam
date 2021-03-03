@@ -1,26 +1,41 @@
 .container{  	
 	width: 100%;
 	display: block;
-	justify-content: center;
 }
+
 .content{
-	padding: 1em;
+	width: 100%;
+	top: 70px;
 	position: relative;
-	top:0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	margin: auto;
+	display: block;
+	padding: 1em;
+}
+
+.title{
+	z-index: 1;
+	position: absolute;
+	left:0px;
+	display: block;
+	align-content: center;
+	overflow: hidden;
+	width: 100%;
+	color: #212529;
 }
 
 nav{
-	display: flex;
 	position: relative;
-	top:0;
-	bottom: 0;
+	align-items: center;
+	padding: 2em;
+}
+
+.sidebar{
+	display: flex;
+	height: 100%;
+	top:20px;
+	bottom: 20px;
+	width: 300px;
+	position: absolute;
 	left: 0;
-	right: 0;
-	margin: auto;
 }
 
 .table{
