@@ -68,7 +68,7 @@ class Module(BaseModule):
             links = [link for link in links if re.search('https?://(www.)?reddit.com/', link)]
             self.alert('Usernames')
             for link in links:
-                if re.search(r"https?://(www.)?reddit.com/user/", link):
+                if re.search(r"reddit.com/user/", link):
                     link = re.sub('https?://(www.)?reddit.com/user/', '', link)
                     if re.search(r'^[\w\d_\-\/]+$', link):
                         link = link.rsplit('/')
@@ -78,7 +78,7 @@ class Module(BaseModule):
 
             self.alert('Posts')
             for link in links:
-                if re.search(r"https?://(www.)?reddit.com/r/", link):
+                if re.search(r"reddit.com/r/", link):
                     post_url = re.sub('https?://(www.)?reddit.com/r/', '', link)
                     post_url = post_url.rsplit('/')
                     subreddit = post_url[0]
