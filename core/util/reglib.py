@@ -34,6 +34,8 @@ class main:
 	url_m = r"ftp|https?://[A-z0-9\-.]{2,255}[\/A-z\.:\-0-9%~@#?&()+_;,\']+"
 	id_s = r"^@[A-z_0-9\.\-]{2,255}$"
 	id_m = r"@[A-z_0-9\.\-]{2,255}"
+	ip_s = r"^\d+\.[\d]+\.[\d]+\.[\d]+$"
+	ip_m = r"\d+\.[\d]+\.[\d]+\.[\d]+"
 	social_network_ulinks = {
 		'Instagram': r"(instagram\.com\/[A-z_0-9.\-]{1,30})",
 		'Facebook': r"(facebook\.com\/[A-z_0-9\-]{2,50})|(fb\.com\/[A-z_0-9\-]{2,50})",
