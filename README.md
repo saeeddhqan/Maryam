@@ -34,12 +34,12 @@ python3 maryam -e help
 ## Updates
 **Last Updates**
 
+ - Added reddit search and reverse dns
  - Deleted godork module(Due to redundancy with the google search module)
  - Added stackoverflow search module
  - Added instagram search module
  - Fixed bing and google search
- - Deleted searchencrypt engine
- - Running modules with options(Without entering to program) 
+ - Deleted searchencrypt engine 
 
 
 ## Contribution
