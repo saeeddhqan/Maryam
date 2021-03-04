@@ -431,6 +431,8 @@ class Base(framework.Framework):
 			finally:
 				if spool_flag:
 					self.do_spool('stop')
+					
+		return meta
 
 	def run_tool(self, func, tool_name, args, output=None):
 		try:

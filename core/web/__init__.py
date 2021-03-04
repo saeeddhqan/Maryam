@@ -32,6 +32,10 @@ def create_app():
     def index():
         return render_template('index.html', workspaces=base_obj._get_workspaces(), headings=headings)
 
+    @app.route('/run')
+    def run():
+        return render_template('run.html', workspaces=base_obj._get_workspaces(), headings=headings)
+
     from core.web.api import resources
     app.register_blueprint(resources)
 
