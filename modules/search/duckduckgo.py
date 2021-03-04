@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from core.module import BaseModule
 
-
 class Module(BaseModule):
 
 	meta = {
@@ -47,6 +46,6 @@ class Module(BaseModule):
 			self.output('Without result')
 		else:
 			for link in set(links):
-				self.output(f'\t{link}')
+				self.output(f"\t{link}")
 				print('')
 		self.save_gather(links, 'search/duckduckgo', query, output=self.options['output'])
