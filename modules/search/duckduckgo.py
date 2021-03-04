@@ -21,7 +21,7 @@ from core.module import BaseModule
 class Module(BaseModule):
 
 	meta = {
-		'name': 'Duck Duck Go',
+		'name': 'DuckDuckGo',
 		'author': 'Tarunesh Kumar',
 		'version': '0.1',
 		'description': 'Search your query in the duckduckgo.com and show the results.',
@@ -46,7 +46,7 @@ class Module(BaseModule):
 		if links == []:
 			self.output('Without result')
 		else:
-			for link in links:
+			for link in set(links):
 				self.output(f'\t{link}')
 				print('')
 		self.save_gather(links, 'search/duckduckgo', query, output=self.options['output'])

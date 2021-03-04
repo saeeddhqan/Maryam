@@ -617,7 +617,6 @@ class Framework(cmd.Cmd):
 			print(f"header: {k}: {v}")
 
 	def request(self, url, method='GET', **kwargs):
-		print(url,kwargs)
 		if '://' not in url:
 			url = f'https://{url}'
 		# process socket timeout
@@ -644,9 +643,7 @@ class Framework(cmd.Cmd):
 		kwargs['verify'] = False
 		requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 		# send the request
-		print("processing")
 		resp = getattr(requests, method.lower())(url, **kwargs)
-		print(resp)
 		if self._global_options['verbosity'] < 2:
 			return resp
 			
