@@ -373,7 +373,7 @@ class Base(framework.Framework):
 				self.error(f"{tool_name}CodeError: options is too short. need more than {len(option)} option")
 				return
 			name = f"--{name}" if not name.startswith('-') else name
-			#name = name if name.startswith('-') else f"--{name}"	# more readable
+
 			try:
 				parser.add_argument(op, name, help=desc, dest=name, default=val, action=act, required=req)
 			except argparse.ArgumentError as e:
