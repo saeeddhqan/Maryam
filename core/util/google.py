@@ -75,8 +75,9 @@ class main:
 		for link in links:
 			cond1 = 'https://support.google.com/' not in link.lower()
 			cond2 = 'https://www.google.com/webhp' not in link.lower()
-			cond3 = "://" in link
-			if cond1 and cond2 and cond3:
+			cond3 = '://' in link
+			cond4 = 'https://www.google.com/search?' not in link.lower()
+			if cond1 and cond2 and cond3 and cond4:
 				url = self.framework.urlib(link).unquote_plus
 				self._links.append(url[:url.find("&amp")])
 
