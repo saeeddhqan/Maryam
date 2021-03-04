@@ -15,9 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import re
-import os
-
 class main:
 
 	def __init__(self, framework, q, limit=1, count=10):
