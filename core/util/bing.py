@@ -77,7 +77,7 @@ class main:
 		if len(links) <= 1:
 			links += parser.findall(r'<a href="([^"]+)" h="ID=SERP,[\d\.]+">')
 		links = [x for x in links if "http://www.microsofttranslator.com" not in x]
-		return l
+		return links
 
 	@property
 	def links_with_title(self):
