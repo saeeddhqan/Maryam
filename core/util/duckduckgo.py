@@ -23,66 +23,58 @@ class main:
 	def __init__(self, framework, q, limit=1, count=10):
 		""" duckduckgo.com search engine
 
-			framework  : core attribute
-			q          : query for search
-			limit      : count of pages
+			framework  : Core attribute
+			q          : Query for search
+			limit      : Number of of pages
 			count      : Number of results per page
 		"""
 		self.framework = framework
 		self.q = q
 		self.agent = framework.rand_uagent().lynx[7]
 		self._pages = ''
-		self.limit = limit+1
+		self.limit = limit + 1
 		self.num = count
 		self._links = []
 
 	def run_crawl(self):
-		url = "https://lite.duckduckgo.com/lite/"
-		payload = {'q':self.q ,'s':'','o':'json','dc':'','api':'/d.js','kl':'wt-wt'}	
+		url = 'https://lite.duckduckgo.com/lite/'
+		payload = {'q': self.q, 's': '', 'o': 'json', 'dc': '', 'api': '/d.js', 'kl': 'wt-wt'}	
 		page = 1
-		
 		while True:
-			self.framework.verbose(f'[DUCKDUCKGO] Searching in {page} page...', end='\r')
+			self.framework.verbose(f"[DUCKDUCKGO] Searching in {page} page...", end='\r')
 			try:
 				req = self.framework.request(
 						url=url,
 						method='POST',
 						params=payload,
-						headers={"User-Agent":self.agent},
+						headers={"User-Agent": self.agent},
 						allow_redirects=False)
 			except:
 				self.framework.error('[DUCKDUCKGO] ConnectionError')
 				return
-			
 			if req.status_code == 403:
 				req = self.framework.error('[DUCKDUCKGO] 403 Forbidden (Too many requests.)')
 				break
-
-
 			self._pages += req.text
-			
 			# setting next page offset
-			if payload['s'] == '':		# num of result per page
+			if payload['s'] == '':
+				# num of result per page
 				payload['s'] = self.num
-			else: payload['s'] += self.num 	
-			payload['dc'] = payload['s']+1		# next page start
+			else:
+				payload['s'] += self.num
+			# next page start
+			payload['dc'] = payload['s'] + 1 
 			
 			page += 1
 			if page > self.limit:
 				break
-
-		
 		links = self.framework.page_parse(self._pages).findall(r'href="([^"]+)"')
-		
 		for link in links:
 			cond1 = 'duckduckgo.com' not in link.lower()
 			cond2 = '/lite/?' not in link.lower()
 			cond3 = "://" in link
 			if cond1 and cond2 and cond3:
 				self._links.append(self.framework.urlib(link).unquote_plus)
-
-
-
 	@property
 	def pages(self):
 		return self._pages
