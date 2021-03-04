@@ -71,7 +71,7 @@ class Module(BaseModule):
 			run.run_crawl()
 			links += run.links
 
-		links = set(links)
+		links = list(set(links))
 		
 		if links == []:
 		 	self.output('Without result')
