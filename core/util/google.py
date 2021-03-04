@@ -70,7 +70,7 @@ class main:
 			payload['start'] = set_page(page)
 			if page >= self.limit:
 				break
-		links = self.framework.page_parse(self._pages).findall(r'a href=".*?(https?[^"]+)"')
+		links = self.framework.page_parse(self._pages).findall(r'a href="([^"]+)"')
 
 		for link in links:
 			cond1 = 'https://support.google.com/' not in link.lower()
@@ -78,7 +78,9 @@ class main:
 			cond3 = "://" in link
 			if cond1 and cond2 and cond3:
 				url = self.framework.urlib(link).unquote_plus
-				self._links.append(url[:url.find("&amp")])
+				url = re.sub(r"^\/url\?q=", '', url)
+				url = re.sub(r'\&amp.+', '', url)
+				self._links.append(url)
 
 	def api_run_crawl(self):
 		if not (self.google_api and self.google_cx):
