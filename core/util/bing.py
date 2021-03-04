@@ -81,7 +81,7 @@ class main:
 	def links_with_title(self):
 		parser = self.framework.page_parse(self._pages)
 		parser.pclean
-		links = parser.findall(r'<a target="_blank" href="([^"]+)" h="ID=SERP,[\d\.]+">([^<]+)</a>')
+		links = parser.findall(r'<a href="([^"]+)" h="ID=SERP,[\d\.]+">([^<]+)</a>')
 		links = [x for x in links if x[0].startswith('http') and "http://www.microsofttranslator.com" not in x[0] and "Translate this page" not in x[1]]
 		return links
 
