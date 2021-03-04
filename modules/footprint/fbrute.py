@@ -37,7 +37,7 @@ class Module(BaseModule):
 								'wordlist address. default is dnsnames.txt in data folder', '-w', 'store'),
 			('thread', 8, False, 'The number of links that open per round(default=8)', '-t', 'store'),
 			('wordlists', False, False, 'List of most common DNS wordlists', '-l', 'store_true'),
-			('status_codes', '200,201,204', False, 'List of good status codes(default="200,201,204")', '-s', 'store_true'),
+			('status_codes', '200,201,204', False, 'List of good status codes(default="200,201,204")', '-s', 'store'),
 			('redirect', True, False, 'Allow redirection(default=True)', '-r', 'store_true'),
 			('output', False, False, 'Save output to the workspace', '--output', 'store_true'),
 		),
