@@ -22,12 +22,12 @@ class Module(BaseModule):
 	meta = {
 		'name': 'Qwant Search',
 		'author': 'Saeeddqn',
-		'version': '0.1',
+		'version': '0.2',
 		'description': 'Search your query in the qwant.com and show the results(without limit).',
 		'sources': ('qwant',),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
-			('method', 'webpages', False, 'Qwant methods("webpages", "images", "news", "videos", "social"). default=None', '-m', 'store'),
+			('method', 'webpages', False, 'Qwant methods("webpages", "images", "news", "videos"). default=None', '-m', 'store'),
 			('limit', 2, False, 'Search limit(number of pages, default=2)', '-l', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
@@ -38,8 +38,8 @@ class Module(BaseModule):
 		query = self.options['query']
 		run = self.qwant(query, self.options['limit'])
 		method = self.options['method'].lower()
-		if method not in ('webpages', 'images', 'news', 'videos', 'social'):
-			self.error(f'Method name "{method}" is incurrect!')
+		if method not in ('webpages', 'images', 'news', 'videos'):
+			self.error(f'Method name "{method}" is incorrect!')
 			self.verbose('Running with "webpages" method...')
 			method = 'webpages'
 

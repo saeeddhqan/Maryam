@@ -39,8 +39,7 @@ class main:
 		policies = {'webpages': 'web',
 					'images': 'images',
 					'news': 'news',
-					'videos': 'videos',
-					'social': 'social'}
+					'videos': 'videos'}
 
 		method = method.lower()
 		if method not in policies:
