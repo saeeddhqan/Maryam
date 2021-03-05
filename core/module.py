@@ -41,6 +41,7 @@ from core.util import qwant
 from core.util import rand_uagent
 from core.util import reglib
 from core.util import startpage
+from core.util import shodan
 from core.util import urlib
 from core.util import virustotal
 from core.util import waf_identify
@@ -221,6 +222,10 @@ class BaseModule(framework.Framework):
 
 	def reglib(self, page=None):
 		return reglib.main(page)
+
+       def shodan(self, q, key, limit=1, count=10):
+               search = shodan.main(self, q, key, limit, count)
+               return search
 
 	def urlib(self, url):
 		return urlib.main(url)
