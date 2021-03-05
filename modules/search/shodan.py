@@ -29,7 +29,7 @@ class Module(BaseModule):
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
 			('key', None, False, 'shodan.io api key [required]', '-k', 'store'),
-			('count', 50, False, 'Number of results per page(min=10, max=100, default=50)', '-c', 'store'),
+#			('count', 50, False, 'Number of results per page(min=10, max=100, default=50)', '-c', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
         'examples': ('shodan -q <QUERY> -k <KEY> -l 15 --output',)
@@ -37,10 +37,10 @@ class Module(BaseModule):
 
 	def module_run(self):
 		query = self.options['query']
-		limit = self.options['limit']
-		count = self.options['count']
+#		count = self.options['count']
 		key = self.options['key']
-		run = self.shodan(query, key, limit, count)
+#		run = self.shodan(query, key, count)
+		run = self.shodan(query, key)
 		run.run_crawl()
 		links = run.links
 

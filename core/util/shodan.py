@@ -15,13 +15,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import re
-import os
-
 class main:
 
-	def __init__(self, framework, q, key, count=10):
-		""" google.com search engine
+#	def __init__(self, framework, q, key, count=10):
+	def __init__(self, framework, q, key):
+	""" google.com search engine
 
 			framework  : core attribute
 			q          : query for search
@@ -32,8 +30,9 @@ class main:
 		self.q = q
 		self.key = key
 		self._pages = ''
-		self.num = count
+#		self.num = count
 		self.shodan_api = f"https://api.shodan.io/shodan/host/search?key={self.key}&query={self.q}"
+		self.acceptable = False
 		self._links = []
 
 	def run_crawl(self):
@@ -51,6 +50,7 @@ class main:
 		# Key validation
 		if 'errors' in self._json_pages:
 			self.framework.error(f"[SHODAN] api key is incorrect:'self.key'")
+			self.acceptable = False
 			return
 
 		# Request validation
