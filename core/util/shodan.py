@@ -20,20 +20,18 @@ import os
 
 class main:
 
-	def __init__(self, framework, q, key, limit=1, count=10):
+	def __init__(self, framework, q, key, count=10):
 		""" google.com search engine
 
 			framework  : core attribute
 			q          : query for search
 			key		   : API key
 			ip		   : query on a given host IP
-			limit      : count of pages
 		"""
 		self.framework = framework
 		self.q = q
 		self.key = key
 		self._pages = ''
-		self.limit = limit
 		self.num = count
 		self.shodan_api = f"https://api.shodan.io/shodan/host/search?key={self.key}&query={self.q}"
 		self._links = []

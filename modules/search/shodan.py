@@ -28,7 +28,6 @@ class Module(BaseModule):
 		'sources': ('shodan',),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
-			('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store'),
 			('key', None, False, 'shodan.io api key [required]', '-k', 'store'),
 			('count', 50, False, 'Number of results per page(min=10, max=100, default=50)', '-c', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),

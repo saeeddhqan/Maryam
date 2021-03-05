@@ -223,8 +223,8 @@ class BaseModule(framework.Framework):
 	def reglib(self, page=None):
 		return reglib.main(page)
 
-       def shodan(self, q, key, limit=1, count=10):
-               search = shodan.main(self, q, key, limit, count)
+       def shodan(self, q, key, count=10):
+               search = shodan.main(self, q, key, count)
                return search
 
 	def urlib(self, url):
