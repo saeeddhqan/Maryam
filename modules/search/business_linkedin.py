@@ -1,22 +1,18 @@
 """
 OWASP Maryam!
-
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 any later version.
-
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from core.module import BaseModule
-import re
 
 class Module(BaseModule):
 	meta = {
@@ -32,7 +28,7 @@ class Module(BaseModule):
 			('engine', 'google', False, 'Engine names for search(default=google)', '-e', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-		'examples': ('business_linkedin -q <QUERY> -l 15 --output',)
+		'examples': ('business_linkedin -q <QUERY> -e carrot2,bing,qwant -c 50 --output',)
 	}
 
 	def module_run(self):
@@ -42,7 +38,6 @@ class Module(BaseModule):
 		engine = self.options['engine'].split(',')
 		q = f"site:business.linkedin.com {query}"
 		meta_q = f'"business.linkedin.com" {query}'
-
 		run = self.google(q, limit, count)
 		run.run_crawl()
 		links = run.links
@@ -82,14 +77,14 @@ class Module(BaseModule):
 			run.run_crawl()
 			links.extend(run.links)
 
-		regex = re.compile(r"https?:\/\/business\.linkedin\.com/")
-		links = filter(regex.match, links)
+		links = self.reglib().filter(r"https?:\/\/business\.linkedin\.com/", links)
 		links = list(set(links))
 		if links == []:
 			self.output('Without result')
 		else:
+			self.alert('links')
 			for link in links:
-				self.output(f"\t{link}", "G")
+				self.output(link, 'G')
 
 		self.save_gather({'links': links},
-						 'search/business_linkedin', query, output=self.options.get('output'))
+						 'search/business_linkedin', query, output=self.options.get('output')) 
