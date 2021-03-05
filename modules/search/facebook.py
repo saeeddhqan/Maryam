@@ -74,11 +74,7 @@ class Module(BaseModule):
 		usernames = self.page_parse(pages).get_networks
 		self.alert('People')
 		for _id in list(set(usernames.get('Facebook'))):
-			if isinstance(_id, (tuple, list)):
-				_id = _id[0]
-				_id = f"@{_id[_id.find('/')+1:]}"
-			else:
-				_id = f"@{_id[_id.find('/')+1:]}"
+			_id = f"@{_id[_id.find('/')+1:]}"
 			if _id not in people:
 				people.append(_id)
 				self.output(f'\t{_id}', 'G')
@@ -88,20 +84,18 @@ class Module(BaseModule):
 			self.output('Without result')
 		else:
 			self.alert('Hashtags')
-			for link in links:
-				if '/hashtag/' in link:
-					link = link.replace('https://www.facebook.com/hashtag/', '').replace('/', '')
-					if re.search(r'^[\w\d_\-\/]+$', link):
-						hashtags.append(link)
-						self.output(f"\t#{link}", 'G')
+			for link in self.reglib().filter(lambda x: '/hashtag/' in x, links):
+				link = link.replace('https://www.facebook.com/hashtag/', '').replace('/', '')
+				if re.search(r'^[\w\d_\-\/]+$', link):
+					hashtags.append(link)
+					self.output(f"\t#{link}", 'G')
 
 			self.alert('Groups')
-			for link in links:
-				if '/groups/' in link:
-					link = link.replace('https://www.facebook.com/groups/', '').replace('/', '')
-					if re.search(r'^[\w\d_\-\/]+$', link):
-						groups.append(link)
-						self.output(f"\t{link}", 'G')
+			for link in self.reglib().filter(lambda x: '/groups/' in x, links):
+				link = link.replace('https://www.facebook.com/groups/', '').replace('/', '')
+				if re.search(r'^[\w\d_\-\/]+$', link):
+					groups.append(link)
+					self.output(f"\t{link}", 'G')
 
 			self.alert('Links')
 			for link in links:

@@ -23,7 +23,8 @@ class Module(BaseModule):
 		'name': 'Web Crawler',
 		'author': 'Saeeddqn',
 		'version': '0.5',
-		'description': 'Crawl web pages to find links, JS Files, CSS files, Comments and everything else interesting, supports concurrency.',
+		'description': 'Crawl web pages to find links, JS Files, CSS files, Comments\
+		 and everything else interesting, supports concurrency.',
 		'options': (
 			('domain', BaseModule._global_options['target'], True, 'Domain string', '-d', 'store'),
 			('debug', False, False, 'debug the scraper', '--debug', 'store_true'),
@@ -42,7 +43,7 @@ class Module(BaseModule):
 		e = {'js': run.js, 'cdn': run.cdn,
 			 'query': run.query_links, 'exlinks': run.external_links, 
 			 'links': run.links, 'css': run.css, 'comments': run.comments, 
-			 'emails' : run.emails, 'phones' : run.phones, 'media' : run.media}
+			 'emails': run.emails, 'phones': run.phones, 'media': run.media}
 
 		for obj in e:
 			self.alert(f"{obj}({len(e[obj])})")
@@ -59,15 +60,8 @@ class Module(BaseModule):
 			if lst != []:
 				self.alert(net)
 				for link in lst:
-					if isinstance(link, (tuple, list)):
-						link = list(link)
-						for mic in link:
-							if len(mic) > 4 and mic != '':
-								links.append(mic)
-								self.output(f'\t{str(mic)}', 'G')
-					else:
-						links.append(link)
-						self.output(f'\t{str(link)}', 'G')
+					links.append(link)
+					self.output(f'\t{str(link)}', 'G')
 
 		e['Social Networks'] = links
 

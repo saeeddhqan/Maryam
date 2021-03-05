@@ -26,14 +26,15 @@ class Module(BaseModule):
 		'version': '0.8',
 		'description': 'Search in open-sources to find relevant documents. filetypes[pdf,doc,docx,ppt,pptx,xlsx,txt,..].',
 		'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask',
-			'startpage', 'exalead', 'carrot2', 'searchencrypt', 'qwant', 'millionshort'),
+			'startpage', 'exalead', 'carrot2', 'qwant', 'millionshort'),
 		'options': (
-			('query', BaseModule._global_options['target'], True, 'Host Name, Company Name, keyword, query, etc', '-q', 'store'),
+			('query', BaseModule._global_options['target'], True, 'Host Name, \
+				Company Name, keyword, query, etc', '-q', 'store'),
 			('file', 'pdf', True, 'Filetype [pdf,doc,docx,ppt,pptx,xlsx,txt,..]', '-f', 'store'),
 			('limit', 2, False, 'Search limit(number of pages, default=2)', '-l', 'store'),
 			('count', 50, False, 'number of results per page(min=10)', '-c', 'store'),
 			('site', False, False, 'If this is set, search just limited to the site', '-s', 'store_false'),
-			('engines', 'exalead,bing', True, 'Search engines with comma separator', '-e', 'store'),
+			('engines', 'exalead,bing,google', True, 'Search engines with comma separator', '-e', 'store'),
 			('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
@@ -45,7 +46,8 @@ class Module(BaseModule):
 
 	def thread(self, function, thread_count, engines, q, limit, count):
 		threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
-		futures = (threadpool.submit(function, name, q, limit, count) for name in engines if name in self.meta['sources'])
+		futures = (threadpool.submit(function, name, q, limit, count)\
+			for name in engines if name in self.meta['sources'])
 		for _ in concurrent.futures.as_completed(futures):
 			pass
 
@@ -87,4 +89,5 @@ class Module(BaseModule):
 				self.output(f'\t{doc}')
 		else:
 			self.output('\tNothing to declare')
-		self.save_gather({_type : self.docs}, 'osint/docs_search', q, [_type], output=self.options['output'])
+		self.save_gather({_type : self.docs}, 'osint/docs_search', q, \
+			[_type], output=self.options['output'])

@@ -165,8 +165,8 @@ class BaseModule(framework.Framework):
 		search = carrot2.main(self, q)
 		return search
 
-	def duckduckgo(self, q, limit=1):
-		search = duckduckgo.main(self, q, limit)
+	def duckduckgo(self, q, limit=1, count=10):
+		search = duckduckgo.main(self, q, limit, count)
 		return search
 
 	def exalead(self, q, limit=3):

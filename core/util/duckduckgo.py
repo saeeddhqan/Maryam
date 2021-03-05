@@ -14,22 +14,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class main:
 
-	def __init__(self, framework, q, limit=1):
+	def __init__(self, framework, q, limit=1, count=10):
 		""" duckduckgo.com search engine
 			framework  : Core attribute
 			q          : Query for search
 			limit      : Number of of pages
+			count      : Number of of results
 		"""
 		self.framework = framework
 		self.q = q
-		self.agent = framework.rand_uagent().lynx[7]
 		self._pages = ''
 		self.limit = limit + 1
+		self.num = count
 		self._links = []
 
 	def run_crawl(self):
 		url = 'https://lite.duckduckgo.com/lite/'
-		payload = {'q': self.q, 's': '', 'o': 'json', 'dc': '', 'api': '/d.js', 'kl': 'wt-wt'}	
+		payload = {'q': self.q, 's': 0, 'o': 'json', 'dc': '', 'api': '/d.js', 'kl': 'wt-wt'}	
 		page = 1
 		while True:
 			self.framework.verbose(f"[DUCKDUCKGO] Searching in {page} page...", end='\r')
@@ -38,17 +39,16 @@ class main:
 						url=url,
 						method='POST',
 						params=payload,
-						headers={"User-Agent": self.agent},
 						allow_redirects=False)
 			except:
 				self.framework.error('[DUCKDUCKGO] ConnectionError')
 				return
 			if req.status_code == 403:
-				req = self.framework.error('[DUCKDUCKGO] 403 Forbidden (Too many requests.)')
-				break
+				self.framework.error('[DUCKDUCKGO] 403 Forbidden (Too many requests.)')
+				return
 			self._pages += req.text
 			# setting next page offset
-			if payload['s'] == '':
+			if payload['s'] == 0:
 				# num of result per page
 				payload['s'] = self.num
 			else:

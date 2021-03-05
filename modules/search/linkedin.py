@@ -21,7 +21,7 @@ from core.module import BaseModule
 class Module(BaseModule):
 
 	meta = {
-		'name': 'Linkedin Search',
+		'name': 'LinkedIn Search',
 		'author': 'Saeeddqn',
 		'version': '0.4',
 		'description': 'Search your query in the linkedin.com and show the results.',
@@ -75,21 +75,12 @@ class Module(BaseModule):
 			if lst != []:
 				self.alert(net)
 				for link in lst:
-					if isinstance(link, (tuple, list)):
-						link = list(link).pop(link.index(''))
-						for mic in link:
-							if len(mic) > 2:
-								mic = mic[mic.find('/')+1:]
-								mic = mic.replace('company/', '').replace('in/', '').replace('\\x22', '')
-								mic = f"@{mic}"
-								people.append(mic)
-								self.output(f'\t{mic}', 'G')
-					else:
-						link = link[link.find('/')+1:]
-						link = link.replace('company/', '').replace('in/', '').replace('\\x22', '')
-						link = f"@{link}"
-						people.append(link)
-						self.output(f'\t{link}', 'G')
+					link = link[link.find('/')+1:]
+					link = link.replace('company/', '').replace('in/', '').replace('\\x22', '')
+					link = f"@{link}"
+					people.append(link)
+					self.output(f'\t{link}', 'G')
+
 		self.alert('links')
 		links = list(set(links))
 		if links == []:

@@ -27,7 +27,8 @@ class Module(BaseModule):
 		'sources': ('qwant',),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
-			('method', 'webpages', False, 'Qwant methods("webpages", "images", "news", "videos"). default=None', '-m', 'store'),
+			('method', 'webpages', False, 'Qwant methods("webpages",\
+			 "images", "news", "videos"). default=None', '-m', 'store'),
 			('limit', 2, False, 'Search limit(number of pages, default=2)', '-l', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
