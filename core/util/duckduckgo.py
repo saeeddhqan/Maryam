@@ -1,36 +1,30 @@
 """
 OWASP Maryam!
-
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 any later version.
-
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 class main:
 
-	def __init__(self, framework, q, limit=1, count=10):
+	def __init__(self, framework, q, limit=1):
 		""" duckduckgo.com search engine
-
 			framework  : Core attribute
 			q          : Query for search
 			limit      : Number of of pages
-			count      : Number of results per page
 		"""
 		self.framework = framework
 		self.q = q
 		self.agent = framework.rand_uagent().lynx[7]
 		self._pages = ''
 		self.limit = limit + 1
-		self.num = count
 		self._links = []
 
 	def run_crawl(self):
@@ -65,7 +59,7 @@ class main:
 			page += 1
 			if page > self.limit:
 				break
-		links = self.framework.page_parse(self._pages).findall(r'href="([^"]+)"')
+		links = self.framework.page_parse(self._pages).findall(r'rel="nofollow" href="([^"]+)" class=\'result-link\'>')
 		for link in links:
 			cond1 = 'duckduckgo.com' not in link.lower()
 			cond2 = '/lite/?' not in link.lower()
@@ -79,6 +73,13 @@ class main:
 	@property
 	def links(self):
 		return self._links
+
+	@property
+	def links_with_title(self):
+		parser = self.framework.page_parse(self._pages)
+		parser.pclean
+		results = parser.findall(r'''rel="nofollow" href="([^"]+)" class='result-link'>([^<]+)</a''')
+		return results
 
 	@property
 	def dns(self):
