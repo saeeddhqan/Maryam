@@ -1,16 +1,13 @@
 """
 OWASP Maryam!
-
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 any later version.
-
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSEdocs.  See the
 GNU General Public License for more details.
-
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
@@ -30,6 +27,7 @@ from core.util import crt
 from core.util import carrot2
 from core.util import exalead
 from core.util import google
+from core.util import duckduckgo
 from core.util import hunter
 from core.util import keywords
 from core.util import lang_identify
@@ -165,6 +163,10 @@ class BaseModule(framework.Framework):
 
 	def carrot2(self, q):
 		search = carrot2.main(self, q)
+		return search
+
+	def duckduckgo(self, q, limit=1):
+		search = duckduckgo.main(self, q, limit)
 		return search
 
 	def exalead(self, q, limit=3):
