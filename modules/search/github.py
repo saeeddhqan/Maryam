@@ -25,7 +25,7 @@ class Module(BaseModule):
 		'author': 'Aman Singh',
 		'version': '0.1',
 		'description': 'Search your query in the GitHub and show the results.',
-		'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort','qwant'),
+		'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort','qwant', 'duckduckgo'),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
 			('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store'),
@@ -48,6 +48,7 @@ class Module(BaseModule):
 		links = run.links
 		users = []
 		repository = []
+		blogs = []
 		pages = run.pages
 
 		if 'bing' in engine:
@@ -62,7 +63,7 @@ class Module(BaseModule):
 				links.append(link)
 
 		if 'carrot2' in engine:
-			run = self.carrot2(google_q)
+			run = self.carrot2(q, limit)
 			run.run_crawl()
 			pages += run.pages
 			for item in run.json_links:
@@ -71,24 +72,35 @@ class Module(BaseModule):
 				self.verbose(f"\t{link}")
 				links.append(link)
 
-		if 'yippy' in engine:
-			run = self.yippy(yippy_q)
+		if 'duckduckgo' in engine:
+			run = self.duckduckgo(q,limit,count)
 			run.run_crawl()
+			pages += run.pages
+			links += run.links
+
+
+		if 'yippy' in engine:
+			run = self.yippy(q, limit)
+			run.run_crawl()
+			pages += run.pages
 			links += run.links
 
 		if 'yahoo' in engine:
 			run = self.yahoo(q, limit, count)
 			run.run_crawl()
+			pages += run.pages
 			links.extend(run.links)
 
 		if 'millionshort' in engine:
 			run = self.millionshort(q, limit)
 			run.run_crawl()
+			pages += run.pages
 			links.extend(run.links)
 
 		if 'qwant' in engine:
 			run = self.qwant(q, limit)
 			run.run_crawl()
+			pages += run.pages
 			links.extend(run.links)
 
 
@@ -96,6 +108,13 @@ class Module(BaseModule):
 		if links == []:
 			self.output('Without result')
 		else:
+			search = self.page_parse(pages).get_networks
+
+			self.alert('Blogs')
+			for blog in set(search['Github site']):
+				self.output(f'\t{blog}', 'G')
+				blogs.append(blog)
+
 			self.alert('Users')
 			for link in links:
 				try:
@@ -122,4 +141,4 @@ class Module(BaseModule):
 			for link in links:
 				self.output(f'\t{link}')
 
-		self.save_gather({'users': users, 'repo': repository,}, 'search/github', query, output=self.options.get('output'))
+		self.save_gather({'users': users, 'repos': repository, 'blogs': blogs}, 'search/github', query, output=self.options.get('output'))
