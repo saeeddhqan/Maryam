@@ -25,15 +25,15 @@ class Module(BaseModule):
 		'author': 'Aman Singh',
 		'version': '0.1',
 		'description': 'Search your query in the GitHub and show the results.',
-		'sources': ('google', 'carrot2', 'bing', 'yippy'),
+		'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort','qwant'),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
 			('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store'),
 			('count', 50, False, 'Number of links per page(min=10, max=100, default=50)', '-c', 'store'),
-			('engine', 'google,carrot2', False, 'Engine names for search(default=google)', '-e', 'store'),
+			('engine', 'google', False, 'Engine names for search(default=google)', '-e', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-        'examples': ('github -q <QUERY> -l 15 --output',)
+        'examples': ('github -q <QUERY> -l 15 -e carrot2,bing,qwant --output',)
 	}
 
 	def module_run(self):
@@ -41,11 +41,9 @@ class Module(BaseModule):
 		limit = self.options['limit']
 		count = self.options['count']
 		engine = self.options['engine'].split(',')
-		google_q = f"site:github.com {query}"
-		bing_q = f"site:github.com {query}"
-		yippy_q = f"site:github.com {query}"
+		q = f"site:github.com {query}"
 
-		run = self.google(google_q, limit, count)
+		run = self.google(q, limit, count)
 		run.run_crawl()
 		links = run.links
 		users = []
@@ -53,7 +51,7 @@ class Module(BaseModule):
 		pages = run.pages
 
 		if 'bing' in engine:
-			run = self.bing(bing_q, limit, count)
+			run = self.bing(q, limit, count)
 			run.run_crawl()
 			pages += run.pages
 			for item in run.links_with_title:
@@ -78,6 +76,22 @@ class Module(BaseModule):
 			run.run_crawl()
 			links += run.links
 
+		if 'yahoo' in engine:
+			run = self.yahoo(q, limit, count)
+			run.run_crawl()
+			links.extend(run.links)
+
+		if 'millionshort' in engine:
+			run = self.millionshort(q, limit)
+			run.run_crawl()
+			links.extend(run.links)
+
+		if 'qwant' in engine:
+			run = self.qwant(q, limit)
+			run.run_crawl()
+			links.extend(run.links)
+
+
 		links = list(set(links))
 		if links == []:
 			self.output('Without result')
@@ -96,7 +110,7 @@ class Module(BaseModule):
 			self.alert('Repository')
 			for link in links:
 				try:
-					link = link.split('/')[4]
+					link = link.split('/')[3] + '/' + link.split('/')[4]
 				except:
 					continue
 				if re.search(r'^[\w\d_\-\/]+$', link):
