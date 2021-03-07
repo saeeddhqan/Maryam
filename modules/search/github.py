@@ -1,16 +1,13 @@
 """
 OWASP Maryam!
-
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 any later version.
-
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
@@ -46,9 +43,9 @@ class Module(BaseModule):
 		run = self.google(q, limit, count)
 		run.run_crawl()
 		links = run.links
-		users = []
-		repository = []
+		repositories = []
 		blogs = []
+		users = []
 		pages = run.pages
 
 		if 'bing' in engine:
@@ -57,8 +54,8 @@ class Module(BaseModule):
 			pages += run.pages
 			for item in run.links_with_title:
 				link,title = item
-				self.verbose(f"\t{title}", 'C')
-				self.verbose(f"\t\t{link}")
+				self.verbose(title, 'G')
+				self.verbose(f"\t{link}")
 				self.verbose('')
 				links.append(link)
 
@@ -73,14 +70,14 @@ class Module(BaseModule):
 				links.append(link)
 
 		if 'duckduckgo' in engine:
-			run = self.duckduckgo(q,limit,count)
+			run = self.duckduckgo(q, limit, count)
 			run.run_crawl()
 			pages += run.pages
 			links += run.links
 
 
 		if 'yippy' in engine:
-			run = self.yippy(q, limit)
+			run = self.yippy(q)
 			run.run_crawl()
 			pages += run.pages
 			links += run.links
@@ -110,35 +107,24 @@ class Module(BaseModule):
 		else:
 			search = self.page_parse(pages).get_networks
 
-			self.alert('Blogs')
+			self.alert('blogs')
 			for blog in set(search['Github site']):
 				self.output(f'\t{blog}', 'G')
 				blogs.append(blog)
 
-			self.alert('Users')
-			for link in links:
-				try:
-					link = link.split('/')[3]
-				except:
-					continue
-				if re.search(r'^[\w\d_\-\/]+$', link):
-					if(link not in users):
-						users.append(link)
-						self.output(f"\t{link}", 'G')
+			self.alert('users')
+			for user in set(search['Github']):
+				self.output(f'\t{user}', 'G')
+				users.append(user)
 
-			self.alert('Repository')
-			for link in links:
-				try:
-					link = link.split('/')[3] + '/' + link.split('/')[4]
-				except:
-					continue
-				if re.search(r'^[\w\d_\-\/]+$', link):
-					if(link not in repository):
-						repository.append(link)
-						self.output(f"\t{link}", 'G')
+			repo_reg = re.compile(r"https://(www\.)?(github\.com/[\w_-]{1,39}/[\w\-\.]+)")
+			self.alert('repositories')
+			for link in filter(repo_reg.match, links):
+				rep = repo_reg.search(link).group(0)
+				repositories.append(rep)
+				title = rep.split('/')[-1].replace('-', ' ').title()
+				self.output(title, 'G')
+				self.output(f'\t{rep}')
 
-			self.alert('Links')
-			for link in links:
-				self.output(f'\t{link}')
-
-		self.save_gather({'users': users, 'repos': repository, 'blogs': blogs}, 'search/github', query, output=self.options.get('output'))
+		self.save_gather({'usernames': users, 'repositories': repositories, 'blogs': blogs},\
+		 'search/github', query, output=self.options.get('output'))
