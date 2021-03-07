@@ -27,6 +27,7 @@ from core.util import crt
 from core.util import carrot2
 from core.util import exalead
 from core.util import google
+from core.util import github
 from core.util import duckduckgo
 from core.util import hunter
 from core.util import keywords
@@ -175,6 +176,10 @@ class BaseModule(framework.Framework):
 
 	def google(self, q, limit=1, count=10):
 		search = google.main(self, q, limit, count)
+		return search
+
+	def github(self, q, cookie, _type="Repositories", limit=1):
+		search = github.main(self, q=q, cookie=cookie, _type=_type, limit=limit)
 		return search
 
 	def hunter(self, q, key, limit=100):

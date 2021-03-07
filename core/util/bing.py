@@ -34,7 +34,8 @@ class main:
 
 	def run_crawl(self):
 		set_page = lambda x: x*11
-		urls = [f"https://www.{self.bing}/search?q={self.q}&count={self.count}&first={set_page(i)}&form=QBLH&pq={self.q.lower()}" for i in range(1, self.limit+1)]
+		urls = [f"https://www.{self.bing}/search?q={self.q}&count={self.count}&\
+					first={set_page(i)}&form=QBLH&pq={self.q.lower()}" for i in range(1, self.limit+1)]
 		max_attempt = len(urls)
 		for url in range(max_attempt):
 			self.framework.verbose(f"[BING] Searching in {url} page...")
