@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from core.module import BaseModule
-
+from pprint import pprint
 
 class Module(BaseModule):
 	meta = {
@@ -24,87 +24,48 @@ class Module(BaseModule):
 		'author': 'Tarunesh Kumar',
 		'version': '0.1',
 		'description': 'Search your query in the Wikipedia and show the results.',
-		'sources': ('google','duckduckgo', 'yahoo', 'bing', 'yippy', 'metacrawler', 'millionshort', 'carrot2', 'qwant'),
+		'sources': ('wikipedia',),
 		'options': (
-			('query', None, True, 'Query string', '-q', 'store'),
-			('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store'),
+			('query', None, True, 'Query String', '-q', 'store'),
 			('count', 50, False, 'Number of links per page(min=10, max=100, default=50)', '-c', 'store'),
-			('engine', 'google', False, 'Engine names for search(default=google)', '-e', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-		'examples': ('wikipedia -q <QUERY> -l 15 --output',)
+		'examples': ('wikipedia -q <QUERY> -c 15 --output',)
 	}
 
 	def module_run(self):
 		query = self.options['query']
-		limit = self.options['limit']
 		count = self.options['count']
-		engine = self.options['engine'].split(',')
-		q = f"site:en.wikipedia.org {query}"
-		yippy_q = f'"en.wikipedia.org" {query}'
-		millionshort_q = f'site:en.wikipedia.org "{query}"'
+		wiki = self.wikipedia(query, count)
+		target = ""
+		output = {}
+		
+		if isinstance(query,str):
+			wiki.search()
+			links_with_title = wiki.links_with_title
 
-		run = self.google(q, limit, count)
-		run.run_crawl()
-		links = run.links
-		titles = []
-
-		if 'duckduckgo' in engine:
-			run = self.duckduckgo(q,limit,count)
-			run.run_crawl()
-			links += run.links
-
-		if 'bing' in engine:
-			run = self.bing(q, limit, count)
-			run.run_crawl()
-			links += run.links
-
-		if 'yahoo' in engine:
-			run = self.yahoo(q, limit, count)
-			run.run_crawl()
-			links += run.links
-
-		if 'yippy' in engine:
-			run = self.yippy(yippy_q)
-			run.run_crawl()
-			links += run.links
-
-		if 'metacrawler' in engine:
-			run = self.metacrawler(yippy_q, limit)
-			run.run_crawl()
-			links += run.links
-
-		if 'millionshort' in engine:
-			run = self.millionshort(millionshort_q, limit)
-			run.run_crawl()
-			links += run.links
-
-		if 'carrot2' in engine:
-			run = self.carrot2(q)
-			run.run_crawl()
-			links += run.links
-
-		if 'qwant' in engine:
-			run = self.qwant(q, limit)
-			run.run_crawl('webpages')
-			links += run.links
-
-		links = list(set(links))
-		filtered_links = []
-		if links == []:
-			self.output('Without result')
-		else:
 			self.alert('Links')
-			for link in links:
-				if 'en.wikipedia.org/wiki' in link:
-					filtered_links.append(link)
-					title = link.replace('https://en.wikipedia.org/wiki/','').replace('/',' ')
-					title = title.replace('_',' ')
-					title = self.urlib(title).unquote
-					titles.append(title)
-					self.output(title,'G')
-					self.output(f'\t{link}')
-			
+			for link, title, pid in links_with_title:
+				self.output(f'{title}[{pid}]','G')
+				self.output(f'\t{link}')
 
-		self.save_gather({'titles':titles, 'links': filtered_links},
-						 'search/wikipedia', query, output=self.options.get('output'))
+			target = query
+			output['Titles'] = wiki.titles
+			output['Links'] = wiki.links
+
+		else:
+			output = wiki.page()
+			page = {**output}
+			target = page.pop('title',query)
+			description = page.pop('extract')
+			header = ['Key','Value']
+			self.table(page.items(),header, title=target)
+			self.heading('Description')
+			pprint(description,width=80)
+		
+
+		self.save_gather(output, 'search/wikipedia', target, output=self.options.get('output'))		
+
+
+
+

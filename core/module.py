@@ -47,6 +47,7 @@ from core.util import virustotal
 from core.util import waf_identify
 from core.util import web_scrap
 from core.util import wapps
+from core.util import wikipedia
 from core.util import yahoo
 from core.util import yandex
 from core.util import yippy
@@ -244,6 +245,10 @@ class BaseModule(framework.Framework):
 
 	def web_scrap(self, url, debug=False, limit=5, thread=1):
 		search = web_scrap.main(self, url, debug, limit, thread)
+		return search
+
+	def wikipedia(self, q, count):
+		search = wikipedia.main(self, q, count)
 		return search
 
 	def startpage(self, q, limit):
