@@ -20,7 +20,6 @@ from core.module import BaseModule
 import re
 import concurrent.futures
 
-
 class Module(BaseModule):
 
     meta = {
@@ -55,7 +54,7 @@ class Module(BaseModule):
         self.verbose('[MITRE] Searching in mitre...')
         try:
             req = self.request(
-                f'https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword={q}')
+                f"https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword={q}")
         except Exception as e:
             self.error('Mitre is missed!')
         else:
@@ -66,7 +65,7 @@ class Module(BaseModule):
             self.links.extend(
                 list(map(lambda x: "https://cve.mitre.org/" + x, hrefs)))
             self.descriptions.extend(re.findall(
-                r"<td valign=\"top\">(.*?)<\/td>", req.text.replace("\n", "")))
+                r"<td valign=\"top\">(.*?)<\/td>", req.text.replace('\n', '')))
 
     def thread(self, function, thread_count, sources, q):
         threadpool = concurrent.futures.ThreadPoolExecutor(
@@ -82,17 +81,17 @@ class Module(BaseModule):
     def module_run(self):
         self.clear()
         q = self.options['query']
-        sources = self.options['sources'].split(",")
+        sources = self.options['sources'].split(',')
         thread_count = self.options['thread']
 
         self.thread(self.search, thread_count, sources, q)
 
         if self.names == []:
-            self.output("No CVE found", "O")
+            self.output('No CVE found', 'O')
 
         for i in range(len(self.names)):
-            self.output(f"{self.names[i]}", "G")
-            self.output(f"{self.links[i]}", "R")
+            self.output(self.names[i], 'G')
+            self.output(self.links[i], 'R')
             self.output(f"{self.descriptions[i]}\n")
 
         self.save_gather({'names': self.names, 'links': self.links,
