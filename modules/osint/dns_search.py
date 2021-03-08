@@ -252,7 +252,7 @@ class Module(BaseModule):
 				hostname, alias_list, addr_list = gethostbyaddr(ip)
 				tire += (hostname,)
 				tire += (','.join(addr_list),)
-				tire += (','.join(aliaslist),) if alias_list else ('-',)
+				tire += (','.join(alias_list),) if alias_list else ('-',)
 				data.append(tire)
 			except: 
 				self.output('Invalid IP address: ' + ip)
