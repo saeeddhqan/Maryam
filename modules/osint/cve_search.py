@@ -15,8 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from concurrent.futures import thread
 from core.module import BaseModule
 import re
+import concurrent.futures
 
 
 class Module(BaseModule):
@@ -66,15 +68,28 @@ class Module(BaseModule):
 			self.descriptions.extend(re.findall(
 				r"<td valign=\"top\">(.*?)<\/td>", req.text.replace("\n", "")))
 
+	def thread(self, function, thread_count, sources, q):
+		threadpool = concurrent.futures.ThreadPoolExecutor(
+			max_workers=thread_count)
+		futures = (threadpool.submit(function, source, q)
+				   for source in sources if source in self.meta['sources'])
+		for _ in concurrent.futures.as_completed(futures):
+			pass
+
+	def search(self, source, q):
+		getattr(self, source)(q)
+
 	def module_run(self):
 		self.clear()
 		q = self.options['query']
-		sources = self.options['sources']
-		
-		for source in sources.split(","):
-			if hasattr(self, source):
-				getattr(self, source)(q)
-		
+		sources = self.options['sources'].split(",")
+		thread_count = self.options['thread']
+
+		# for source in sources.split(","):
+		# 	if hasattr(self, source):
+		# 		getattr(self, source)(q)
+		self.thread(self.search, thread_count, sources, q)
+
 		if self.names == []:
 			self.output("No CVE found", "O")
 
