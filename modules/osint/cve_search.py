@@ -20,80 +20,103 @@ from core.module import BaseModule
 import re
 import concurrent.futures
 
+
 class Module(BaseModule):
 
-    meta = {
-        'name': 'Common Vulnerabilities and Exposures Searcher',
-        'author': 'Dimitrios Papageorgiou',
-        'version': '0.1',
-        'description': 'Search in open-sources to find CVEs.',
-        'sources': ('mitre'),
-        'options': (
-                ('query', BaseModule._global_options['target'],
-                 True, 'Domain name or company name', '-q', 'store'),
-                ('sources', 'mitre', False,
-                 'DB source to search. e.g mitre,...(default=mitre)', '-s', 'store'),
-                ('thread', 2, False,
-                 'The number of engine that run per round(default=2)', '-t', 'store'),
-                ('output', False, False, 'Save output to  workspace',
-                 '--output', 'store_true'),
-        ),
-        'examples': ('cve_search -q sql -s mitre --output')
-    }
+	meta = {
+		'name': 'Common Vulnerabilities and Exposures Searcher',
+		'author': 'Dimitrios Papageorgiou',
+		'version': '0.2',
+		'description': 'Search in open-sources to find CVEs.',
+		'sources': ('mitre', 'nist'),
+		'options': (
+				('query', BaseModule._global_options['target'],
+				 True, 'Domain name or company name', '-q', 'store'),
+				('sources', 'mitre', False,
+				 'DB source to search. e.g mitre,...(default=mitre)', '-s', 'store'),
+				('count', 20, False,
+				 'Number of results per search(default=20, -1 for all available in mitre)', '-c', 'store'),
+				('thread', 2, False,
+				 'The number of engine that run per round(default=2)', '-t', 'store'),
+				('output', False, False, 'Save output to  workspace',
+				 '--output', 'store_true'),
+		),
+		'examples': ('cve_search -q sql -s mitre --output')
+	}
 
-    names = []
-    links = []
-    descriptions = []
+	names = []
+	links = []
+	descriptions = []
 
-    def clear(self):
-        self.names = []
-        self.links = []
-        self.descriptions = []
+	def clear(self):
+		self.names = []
+		self.links = []
+		self.descriptions = []
 
-    def mitre(self, q):
-        self.verbose('[MITRE] Searching in mitre...')
-        try:
-            req = self.request(
-                f"https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword={q}")
-        except Exception as e:
-            self.error('Mitre is missed!')
-        else:
-            self.names.extend(re.findall(
-                r"<a href=\".*?\">(CVE-.*?)</a>", req.text))
-            hrefs = re.findall(
-                r"<a href=\"(/cgi-bin/cvename.cgi\?name=.*?)\">", req.text)
-            self.links.extend(
-                list(map(lambda x: "https://cve.mitre.org/" + x, hrefs)))
-            self.descriptions.extend(re.findall(
-                r"<td valign=\"top\">(.*?)<\/td>", req.text.replace('\n', '')))
+	def mitre(self, q, count):
+		self.verbose('[MITRE] Searching in mitre...')
+		try:
+			req = self.request(
+				f"https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword={q}")
+		except Exception as e:
+			self.error('Mitre is missed!')
+		else:
+			self.names.extend(re.findall(
+				r'<a href="[^"]+">(CVE-[^<]+)</a>', req.text)[:count])
+			hrefs = re.findall(
+				r'<a href=\"(/cgi-bin/cvename.cgi\?name=[^"]+)\">', req.text)[:count]
+			self.links.extend(
+				list(map(lambda x: f"https://cve.mitre.org{x}", hrefs)))
+			self.descriptions.extend(re.findall(
+				r'<td valign="top">(.*?)<\/td>', req.text.replace('\n', ''))[:count])
 
-    def thread(self, function, thread_count, sources, q):
-        threadpool = concurrent.futures.ThreadPoolExecutor(
-            max_workers=thread_count)
-        futures = (threadpool.submit(function, source, q)
-                   for source in sources if source in self.meta['sources'])
-        for _ in concurrent.futures.as_completed(futures):
-            pass
+	def nist(self, q, count):
+		self.verbose('[NIST] Searching in nist...')
+		try:
+			req = self.request(
+				f"https://services.nvd.nist.gov/rest/json/cves/1.0?keyword={q}&resultsPerPage={count}")
+		except Exception as e:
+			print(e)
+			self.error('Nist is missed!')
+		else:
+			cve_items = req.json()['result']['CVE_Items']
+			names = [cve['cve']['CVE_data_meta']['ID'] for cve in cve_items]
+			links = [f"https://nvd.nist.gov/vuln/detail/{id}" for id in names]
+			desc = [cve['cve']['description']['description_data'][0]['value']
+					for cve in cve_items]
 
-    def search(self, source, q):
-        getattr(self, source)(q)
+			self.names.extend(names)
+			self.links.extend(links)
+			self.descriptions.extend(desc)
 
-    def module_run(self):
-        self.clear()
-        q = self.options['query']
-        sources = self.options['sources'].split(',')
-        thread_count = self.options['thread']
+	def thread(self, function, thread_count, sources, q, count):
+		threadpool = concurrent.futures.ThreadPoolExecutor(
+			max_workers=thread_count)
+		futures = (threadpool.submit(function, source, q, count)
+				   for source in sources if source in self.meta['sources'])
+		for _ in concurrent.futures.as_completed(futures):
+			pass
 
-        self.thread(self.search, thread_count, sources, q)
+	def search(self, source, q, count):
+		getattr(self, source)(q, count)
 
-        if self.names == []:
-            self.output('No CVE found', 'O')
+	def module_run(self):
+		self.clear()
+		q = self.options['query']
+		sources = self.options['sources'].split(',')
+		count = self.options['count']
+		thread_count = self.options['thread']
 
-        for i in range(len(self.names)):
-            self.output(self.names[i], 'G')
-            self.output(self.links[i], 'R')
-            self.output(f"{self.descriptions[i]}\n")
+		self.thread(self.search, thread_count, sources, q, count)
 
-        self.save_gather({'names': self.names, 'links': self.links,
-                          'descriptions': self.descriptions}, 'osint/cve_search',
-                         q, output=self.options.get('output'))
+		if self.names == []:
+			self.output('No CVE found', 'O')
+
+		for i in range(len(self.names)):
+			self.output(self.names[i], 'G')
+			self.output(self.links[i], 'R')
+			self.output(f"{self.descriptions[i]}\n")
+
+		self.save_gather({'names': self.names, 'links': self.links,
+						  'descriptions': self.descriptions}, 'osint/cve_search',
+						 q, output=self.options.get('output'))
