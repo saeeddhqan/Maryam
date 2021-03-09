@@ -64,11 +64,12 @@ class Module(BaseModule):
 			self.names.extend(re.findall(
 				r'<a href="[^"]+">(CVE-[^<]+)</a>', req.text)[:count])
 			hrefs = re.findall(
-				r'<a href=\"(/cgi-bin/cvename.cgi\?name=[^"]+)\">', req.text)[:count]
+				r'<a href="(/cgi-bin/cvename.cgi\?name=[^"]+)">', req.text)[:count]
 			self.links.extend(
 				list(map(lambda x: f"https://cve.mitre.org{x}", hrefs)))
-			self.descriptions.extend(re.findall(
-				r'<td valign="top">(.*?)<\/td>', req.text.replace('\n', ''))[:count])
+			descriptions = re.findall(
+				r'<td valign="top">(.*?)<\/td>', req.text.replace('\n', ''))[:-1]
+			self.descriptions.extend(descriptions[:count])
 
 	def nist(self, q, count):
 		self.verbose('[NIST] Searching in nist...')
@@ -84,7 +85,6 @@ class Module(BaseModule):
 			links = [f"https://nvd.nist.gov/vuln/detail/{id}" for id in names]
 			desc = [cve['cve']['description']['description_data'][0]['value']
 					for cve in cve_items]
-
 			self.names.extend(names)
 			self.links.extend(links)
 			self.descriptions.extend(desc)
