@@ -29,8 +29,8 @@ class Module(BaseModule):
         'description': 'Search in open-sources to find CVEs.',
         'sources': ('mitre'),
         'options': (
-                ('query', BaseModule._global_options['target'],
-                 True, 'Domain name or company name', '-q', 'store'),
+                ('query', None,
+                 True, 'Query string(bug name, app name, etc)', '-q', 'store'),
                 ('sources', 'mitre', False,
                  'DB source to search. e.g mitre,...(default=mitre)', '-s', 'store'),
                 ('thread', 2, False,
@@ -59,13 +59,13 @@ class Module(BaseModule):
             self.error('Mitre is missed!')
         else:
             self.names.extend(re.findall(
-                r"<a href=\".*?\">(CVE-.*?)</a>", req.text))
+                r'<a href=".*?">(CVE-.*?)</a>', req.text))
             hrefs = re.findall(
-                r"<a href=\"(/cgi-bin/cvename.cgi\?name=.*?)\">", req.text)
+                r'<a href="(/cgi-bin/cvename.cgi\?name=.*?)">', req.text)
             self.links.extend(
-                list(map(lambda x: "https://cve.mitre.org/" + x, hrefs)))
+                list(map(lambda x: f"https://cve.mitre.org/{x}", hrefs)))
             self.descriptions.extend(re.findall(
-                r"<td valign=\"top\">(.*?)<\/td>", req.text.replace('\n', '')))
+                r'<td valign="top">(.*?)<\/td>', req.text.replace('\n', '')))
 
     def thread(self, function, thread_count, sources, q):
         threadpool = concurrent.futures.ThreadPoolExecutor(
