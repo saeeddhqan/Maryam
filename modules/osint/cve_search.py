@@ -38,7 +38,7 @@ class Module(BaseModule):
                 ('output', False, False, 'Save output to  workspace',
                  '--output', 'store_true'),
         ),
-        'examples': ('cve_search -q sql -s mitre --output')
+        'examples': ('cve_search -q sql --output')
     }
 
     names = []
@@ -59,9 +59,9 @@ class Module(BaseModule):
             self.error('Mitre is missed!')
         else:
             self.names.extend(re.findall(
-                r'<a href=".*?">(CVE-.*?)</a>', req.text))
+                r'<a href="[^"]+">(CVE-[^<]+)</a>', req.text))
             hrefs = re.findall(
-                r'<a href="(/cgi-bin/cvename.cgi\?name=.*?)">', req.text)
+                r'<a href="(/cgi-bin/cvename.cgi\?name=[^"]+)">', req.text)
             self.links.extend(
                 list(map(lambda x: f"https://cve.mitre.org/{x}", hrefs)))
             self.descriptions.extend(re.findall(
