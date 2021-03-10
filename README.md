@@ -48,6 +48,9 @@ python3 maryam -e help
 Contributes are welcome! Here is a start guide: [Development Guide](https://github.com/saeeddhqan/maryam/wiki/Development-Guide)
 You can add a new search engine to the util classes or use current search engines to write a new module.
 The best help to write a new module is by checking the current modules.
+### Google Summer of Code(2021)
+
+OWASP Maryam is part of the GSoC2021. Please look at [this](https://owasp.org/www-community/initiatives/gsoc/gsoc2021) page if you are interest.
  
 ## Roadmap
 
