@@ -28,6 +28,7 @@ from core.util import carrot2
 from core.util import exalead
 from core.util import google
 from core.util import github
+from core.util import darksearch
 from core.util import duckduckgo
 from core.util import hunter
 from core.util import keywords
@@ -165,6 +166,10 @@ class BaseModule(framework.Framework):
 
 	def carrot2(self, q):
 		search = carrot2.main(self, q)
+		return search
+
+	def darksearch(self, q, limit=1):
+		search = darksearch.main(self, q, limit=1)
 		return search
 
 	def duckduckgo(self, q, limit=1, count=10):
