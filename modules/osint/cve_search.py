@@ -1,16 +1,13 @@
 """
 OWASP Maryam!
-
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 any later version.
-
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
@@ -31,9 +28,9 @@ class Module(BaseModule):
 		'sources': ('mitre', 'nist'),
 		'options': (
 				('query', BaseModule._global_options['target'],
-				 True, 'Domain name or company name', '-q', 'store'),
-				('sources', 'mitre', False,
-				 'DB source to search. e.g mitre,...(default=mitre)', '-s', 'store'),
+				 True, 'Query string', '-q', 'store'),
+				('engines', 'mitre', False,
+				 'DB source to search. e.g mitre,...(default=mitre)', '-e', 'store'),
 				('count', 20, False,
 				 'Number of results per search(default=20, -1 for all available in mitre)', '-c', 'store'),
 				('thread', 2, False,
@@ -41,7 +38,7 @@ class Module(BaseModule):
 				('output', False, False, 'Save output to  workspace',
 				 '--output', 'store_true'),
 		),
-		'examples': ('cve_search -q sql -s mitre --output')
+		'examples': ('cve_search -q sql -e mitre --output',)
 	}
 
 	names = []
@@ -103,7 +100,7 @@ class Module(BaseModule):
 	def module_run(self):
 		self.clear()
 		q = self.options['query']
-		sources = self.options['sources'].split(',')
+		sources = self.options['engines'].split(',')
 		count = self.options['count']
 		thread_count = self.options['thread']
 
