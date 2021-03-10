@@ -58,17 +58,3 @@ class main:
 	def links(self):
 		return self._links
 
-#		self._pages = req.text
-#		self._json_pages = req.json()
-
-		# Key validation
-#		if 'errors' in self._json_pages:
-#			self.framework.error(f"[SHODAN] api key is incorrect:'self.key'")
-#			self.acceptable = False
-#			return
-
-		# Request validation
-#		if not self._json_pages.get('data').get('accept_all'):
-#			self.framework.verbose('[SHODAN] request was not accepted!')
-#		else:
-#			self.acceptable = True
