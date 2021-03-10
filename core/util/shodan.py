@@ -14,63 +14,61 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-
+from shodan import Shodan
+import json
 class main:
 
 #	def __init__(self, framework, q, key, count=10):
-	def __init__(self, framework, q, key):
-	""" google.com search engine
+	def __init__(self, framework, q, key, host):
+		""" shodan.io search engine
 
 			framework  : core attribute
 			q          : query for search
 			key		   : API key
-			ip		   : query on a given host IP
+			host	   : Returns all services that have been found on the given host IP
 		"""
 		self.framework = framework
 		self.q = q
-		self.key = key
-		self._pages = ''
-#		self.num = count
-		self.shodan_api = f"https://api.shodan.io/shodan/host/search?key={self.key}&query={self.q}"
-		self.acceptable = False
+		self.api_key = key
+		self.host = host
+#		self.shodan_api = f"https://api.shodan.io/shodan/host/search?key={self.key}&query={self.q}"
 		self._links = []
-
 	def run_crawl(self):
 		self.framework.verbose('[SHODAN] Searching in shodan...')
 		try:
-			req = self.framework.request(self.shodan_api)
-			print(req.text)
-		except:
+			if self.host is None:
+				req = Shodan(self.api_key).search(self.q)
+#				req = self.framework.request(self.shodan_api)
+				for results in req['matches']:
+					result_list = {key: results[key] for key in results.keys() & {'location', 'org','ip_str','port','hostnames'}}
+					self._links = req
+					print(json.dumps(result_list, separators=(',', ':'), indent=4))
+				return
+			else:
+				req = Shodan(self.api_key).host(self.host)
+				self._links = req
+				print(json.dumps(req, separators=(',', ':'), indent=4))
+				return
+		except Exception as e:
+			self.framework.error(f"[SHODAN]:{e}")
 			self.framework.debug('[SHODAN] ConnectionError')
-			self.framework.error('Shodan is missed!')
-			return
-		self._pages = req.text
-		self._json_pages = req.json()
-
-		# Key validation
-		if 'errors' in self._json_pages:
-			self.framework.error(f"[SHODAN] api key is incorrect:'self.key'")
-			self.acceptable = False
 			return
 
-		# Request validation
-		if not self._json_pages.get('data').get('accept_all'):
-			self.framework.verbose('[SHODAN] request was not accepted!')
-		else:
-			self.acceptable = True
-
-	@property
-	def pages(self):
-		return self._pages
-
-	@property
+	@property                                                                                                                      
 	def links(self):
 		return self._links
 
-	@property
-	def dns(self):
-		return self.framework.page_parse(self._pages).get_dns(self.q)
+#		self._pages = req.text
+#		self._json_pages = req.json()
 
-	@property
-	def docs(self):
-		return self.framework.page_parse(self._pages).get_docs(self.q, self.links)
+		# Key validation
+#		if 'errors' in self._json_pages:
+#			self.framework.error(f"[SHODAN] api key is incorrect:'self.key'")
+#			self.acceptable = False
+#			return
+
+		# Request validation
+#		if not self._json_pages.get('data').get('accept_all'):
+#			self.framework.verbose('[SHODAN] request was not accepted!')
+#		else:
+#			self.acceptable = True

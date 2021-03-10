@@ -234,9 +234,9 @@ class BaseModule(framework.Framework):
 	def reglib(self, page=None):
 		return reglib.main(page)
 
-       def shodan(self, q, key):
-               search = shodan.main(self, q, key)
-               return search
+	def shodan(self, q, key, host):
+		search = shodan.main(self, q, key, host)
+		return search
 
 	def urlib(self, url):
 		return urlib.main(url)

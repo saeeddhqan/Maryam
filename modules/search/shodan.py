@@ -24,23 +24,26 @@ class Module(BaseModule):
 		'name': 'Shodan Search',
 		'author': 'Divya Goswami',
 		'version': '1.0',
-		'description': 'Search your query on shodan.io and show the results.',
+		'description': 'Search your query on shodan.io and show the results. It can behave both as a stand alone search engine and also as part of dns enumeration module',
 		'sources': ('shodan',),
 		'options': (
-			('query', None, True, 'Query string', '-q', 'store'),
+			('query', None, False, 'Query string', '-q', 'store'),
 			('key', None, False, 'shodan.io api key [required]', '-k', 'store'),
-#			('count', 50, False, 'Number of results per page(min=10, max=100, default=50)', '-c', 'store'),
+			('host', None, False, 'Returns all services that have been found on the given host IP.','-host','store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-        'examples': ('shodan -q <QUERY> -k <KEY> -l 15 --output',)
+        'examples': ('shodan -q <QUERY> -k <KEY> -l 15 --output',
+			('shodan -host <IP> -k <key>')
+		)
 	}
 
 	def module_run(self):
 		query = self.options['query']
 #		count = self.options['count']
 		key = self.options['key']
+		host = self.options['host']
 #		run = self.shodan(query, key, count)
-		run = self.shodan(query, key)
+		run = self.shodan(query, key, host)
 		run.run_crawl()
 		links = run.links
 
