@@ -10,22 +10,27 @@
 
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
 	<script type="text/javascript" src="{{ url_for('static', filename='js/script.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/common.js') }}"></script>
 </head>
 
 <body>
 	<div class = "container">
 		<div class="title">
 			<nav class = "navbar navbar-dark bg-dark">
-	            	<h2>
-	            		<a href="{{ url_for('index') }}">[Maryam]</a>
-	                <span>[</span>
-	                <select id="workspace" onChange="getSummary(this.value)">
-	                {% for workspace in workspaces %}
-	                    <option value="{{ workspace }}"{% if workspace == config.WORKSPACE %}selected=true{% endif %}>{{ workspace }}</option>
-	                {% endfor %}
-	                </select>
-	                <span>]</span>
-	                </h2>
+        <h2>
+      		<a href="{{ url_for('index') }}">[Maryam]</a>
+          <span>[</span>
+          <select id="workspace" onChange="getSummary(this.value)">
+          {% for workspace in workspaces %}
+              <option value="{{ workspace }}"{% if workspace == config.WORKSPACE %}selected=true{% endif %}>{{ workspace }}</option>
+          {% endfor %}
+          </select>
+          <span>]</span>
+          </h2>
+          <ul>
+            <input type="search" class="js-form-search form-control" placeholder="Search" style="width:70%">
+            <button class="btn btn-primary">Find</button>
+        </ul>
 			</nav>
 		</div><!--Nav end -->
 		<div class="sidebar">
@@ -33,9 +38,15 @@
           <div class="sidebar-sticky">
             <ul class="nav flex-column">
               <li class="nav-item">
+                <a class="nav-link active" href="/run">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-activity"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-activity"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></svg>
+                  Run Modules
+                </a>
+              </li>
+              <li class="nav-item">
                 <a class="nav-link active" href="#">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                  Organisations <span class="sr-only">(current)</span>
+                  Organisations
                 </a>
               </li>
               <li class="nav-item">
