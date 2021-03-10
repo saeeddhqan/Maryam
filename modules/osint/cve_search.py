@@ -23,16 +23,16 @@ class Module(BaseModule):
 	meta = {
 		'name': 'Common Vulnerabilities and Exposures Searcher',
 		'author': 'Dimitrios Papageorgiou',
-		'version': '0.2',
+		'version': '0.3',
 		'description': 'Search in open-sources to find CVEs.',
-		'sources': ('mitre', 'nist'),
+		'sources': ('mitre', 'nist', 'packetstormsecurity'),
 		'options': (
 				('query', BaseModule._global_options['target'],
 				 True, 'Query string', '-q', 'store'),
 				('engines', 'mitre', False,
 				 'DB source to search. e.g mitre,...(default=mitre)', '-e', 'store'),
 				('count', 20, False,
-				 'Number of results per search(default=20, -1 for all available in mitre)', '-c', 'store'),
+				 'Number of results per search(default=20, -1 for all available)', '-c', 'store'),
 				('thread', 2, False,
 				 'The number of engine that run per round(default=2)', '-t', 'store'),
 				('output', False, False, 'Save output to  workspace',
@@ -74,7 +74,6 @@ class Module(BaseModule):
 			req = self.request(
 				f"https://services.nvd.nist.gov/rest/json/cves/1.0?keyword={q}&resultsPerPage={count}")
 		except Exception as e:
-			print(e)
 			self.error('Nist is missed!')
 		else:
 			cve_items = req.json()['result']['CVE_Items']
@@ -85,6 +84,21 @@ class Module(BaseModule):
 			self.names.extend(names)
 			self.links.extend(links)
 			self.descriptions.extend(desc)
+
+	def packetstormsecurity(self, q, count):
+		self.verbose('[Packetstormsecurity] Searching in packetstormsecurity...')
+		try:
+			req = self.request(
+				f"https://packetstormsecurity.com/search/?q={q}", timeout=60)
+		except Exception as e:
+			self.error('Packetstormsecurity is missed')
+		else:
+			names = re.findall(r'<a class="ico text-plain"[^>]+>([^<]+)</a>', req.text)[:count]
+			links = re.findall(r'<a class="ico text-plain" href="([^"]+)"[^>]+>', req.text)[:count]
+			descriptions = re.findall(r'<dd class="detail"><p>([^<]+)</p></dd>', req.text)[:count]
+			self.names.extend(names)
+			self.links.extend([f"https://packetstormsecurity.com{link}" for link in links])
+			self.descriptions.extend(descriptions)
 
 	def thread(self, function, thread_count, sources, q, count):
 		threadpool = concurrent.futures.ThreadPoolExecutor(
