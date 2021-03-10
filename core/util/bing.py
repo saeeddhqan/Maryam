@@ -20,10 +20,10 @@ class main:
 	def __init__(self, framework, q, limit=1, count=10):
 		""" bing.com search engine
 			
-			framework : core attribute
-			q 		  : the query for search
-			limit	  : the number of pages
-			count	  : the number of links
+			framework : Core attribute
+			q         : The query for search
+			limit	  : The number of pages
+			count	  : The number of links
 		"""
 		self.framework = framework
 		self.q = self.framework.urlib(q).quote
