@@ -27,25 +27,25 @@ class main:
 		self._titles = []
 		self._pids = []
 		self.url = "https://en.wikipedia.org/w/api.php"		
-		self.headers = {"User-Agent" : "OWASP Maryam: github.com/saeeddhqan/maryam"}
+		self.headers = {"User-Agent" : "OWASP Maryam(github.com/saeeddhqan/maryam)"}
 
 
-	def search(self):
+	def run_crawl(self):
 		self.framework.verbose(f"[WIKIPEDIA] Searching...", end='\r')
 		payload = {
-			'action':'query', 
-			'list':'search',
-			'prop':'', 
-			'srsearch':self.q, 
+			'action': 'query',
+			'list': 'search',
+			'prop': '', 
+			'srsearch': self.q, 
 			'srlimit': self.num, 
-			'utf8':'', 
+			'utf8': '', 
 			'format': 'json'
 		}
 
 		res = self.wiki_request(payload)
 		if res is None:
 			return 
-		
+
 		res = res.json()
 		results = res['query']['search']
 
@@ -61,22 +61,21 @@ class main:
 	def page(self):
 		self.framework.verbose(f"[WIKIPEDIA] Getting page {self.q}...", end='\r')
 		payload = {
-			'action':'query', 
+			'action': 'query', 
 			'pageids': self.q,
-			'prop':'info|extracts', 
-			'inprop':'url',  
-			'explaintext':'',
-			'exintro':'',
+			'prop': 'info|extracts', 
+			'inprop': 'url',  
+			'explaintext': '',
+			'exintro': '',
 			'format': 'json'
 		}
 
 		res = self.wiki_request(payload)
-		if res is None:
+		if not res:
 			return
 
 		res = res.json()
 		return res['query']['pages'][str(self.q)]
-
 
 	def wiki_request(self, payload):
 		try:
@@ -86,12 +85,10 @@ class main:
 					headers=self.headers,
 					allow_redirects=False)
 			return req
-		
 		except:
 			self.framework.error('[WIKIPEDIA] ConnectionError')
 			return None
 
-	
 	@property
 	def links(self):
 		return self._links
@@ -107,4 +104,3 @@ class main:
 	@property
 	def links_with_title(self):
 		return zip(self._links, self._titles , self._pids)
-
