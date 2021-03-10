@@ -1,5 +1,6 @@
 $(document).ready(function(e) {   
     var workspace = document.getElementById("workspace").value;
+    getSummary(workspace);
     getModules(workspace);
  });
 
@@ -54,6 +55,10 @@ function showModules(){
 }
 
 function runCommand(){
+	$('#reload').remove();
+	var reload = document.createElement("a");
+	reload.innerHTML = `<a id = "reload" style="font-size:2vw; padding: 5px;" data-toggle="tooltip" data-placement="top" title="Reload" onclick="displayData(summary)">↺</a>` ;
+	$('#dataTable tr:first th:last').append(reload) ;
 	var command =document.getElementById('module').value;
 	command += " ";
 	command+= document.getElementById('target').value;
@@ -96,6 +101,8 @@ function runCommand(){
 
 
 function displayData(data){
+	$('#reload').remove();
+	$('#dataTable tr:not(:first)').remove();
 	var table = document.getElementById('dataTable');
 	var row = table.insertRow(-1);
 	row.className="table__row";
@@ -141,6 +148,27 @@ function getModules(workspace){
 	}).then(function (data) {
 		displayData(data.modules);
 		summary = data.modules;
+	}).catch(function (error) {
+		console.warn('Something went wrong.', error);
+	});
+}
+
+function getSummary(workspace){
+	fetch('/api/workspaces/',{
+		method: 'POST',
+		headers: {
+			'Content-type': 'application/json'
+		},
+		body: JSON.stringify({
+			'workspace': workspace
+		})
+	})
+	.then(function (response) {
+		if (response.ok) {
+			return response.json();
+		}
+		return Promise.reject(response);
+	}).then(function (data) {
 	}).catch(function (error) {
 		console.warn('Something went wrong.', error);
 	});

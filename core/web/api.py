@@ -16,7 +16,10 @@ API.init_app(resources)
 class WorkspaceSummary(Resource):
     def post(self):
         workspace = request.json['workspace']
+        base_obj.init_workspace(workspace)
         current_app.config['WORKSPACE'] = workspace
+        WORKSPACE = base_obj.workspace.split('/')[-1]
+        print((f" * Workspace initialized: {WORKSPACE}"))
         try:
             filename = os.path.join(home, '.maryam/workspaces/', workspace, 'gather.dat')
             file = open(filename)
@@ -33,7 +36,6 @@ class RunModules(Resource):
         return {
             'modules': modules,
         }
-
     def post(self):
         cmd = request.json['cmd']
         args = cmd.split(' ')
@@ -50,13 +52,18 @@ class RunModules(Resource):
         except:
             data = {}
 
+        output = []
         for module in data:
             if args[0] in module:
-                output = data[module][args[-1]]
+                for target in data[module]:
+                    if args[-1] in target:
+                        output = data[module][target]
+                        break
                 break
 
         return {
             'output': output,
+            'workspace': workspace
         }
 
 API.add_resource(RunModules, '/run/')
