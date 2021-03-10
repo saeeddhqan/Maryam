@@ -43,21 +43,18 @@ class Module(BaseModule):
 		for url in urls:
 			self.links.append(url)
 
-	def thread(self, function, thread_count, engines, q, q_format, limit, count):
+	def thread(self, function, thread_count, engines, q, q_formats, limit, count):
 		threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
 		futures = (threadpool.submit(
-			function, name, q, q_format, limit, count) for name in engines if name in self.meta['sources'])
+			function, name, q, q_formats, limit, count) for name in engines if name in self.meta['sources'])
 		for _ in concurrent.futures.as_completed(futures):
 			pass
 
-	def search(self, name, q, q_format, limit, count):
+	def search(self, name, q, q_formats, limit, count):
 		engine = getattr(self, name)
 		name = engine.__name__
-		query = name + '_q'
-		try:
-			q = q_format[query]
-		except KeyError:
-			q = q_format['_q']
+
+		q = f"{name}_q" if f"{name}_q" in q_formats else q_formats['default_q']
 
 		varnames = engine.__code__.co_varnames
 
@@ -76,16 +73,15 @@ class Module(BaseModule):
 		limit = self.options['limit']
 		count = self.options['count']
 		engine = self.options['engine'].split(',')
-		q_format = {
-			'_q': f"site:www.reddit.com {query}",
+		q_formats = {
+			'default_q': f"site:www.reddit.com {query}",
 			'yippy_q': f'"www.reddit.com" {query}',
 			'millionshort_q': f'site:www.reddit.com "{query}"',
 			'qwant_q': f'site:www.reddit.com {query}'
 		}
 		usernames = []
 
-		self.thread(self.search, self.options['thread'], engine, query, q_format, limit, count)
-
+		self.thread(self.search, self.options['thread'], engine, query, q_formats, limit, count)
 
 		links = list(set(self.links))
 		links = list(self.reglib().filter(r"https?://(www\.)?reddit\.com/", links))
@@ -114,8 +110,8 @@ class Module(BaseModule):
 
 					post = post.replace('_', ' ')
 					post = self.urlib(post).unquote
-					self.output(f"{post.title()} => r/{subreddit}")
-					self.output(f"\t{link}", 'G')
+					self.output(f"\t{post.title()} => r/{subreddit}")
+					self.output(f"\t\t{link}", 'G')
 
 		self.save_gather({'links': links, 'usernames': usernames},
 						 'search/reddit', query, output=self.options.get('output'))
