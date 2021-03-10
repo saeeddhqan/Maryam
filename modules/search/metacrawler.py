@@ -21,7 +21,7 @@ from core.module import BaseModule
 class Module(BaseModule):
 
 	meta = {
-		'name': 'MetaCrawler Search',
+		'name': 'Metacrawler Search',
 		'author': 'Saeeddqn',
 		'version': '0.2',
 		'description': 'Search your query in the metacrawler.com and show the results.',
@@ -40,10 +40,9 @@ class Module(BaseModule):
 		run = self.metacrawler(query, limit)
 		run.run_crawl()
 		links = run.links
-		print('')
 		if links == []:
 			self.output('Without result')
 		else:
 			for link in links:
-				self.output(f'{link}')
-		self.save_gather(links, 'search/metacrawler', query, output=self.options['output'])
+				self.output(f"{link}")
+		self.save_gather({'links': links}, 'search/metacrawler', query, output=self.options['output'])

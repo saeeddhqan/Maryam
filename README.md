@@ -34,12 +34,13 @@ python3 maryam -e help
 ## Updates
 **Last Updates**
 
+ - Added CVE search module
+ - Added wikipedia search module
+ - Added GitHub search module
  - Added duckduckgo and linkedin_business modules
  - Added reddit search and reverse dns
  - Deleted godork module(Due to redundancy with the google search module)
- - Added stackoverflow search module
- - Added instagram search module
- - Fixed bing and google search
+
 
 
 ## Contribution

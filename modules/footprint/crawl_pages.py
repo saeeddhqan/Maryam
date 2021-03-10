@@ -24,7 +24,8 @@ class Module(BaseModule):
 		'name' : 'Crawler Pages',
 		'author' : 'Saeeddqn',
 		'version' : '0.6',
-		'description' : 'Search to find keywords, emails, usernames, errors, meta tags and regex on the page/pages.',
+		'description' : 'Search to find keywords, emails, usernames,\
+		 errors, meta tags and regex on the page/pages.',
 		'options' : (
 			('domain', BaseModule._global_options['target'], True, 'Domain string', '-d', 'store'),
 			('regex', None, True, 'Regex or string for search in the pages', '-r', 'store'),
@@ -34,7 +35,8 @@ class Module(BaseModule):
 			('thread', 1, False, 'The number of links that open per round', '-t', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-		'examples': ('crawl_pages -d <DOMAIN> -r "https?://[A-z0-9\./]+" --output', 'crawl_pages -d <DOMAIN> --limit 2 --more')
+		'examples': ('crawl_pages -d <DOMAIN> -r "https?://[A-z0-9\./]+"\
+		 --output', 'crawl_pages -d <DOMAIN> --limit 2 --more')
 	}
 
 	def module_run(self):
@@ -165,15 +167,8 @@ class Module(BaseModule):
 			if lst != []:
 				self.alert(net)
 				for link in lst:
-					if isinstance(link, (tuple, list)):
-						link = list(link)
-						for mic in link:
-							if len(mic) > 2:
-								users.append(mic)
-								self.output(f'\t{str(mic)}', 'G')
-					else:
-						users.append(link)
-						self.output(f'\t{str(link)}', 'G')
+					users.append(link)
+					self.output(f"\t{str(link)}", 'G')
 		resp[regex]['more']['social_networks'] = users
 
 		flag = 0

@@ -24,7 +24,8 @@ class Module(BaseModule):
 		'name': 'Millionshort Search',
 		'author': 'Saeeddqn',
 		'version': '0.1',
-		'description': 'Million Short started out as an experimental web search engine that allows you to filter and refine your search results set.',
+		'description': 'Million Short started out as an experimental \
+		web search engine that allows you to filter and refine your search results set.',
 		'sources': ('millionshort',),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),

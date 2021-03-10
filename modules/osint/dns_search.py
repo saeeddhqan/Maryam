@@ -31,7 +31,7 @@ class Module(BaseModule):
 		'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'baidu', 'startpage',
 					'netcraft', 'threatcrowd', 'virustotal', 'yippy', 'otx', 'carrot2', 'crt',
 					'qwant', 'millionshort', 'threatminer', 'jldc', 'bufferover', 'rapiddns', 'certspotter',
-					'sublist3r', 'riddler', 'sitedossier'),
+					'sublist3r', 'riddler', 'sitedossier', 'duckduckgo'),
 		'options': (
 			('domain', BaseModule._global_options['target'],
 			 False, 'Domain name without https?://', '-d', 'store'),
@@ -40,14 +40,17 @@ class Module(BaseModule):
 			('engines', 'otx', False, 'Search engine names. e.g bing,google,...[otx by default]', '-e', 'store'),
 			('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store'),
 			('max', False, False, 'Using all of sources(max limit=15, max count=50)', '--max', 'store_true'),
-			('validate', False, False, 'Validate the domains(Remove dead subdomains) found and display their IP(default=False)', '--validate', 'store_true'),
-			('silent', False, False, 'Output without any color and message([Warn]This sets the value of verbosity to zero!, default=False)', '--silent', 'store_true'),
+			('validate', False, False, 'Validate the domains(Remove dead subdomains) \
+				found and display their IP(default=False)', '--validate', 'store_true'),
+			('silent', False, False, 'Output without any color and message([Warn]This sets the \
+				value of verbosity to zero!, default=False)', '--silent', 'store_true'),
 			('reverse', None, False, 'Use reverse DNS search. \
 				Input could be a list of ip addresses(with comma separator)\
 				 or could be a filename that contains ip addresses', '-r', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true')
 		),
-		'examples': ('dns_search -d example.com --output', 'dns_search -d example.com -e google,bing,yahoo -l 3 -t 3 --output', 
+		'examples': ('dns_search -d example.com --output', 'dns_search -d example.com -e \
+			google,bing,yahoo -l 3 -t 3 --output', 
 					 'dns_search -d example.com --max --validate --silent --output',
 					 'dns_search --reverse 1.1.1.1,2.2.2.2,3.3.3.3',
 					 'dns_search --reverse ips.txt')
@@ -218,22 +221,17 @@ class Module(BaseModule):
 			pass
 
 	def search(self, name, q, limit, count):
-		try:
-			engine = getattr(self, name)
-		except Exception as e:
-			self.debug(f"Search engine {name} has not found.")
-			return
+		engine = getattr(self, name)
+		varnames = engine.__code__.co_varnames
+		if 'limit' in varnames and 'count' in varnames:
+			attr = engine(q, limit, count)
+		elif 'limit' in varnames:
+			attr = engine(q, limit)
 		else:
-			varnames = engine.__code__.co_varnames
-			if 'limit' in varnames and 'count' in varnames:
-				attr = engine(q, limit, count)
-			elif 'limit' in varnames:
-				attr = engine(q, limit)
-			else:
-				attr = engine(q)
-			if attr not in ('otx', 'threatcrowd'):
-				attr.run_crawl()
-				self.set_data(attr.dns)
+			attr = engine(q)
+		if attr not in ('otx', 'threatcrowd'):
+			attr.run_crawl()
+			self.set_data(attr.dns)
 
 	def reverse_dns(self, ips):
 		reg_ip = self.reglib().ip_m
@@ -254,7 +252,7 @@ class Module(BaseModule):
 				hostname, alias_list, addr_list = gethostbyaddr(ip)
 				tire += (hostname,)
 				tire += (','.join(addr_list),)
-				tire += (','.join(aliaslist),) if alias_list else ('-',)
+				tire += (','.join(alias_list),) if alias_list else ('-',)
 				data.append(tire)
 			except: 
 				self.output('Invalid IP address: ' + ip)
@@ -282,10 +280,10 @@ class Module(BaseModule):
 			self._global_options['verbosity'] = 0
 		if engines == None:
 			engines = 'otx'
-
 		engines = self.meta['sources'] if MAX else self.options['engines'].lower().split(',')
 		self.thread(self.search, self.options['thread'], engines, domain_name, limit, count)
 		self.hostnames = list(set(self.hostnames))
+
 		if self.options['validate']:
 			validate_hosts = []
 			for sub in self.hostnames:
@@ -303,10 +301,11 @@ class Module(BaseModule):
 
 		if not self.options['output']:
 			if self.hostnames == []:
-				self.output('\tNo hostname found', 'O')
+				self.output('No hostname found', 'O')
 			else:
 				for host in self.hostnames:
 					print(f"{host}")
 
 		self._global_options['verbosity'] = verb
-		self.save_gather(self.hostnames, 'osint/dns_search', domain_name, output=self.options['output'])
+		self.save_gather(self.hostnames, 'osint/dns_search', domain_name,\
+		 output=self.options['output'])

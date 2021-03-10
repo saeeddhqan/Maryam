@@ -80,34 +80,32 @@ class Module(BaseModule):
 			links += run.links
 
 		if 'carrot2' in engine:
-			run = self.carrot2(query)
+			run = self.carrot2(qwant_q)
 			run.run_crawl()
 			links += run.links
 
 		if 'qwant' in engine:
-			run = self.qwant(query)
+			run = self.qwant(qwant_q, limit)
 			run.run_crawl('webpages')
 			links += run.links
 
 		links = list(set(links))
-
-		if links is None:
+		links = list(self.reglib().filter(r"https?://(www\.)?reddit\.com/", links))
+		if links == []:
 			self.output('Without result')
 		else:
-			links = [link for link in links if re.search(r"https?://(www\.)?reddit\.com/", link)]
-			self.alert('Usernames')
-			for link in links:
-				if re.search(r"reddit\.com/user/", link):
-					link = re.sub(r"https?://(www\.)?reddit.com/user/", '', link)
-					if re.search(r'^[\w\d_\-\/]+$', link):
-						link = link.rsplit('/')
-						if link[0] not in usernames:
-							usernames.append(link[0])
-							self.output(f"\t@{link[0]}", 'G')
+			self.alert('usernames')
+			for link in self.reglib().filter(r"reddit\.com/user/", links):
+				link = re.sub(r"https?://(www\.)?reddit\.com/user/", '', link)
+				if re.search(r'^[\w\d_\-\/]+$', link):
+					link = link.rsplit('/')
+					if link[0] not in usernames:
+						usernames.append(link[0])
+						self.output(f"\t@{link[0]}", 'G')
 
-			self.alert('Posts')
+			self.alert('posts')
 			for link in links:
-				if re.search(r"reddit\.com/r/", link) and not re.search(r"reddit\.com/r/[\w\d_\-]+/about/", link):
+				if re.search(r"reddit\.com/r/", link) and "/about/" not in link:
 					post_url = re.sub(r"https?://(www\.)?reddit\.com/r/", '', link)
 					post_url = post_url.rsplit('/')
 					subreddit = post_url[0]

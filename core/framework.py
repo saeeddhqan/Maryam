@@ -646,7 +646,6 @@ class Framework(cmd.Cmd):
 		resp = getattr(requests, method.lower())(url, **kwargs)
 		if self._global_options['verbosity'] < 2:
 			return resp
-			
 		# display request data
 		self._print_prepared_request(resp.request)
 		# display response data

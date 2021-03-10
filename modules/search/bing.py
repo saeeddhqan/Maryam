@@ -29,7 +29,7 @@ class Module(BaseModule):
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
 			('limit', 1, False, 'Search limit(count of pages, default=1)', '-l', 'store'),
-			('count', 50, False, 'Number of results per page(min=10, max=100, default=50)', '-c', 'store'),
+			('count', 50, False, 'The number of results per page(min=10, max=100, default=50)', '-c', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
         'examples': ('bing -q <QUERY> -l 15 --output',)

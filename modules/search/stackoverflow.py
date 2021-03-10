@@ -27,7 +27,7 @@ class Module(BaseModule):
 		'author': 'Sanjiban Sengupta',
 		'version': '0.2',
 		'description': 'Search your query in the stackoverflow.com and show the results.',
-		'sources': ('yippy', 'bing', 'google', 'carrot2'),
+		'sources': ('yippy', 'bing', 'google', 'carrot2', 'qwant', 'millionshort'),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
 			('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store'),
@@ -45,6 +45,7 @@ class Module(BaseModule):
 		count = self.options['count']
 		engine = self.options['engine'].split(',')
 		q = f"site:www.stackoverflow.com {query}"
+		millionshort_q = f'site:www.stackoverflow.com "{query}"'
 		run = self.google(q, limit, count)
 		run.run_crawl()
 		links = run.links
@@ -79,7 +80,18 @@ class Module(BaseModule):
 				self.verbose(f"\t{link}")
 				links.append(link)
 
+		if 'millionshort' in engine:
+			run = self.millionshort(millionshort_q, limit)
+			run.run_crawl()
+			links += run.links
+
+		if 'qwant' in engine:
+			run = self.qwant(q, limit)
+			run.run_crawl('webpages')
+			links += run.links
+
 		links = list(set(links))
+		links = list(self.reglib().filter(lambda x: 'stackoverflow.com' in x, links))
 		if links == []:
 		 	self.output('Without result')
 		else:
@@ -88,13 +100,13 @@ class Module(BaseModule):
 				first_type = re.search(r'stackoverflow\.com/questions/[\d]+/([\w\d\-_]+)/?', link)
 				second_type = re.search(r'stackoverflow\.com/a/[\d+]/?', link)
 				if first_type:
-					title = first_type.group(1).replace("-", " ").title()
+					title = first_type.group(1).replace('-', ' ').title()
 					title = self.urlib(title).unquote
 					titles.append(title.title())
-					self.output(title, 'C')
+					self.output(title, 'G')
 					self.output(f'\t{link}')
 				elif second_type:
-					self.output('Without Title', 'C')
+					self.output('Without Title', 'G')
 					self.output(f'\t{link}')
 
 			self.alert('profiles')
@@ -115,4 +127,3 @@ class Module(BaseModule):
 
 		self.save_gather({'links': links, 'titles': titles, 'profiles': profiles, 'tags': tags},
 			'search/stackoverflow', query, output=self.options.get('output'))
-

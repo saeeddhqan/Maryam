@@ -20,7 +20,7 @@ import re
 class main:
 
 	def __init__(self, string=None):
-		self.string = string
+		self.string = str(string)
 
 	protocol_s = r"^([A-z0-9]+:\/\/)"
 	protocol_m = r"([A-z0-9]+:\/\/)"
@@ -37,32 +37,39 @@ class main:
 	ip_s = r"^\d+\.[\d]+\.[\d]+\.[\d]+$"
 	ip_m = r"\d+\.[\d]+\.[\d]+\.[\d]+"
 	social_network_ulinks = {
-		'Instagram': r"(instagram\.com\/[A-z_0-9.\-]{1,30})",
-		'Facebook': r"(facebook\.com\/[A-z_0-9\-]{2,50})|(fb\.com\/[A-z_0-9\-]{2,50})",
-		'Twitter': r"(twitter\.com\/[A-z_0-9\-.]{2,40})",
-		'Github': r"(github\.com\/[A-z0-9_-]{1,39})",
-		'Github site': r"([A-z0-9_-]{1,39}\.github.(io|com))",
-		'Telegram': r"(telegram\.me/[A-z_0-9]{5,32})",
-		'Youtube': r"(youtube\.com\/user\/[A-z_0-9\-\.]{2,100})",
-		'Linkedin company': r"(linkedin\.com\/company\/[A-z_0-9\.\-]{3,50})",
-		'Linkedin individual': r"(linkedin\.com\/in\/[A-z_0-9\.\-]{3,50})",
-		'Googleplus': r"\.?(plus\.google\.com/[A-z0-9_\-.+]{3,255})",
-		'WordPress': r"([A-z0-9\-]+\.wordpress\.com)",
-		'Reddit': r"(reddit\.com/user/[A-z0-9_\-]{3,20})",
-		'Tumblr': r"([A-z0-9\-]{3,32}\.tumblr\.com)",
-		'Blogger': r"([A-z0-9\-]{3,50}\.blogspot\.com)"
+		'Instagram': r"instagram\.com/[A-z_0-9.\-]{1,30}",
+		'Facebook': [r"facebook\.com/[A-z_0-9\-]{2,50}", r"fb\.com/[A-z_0-9\-]{2,50}"],
+		'Twitter': r"twitter\.com/[A-z_0-9\-.]{2,40}",
+		'Github': r"github\.com/[A-z0-9_-]{1,39}",
+		'Github site': [r"[A-z0-9_-]{1,39}\.github\.io", r"[A-z0-9_-]{1,39}\.github\.com"],
+		'Telegram': r"telegram\.me/[A-z_0-9]{5,32}",
+		'Youtube user': r"youtube\.com/user/[A-z_0-9\-\.]{2,100}",
+		'Youtube channel': [r"youtube\.com/c/[A-z_0-9\-\.]{2,100}", \
+				r"youtube\.com/channel/[A-z_0-9\-\.]{2,100}"],
+		'Linkedin company': r"linkedin\.com/company/[A-z_0-9\.\-]{3,50}",
+		'Linkedin individual': r"linkedin\.com/in/[A-z_0-9\.\-]{3,50}",
+		'Googleplus': r"\.?plus\.google\.com/[A-z0-9_\-.+]{3,255}",
+		'WordPress': r"[A-z0-9\-]+\.wordpress\.com",
+		'Reddit': r"reddit\.com/user/[A-z0-9_\-]{3,20}",
+		'Tumblr': r"[A-z0-9\-]{3,32}\.tumblr\.com",
+		'Blogger': r"[A-z0-9\-]{3,50}\.blogspot\.com"
 		}
 
 	def search(self, regex, _type=list):
-		res = [] if _type is list else False
 		regex = re.compile(regex)
 		regex = regex.findall(self.string)
 		return regex
 
 	def sub(self, regex, sub_string):
-		data = re.sub(regex, sub_string, str(self.string))
+		data = re.sub(regex, sub_string, self.string)
 		return data
 	
+	def filter(self, regex, _list: list) -> list:
+		if not isinstance(regex, str):
+			return filter(regex, _list)
+		else:
+			return filter(re.compile(regex).match, _list)
+
 	@property
 	def emails(self):
 		emails = self.search(self.email_m)

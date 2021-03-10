@@ -1,16 +1,13 @@
 """
 OWASP Maryam!
-
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 any later version.
-
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
@@ -21,20 +18,19 @@ import re
 class Module(BaseModule):
 
 	meta = {
-		'name': 'Twitter Search',
-		'author': 'Saeeddqn',
-		'version': '0.5',
-		'description': 'Search your query in the twitter.com and show the results.',
-		'sources': ('google', 'carrot2', 'bing', 'yippy', 'millionshort', 'qwant'),
+		'name': 'GitHub Search',
+		'author': 'Aman Singh',
+		'version': '0.1',
+		'description': 'Search your query in the GitHub and show the results.',
+		'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort','qwant', 'duckduckgo'),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
 			('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store'),
-			('count', 50, False, 'The number of results per page(min=10, max=100,\
-				default=50)', '-c', 'store'),
+			('count', 50, False, 'Number of links per page(min=10, max=100, default=50)', '-c', 'store'),
 			('engine', 'google', False, 'Engine names for search(default=google)', '-e', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-		'examples': ('twitter -q <QUERY> -l 15 --output',)
+        'examples': ('github -q <QUERY> -l 15 -e carrot2,bing,qwant --output',)
 	}
 
 	def module_run(self):
@@ -42,14 +38,14 @@ class Module(BaseModule):
 		limit = self.options['limit']
 		count = self.options['count']
 		engine = self.options['engine'].split(',')
-		q = f"site:twitter.com {query}"
-		millionshort_q = f'site:twitter.com "{query}"'
-		yippy_q = f"twitter.com {query}"
+		q = f"site:github.com {query}"
+
 		run = self.google(q, limit, count)
 		run.run_crawl()
 		links = run.links
-		people = []
-		hashtags = []
+		repositories = []
+		blogs = []
+		users = []
 		pages = run.pages
 
 		if 'bing' in engine:
@@ -58,13 +54,13 @@ class Module(BaseModule):
 			pages += run.pages
 			for item in run.links_with_title:
 				link,title = item
-				self.verbose(f'\t{title}', 'C')
-				self.verbose(f'\t\t{link}')
+				self.verbose(title, 'G')
+				self.verbose(f"\t{link}")
 				self.verbose('')
 				links.append(link)
 
 		if 'carrot2' in engine:
-			run = self.carrot2(q)
+			run = self.carrot2(q, limit)
 			run.run_crawl()
 			pages += run.pages
 			for item in run.json_links:
@@ -73,47 +69,62 @@ class Module(BaseModule):
 				self.verbose(f"\t{link}")
 				links.append(link)
 
-		if 'yippy' in engine:
-			run = self.yippy(yippy_q)
+		if 'duckduckgo' in engine:
+			run = self.duckduckgo(q, limit, count)
 			run.run_crawl()
+			pages += run.pages
 			links += run.links
 
-		if 'millionshort' in engine:
-			run = self.millionshort(millionshort_q, limit)
+
+		if 'yippy' in engine:
+			run = self.yippy(q)
 			run.run_crawl()
+			pages += run.pages
 			links += run.links
+
+		if 'yahoo' in engine:
+			run = self.yahoo(q, limit, count)
+			run.run_crawl()
+			pages += run.pages
+			links.extend(run.links)
+
+		if 'millionshort' in engine:
+			run = self.millionshort(q, limit)
+			run.run_crawl()
+			pages += run.pages
+			links.extend(run.links)
 
 		if 'qwant' in engine:
 			run = self.qwant(q, limit)
-			run.run_crawl('webpages')
-			links += run.links
+			run.run_crawl()
+			pages += run.pages
+			links.extend(run.links)
 
-		usernames = self.page_parse(pages).get_networks
-		self.alert('people')
-		for _id in list(set(usernames.get('Twitter'))):
-			if isinstance(_id, (tuple, list)):
-				_id = _id[0]
-				_id = f"@{_id[_id.find('/') + 1:]}"
-			else:
-				_id = f"@{_id[_id.find('/') + 1:]}"
-			people.append(_id)
-			self.output(f"\t{_id}", 'G')
 
 		links = list(set(links))
-		links = list(self.reglib().filter(lambda x: 'twitter.com' in x and '.twitter.com' not in x, links))
 		if links == []:
 			self.output('Without result')
 		else:
-			self.alert('hashtags')
-			for link in self.reglib().filter(lambda x: '/hashtag/' in x, links):
-				link = link.replace('https://twitter.com/hashtag/', '')
-				if re.search(r"^[\w\d_\-]+$", link):
-					hashtags.append(link)
-					self.output(f"\t#{link}", 'G')
+			search = self.page_parse(pages).get_networks
 
-			self.alert('links')
-			for link in links:
-				self.output(f'\t{link}')
+			self.alert('blogs')
+			for blog in set(search['Github site']):
+				self.output(f'\t{blog}', 'G')
+				blogs.append(blog)
 
-		self.save_gather({'links': links, 'people': people, 'hashtags': hashtags},
-			'search/twitter', query, output=self.options.get('output'))
+			self.alert('users')
+			for user in set(search['Github']):
+				self.output(f'\t{user}', 'G')
+				users.append(user)
+
+			repo_reg = re.compile(r"https://(www\.)?(github\.com/[\w_-]{1,39}/[\w\-\.]+)")
+			self.alert('repositories')
+			for link in filter(repo_reg.match, links):
+				rep = repo_reg.search(link).group(0)
+				repositories.append(rep)
+				title = rep.split('/')[-1].replace('-', ' ').title()
+				self.output(title, 'G')
+				self.output(f'\t{rep}')
+
+		self.save_gather({'usernames': users, 'repositories': repositories, 'blogs': blogs},\
+		 'search/github', query, output=self.options.get('output'))

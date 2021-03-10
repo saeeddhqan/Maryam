@@ -44,7 +44,8 @@ class Module(BaseModule):
 
 	def thread(self, function, thread_count, engines, domain, q, limit, count, key):
 		threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
-		futures = (threadpool.submit(function, name, domain, q, limit, count, key) for name in engines if name in self.meta['sources'])
+		futures = (threadpool.submit(function, name, domain, q, limit, count, key)\
+			for name in engines if name in self.meta['sources'])
 		for _ in concurrent.futures.as_completed(futures):
 			pass
 
@@ -85,7 +86,8 @@ class Module(BaseModule):
 		engines = self.options['engines'].split(',')
 		q = f'"%40{domain}"'
 
-		self.thread(self.search, self.options['thread'], engines, domain, q, limit, count, self.options.get('key'))
+		self.thread(self.search, self.options['thread'], engines, domain, q,\
+			limit, count, self.options.get('key'))
 
 		self.alert('Emails')
 		emails = list(set(self.emails))
@@ -94,4 +96,5 @@ class Module(BaseModule):
 		for email in emails:
 			self.output(f"\t{email}")
 
-		self.save_gather(emails, 'osint/email_search', domain, output=self.options['output'])
+		self.save_gather(emails, 'osint/email_search', domain,\
+			output=self.options['output'])

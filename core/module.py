@@ -27,6 +27,8 @@ from core.util import crt
 from core.util import carrot2
 from core.util import exalead
 from core.util import google
+from core.util import github
+from core.util import darksearch
 from core.util import duckduckgo
 from core.util import hunter
 from core.util import keywords
@@ -47,6 +49,7 @@ from core.util import virustotal
 from core.util import waf_identify
 from core.util import web_scrap
 from core.util import wapps
+from core.util import wikipedia
 from core.util import yahoo
 from core.util import yandex
 from core.util import yippy
@@ -166,8 +169,12 @@ class BaseModule(framework.Framework):
 		search = carrot2.main(self, q)
 		return search
 
-	def duckduckgo(self, q, limit=1):
-		search = duckduckgo.main(self, q, limit)
+	def darksearch(self, q, limit=1):
+		search = darksearch.main(self, q, limit=1)
+		return search
+
+	def duckduckgo(self, q, limit=1, count=10):
+		search = duckduckgo.main(self, q, limit, count)
 		return search
 
 	def exalead(self, q, limit=3):
@@ -176,6 +183,10 @@ class BaseModule(framework.Framework):
 
 	def google(self, q, limit=1, count=10):
 		search = google.main(self, q, limit, count)
+		return search
+
+	def github(self, q, cookie, _type="Repositories", limit=1):
+		search = github.main(self, q=q, cookie=cookie, _type=_type, limit=limit)
 		return search
 
 	def hunter(self, q, key, limit=100):
@@ -244,6 +255,10 @@ class BaseModule(framework.Framework):
 
 	def web_scrap(self, url, debug=False, limit=5, thread=1):
 		search = web_scrap.main(self, url, debug, limit, thread)
+		return search
+
+	def wikipedia(self, q, count):
+		search = wikipedia.main(self, q, count)
 		return search
 
 	def startpage(self, q, limit):

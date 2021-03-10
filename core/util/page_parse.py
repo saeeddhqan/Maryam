@@ -30,7 +30,9 @@ class main:
 
 	@property
 	def pclean(self):
-		subs = r'<em>|<b>|</b>|</em>|<strong>|</strong>|<wbr>|</wbr>|<span class="vivbold qt0">|%22|<span dir="[\w]+">|</span>|<h\d>|</h\d>'
+		subs = r'<em>|<b>|</b>|</em>|<strong>|</strong>|<wbr>|</wbr>|<span class="vivbold qt0">\
+				|%22|<span dir="[\w]+">|</span>|<h\d>|</h\d>|<q>|</q>'
+		self.page = self.remove_comments(self.page)
 		self.page = re.sub(subs, '', self.page)
 		self.page = re.sub(r'%3a', ' ', self.page)
 		self.page = re.sub(r'%2f', ' ', self.page)
@@ -65,7 +67,12 @@ class main:
 		resp = {}
 		page = self.page.replace('www.', '')
 		for i in reg_id:
-			name = re.findall(reg_id[i], page)
+			if isinstance(reg_id[i], list):
+				name = []
+				for j in reg_id[i]:
+					name += re.findall(j, page)
+			else:
+				name = re.findall(reg_id[i], page)
 			names = []
 			for j in name:
 				if j not in names:

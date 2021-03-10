@@ -23,11 +23,11 @@ class Module(BaseModule):
 	meta = {
 		'name': 'Get Usernames in Social Networks',
 		'author': 'Saeeddqn',
-		'version': '0.9',
+		'version': '1.0',
 		'description': 'Search to find Usernames in social networks.',
 		'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'startpage'),
 		'options': (
-			('name', BaseModule._global_options['target'], True, 'Company Name', '-n', 'store'),
+			('query', BaseModule._global_options['target'], True, 'Company Name or Query', '-q', 'store'),
 			('engines', 'google,bing', False, 'Search engine names. e.g `bing,google,..`', '-e', 'store'),
 			('limit', 5, False, 'Search limit(number of pages, default=5)', '-l', 'store'),
 			('count', 100, False, 'number of results per page(min=10, max=100, default=100)', '-c', 'store'),
@@ -35,7 +35,7 @@ class Module(BaseModule):
 			('output', False, False, 'Save output to  workspace', '--output', 'store_true'),
 		),
 		'examples': ('social_nets -n microsoft -e google,bing,yahoo -c 50 -t 3 --output',
-			'social_nets -n microsoft.com -e google')
+			'social_nets -n microsoft -e google')
 	}
 
 	pages = ''
@@ -64,7 +64,7 @@ class Module(BaseModule):
 			self.pages += attr.pages
 
 	def module_run(self):
-		query = '@'+self.options['name']
+		query = '@' + self.options['query']
 		limit = self.options['limit']
 		count = self.options['count']
 		engines = self.options['engines'].lower().split(',')
@@ -81,14 +81,8 @@ class Module(BaseModule):
 			lst = list(set(usernames[net]))
 			if lst != []:
 				self.alert(net)
-				for link in lst:
-					if isinstance(link, list):
-						link = list(link).pop(link.index(''))
-						for mic in link:
-							if len(mic) > 2:
-								links.append(mic)
-								self.output(f'\t{str(mic)}', 'G')
-					else:
-						links.append(link)
-						self.output(f'\t{str(link)}', 'G')
-		self.save_gather(links, 'osint/social_nets', query, output=self.options['output'])
+				for atom in lst:
+					links.append(atom)
+					self.output(f"\t{atom}", 'G')
+
+		self.save_gather({'links': links}, 'osint/social_nets', query, output=self.options['output'])

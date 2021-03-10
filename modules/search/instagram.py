@@ -80,17 +80,11 @@ class Module(BaseModule):
 			links += run.links
 
 		usernames = self.page_parse(pages).get_networks
-		self.alert('People')
+		self.alert('people')
 		for _id in list(set(usernames.get('Instagram'))):
-			if isinstance(_id, (tuple, list)):
-				_id = _id[0]
-				if _id[-2:] == "/p" or _id[-8:] == '/explore':
-					continue
-				_id = f"@{_id[_id.find('/')+1:]}"
-			else:
-				if _id[-2:] == "/p" or _id[-8:] == '/explore':
-					continue
-				_id = f"@{_id[_id.find('/')+1:]}"
+			if _id[-2:] == "/p" or _id[-8:] == '/explore':
+				continue
+			_id = f"@{_id[_id.find('/')+1:]}"
 
 			if _id not in people:
 				people.append(_id)
@@ -100,19 +94,17 @@ class Module(BaseModule):
 		if links == []:
 			self.output('Without result')
 		else:
-			self.alert('Hashtags')
-			for link in links:
-				if '/explore/tags/' in link:
-					tag = link.replace('https://www.instagram.com/explore/tags/', '').replace('/', '')
-					if re.search(r'^[\w\d_\-\/]+$', tag):
-						hashtags.append(tag)
-						self.output(f"\t#{tag}", 'G')
+			self.alert('hashtags')
+			for link in self.reglib().filter(lambda x: '/explore/tags/' in x, links):
+				tag = link.replace('https://www.instagram.com/explore/tags/', '').replace('/', '')
+				if re.search(r'^[\w\d_\-\/]+$', tag):
+					hashtags.append(tag)
+					self.output(f"\t#{tag}", 'G')
 
-			self.alert('Posts')
-			for link in links:
-				if re.search(r'instagram\.com/p/[\w_\-0-9]+/', link):
-					post = link.replace('https://www.', '')
-					posts.append(post)
-					self.output(f'\t{post}', 'G')
+			self.alert('posts')
+			for link in self.reglib().filter(r'instagram\.com/p/[\w_\-0-9]+/', links):
+				post = link.replace('https://www.', '')
+				posts.append(post)
+				self.output(f'\t{post}', 'G')
 
 		self.save_gather({'posts': posts, 'people': people, 'hashtags': hashtags}, 'search/instagram', query, output=self.options.get('output'))
