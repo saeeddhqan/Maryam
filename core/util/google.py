@@ -31,7 +31,7 @@ class main:
 		"""
 		self.framework = framework
 		self.q = q
-		self.agent = framework.rand_uagent().lynx[7]
+		self.agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0'
 		self._pages = ''
 		self.limit = limit+1
 		self.num = count
@@ -43,7 +43,7 @@ class main:
 		page = 1
 		url = 'https://www.google.com/search'
 		set_page = lambda x: (x - 1) * self.num
-		payload = {'num' : self.num, 'start' : set_page(page), 'ie' : 'utf-8', 'oe' : 'utf-8', 'q' : self.q, 'filter': '0'}
+		payload = {'num': self.num, 'start': set_page(page), 'ie': 'utf-8', 'oe': 'utf-8', 'q': self.q, 'filter': '0'}
 		max_attempt = 0
 		while True:
 			self.framework.verbose(f'[GOOGLE] Searching in {page} page...', end='\r')
@@ -51,17 +51,16 @@ class main:
 				req = self.framework.request(
 					url=url,
 					params=payload,
-					headers={"User-Agent": self.agent},
-					allow_redirects=False)
+					headers={'User-Agent': self.agent},
+					allow_redirects=True)
 			except:
 				self.framework.error('[GOOGLE] ConnectionError')
 				return
-
-			if req.status_code == 503:
+			if req.status_code in (503, 429):
 				req = self.framework.error('[GOOGLE] Google CAPTCHA triggered.')
 				break
 
-			if req.status_code in [301, 302]:
+			if req.status_code in (301, 302):
 				redirect = req.headers['location']
 				req = self.framework.request(url=redirect, allow_redirects=False)
 
@@ -75,9 +74,13 @@ class main:
 		for link in links:
 			cond1 = 'https://support.google.com/' not in link.lower()
 			cond2 = 'https://www.google.com/webhp' not in link.lower()
-			cond3 = "://" in link
-			if cond1 and cond2 and cond3:
-				self._links.append(self.framework.urlib(link).unquote_plus)
+			cond3 = '://' in link
+			cond4 = 'https://www.google.com/search?' not in link.lower()
+			if cond1 and cond2 and cond3 and cond4:
+				url = self.framework.urlib(link).unquote_plus
+				url = re.sub(r"^\/url\?q=", '', url)
+				url = re.sub(r'\&amp.+', '', url)
+				self._links.append(url)
 
 	def api_run_crawl(self):
 		if not (self.google_api and self.google_cx):

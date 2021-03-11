@@ -22,10 +22,12 @@ class Module(BaseModule):
 		'name': 'Onions Network Search',
 		'author': 'Saeeddqn',
 		'version': '0.4',
-		'description': 'onion_search is used to create the premier search engine for services residing on the Tor anonymity network.',
-		'sources': ('ahmia','onionland'),
+		'description': 'onion_search is used to create the premier \
+		search engine for services residing on the Tor anonymity network.',
+		'sources': ('ahmia', 'onionland', 'darksearch'),
 		'options': (
-			('query', BaseModule._global_options['target'], True, 'Domain Name, Company Name, keyword, etc', '-q', 'store'),
+			('query', BaseModule._global_options['target'], True, 'Domain Name,\
+				Company Name, keyword, etc', '-q', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
 		'examples': ('onion_search -q <KEYWORD|COMPANY>', 'onion_search -q <KEYWORD|COMPANY> --output')
@@ -36,15 +38,21 @@ class Module(BaseModule):
 		ahmia = self.ahmia(q)
 		ahmia.run_crawl()
 		links = ahmia.links
+
 		onionland = self.onionland(q, limit=5)
 		onionland.run_crawl()
 		links.extend(onionland.links)
 
+		darksearch = self.darksearch(q, limit=1)
+		darksearch.run_crawl()
+		links.extend(darksearch.links)
+
 		links = list(set(links))
-		if links != []:
+		self.output('links')
+		if links is not None:
 			for link in links:
 				self.output(f'\t{link}')
 		else:
 			self.output('Nothing to declare', 'O')
 			return
-		self.save_gather({'links' : links}, 'osint/onion_search', q, output=self.options['output'])
+		self.save_gather({'links': links}, 'osint/onion_search', q, output=self.options['output'])

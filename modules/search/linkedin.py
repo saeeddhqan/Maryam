@@ -16,83 +16,91 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from core.module import BaseModule
+import concurrent.futures
 
 
 class Module(BaseModule):
 
 	meta = {
-		'name': 'Linkedin Search',
+		'name': 'LinkedIn Search',
 		'author': 'Saeeddqn',
 		'version': '0.4',
 		'description': 'Search your query in the linkedin.com and show the results.',
-		'sources': ('google','carrot2','bing'),
+		'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo'),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
 			('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store'),
 			('count', 50, False, 'Number of results per page(min=10, max=100, default=50)', '-c', 'store'),
+			('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store'),
 			('engine', 'google', False, 'Engine names for search(default=google)', '-e', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
         'examples': ('linkedin -q <QUERY> -l 15 --output',)
 	}
 
+	links = []
+	pages = ''
+
+	def set_data(self, urls):
+		for url in urls:
+			self.links.append(url)
+
+	def thread(self, function, thread_count, engines, q, q_formats, limit, count):
+		threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
+		futures = (threadpool.submit(
+			function, name, q, q_formats, limit, count) for name in engines if name in self.meta['sources'])
+		for _ in concurrent.futures.as_completed(futures):
+			pass
+
+	def search(self, name, q, q_formats, limit, count):
+		engine = getattr(self, name)
+		name = engine.__name__
+
+		q = f"{name}_q" if f"{name}_q" in q_formats else q_formats['default_q']
+
+		varnames = engine.__code__.co_varnames
+
+		if 'limit' in varnames and 'count' in varnames:
+			attr = engine(q, limit, count)
+		elif 'limit' in varnames:
+			attr = engine(q, limit)
+		else:
+			attr = engine(q)
+
+		attr.run_crawl()
+		self.set_data(attr.links)
+		self.pages += attr.pages
+
+
 	def module_run(self):
 		query = self.options['query']
 		limit = self.options['limit']
 		count = self.options['count']
 		engine = self.options['engine'].split(',')
-		q = f"site:linkedin.com {query}"
-		run = self.google(q, limit, count)
-		run.run_crawl()
-		links = run.links
-		pages = run.pages
+
+		q_formats = {
+			'default_q': f"site:linkedin.com  {query}"
+		}
+
 		people = []
+		self.thread(self.search, self.options['thread'], engine, query, q_formats, limit, count)
 
-		if 'bing' in engine:
-			run = self.bing(q, limit, count)
-			run.run_crawl()
-			pages += run.pages 
-			for item in run.links_with_title:
-				link, title = item
-				self.verbose(f'{title}', 'C')
-				self.verbose(f'\t{link}')
-				links.append(link)
-
-		if 'carrot2' in engine:
-			run = self.carrot2(q)
-			run.run_crawl()
-			pages += run.pages 
-			for item in run.json_links:
-				link = item.get('url')
-				self.verbose(item.get('title'), 'C')
-				self.verbose(f"\t{link}")
-				links.append(link)
-
-		usernames = self.page_parse(pages).get_networks
+		usernames = self.page_parse(self.pages).get_networks
 		self.alert('People')
 		for net in usernames:
 			lst = list(set(usernames[net]))
-			if lst != []:
+			if lst:
 				self.alert(net)
 				for link in lst:
-					if isinstance(link, (tuple, list)):
-						link = list(link).pop(link.index(''))
-						for mic in link:
-							if len(mic) > 2:
-								mic = mic[mic.find('/')+1:]
-								mic = mic.replace('company/', '').replace('in/', '').replace('\\x22', '')
-								mic = f"@{mic}"
-								people.append(mic)
-								self.output(f'\t{mic}', 'G')
-					else:
-						link = link[link.find('/')+1:]
-						link = link.replace('company/', '').replace('in/', '').replace('\\x22', '')
-						link = f"@{link}"
-						people.append(link)
-						self.output(f'\t{link}', 'G')
+					link = link[link.find('/')+1:]
+					link = link.replace('company/', '').replace('in/', '').replace('\\x22', '')
+					link = f"@{link}"
+					people.append(link)
+					self.output(f'\t{link}', 'G')
+
 		self.alert('links')
-		links = list(set(links))
-		if links == []:
+		links = list(set(self.links))
+		if not links:
 			self.output('Without result')
 		else:
 			for link in links:

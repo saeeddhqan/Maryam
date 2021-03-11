@@ -1,42 +1,37 @@
 """
 OWASP Maryam!
-
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 any later version.
-
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-
 from core.module import BaseModule
-import re
 import concurrent.futures
 
-class Module(BaseModule):
 
+class Module(BaseModule):
 	meta = {
-		'name': 'StackOverFlow Search',
-		'author': 'Sanjiban Sengupta',
-		'version': '0.2',
-		'description': 'Search your query in the stackoverflow.com and show the results.',
-		'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo'),
+		'name': 'Business Linkedin Search',
+		'author': 'Dimitrios Papageorgiou',
+		'version': '0.1',
+		'description': 'Search your query in the Business Linkedin and show the results.',
+		'sources': ('google', 'yahoo', 'bing', 'yippy', 'metacrawler', 'millionshort', 'carrot2', 'qwant'),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
 			('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store'),
-			('count', 50, False, 'Number of results per page(min=10, max=100, default=50)', '-c', 'store'),
+			('count', 50, False, 'Number of links per page(min=10, max=100, default=50)', '-c', 'store'),
 			('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store'),
 			('engine', 'google', False, 'Engine names for search(default=google)', '-e', 'store'),
-			('output', False, False, 'Save output to the workspace', '--output', 'store_true'),
+			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
-		'examples': ('stackoverflow -q "syntax error" -l 15 --output',)
+		'examples': ('business_linkedin -q <QUERY> -e carrot2,bing,qwant -c 50 --output',)
 	}
 
 	links = []
@@ -75,51 +70,21 @@ class Module(BaseModule):
 		limit = self.options['limit']
 		count = self.options['count']
 		engine = self.options['engine'].split(',')
-
 		q_formats = {
-			'default_q': f"site:www.stackoverflow.com {query}",
-			'millionshort_q': f'site:www.stackoverflow.com "{query}"'
+			'default_q': f"site:business.linkedin.com {query}",
+			'meta_q': f'"business.linkedin.com" {query}'
 		}
 
-		titles = []
-		profiles = []
-		tags = []
 		self.thread(self.search, self.options['thread'], engine, query, q_formats, limit, count)
 
-		links = list(set(self.links))
-		links = list(self.reglib().filter(lambda x: 'stackoverflow.com' in x, links))
+		links = self.reglib().filter(r"https?:\/\/business\.linkedin\.com/", self.links)
+		links = list(set(links))
 		if not links:
 			self.output('Without result')
 		else:
-			self.alert('Questions')
+			self.alert('links')
 			for link in links:
-				first_type = re.search(r'stackoverflow\.com/questions/[\d]+/([\w\d\-_]+)/?', link)
-				second_type = re.search(r'stackoverflow\.com/a/[\d+]/?', link)
-				if first_type:
-					title = first_type.group(1).replace('-', ' ').title()
-					title = self.urlib(title).unquote
-					titles.append(title.title())
-					self.output(title, 'G')
-					self.output(f'\t{link}')
-				elif second_type:
-					self.output('Without Title', 'G')
-					self.output(f'\t{link}')
+				self.output(link, 'G')
 
-			self.alert('profiles')
-			for link in links:
-				link = re.sub(r'https?://(www\.)stackoverflow\.com/users/', '', link)
-				if re.search(r'^[\w\d_\-\/]+$', link):
-					link = link.rsplit('/')
-					profiles.append(link[0])
-					self.output(f"\t{link[0]}", 'G')
-
-			self.alert('Tags')
-			for link in links:
-				if '/tag/' in link:
-					link = re.sub(r'https?://(www\.)?stackoverflow\.com/tags/', '', link)
-					if re.search(r'^[\w\d_\-]+$', link):
-						tags.append(link)
-						self.output(f"\t#{link}", 'G')
-
-		self.save_gather({'links': links, 'titles': titles, 'profiles': profiles, 'tags': tags},
-			'search/stackoverflow', query, output=self.options.get('output'))
+		self.save_gather({'links': links},
+						 'search/business_linkedin', query, output=self.options.get('output')) 

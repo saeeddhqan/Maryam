@@ -34,12 +34,13 @@ python3 maryam -e help
 ## Updates
 **Last Updates**
 
+ - Added CVE search module
+ - Added wikipedia search module
+ - Added GitHub search module
+ - Added duckduckgo and linkedin_business modules
  - Added reddit search and reverse dns
  - Deleted godork module(Due to redundancy with the google search module)
- - Added stackoverflow search module
- - Added instagram search module
- - Fixed bing and google search
- - Deleted searchencrypt engine 
+
 
 
 ## Contribution
@@ -47,6 +48,9 @@ python3 maryam -e help
 Contributes are welcome! Here is a start guide: [Development Guide](https://github.com/saeeddhqan/maryam/wiki/Development-Guide)
 You can add a new search engine to the util classes or use current search engines to write a new module.
 The best help to write a new module is by checking the current modules.
+### Google Summer of Code(2021)
+
+OWASP Maryam is part of the GSoC2021. Please look at [this](https://owasp.org/www-community/initiatives/gsoc/gsoc2021) page if you are interest.
  
 ## Roadmap
 
