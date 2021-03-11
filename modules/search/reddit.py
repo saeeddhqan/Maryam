@@ -85,7 +85,7 @@ class Module(BaseModule):
 
 		links = list(set(self.links))
 		links = list(self.reglib().filter(r"https?://(www\.)?reddit\.com/", links))
-		if links is None:
+		if not links:
 			self.output('Without result')
 		else:
 			self.alert('usernames')

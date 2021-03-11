@@ -96,7 +96,7 @@ class Module(BaseModule):
 				self.output(f'\t{_id}', 'G')
 
 		links = list(set(self.links))
-		if links is None:
+		if not links:
 			self.output('Without result')
 		else:
 			self.alert('Hashtags')

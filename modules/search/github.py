@@ -86,7 +86,7 @@ class Module(BaseModule):
 		users = []
 
 		links = list(set(self.links))
-		if links is None:
+		if not links:
 			self.output('Without result')
 		else:
 			search = self.page_parse(self.pages).get_networks

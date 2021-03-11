@@ -86,7 +86,7 @@ class Module(BaseModule):
 		self.thread(self.search, self.options['thread'], engine, query, q_formats, limit, count)
 
 		links = list(set(self.links))
-		if links is None:
+		if not links:
 			self.output('Without result')
 		else:
 			self.alert('profiles')
