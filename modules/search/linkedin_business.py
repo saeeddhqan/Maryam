@@ -13,6 +13,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from core.module import BaseModule
+import concurrent.futures
+
 
 class Module(BaseModule):
 	meta = {
@@ -25,61 +27,59 @@ class Module(BaseModule):
 			('query', None, True, 'Query string', '-q', 'store'),
 			('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store'),
 			('count', 50, False, 'Number of links per page(min=10, max=100, default=50)', '-c', 'store'),
+			('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store'),
 			('engine', 'google', False, 'Engine names for search(default=google)', '-e', 'store'),
 			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
 		),
 		'examples': ('business_linkedin -q <QUERY> -e carrot2,bing,qwant -c 50 --output',)
 	}
 
+	links = []
+
+	def set_data(self, urls):
+		for url in urls:
+			self.links.append(url)
+
+	def thread(self, function, thread_count, engines, q, q_formats, limit, count):
+		threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
+		futures = (threadpool.submit(
+			function, name, q, q_formats, limit, count) for name in engines if name in self.meta['sources'])
+		for _ in concurrent.futures.as_completed(futures):
+			pass
+
+	def search(self, name, q, q_formats, limit, count):
+		engine = getattr(self, name)
+		name = engine.__name__
+
+		q = f"{name}_q" if f"{name}_q" in q_formats else q_formats['default_q']
+
+		varnames = engine.__code__.co_varnames
+
+		if 'limit' in varnames and 'count' in varnames:
+			attr = engine(q, limit, count)
+		elif 'limit' in varnames:
+			attr = engine(q, limit)
+		else:
+			attr = engine(q)
+
+		attr.run_crawl()
+		self.set_data(attr.links)
+
 	def module_run(self):
 		query = self.options['query']
 		limit = self.options['limit']
 		count = self.options['count']
 		engine = self.options['engine'].split(',')
-		q = f"site:business.linkedin.com {query}"
-		meta_q = f'"business.linkedin.com" {query}'
-		run = self.google(q, limit, count)
-		run.run_crawl()
-		links = run.links
+		q_formats = {
+			'default_q': f"site:business.linkedin.com {query}",
+			'meta_q': f'"business.linkedin.com" {query}'
+		}
 
-		if 'bing' in engine:
-			run = self.bing(q, limit, count)
-			run.run_crawl()
-			links.extend(run.links)
+		self.thread(self.search, self.options['thread'], engine, query, q_formats, limit, count)
 
-		if 'yahoo' in engine:
-			run = self.yahoo(q, limit, count)
-			run.run_crawl()
-			links.extend(run.links)
-
-		if 'yippy' in engine:
-			run = self.yippy(meta_q)
-			run.run_crawl()
-			links.extend(run.links)
-
-		if 'metacrawler' in engine:
-			run = self.metacrawler(meta_q, limit)
-			run.run_crawl()
-			links.extend(run.links)
-
-		if 'millionshort' in engine:
-			run = self.millionshort(q, limit)
-			run.run_crawl()
-			links.extend(run.links)
-
-		if 'carrot2' in engine:
-			run = self.carrot2(q)
-			run.run_crawl()
-			links.extend(run.links)
-
-		if 'qwant' in engine:
-			run = self.qwant(q, limit)
-			run.run_crawl()
-			links.extend(run.links)
-
-		links = self.reglib().filter(r"https?:\/\/business\.linkedin\.com/", links)
+		links = self.reglib().filter(r"https?:\/\/business\.linkedin\.com/", self.links)
 		links = list(set(links))
-		if links == []:
+		if not links:
 			self.output('Without result')
 		else:
 			self.alert('links')
