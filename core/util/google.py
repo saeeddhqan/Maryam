@@ -19,17 +19,16 @@ import re
 import os
 
 class main:
-
-	def __init__(self, framework, q, limit=1, count=10, google_api=None, google_cx=None):
+	# framework = None
+	def __init__(self, q, limit=1, count=10, google_api=None, google_cx=None):
 		""" google.com search engine
 
-			framework  : core attribute
-			q          : query for search
-			limit      : count of pages
-			google_api : google api(if you need to use api_run_crawl)
-			google_cx  : google cx(if you need to use api_run_crawl)
+			q          : Query for search
+			limit      : Number of pages
+			google_api : Google api(if you need to use api_run_crawl)
+			google_cx  : Google cx(if you need to use api_run_crawl)
 		"""
-		self.framework = framework
+		self.framework = main.framework
 		self.q = q
 		self.agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0'
 		self._pages = ''
@@ -47,15 +46,15 @@ class main:
 		max_attempt = 0
 		while True:
 			self.framework.verbose(f'[GOOGLE] Searching in {page} page...', end='\r')
-			try:
-				req = self.framework.request(
-					url=url,
-					params=payload,
-					headers={'User-Agent': self.agent},
-					allow_redirects=True)
-			except:
-				self.framework.error('[GOOGLE] ConnectionError')
-				return
+			# try:
+			req = self.framework.request(
+				url=url,
+				params=payload,
+				headers={'User-Agent': self.agent},
+				allow_redirects=True)
+		# 	# except:
+		# 		# self.framework.error('[GOOGLE] ConnectionError')
+		# 		# return
 			if req.status_code in (503, 429):
 				req = self.framework.error('[GOOGLE] Google CAPTCHA triggered.')
 				break
@@ -79,7 +78,7 @@ class main:
 			if cond1 and cond2 and cond3 and cond4:
 				url = self.framework.urlib(link).unquote_plus
 				url = re.sub(r"^\/url\?q=", '', url)
-				url = re.sub(r'\&amp.+', '', url)
+				url = re.sub(r"\&amp.+", '', url)
 				self._links.append(url)
 
 	def api_run_crawl(self):

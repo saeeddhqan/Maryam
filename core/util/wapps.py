@@ -21,15 +21,14 @@ import os
 
 class main:
 
-	def __init__(self, framework, q, page, headers):
+	def __init__(self, q, page, headers):
 		""" Web application fingerprint for detect apps. like wappalizer
 			
-			framework : core attribute
 			q 		  : domain name
 			page	  : web page
 			headers	  : web headers
 		"""
-		self.framework = framework
+		self.framework = main.framework
 		self.q = q
 		self.page = page
 		self.headers = headers

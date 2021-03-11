@@ -17,14 +17,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class main:
 
-	def __init__(self, framework, q, limit=1):
+	def __init__(self, q, limit=1):
 		""" metacrawler.com search engine
 
-			framework : core attribute
 			q 		  : query for search
 			limit	  : count of pages
 		"""
-		self.framework = framework
+		self.framework = main.framework
 		self.q = self.framework.urlib(q).quote
 		self.limit = limit
 		self._pages = ''

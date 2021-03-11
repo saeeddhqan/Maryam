@@ -14,10 +14,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-# Based on the Recon-ng core(https://github.com/lanmaster53/recon-ng)
 
 import cmd
-import codecs
 import json
 import os
 import re
@@ -42,90 +40,23 @@ class Colors(object):
 	B = '\033[94m'  # blue
 	P = '\033[95m'  # purple
 	C = '\033[0;1;36m'  # cyan
+	Y = '\u001b[38;5;226m'
 
 
-class Options(dict):
-
-	def __init__(self, *args, **kwargs):
-		self.required = {}
-		self.description = {}
-
-		super(Options, self).__init__(*args, **kwargs)
-
-	def __setitem__(self, name, value):
-		super(Options, self).__setitem__(name, self._autoconvert(value))
-
-	def __delitem__(self, name):
-		super(Options, self).__delitem__(name)
-		if name in self.required:
-			del self.required[name]
-		if name in self.description:
-			del self.description[name]
-
-	def _boolify(self, value):
-		# designed to throw an exception if value is not a string
-		# representation of a boolean
-		return {'true': True, 'false': False, 'yes': True, 'no': False}[value.lower()]
-
-	def _autoconvert(self, value):
-		if value in (None, True, False):
-			return value
-		elif (isinstance(value, str)) and value.lower() in ('none', '\'\'', '\"\"'):
-			return None
-		orig = value
-		for fn in (self._boolify, int, float):
-			try:
-				value = fn(value)
-				break
-			except (ValueError, KeyError, AttributeError):
-				pass
-		if isinstance(value, int) and '.' in str(orig):
-			return float(orig)
-		return value
-
-	def init_option(self, name, value=None, required=False, description=''):
-		self[name] = value
-		self.required[name] = required
-		self.description[name] = description
-
-	def serialize(self):
-		data = {}
-		for key in self:
-			data[key] = self[key]
-		return data
-
-# =================================================
-# FRAMEWORK CLASS
-# =================================================
-
-
-class Framework(cmd.Cmd):
+class core(cmd.Cmd):
 	prompt = ">>>"
-	# mode flags
-	_script = 0
-	_load = 0
-	# framework variables
-	_global_options = Options()
+	_global_options = {}
+	_global_options_ = {}
 	_loaded_modules = {}
-	_module_names = {}
-	app_path = ''
-	data_path = ''
-	core_path = ''
-	module_path = ''
-	module_dirname = ''
-	workspace = ''
-	module_ext = ''
-	variables = {}
-	_home = ''
-	_record = None
-	_spool = None
-	_summary_counts = {}
-	Colors = Colors
+	_cat_module_names = {}
+	_module_names = []
 	_history_file = ''
+	workspace = ''
+	variables = {}
+	Colors = Colors
 
-	def __init__(self, params):
+	def __init__(self):
 		cmd.Cmd.__init__(self)
-		self._modulename = params
 		self.ruler = '-'
 		self.spacer = '  '
 		self.nohelp = f'{Colors.R}[!] No help on %s{Colors.N}'
@@ -133,47 +64,31 @@ class Framework(cmd.Cmd):
 		self.doc_header = 'Commands (type [help|?] <topic>):'
 		self._exit = 0
 
-	# ==================================================
-	# CMD OVERRIDE METHODS
-	# ==================================================
+	# ////////////////////////////////
+	#             OVERRIDE 			//
+	# ////////////////////////////////
 
 	def default(self, line):
 		self.do_shell(line)
 
 	def emptyline(self):
-		# disables running of last command when no command is given
-		# return flag to tell interpreter to continue
 		return 0
 
 	def precmd(self, line):
-		line = self.to_unicode(line)
-		if Framework._load:
-			print('\r', end='')
-		if Framework._script:
-			print(f'{line}')
-		if Framework._record:
-			recorder = codecs.open(Framework._record, 'ab', encoding='utf-8')
-			recorder.write(f'{line}{os.linesep}')
-			recorder.flush()
-			recorder.close()
-		if Framework._spool:
-			Framework._spool.write(f'{self.prompt}{line}{os.linesep}')
-			Framework._spool.flush()
+		line = self.to_str(line)
 		return line
 
 	def onecmd(self, line):
-		line = self.to_unicode(line)
-		# Log command into the history file if 'history' is true
+		line = self.to_str(line)
 		if self._global_options['history']:
 			self._log_commands(line)
 		cmd, arg, line = self.parseline(line)
 		if not line:
 			return self.emptyline()
 		if line == 'EOF':
-			# reset stdin for raw_input
 			sys.stdin = sys.__stdin__
-			Framework._script = 0
-			Framework._load = 0
+			core._script = 0
+			core._load = 0
 			return 0
 		if cmd is None:
 			return self.default(line)
@@ -193,7 +108,6 @@ class Framework(cmd.Cmd):
 				except Exception as e:
 					self.print_exception()
 
-	# make help menu more attractive
 	def print_topics(self, header, cmds, cmdlen, maxcol):
 		if cmds:
 			self.stdout.write(f"{header}{os.linesep}")
@@ -203,23 +117,16 @@ class Framework(cmd.Cmd):
 				self.stdout.write(f"{cmd.ljust(15)} {getattr(self, 'do_' + cmd).__doc__}{os.linesep}")
 			self.stdout.write(os.linesep)
 
-	# ==================================================
-	# SUPPORT METHODS
-	# ==================================================
+	# ////////////////////////////////
+	#           SUPPORT 			//
+	# ////////////////////////////////
 
-	def to_unicode_str(self, obj, encoding='utf-8'):
-		# converts non-stringish types to unicode
-		if not isinstance(obj, (str, bytes)):
-			obj = str(obj)
-		obj = self.to_unicode(obj, encoding)
-		return obj
-
-	def to_unicode(self, obj, encoding='utf-8'):
-		# checks if obj is a string and converts if not
-		if isinstance(obj, bytes):
-			obj = str(obj, encoding)
-		else:
-			obj = str(obj)
+	def to_str(self, obj):
+		if not isinstance(obj, str):
+			if isinstance(obj, bytes):
+				obj = str(obj, 'utf-8')
+			else:
+				obj = str(obj)
 		return obj
 
 	def _is_readable(self, filename, flag='r'):
@@ -229,24 +136,9 @@ class Framework(cmd.Cmd):
 			self.error('IOError: ' + str(e))
 			return False
 
-	def _parse_rowids(self, rowids):
-		xploded = []
-		rowids = [x.strip() for x in rowids.split(',')]
-		for rowid in rowids:
-			try:
-				if '-' in rowid:
-					start = int(rowid.split('-')[0].strip())
-					end = int(rowid.split('-')[-1].strip())
-					xploded += range(start, end + 1)
-				else:
-					xploded.append(int(rowid))
-			except ValueError:
-				continue
-		return sorted(list(set(xploded)))
-
-	# ==================================================
-	# OUTPUT METHODS
-	# ==================================================
+	# ////////////////////////////////
+	#           OUTPUT  			//
+	# ////////////////////////////////
 
 	def print_exception(self, line=''):
 		stack_list = [x.strip() for x in traceback.format_exc().strip().splitlines()]
@@ -269,10 +161,10 @@ class Framework(cmd.Cmd):
 		line = line[:1].upper() + line[1:]
 		print(f"{Colors.R}[!] {line}{Colors.N}")
 
-	def output(self, line, color='N', end='', linesep=True):
+	def output(self, line, color='N', end='', prep='', linesep=True):
 		'''Formats and presents normal output.'''
-		line = self.to_unicode(line)
-		line = f'{Colors.B}[*]{getattr(Colors, color.upper())} {line}\033[m'
+		line = self.to_str(line)
+		line = f'{prep}{Colors.B}[*]{getattr(Colors, color.upper())} {line}\033[m'
 		if not line.endswith(os.linesep) and linesep:
 			line += os.linesep
 		print(line, end=end)
@@ -289,7 +181,7 @@ class Framework(cmd.Cmd):
 	def debug(self, line, end='', linesep=True):
 		'''Formats and presents output if in debug mode (very verbose).'''
 		if self._global_options['verbosity'] >= 2:
-			line = f'{Colors.C}[~] {Colors.N}{self.to_unicode(line)}'
+			line = f'{Colors.C}[~] {Colors.N}{self.to_str(line)}'
 			if not line.endswith(os.linesep) and linesep:
 				line += os.linesep
 			print(line, end=end)
@@ -317,7 +209,7 @@ class Framework(cmd.Cmd):
 		cols = len(tdata[0])
 		# create a list of max widths for each column
 		for i in range(0, cols):
-			lens.append(len(max([self.to_unicode_str(x[i]) if x[i] != None else '' for x in tdata], key=len)))
+			lens.append(len(max([self.to_str(x[i]) if x[i] != None else '' for x in tdata], key=len)))
 		# calculate dynamic widths based on the title
 		title_len = len(title)
 		tdata_len = sum(lens) + (3*(cols-1))
@@ -347,7 +239,7 @@ class Framework(cmd.Cmd):
 				print(data_str % data_sub)
 				print(separator)
 			for rdata in tdata:
-				data_sub = tuple([self.to_unicode_str(rdata[i]).ljust(lens[i]) if rdata[i] != None else ''.ljust(lens[i]) for i in range(0,cols)])
+				data_sub = tuple([self.to_str(rdata[i]).ljust(lens[i]) if rdata[i] != None else ''.ljust(lens[i]) for i in range(0,cols)])
 				print(data_str % data_sub)
 				if linear:
 					print(separator)
@@ -356,9 +248,9 @@ class Framework(cmd.Cmd):
 				print(separator)
 			print('')
 
-	# ==================================================
-	# EXPORT METHODS
-	# ==================================================
+	# ////////////////////////////////
+	#             EXPORT  			//
+	# ////////////////////////////////
 
 	def save_gather(self, value, module, target, method=None, output=True):
 		if method is None:
@@ -483,19 +375,9 @@ class Framework(cmd.Cmd):
 			return filename
 		return False
 
-	# ==================================================
-	# ADD METHODS
-	# ==================================================
-
-	def _display(self, data, rowcount):
-		display = self.alert if rowcount else self.verbose
-		for key in sorted(data.keys()):
-			display(f"{key.title()}: {data[key]}")
-		display(self.ruler*50)
-
-	# ==================================================
-	# HISTORY METHODS
-	# ==================================================
+	# ////////////////////////////////
+	#           HISTORY 			//
+	# ////////////////////////////////
 
 	def _init_history(self, reborn=False, write=True):
 		history = os.path.join(self.workspace, 'history.dat')
@@ -526,80 +408,51 @@ class Framework(cmd.Cmd):
 			self._history_file.write(f"\n{cmd}")
 			self._history_file.close()
 
-	# ==================================================
-	# OPTIONS METHODS
-	# ==================================================
 
-	def register_option(self, name, value, required, description):
-		self.options.init_option(
-			name=name.lower(),
-			value=value,
-			required=required,
-			description=description)
-		# needs to be optimized rather than ran on every register
-		self._load_config()
-
-	def _validate_options(self):
-		for option in self.options:
-			# if value type is bool or int, then we know the options is set
-			if not isinstance(self.options[option], (bool, int)):
-				if self.options.required[option] is True and not self.options[option]:
-					raise FrameworkException(
-						f"Value required for the '{option.upper()}' option.")
-		return
+	# ////////////////////////////////
+	#           OPTIONS 			//
+	# ////////////////////////////////
 
 	def _load_config(self):
 		config_path = os.path.join(self.workspace, 'config.dat')
-		# don't bother loading if a config file doesn't exist
+
 		if os.path.exists(config_path):
-			# retrieve saved config data
 			config_file = self._is_readable(config_path)
 			try:
 				config_data = self.config_data = json.loads(config_file.read())
 			except ValueError:
-				# file is corrupt, nothing to load, exit gracefully
 				pass
 			else:
-				# set option values
-				for key in self.options:
+				for key in self._global_options:
 					try:
-						self.options[key] = config_data[self._modulename][key]
+						self._global_options[key] = config_data[key]
 					except KeyError:
-						# invalid key, contnue to load valid keys
 						continue
 
 	def _save_config(self, name):
 		config_path = os.path.join(self.workspace, 'config.dat')
-		# create a config file if one doesn't exist
 		if not os.path.exists(config_path):
 			self._is_readable(config_path, 'a').close()
 			config_data = {}
 		else:
-			# retrieve saved config data
 			with open(config_path) as config_file:
 				try:
 					config_data = json.loads(config_file.read())
 				except ValueError:
-					# file is empty or corrupt, nothing to load
 					config_data = {}
-		# create a container for the current module
-		if self._modulename not in config_data:
-			config_data[self._modulename] = {}
-		# set the new option value in the config
-		config_data[self._modulename][name] = self.options[name]
-		# remove the option if it has been unset
-		if config_data[self._modulename][name] is None:
-			del config_data[self._modulename][name]
-		# remove the module container if it is empty
-		if not config_data[self._modulename]:
-			del config_data[self._modulename]
-		# write the new config data to the config file
+
+
+		config_data[name] = self._global_options[name]
+
+		if config_data[name] is None:
+			del config_data[name]
+
 		with open(config_path, 'w') as config_file:
 			json.dump(config_data, config_file, indent=4)
 
-	# ==================================================
-	# REQUEST METHODS
-	# ==================================================
+	# ////////////////////////////////
+	#           request    			//
+	# ////////////////////////////////
 
 	def _print_prepared_request(self, prepared):
 		self.debug(f"{'='*25} REQUEST {'='*25}{os.linesep}")
@@ -652,58 +505,45 @@ class Framework(cmd.Cmd):
 		self._print_response(resp)
 		return resp
 
-	# ==================================================
-	# SHOW METHODS
-	# ==================================================
+	# ////////////////////////////////
+	#           SHOW    			//
+	# ////////////////////////////////
 
 	def show_history(self):
 		self.do_history('list')
 
 	def show_modules(self, param):
-		# process parameter according to type
-		if isinstance(param, list):
-			modules = param
-		elif param:
-			modules = [
-				x for x in Framework._loaded_modules if x.startswith(param)]
-			if not modules:
-				self.error('Invalid module category.')
-				return
-		else:
-			modules = Framework._loaded_modules
-		if not modules:
-			self.error('no modules to display.')
-			return
-		# display the modules
-		last_category = ''
-		for module in sorted(modules):
-			category = module.split('/')[0]
-			if category != last_category:
-				# print header
-				last_category = category
-				self.heading(last_category)
-			# print module
-			print(f'{self.spacer * 2}{module}')
+		# if isinstance(param, list):
+			# modules = param
+		for section in core._cat_module_names:
+			self.heading(section)
+			for module in core._cat_module_names[section]:
+				print(f'{self.spacer * 2}{module}')
 		print('')
 
 	def show_options(self, options=None):
 		'''Lists options'''
 		if options is None:
-			options = self.options
+			options = self._global_options_
 		if options:
 			pattern = f'{self.spacer}%s  %s  %s  %s'
 			key_len = len(max(options, key=len))
-			if key_len < 4: key_len = 4
-			val_len = len(max([self.to_unicode_str(options[x]) for x in options], key=len))
-			if val_len < 13: val_len = 13
+			if key_len < 4:
+				key_len = 4
+			val_len = len(max([self.to_str(self._global_options[x]) for x in options], key=len))
+			if val_len < 13:
+				val_len = 13
 			print('')
 			print(pattern % ('Name'.ljust(key_len), 'Current Value'.ljust(val_len), 'Required', 'Description'))
 			print(pattern % (self.ruler*key_len, (self.ruler*13).ljust(val_len), self.ruler*8, self.ruler*11))
 			for key in sorted(options):
-				value = options[key] if options[key] != None else ''
-				reqd = 'no' if options.required[key] is False else 'yes'
-				desc = options.description[key]
-				print(pattern % (key.ljust(key_len), self.to_unicode_str(value).ljust(val_len), self.to_unicode_str(reqd).ljust(8), desc))
+				option = options[key]
+				value = self._global_options[key] if self._global_options[key] != None else ''
+				reqd = 'no' if not option[2] else 'yes'
+				desc = option[3]
+				print(pattern % (key.ljust(key_len), \
+					self.to_str(value).ljust(val_len), \
+					self.to_str(reqd).ljust(8), desc.title()))
 			print('')
 		else:
 			print(f'{os.linesep}{self.spacer}No options available for this module.{os.linesep}')
@@ -712,15 +552,13 @@ class Framework(cmd.Cmd):
 		self.do_var('list')
 
 	def _get_show_names(self):
-		# Any method beginning with "show_" will be parsed
-		# and added as a subcommand for the show command.
 		prefix = 'show_'
 		return [x[len(prefix):]
 				for x in self.get_names() if x.startswith(prefix)]
 
-	# ==================================================
-	# COMMAND METHODS
-	# ==================================================
+	# ////////////////////////////////
+	#           COMMANDS 			//
+	# ////////////////////////////////
 
 	def do_history(self, params):
 		'''Manage history of commands'''
@@ -739,7 +577,7 @@ class Framework(cmd.Cmd):
 			print('')
 		elif arg == 'clear':
 			self._init_history(reborn=True)
-		elif (arg == 'from' and params) or arg == "all":
+		elif (arg == 'from' and params) or arg == 'all':
 			try:
 				if params:
 					to = int(params[0])
@@ -758,7 +596,7 @@ class Framework(cmd.Cmd):
 					print(''.ljust(5) + i)
 				print('')
 		elif arg == 'status':
-			print(f'History logger: {self._global_options["history"]}')
+			print(f"History logger: {self._global_options['history']}")
 		elif arg == 'on':
 			self._global_options['history'] = True
 		elif arg == 'off':
@@ -771,11 +609,6 @@ class Framework(cmd.Cmd):
 		self._exit = 1
 		return True
 
-	# alias for exit
-	def do_back(self, params):
-		'''Exits the current context'''
-		return True
-
 	def do_set(self, params):
 		'''Sets module options'''
 		options = params.split()
@@ -783,12 +616,19 @@ class Framework(cmd.Cmd):
 			self.help_set()
 			return
 		name = options[0].lower()
-		if name in self.options:
+		if name in self._global_options:
+			if self._global_options_[name][2]:
+				print(f"{name} is a required option.")
+				return
 			value = ' '.join(options[1:])
 			if value[:1] == '$':
 				value = self.get_var(value[1:])
-			self.options[name] = value
-			print(f'{name.upper()} => {value}')
+			if value.lower() in ('true', 'yes'):
+				value = True
+			elif value.lower() in ('false', 'no'):
+				value = False
+			self._global_options[name] = value
+			print(f"{name.upper()} => {value}")
 			self._save_config(name)
 		else:
 			self.error('Invalid option.')
@@ -807,8 +647,8 @@ class Framework(cmd.Cmd):
 		arg = params[0]
 		params = ' '.join(params[1:])
 		if arg in self._get_show_names():
-			func = getattr(self, "show_" + arg)
-			if arg == "modules":
+			func = getattr(self, f"show_{arg}")
+			if arg == 'modules':
 				func(params)
 			else:
 				func()
@@ -822,7 +662,7 @@ class Framework(cmd.Cmd):
 			return
 		text = params.split()[0]
 		self.output(f"Searching for '{text}'...")
-		modules = [x for x in Framework._loaded_modules if text in x]
+		modules = [x for x in core._loaded_modules if text in x]
 		if not modules:
 			self.error(f"No modules found containing '{text}'.")
 		else:
@@ -835,28 +675,13 @@ class Framework(cmd.Cmd):
 			return
 		proc = subprocess.Popen(params, shell=True, stdout=subprocess.PIPE,
 								stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-		self.output(f'Command: {params}{os.linesep}')
+		self.output(f"Command: {params}{os.linesep}")
 		stdout = proc.stdout.read()
 		stderr = proc.stderr.read()
 		if stdout:
-			print(f'{Colors.O}{self.to_unicode(stdout)}{Colors.N}', end='')
+			print(f"{Colors.O}{self.to_str(stdout)}{Colors.N}", end='')
 		if stderr:
-			print(f'{Colors.R}{self.to_unicode(stderr)}{Colors.N}', end='')
-
-	def do_resource(self, params=None, code=False):
-		'''Executes commands from a resource file'''
-		if not params and not code:
-			self.help_resource()
-			return
-		if code:
-			sys.stdin = code
-			Framework._script = 1
-		else:
-			if os.path.exists(params):
-				sys.stdin = open(params)
-				Framework._script = 1
-			else:
-				self.error(f"Script file '{params}' not found.")
+			print(f"{Colors.R}{self.to_str(stderr)}{Colors.N}", end='')
 
 	def do_var(self, params):
 		'''Variable define'''
@@ -867,7 +692,7 @@ class Framework(cmd.Cmd):
 		arg = params[0].lower()
 		if arg[:1] == '$':
 
-			if self.add_var(arg[1:], " ".join(params[1:])):
+			if self.add_var(arg[1:], ' '.join(params[1:])):
 				self.output(f"Variable '{arg[1:]}' added.")
 			else:
 				self.output(f"Invalid variable name '{arg[1:]}'.", 'r')
@@ -875,7 +700,8 @@ class Framework(cmd.Cmd):
 			self._list_var()
 		elif arg == 'delete':
 			if len(params) == 2:
-				if params[1] in ["limit", "proxy", "target", "timeout", "agent", "verbosity", "history"]:
+				if params[1] in ['update_check', 'proxy', 'target',\
+				 'timeout', 'agent', 'rand_agent', 'verbosity', 'history']:
 					self.error(f"You cannot delete default variable '{params[1]}'.")
 				else:
 					if self.delete_var(params[1][1:]):
@@ -887,81 +713,25 @@ class Framework(cmd.Cmd):
 		else:
 			self.help_var()
 
-	def do_record(self, params):
-		'''Records commands to a resource file'''
-		if not params:
-			self.help_record()
-			return
-		arg = params.lower()
-		if arg.split()[0] == 'start':
-			if not Framework._record:
-				if len(arg.split()) > 1:
-					filename = ' '.join(arg.split()[1:])
-					if not self._is_readable(filename, 'w'):
-						self.output(f'Cannot record commands to \'{filename}\'.')
-					else:
-						Framework._record = filename
-						self.output(f'Recording commands to \'{Framework._record}\'.')
-				else: self.help_record()
-			else: self.output('Recording is already started.')
-		elif arg == 'stop':
-			if Framework._record:
-				self.output(f'Recording stopped. Commands saved to \'{Framework._record}\'.')
-				Framework._record = None
-			else: self.output('Recording is already stopped.')
-		elif arg == 'status':
-			status = 'started' if Framework._record else 'stopped'
-			self.output(f'Command recording is {status}.')
-		else:
-			self.help_record()
-
-	def do_spool(self, params):
-		'''Spools output to a file'''
-		if not params:
-			self.help_spool()
-			return
-		arg = params.lower()
-		if arg.split()[0] == 'start':
-			if not Framework._spool:
-				if len(arg.split()) > 1:
-					filename = ' '.join(arg.split()[1:])
-					if not self._is_readable(filename,'w'):
-						self.output(f"Cannot spool output to \'{filename}\'.")
-					else:
-						Framework._spool = codecs.open(filename, 'ab', encoding='utf-8')
-						self.output(f'Spooling output to \'{Framework._spool.name}\'.')
-				else: self.help_spool()
-			else: self.output('Spooling is already started.')
-		elif arg == 'stop':
-			if Framework._spool:
-				self.output(f'Spooling stopped. Output saved to \'{Framework._spool.name}\'.')
-				Framework._spool = None
-			else: self.output('Spooling is already stopped.')
-		elif arg == 'status':
-			status = 'started' if Framework._spool else 'stopped'
-			self.output(f'Output spooling is {status}.')
-		else:
-			self.help_spool()
-
 	def do_report(self, params):
 		'''Get report from the Gathers and save it to the other formats'''
 		if not params:
 			self.help_report()
 			return
-		arg = params.lower().split(" ")
-		gather_file = os.path.join(self.workspace, "gather.dat")
+		arg = params.lower().split(' ')
+		gather_file = os.path.join(self.workspace, 'gather.dat')
 		if not os.path.exists(gather_file):
-			self.alert("No data found.")
+			self.alert('No data found.')
 			return
 		# open gather file
 		with open(gather_file) as gf:
 			try:
 				gather_data = json.loads(gf.read())
 			except ValueError:
-				self.error("Gather data is incorrect. gather is missed!") 
+				self.error('Gather data is incorrect. Gather is missed!') 
 				return
 
-		if arg[0] == "saved":
+		if arg[0] == 'saved':
 			if gather_data:
 				for mod in gather_data:
 					self.alert(mod)
@@ -978,18 +748,18 @@ class Framework(cmd.Cmd):
 			return
 		_format = arg[0]
 		if _format not in ('json', 'txt', 'xml', 'csv'):
-			self.error(f"Format \'{_format}\' doesn't found.")
+			self.error(f"Format '{_format}' doesn't found.")
 			return
 		mod_name = arg[2].lower()
 		# Not supperted csv export
 		if mod_name in ('footprint/entry_points',) and _format == 'csv':
-			self.error('CSV format doesn\'t support entry_points output data.')
+			self.error('CSV format does not support entry_points output data.')
 			return
 			
 		if mod_name in gather_data:
 			output = gather_data[mod_name]
 		else:
-			self.error(f"Module \'{mod_name}\' does not have any data.")
+			self.error(f"Module '{mod_name}' does not have any data.")
 			return
 
 		if len(arg) == 4:
@@ -997,51 +767,74 @@ class Framework(cmd.Cmd):
 			if tar_name in output:
 				output = output[tar_name]
 			else:
-				self.error(f"Query name \'{tar_name}\' is not found.")
+				self.error(f"Query name '{tar_name}' is not found.")
 				return
 
 		output_file = os.path.join(self.workspace, arg[1])
 		get_export = self.exporter(output, f"{output_file}.{_format}", _format)
 		if get_export:
 			self.output(f"Report saved at {get_export}")
-
-	def do_load(self, params):
-		'''Loads selected module'''
+	
+	def do_update(self, params):
+		'''Update modules via module name'''
 		if not params:
-			self.help_load()
+			self.help_update()
 			return
-		# finds any modules that contain params
-		modules = [params] if params in Framework._loaded_modules else [
-			x for x in Framework._loaded_modules if params in x]
-		# notify the user if none or multiple modules are found
-		if len(modules) != 1:
-			if not modules:
-				self.error('Invalid module name.')
-			else:
-				self.output(f"Multiple modules match '{params}'.")
-				self.show_modules(modules)
+		check = False
+		args = params.lower().split()
+		if len(args) < 2 or args[0] not in ('module', 'check'):
+			self.help_update()
 			return
-		# compensation for stdin being used for scripting and loading
-		if Framework._script:
-			end_string = sys.stdin.read()
+
+		if args[0] == 'check':
+			check = True
+
+		# Means all of modules
+		if args[1] == '*':
+			modules = self._module_names
 		else:
-			end_string = 'EOF'
-			Framework._load = 1
-		sys.stdin = StringIO(f'load {modules[0]}\n{end_string}')
-		return True
+			modules = args[1:]
+		for module in modules:
+			self.heading(module)
+			if module not in self._loaded_modules:
+				self.output(f"Module name {module} does not exist.")
+			mod = self._loaded_modules[module]
+			file = mod.__file__
+			mod_version = mod.meta['version']
+			url = f"https://raw.githubusercontent.com/saeeddhqan/Maryam/master/modules/{'/'.join(file.split('/')[-2:])}"
+			try:
+				text = self.request(url).text
+				mod_remote_version = re.search(r"'version': '([\d\.]+)',", text).group(1)
+			except Exception as e:
+				self.output(f"Update/check failed ({e}).", prep='\t')
+			else:
+				if max(mod_version, mod_remote_version) == mod_remote_version\
+					and mod_version != mod_remote_version:
+					self.output(f"Remote version: {mod_remote_version}", prep='\t')
+					self.output(f"Local version: {mod_version}", prep='\t')
+					if not check:
+						try:
+							fopen = open(file, 'w')
+							fopen.write(text)
+							fopen.close()
+						except Exception as e:
+							self.output(f"Update/check failed ({e}).", prep='\t')
+							return
+						self.output(f"{module} has been updated to {mod_remote_version}.", prep='\t')
+						self.do_reload()
+				else:
+					self.output(f"{module} is up to date.", prep='\t')
 
-	do_use = do_load
-
-	#==================================================
-	# VARIABLE METHODS
-	#==================================================
+	# ////////////////////////////////
+	#           VARIABLES 			//
+	# ////////////////////////////////
 
 	def get_var(self, name):
 		self._init_var()
 		if name in self.variables:
 			return self.variables[name]
 		else:
-			self.error(f'Variable name \'{name}\' not found. enter `var list`')
+			self.error(f"Variable name '{name}' not found. enter `var list`")
 
 	def add_var(self, name, value):
 		if re.search(r'[a-zA-Z_][a-zA-Z0-9_]*', name):
@@ -1092,9 +885,9 @@ class Framework(cmd.Cmd):
 		# Update var.dat
 		json.dump(self.variables, v, indent=4)
 
-	# ==================================================
-	# HELP METHODS
-	# ==================================================
+	# ////////////////////////////////
+	#             HELP  			//
+	# ////////////////////////////////
 
 	def help_history(self):
 		print(getattr(self, 'do_history').__doc__)
@@ -1108,82 +901,62 @@ class Framework(cmd.Cmd):
 		print('\thistory clear\tClear the history')
 		print(f'Note: If \'from <num>\' is not set, only the last 50 commands will be shown.{os.linesep}')
 
-	def help_load(self):
-		print(getattr(self, 'do_load').__doc__)
-		print(f'{os.linesep}Usage: [load|use] <module>{os.linesep}')
-
-	help_use = help_load
-
-	def help_resource(self):
-		print(getattr(self, 'do_resource').__doc__)
-		print(f'{os.linesep}Usage: resource <filename>{os.linesep}')
-
 	def help_var(self):
 		print(getattr(self, 'do_var').__doc__)
 		print(f'{os.linesep}Usage: var <$name> <value> || var [delete] <name> || var [list]{os.linesep}')
 
-
-	def help_record(self):
-		print(getattr(self, 'do_record').__doc__)
-		print(f'{os.linesep}Usage: record [start <filename>|stop|status]{os.linesep}')
-
-	def help_spool(self):
-		print(getattr(self, 'do_spool').__doc__)
-		print(f'{os.linesep}Usage: spool [start <filename>|stop|status]{os.linesep}')
-
 	def help_report(self):
 		print(getattr(self, 'do_report').__doc__)
-		print(f'{os.linesep}Usage    : report [<format> <filename> [<module_name> or <module_name> <query(hostname,domain name, keywords,etc)>]]')
+		print(f'{os.linesep}Usage: report [<format> <filename> [<module_name> or <module_name> <query(hostname,domain name, keywords,etc)>]]')
 		print('or       : report [saved] => for show queries')
-		print('Example  : report json pdf_docs(without extention) osint/docs_search company.com')
-		print(f'         : report xml pdf_docs(without extention) osint/docs_search')
-		print(f'formats  : xml,json,csv and txt{os.linesep}')
+		print('Examples : report json pdf_docs(without extention) osint/docs_search company.com')
+		print(f'           report xml pdf_docs(without extention) osint/docs_search')
+		print(f'Formats  : xml,json,csv and txt{os.linesep}')
 
 	def help_search(self):
-		print(getattr(self, "do_search").__doc__)
+		print(getattr(self, 'do_search').__doc__)
 		print(f'{os.linesep}Usage: search <string>{os.linesep}')
 
 	def help_set(self):
-		print(getattr(self, "do_set").__doc__)
+		print(getattr(self, 'do_set').__doc__)
 		print(f'{os.linesep}Usage: set <option> <value>')
 		self.show_options()
 
 	def help_unset(self):
-		print(getattr(self, "do_unset").__doc__)
+		print(getattr(self, 'do_unset').__doc__)
 		print(f'{os.linesep}Usage: unset <option>')
 		self.show_options()
 
 	def help_shell(self):
-		print(getattr(self, "do_shell").__doc__)
-		print(f'{os.linesep}Usage: [shell|!] <command>')
-		print(f'   or: just type a command at the prompt.{os.linesep}')
+		print(getattr(self, 'do_shell').__doc__)
+		print(f"{os.linesep}Usage: [shell|!] <command>")
+		print(f"\tor just type a command at the prompt.{os.linesep}")
 
 	def help_show(self):
 		options = sorted(self._get_show_names())
-		print(getattr(self, "do_show").__doc__)
-		print(f'{os.linesep}Usage: show [{"|".join(options)}]{os.linesep}')
+		print(getattr(self, 'do_show').__doc__)
+		print(f"{os.linesep}Usage: show [{'|'.join(options)}]{os.linesep}")
 
-	# ==================================================
-	# COMPLETE METHODS
-	# ==================================================
+	def help_update(self):
+		print(getattr(self, 'do_update').__doc__)
+		print(f"{os.linesep}Usage: update [module|check] <modules or * for all modules>")
+		print(f"update check dns_search email_search")
+		print(f"update module *")
+		print(f"update check *")
 
-	def complete_load(self, text, line, *ignored):
-		args = line.partition(' ')
-		offs = len(args[2]) - len(text)
-		return [x[offs:] for x in Framework._loaded_modules if x.startswith(args[2])]
-
-	complete_use = complete_load
+	# ////////////////////////////////
+	#             COMPLETE 			//
+	# ////////////////////////////////
 
 	def complete_set(self, text, *ignored):
 		return [x.upper()
-				for x in self.options if x.upper().startswith(text.upper())]
+				for x in self._global_options if x.upper().startswith(text.upper())]
 
 	complete_unset = complete_set
 
-	def complete_record(self, text, *ignored):
-		return [x for x in ['start', 'stop', 'status'] if x.startswith(text)]
-
-	complete_spool = complete_record
+	def complete_module_name(self, text, line, *ignored):
+		return [x.lower()
+				for x in self._module_names if x.lower().startswith(text)]
 
 	def complete_show(self, text, line, *ignored):
 		args = line.split()
@@ -1191,16 +964,12 @@ class Framework(cmd.Cmd):
 			if len(args) > 2:
 				offs = len(args[2]) - len(text)
 				return [
-					x[offs:] for x in Framework._loaded_modules if x.startswith(
+					x[offs:] for x in core._loaded_modules if x.startswith(
 						args[2])]
 			else:
-				return [x for x in Framework._loaded_modules]
+				return [x for x in core._loaded_modules]
 		options = sorted(self._get_show_names())
 		return [x for x in options if x.startswith(text)]
 
-	def complete_options(self, text, line, *ignored):
-		arg, params = self._parse_params(line.split(' ', 1)[1])
-		subs = self._parse_subcommands('options')
-		if arg in subs:
-			return getattr(self, '_complete_options_'+arg)(text, params)
-		return [sub for sub in subs if sub.startswith(text)]
+	def complete_(self, text, line, *ignored):
+		return ['x','y']
