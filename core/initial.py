@@ -132,7 +132,7 @@ class initialize(core):
 				category = section
 				self._cat_module_names[category] = []
 				section = os.path.join(dirpath, section)
-				for _, _, files in os.walk(self.module_path):
+				for _, _, files in os.walk(section):
 					# Each File
 					for file in filter(lambda f: f.endswith(self.module_ext), files):
 						mod_path = os.path.join(section, file)
