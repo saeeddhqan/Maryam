@@ -14,10 +14,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-
+import json
 class main:
 
-	def __init__(self, framework, q, key, limit=100):
+	def __init__(self, framework, q, key, limit=10):
 		""" hunter.io search engine
 
 			framework : core attribute
@@ -31,7 +31,7 @@ class main:
 		self.key = key
 		self._pages = ''
 		self._json_pages = ''
-		self.hunter_api = f"https://api.hunter.io/v2/email-finder?domain={self.q}&limit={self.limit}&api_key={self.key}"
+		self.hunter_api = f"https://api.hunter.io/v2/domain-search?domain={self.q}&api_key={self.key}&limit={self.limit}"
 		self.acceptable = False
 	def run_crawl(self):
 		self.framework.verbose('[HUNTER] Searching in hunter...')
@@ -46,12 +46,12 @@ class main:
 
 		# Key validation
 		if 'errors' in self._json_pages:
-			self.framework.error(f"[HUNTER] api key is incorrect:'self.key'")
+			self.framework.error(f"[HUNTER] api key is incorrect:{self.key}")
 			self.acceptable = False
 			return
 
 		# Request validation
-		if not self._json_pages.get('data').get('accept_all'):
+		if not self._json_pages.get('data').get('emails'):
 			self.framework.verbose('[HUNTER] request was not accepted!')
 		else:
 			self.acceptable = True
@@ -72,8 +72,8 @@ class main:
 	def json_emails(self):
 		emails = []
 		if self.acceptable:
-			for email in self._json_pages.get('data')['emails']:
-				emails.append(email.get('value'))
+			for x in range(self.limit):
+				emails.append(self._json_pages['data']['emails'][x]['value'])
 			return emails
 		return []
 	

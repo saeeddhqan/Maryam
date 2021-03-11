@@ -189,7 +189,7 @@ class BaseModule(framework.Framework):
 		search = github.main(self, q=q, cookie=cookie, _type=_type, limit=limit)
 		return search
 
-	def hunter(self, q, key, limit=100):
+	def hunter(self, q, key, limit=10):
 		search = hunter.main(self, q, key, limit)
 		return search
 
