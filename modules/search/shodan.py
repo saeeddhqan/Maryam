@@ -49,8 +49,4 @@ class Module(BaseModule):
 
 		if links == []:
 			self.output('Without result')
-		else:
-			for link in links:
-				self.output(f'\t{link}')
-				print('')
 		self.save_gather(links, 'search/shodan', query, output=self.options['output'])

@@ -184,7 +184,7 @@ class Base(framework.Framework):
 			return True
 		except ImportError as e:
 			# notify the user of missing dependencies
-			self.error(f"Module \'{mod_dispname}\' disabled. Dependency required: {self.to_unicode_str(e)[16:]}")
+			self.error(f"Module \'{mod_dispname}\' disabled. Dependency required: {self.to_unicode_str(e)[16:]}. Run `pip install -r requirements`")
 		except:
 			# notify the user of errors
 			self.print_exception()
