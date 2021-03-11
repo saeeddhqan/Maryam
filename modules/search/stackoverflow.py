@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from core.module import BaseModule
 import re
-
+import concurrent.futures
 
 class Module(BaseModule):
 
@@ -27,73 +27,69 @@ class Module(BaseModule):
 		'author': 'Sanjiban Sengupta',
 		'version': '0.2',
 		'description': 'Search your query in the stackoverflow.com and show the results.',
-		'sources': ('yippy', 'bing', 'google', 'carrot2', 'qwant', 'millionshort'),
+		'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo'),
 		'options': (
 			('query', None, True, 'Query string', '-q', 'store'),
 			('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store'),
-			('count', 50, False,
-			 'Number of results per page(min=10, max=100, default=50)', '-c', 'store'),
+			('count', 50, False, 'Number of results per page(min=10, max=100, default=50)', '-c', 'store'),
+			('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store'),
 			('engine', 'google', False, 'Engine names for search(default=google)', '-e', 'store'),
 			('output', False, False, 'Save output to the workspace', '--output', 'store_true'),
 		),
 		'examples': ('stackoverflow -q "syntax error" -l 15 --output',)
 	}
 
+	links = []
+
+	def set_data(self, urls):
+		for url in urls:
+			self.links.append(url)
+
+	def thread(self, function, thread_count, engines, q, q_formats, limit, count):
+		threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
+		futures = (threadpool.submit(
+			function, name, q, q_formats, limit, count) for name in engines if name in self.meta['sources'])
+		for _ in concurrent.futures.as_completed(futures):
+			pass
+
+	def search(self, name, q, q_formats, limit, count):
+		engine = getattr(self, name)
+		name = engine.__name__
+
+		q = f"{name}_q" if f"{name}_q" in q_formats else q_formats['default_q']
+
+		varnames = engine.__code__.co_varnames
+
+		if 'limit' in varnames and 'count' in varnames:
+			attr = engine(q, limit, count)
+		elif 'limit' in varnames:
+			attr = engine(q, limit)
+		else:
+			attr = engine(q)
+
+		attr.run_crawl()
+		self.set_data(attr.links)
+
 	def module_run(self):
 		query = self.options['query']
 		limit = self.options['limit']
 		count = self.options['count']
 		engine = self.options['engine'].split(',')
-		q = f"site:www.stackoverflow.com {query}"
-		millionshort_q = f'site:www.stackoverflow.com "{query}"'
-		run = self.google(q, limit, count)
-		run.run_crawl()
-		links = run.links
-		pages = run.pages
+
+		q_formats = {
+			'default_q': f"site:www.stackoverflow.com {query}",
+			'millionshort_q': f'site:www.stackoverflow.com "{query}"'
+		}
+
 		titles = []
 		profiles = []
 		tags = []
+		self.thread(self.search, self.options['thread'], engine, query, q_formats, limit, count)
 
-		if 'bing' in engine:
-			run = self.bing(q, limit, count)
-			run.run_crawl()
-			pages += run.pages
-			for item in run.links_with_title:
-				link, title = item
-				self.verbose(f"\t{title}", 'C')
-				self.verbose(f"\t\t{link}")
-				self.verbose('')
-				links.append(link)
-
-		if 'yippy' in engine:
-			run = self.yippy(f"www.stackoverflow.com {query}")
-			run.run_crawl()
-			links = run.links
-
-		if 'carrot2' in engine:
-			run = self.carrot2(q)
-			run.run_crawl()
-			pages += run.pages
-			for item in run.json_links:
-				link = item.get('url')
-				self.verbose(item.get('title'), 'C')
-				self.verbose(f"\t{link}")
-				links.append(link)
-
-		if 'millionshort' in engine:
-			run = self.millionshort(millionshort_q, limit)
-			run.run_crawl()
-			links += run.links
-
-		if 'qwant' in engine:
-			run = self.qwant(q, limit)
-			run.run_crawl('webpages')
-			links += run.links
-
-		links = list(set(links))
+		links = list(set(self.links))
 		links = list(self.reglib().filter(lambda x: 'stackoverflow.com' in x, links))
-		if links == []:
-		 	self.output('Without result')
+		if not links:
+			self.output('Without result')
 		else:
 			self.alert('Questions')
 			for link in links:
@@ -111,16 +107,16 @@ class Module(BaseModule):
 
 			self.alert('profiles')
 			for link in links:
-				link = link.replace('https://stackoverflow.com/users/',
-				                    '').replace('/', '')
+				link = re.sub(r'https?://(www\.)stackoverflow\.com/users/', '', link)
 				if re.search(r'^[\w\d_\-\/]+$', link):
-					profiles.append(link)
-					self.output(f"\t{link}", 'G')
+					link = link.rsplit('/')
+					profiles.append(link[0])
+					self.output(f"\t{link[0]}", 'G')
 
 			self.alert('Tags')
 			for link in links:
 				if '/tag/' in link:
-					link = link.replace('https://stackoverflow.com/tags/', '')
+					link = re.sub(r'https?://(www\.)?stackoverflow\.com/tags/', '', link)
 					if re.search(r'^[\w\d_\-]+$', link):
 						tags.append(link)
 						self.output(f"\t#{link}", 'G')
