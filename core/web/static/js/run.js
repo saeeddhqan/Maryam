@@ -127,6 +127,10 @@ async function runCommand(){
 				if(opt_value === 'false' || opt_value === 'null'){
 					continue;
 				}
+				if(opt_value === 'true'){
+					command += ' ';
+					command += mod_opt[opt][4];
+				}
 				else{
 					command += ' ';
 					command += mod_opt[opt][4];
