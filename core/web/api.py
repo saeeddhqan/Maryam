@@ -30,6 +30,7 @@ class WorkspaceSummary(Resource):
 
 API.add_resource(WorkspaceSummary, '/workspaces/')
 
+
 class RunModules(Resource):
     def get(self):
         meta = {}
@@ -68,3 +69,24 @@ class RunModules(Resource):
         }
 
 API.add_resource(RunModules, '/run/')
+
+
+class PlotGraph(Resource):
+    def get(self):
+        workspace = current_app.config['WORKSPACE']
+        try:
+            filename = os.path.join(home, '.maryam/workspaces/', workspace, 'gather.dat')
+            file = open(filename)
+            data = json.loads(file.read())
+        except:
+            data = {}
+
+        dataPoints = {"modules" : [] , "targets": [], "name": []}
+        for modules in sorted(list(data.keys())):
+            dataPoints['modules'].append(modules.split('/')[1])
+            dataPoints['targets'].append(len(data[modules]))
+            dataPoints['name'].append(', '.join(data[modules].keys()))
+
+        return dataPoints
+
+API.add_resource(PlotGraph, '/graph/')
