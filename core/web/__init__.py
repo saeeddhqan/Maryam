@@ -1,6 +1,8 @@
 from flask import Flask, cli, render_template
 from flasgger import Swagger
 from core import base
+from redis import Redis
+import rq
 import os
 import requests
 import json
@@ -10,12 +12,12 @@ from bokeh.models.glyphs import VBar
 from bokeh.plotting import figure
 from bokeh.embed import components
 from bokeh.models.sources import ColumnDataSource
-from flask import Flask, render_template
 
 cli.show_server_banner = lambda *x: None
 
 base_obj = base.Base()
 
+REDIS_URL = os.environ.get('REDIS_URL','redis://')
 SWAGGER = {
 	'title': 'Swagger',
 	'info': {
@@ -91,6 +93,9 @@ def create_app():
     app.config.from_object(__name__)
 
     Swagger(app)
+
+    app.redis = Redis.from_url(app.config['REDIS_URL'])
+    app.task_queue = rq.Queue('recon-tasks', connection=app.redis)
 
     @app.route('/')
     def index():
