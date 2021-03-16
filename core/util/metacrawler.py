@@ -30,6 +30,7 @@ class main:
 		self.metacrawler = 'metacrawler.com'
 
 	def run_crawl(self):
+		print(type(self.limit))
 		urls = [f"http://{self.metacrawler}/serp?q={self.q}&page={i}" for i in range(1, self.limit+1)]
 		max_attempt = len(urls)
 
@@ -44,7 +45,7 @@ class main:
 					self.framework.error('Metacrawler is missed!')
 					break
 			else:
-				page = self.framework.to_unicode(req.text)
+				page = self.framework.to_str(req.text)
 				if 'To continue, please respond below:' in page:
 					self.framework.error("[METACRAWLER] Google CAPTCHA triggered.")
 					return
