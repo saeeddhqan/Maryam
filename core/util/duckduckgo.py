@@ -14,14 +14,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class main:
 
-	def __init__(self, framework, q, limit=1, count=10):
+	def __init__(self, q, limit=1, count=10):
 		""" duckduckgo.com search engine
-			framework  : Core attribute
+
 			q          : Query for search
 			limit      : Number of of pages
 			count      : Number of of results
 		"""
-		self.framework = framework
+		self.framework = main.framework
 		self.q = q
 		self._pages = ''
 		self.limit = limit + 1

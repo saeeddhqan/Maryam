@@ -15,105 +15,86 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from core.module import BaseModule
 import os
 import concurrent.futures
 from socket import gethostbyname
 
-class Module(BaseModule):
+meta = {
+	'name': 'DNS Brute Force',
+	'author': 'Saeed',
+	'version': '1.1',
+	'description': 'TLD brute force attack, supports cocurrency.',
+	'comments': ('wordlist option can be an url',),
+	'options': (
+		('domain', None, True, 'Domain name without https?://', '-d', 'store', str),
+		('count', None, False, 'Number of payloads len(max=count of payloads). default is max',
+							 '-c', 'store', int),
+		('wordlist', os.path.join(os.getcwd() + '/' + 'data', 'tlds.txt'), False, 
+							'wordlist address. default is dnsnames.txt in data folder', '-w', 'store', str),
+		('thread', 8, False, 'The number of links that open per round(default=8)', '-t', 'store', int),
+		('ips', False, False, 'Show ip addresses', '-i', 'store_true', bool),
+	),
+	'examples': ('dbrute -d <DOMAIN> --output',
+				'dbrute -d <DOMAIN> -w <WORDLIST>')
+}
 
-	meta = {
-		'name': 'DNS Brute Force',
-		'author': 'Saeeddqn',
-		'version': '1.1',
-		'description': 'TLD brute force attack, supports cocurrency.',
-		'comments': ('wordlist option can be an url',),
-		'options': (
-			('domain', BaseModule._global_options['target'],
-			 True, 'Domain name without https?://', '-d', 'store'),
-			('count', None, False, 'Count of payloads len(max=count of payloads). default is max',
-								 '-c', 'store'),
-			('wordlist', os.path.join(BaseModule.data_path, 'tlds.txt'), False, 
-								'wordlist address. default is dnsnames.txt in data folder', '-w', 'store'),
-			('thread', 8, False, 'The number of links that open per round(default=8)', '-t', 'store'),
-			('ips', False, False, 'Show ip addresses', '-i', 'store_true'),
-			('output', False, False, 'Save output to the workspace', '--output', 'store_true'),
-		),
-		'examples': ('dbrute -d <DOMAIN> --output',
-					'dbrute -d <DOMAIN> -w <WORDLIST>')
-	}
+HOSTNAMES = []
 
-	hostnames = []
+def thread(self, function, hostname, wordlist, thread_count):
+	threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
+	futures = (threadpool.submit(function, self, hostname, word) for word in wordlist if not word.startswith('#'))
+	counter = 1
+	for _ in concurrent.futures.as_completed(futures):
+		print(f"Checking payload {counter}, hits: {len(HOSTNAMES)}", end='\r')
+		counter += 1
+	print(os.linesep)
 
-	def thread(self, function, hostname, wordlist, thread_count):
-		threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
-		futures = (threadpool.submit(function, hostname, word) for word in wordlist if not word.startswith('#'))
-		counter = 1
-		for _ in concurrent.futures.as_completed(futures):
-			print(f"Checking payload {counter}, hits: {len(self.hostnames)}", end='\r')
-			counter += 1
-
-		print(os.linesep)
-
-	def request_checker(self, hostname, word):
-		hostname = f"{hostname}.{word}".lower()
-		try:
-			req = self.request(hostname)
-		except Exception as e:
-			if 'timed out' in str(e.args):
-				self.verbose(f"{hostname} => Timed out", 'O')
-			else:
-				self.debug(f"{list(e.args)[0]}:'{hostname}'", 'O')
+def request_checker(self, hostname, word):
+	hostname = f"{hostname}.{word}".lower()
+	try:
+		req = self.request(hostname)
+	except Exception as e:
+		if 'timed out' in str(e.args):
+			self.verbose(f"{hostname} => Timed out", 'O')
 		else:
-			if self.options['ips']:
-				try:
-					ip = gethostbyname(hostname)
-				except:
-					ip = '-'
-				hostname = f"{hostname} : {ip}"
-			self.hostnames.append(hostname)
-			self.output(f"{hostname}{' '*50}", 'G')
+			self.debug(f"{list(e.args)[0]}:'{hostname}'", 'O')
+	else:
+		if self.options['ips']:
+			try:
+				ip = gethostbyname(hostname)
+			except:
+				ip = '-'
+			hostname = f"{hostname} : {ip}"
+		HOSTNAMES.append(hostname)
+		self.output(f"{hostname}{' '*50}", 'G')
 
-	def remote_list(self, addr):
-		req = self.request(addr)
-		headers = req.headers
-		keys = list(map(str.lower, list(headers.keys())))
-		cond1 = 'content-type' in keys and 'text/plain' in str(headers).lower()
-		cond2 = 'githubusercontent.com' in addr.lower()
-		cond3 = '<' not in req.text
-		if cond1 or cond2 or cond3:
-			wordlist = req.text.split('\n')
-			if '' in wordlist:
-				wordlist.pop(wordlist.index(''))
-			return wordlist
-		else:
-			self.error(f"{addr} value is not text/plain")
-		return []
+def module_api(self):
+	domain = self.options['domain']
+	urlib = self.urlib(domain)
+	domain = urlib.sub_service('http')
+	hostname = urlib.netroot
+	hostname = hostname.split('.')[0]
+	wordlist = self.options['wordlist']
+	count = self.options['count']
 
-	def module_run(self):
-		domain = self.options['domain']
-		urlib = self.urlib(domain)
-		domain = urlib.sub_service('http')
-		hostname = urlib.netroot
-		hostname = hostname.split('.')[0]
-		wordlist = self.options['wordlist']
-		count = self.options['count']
-		if '://' in wordlist:
-			dlist = self.remote_list(wordlist)
-		else:
-			dlist = self._is_readable(wordlist)
-			if dlist:
-				dlist = dlist.read().split()
-			else:
-				dlist = []
+	dlist = self._is_readable(wordlist)
+	if dlist:
+		dlist = dlist.read().split()
+	else:
+		dlist = []
 
-		dlen = len(dlist)
-		if not count:
-			count = dlen
-		else:
-			count = dlen if count > dlen else count
+	dlen = len(dlist)
+	if not count:
+		count = dlen
+	else:
+		count = dlen if count > dlen else count
 
-		self.heading(f"Starting TLD brute force with {count} payload", level=0)
-		self.thread(self.request_checker, hostname, dlist[:count], self.options['thread'])
+	self.heading(f"Starting TLD brute force with {count} payload", level=0)
+	thread(self, request_checker, hostname, dlist[:count], self.options['thread'])
+	output = {'hostnames': HOSTNAMES}
 
-		self.save_gather(self.hostnames, 'footprint/tldbrute', domain, output=self.options['output'])
+	self.save_gather(output, 'footprint/tldbrute', domain, output=self.options['output'])
+	return output
+
+def module_run(self):
+	module_api(self)

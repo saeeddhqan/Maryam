@@ -15,18 +15,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from hashlib import sha1
 import re
 
 class main:
 
-	def __init__(self, framework, q, limit=2):
+	def __init__(self, q, limit=2):
 		""" netcraft.com for find dns
 
-			framework : core attribute
-			q 		  : query for search
+			q 		  : Query for search
 		"""
-		self.framework = framework
+		self.framework = main.framework
 		self.q = q
 		self.limit = limit
 		self.base_url = f"https://www.virustotal.com/ui/domains/{q}/subdomains?relationships=resolutions&cursor=STMwCi4=&limit=40"
@@ -71,7 +69,7 @@ class main:
 		parser = self.framework.page_parse(str(self._pages)).get_dns(self.q)
 		for host in list(set(parser)):
 			if host[0].isdigit():
-				matches = re.match(r'.+([0-9])[^0-9]*$', host)
+				matches = re.match(r".+([0-9])[^0-9]*$", host)
 				host = host[matches.start(1) + 1:]
 			if host.startswith('.'):
 				host = host[1:]

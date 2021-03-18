@@ -19,7 +19,7 @@ import re
 
 class main:
 
-	def __init__(self, framework, q, limit=2, count=100):
+	def __init__(self, q, limit=2, count=100):
 		""" yahoo.com search engine
 
 			framework : core attribute
@@ -27,7 +27,7 @@ class main:
 			limit	  : count of pages
 			count	  : count of links
 		"""
-		self.framework = framework
+		self.framework = main.framework
 		self.q = self.framework.urlib(q).quote
 		self.limit = limit
 		self.count = count

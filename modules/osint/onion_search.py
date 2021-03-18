@@ -14,45 +14,38 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-from core.module import BaseModule
 
-class Module(BaseModule):
+meta = {
+	'name': 'Onions Network Search',
+	'author': 'Saeed',
+	'version': '0.4',
+	'description': 'onion_search is used to create the premier \
+	search engine for services residing on the Tor anonymity network.',
+	'sources': ('ahmia', 'onionland', 'darksearch'),
+	'options': (
+		('query', None, True, 'Domain Name,\
+			Company Name, keyword, etc', '-q', 'store', str),
+	),
+	'examples': ('onion_search -q <KEYWORD|COMPANY>', 'onion_search -q <KEYWORD|COMPANY> --output')
+}
 
-	meta = {
-		'name': 'Onions Network Search',
-		'author': 'Saeeddqn',
-		'version': '0.4',
-		'description': 'onion_search is used to create the premier \
-		search engine for services residing on the Tor anonymity network.',
-		'sources': ('ahmia', 'onionland', 'darksearch'),
-		'options': (
-			('query', BaseModule._global_options['target'], True, 'Domain Name,\
-				Company Name, keyword, etc', '-q', 'store'),
-			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
-		),
-		'examples': ('onion_search -q <KEYWORD|COMPANY>', 'onion_search -q <KEYWORD|COMPANY> --output')
-	}
+def module_api(self):
+	q = self.options['query']
+	ahmia = self.ahmia(q)
+	ahmia.run_crawl()
+	links = ahmia.links
+	output = {'links': []}
+	onionland = self.onionland(q, limit=5)
+	onionland.run_crawl()
+	links.extend(onionland.links)
 
-	def module_run(self):
-		q = self.options['query']
-		ahmia = self.ahmia(q)
-		ahmia.run_crawl()
-		links = ahmia.links
+	darksearch = self.darksearch(q, limit=1)
+	darksearch.run_crawl()
+	links.extend(darksearch.links)
 
-		onionland = self.onionland(q, limit=5)
-		onionland.run_crawl()
-		links.extend(onionland.links)
+	output['links'] = list(set(links))
+	self.save_gather(output, 'osint/onion_search', q, output=self.options['output'])
+	return output
 
-		darksearch = self.darksearch(q, limit=1)
-		darksearch.run_crawl()
-		links.extend(darksearch.links)
-
-		links = list(set(links))
-		self.output('links')
-		if links is not None:
-			for link in links:
-				self.output(f'\t{link}')
-		else:
-			self.output('Nothing to declare', 'O')
-			return
-		self.save_gather({'links': links}, 'osint/onion_search', q, output=self.options['output'])
+def module_run(self):
+	self.alert_results(module_api(self))
