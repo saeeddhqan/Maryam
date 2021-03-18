@@ -640,6 +640,7 @@ class core(cmd.Cmd):
 				else:
 					print(f"{name} is a bool option. got {value}")
 					return
+				self._global_options[name] = value
 			elif isinstance(self._global_options[name], int):
 				if value.isdigit():
 					self._global_options[name] = int(value)
