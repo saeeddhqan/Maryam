@@ -49,12 +49,13 @@ python3 maryam -e help
 ## Updates
 **Last Updates**
 
+ - Rewrite core
  - Add API interface
  - Combine 'waf' to 'wapps'
  - Add 'update' command to update modules
  - Remove 'record', 'spool', and 'use'
  - Add CVE search module
- - Add wikipedia search module
+
 
 ## Contribution
 
