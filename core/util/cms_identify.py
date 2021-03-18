@@ -196,6 +196,15 @@ class main:
 					  self.content) is not None
 		if M:
 			self._cms = 'Squarespace'
+	def prestashop(self):
+		M = False
+		if 'set-cookie' in self.headers.keys():
+			M |= search(r"PrestaShop-[a-z0-9A-Z]+", self.headers["set-cookie"], I) is not None
+		if 'Powered-By' in self.headers.keys():
+			M |= search(r"^Prestashop$",self.headers["Powered-By"], I) is not None
+		M |= search(r"<a.*Ecommerce software by PrestaShop™[\s]*</a>", self.content) is not None
+		if M:
+			self._cms = 'Prestashop'
 
 	@property
 	def cms(self):
