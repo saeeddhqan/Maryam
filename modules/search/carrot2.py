@@ -15,36 +15,29 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from core.module import BaseModule
+meta = {
+	'name': 'Carrot2 Search',
+	'author': 'Saeed',
+	'version': '0.1',
+	'description': 'Search your query in the carrot2.org and show the results.',
+	'sources': ('carrot2',),
+	'options': (
+		('query', None, True, 'Query string', '-q', 'store', str),
+	),
+	'examples': ('carrot2 -q <QUERY>',)
+}
 
+def module_api(self):
+	query = self.options['query']
+	run = self.carrot2(query)
+	run.run_crawl()
+	output = {'links': [[link.get('url'), link.get('title')] for link in run.json_links]}
+	self.save_gather(output, 'search/carrot2', query, output=self.options['output'])
+	return output
 
-class Module(BaseModule):
-
-	meta = {
-		'name': 'Carrot2 Search',
-		'author': 'Saeeddqn',
-		'version': '0.1',
-		'description': 'Search your query in the carrot2.org and show the results.',
-		'sources': ('carrot2',),
-		'options': (
-			('query', None, True, 'Query string', '-q', 'store'),
-			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
-		),
-        'examples': ('carrot2 -q <QUERY>',)
-	}
-
-	def module_run(self):
-		query = self.options['query']
-		run = self.carrot2(query)
-		run.run_crawl()
-		json_links = run.json_links
-		out = 0
-		for link in json_links:
-			self.output(link.get('title'), 'G')
-			self.output(f"\t{link.get('url')}")
-			out = 1
-
-		if not out:
-			self.output('Without result')
-
-		self.save_gather(json_links, 'search/carrot2', query, output=self.options['output'])
+def module_run(self):
+	output = module_api(self)
+	for item in output['links']:
+		link,title = item[0],item[1]
+		self.output(title)
+		self.output(f"\t{link}", 'G')

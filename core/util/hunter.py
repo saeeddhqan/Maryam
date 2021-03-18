@@ -17,15 +17,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class main:
 
-	def __init__(self, framework, q, key, limit=100):
+	def __init__(self, q, key, limit=100):
 		""" hunter.io search engine
 
-			framework : core attribute
 			q 		  : query for search
 			key 	  : hunter.io api key
-			limit	  : count of pages
+			limit	  : Number of pages
 		"""
-		self.framework = framework
+		self.framework = main.framework
 		self.q = q
 		self.limit = limit
 		self.key = key

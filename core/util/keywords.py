@@ -20,16 +20,15 @@ import json
 
 class main:
 
-	def __init__(self, framework, q):
+	def __init__(self, q):
 		""" to find suggestions for keywords
 			example:
 			in: 'google'
 			out: ['google docs', 'google summer of code', 'google maps', 'google mail', 'google news', ..]
 
-			framework 		: core attribute
-			q 	: query
+			q 	: Query string
 		"""
-		self.framework = framework
+		self.framework = main.framework
 		self.q = self.framework.urlib(q).quote
 		self._keys_category = []
 		self._keys = []

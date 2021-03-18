@@ -19,20 +19,19 @@ import re
 
 class main:
 
-	def __init__(self, framework, q, limit=2):
+	def __init__(self, q, limit=2):
 		""" qwant.com search engine
 
-			framework : core attribute
 			q 		  : query for search
 			limit	  : count of pages
 		"""
-		self.framework = framework
+		self.framework = main.framework
 		self.q = q
 		self.limit = limit
 		self._pages = ''
 		self._json = []
 		self._links = []
-		self._links_with_title = {}
+		self._links_with_title = []
 		self.qwant = 'qwant.com'
 
 	def run_crawl(self, method='webpages'):
@@ -49,20 +48,32 @@ class main:
 		set_page = lambda x: x*10
 		urls = [f'https://api.{self.qwant}/api/search/{search_type}?q={self.q}&t=web&device=desktop&safesearch=1&uiv=4&count=10&offset={set_page(i)}' 
 					for i in range(self.limit)]
-		self.framework.verbose('Opening the qwant.com domain...', end='\r')
+		headers = {'Host': 'api.qwant.com', 
+				   'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0',
+				   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 
+				   'Accept-Language': 'en-US,en;q=0.5en-US,en;q=0.5', 'Accept-Encoding': 'gzip, deflate, br', 
+				   'Connection': 'keep-alive', 'Cookie': 'JSESSIONID=6120E7C52197190DE5126DCBF47D38B0', 
+				   'Upgrade-Insecure-Requests': '1', 'Cache-Control': 'max-age=0'}
 		for url in range(len(urls)):
 			self.framework.verbose(f"[QWANT] Searching in {url} page...")
 			try:
-				req = self.framework.request(url=urls[url])
+				req = self.framework.request(url=urls[url], headers=headers)
 			except:
 				self.framework.error('[QWANT] ConnectionError')
 				self.framework.error('Qwant is missed!')
 				return
-			if req.status_code == 429:
+			if req.status_code == 429 and "I can't let you do that..." in req.text and '<div class="error-code">' in req.text:
 				self.framework.error('429 Too Many Requests')
 				return
 			self._pages += req.text
-			self._json.append(req.json())
+			try:
+				self._json.append(req.json())
+			except Exception as e:
+				self.framework.error('429 Too Many Requests')
+				return
+			else:
+				if req.json() == {"status": "error", "error": 22}:
+					self.framework.error('429 Too Many Requests')
 
 	@property
 	def pages(self):
@@ -82,10 +93,11 @@ class main:
 	@property
 	def links_with_title(self):
 		for page in self.json:
-			results = page.get('data', {}).get('result', {}).get('items', {})
-			if not results:
-				return {}
-			self._links_with_title.update({x.get('title'): x.get('url') for x in results})
+			items = page.get('data', {}).get('result', {}).get('items', {})
+			if not items:
+				return []
+			for item in items:
+				self._links_with_title.append([item['title'].replace('<b>','').replace('</b>', ''), item['url']])
 		return self._links_with_title
 
 	@property

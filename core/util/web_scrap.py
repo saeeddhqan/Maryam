@@ -22,16 +22,15 @@ import concurrent.futures
 
 class main:
 
-	def __init__(self, framework, url, debug=False, limit=1, thread_count=1):
-		""" web scraper with thread support
+	def __init__(self, url, debug=False, limit=1, thread_count=1):
+		""" Web scraper with thread support
 
-			framework 	 : core attribute
 			url		  	 : first page address
 			debug	  	 : show the result at moment
 			limit	  	 : web scrap level(if it's 1 that's mean just search in first page)
 			thread_count : count of links for open at per lap
 		"""
-		self.framework = framework
+		self.framework = main.framework
 		# ADD http:// 
 		self.url = self.framework.urlib(url).sub_service(serv='http')
 		self.urlib = self.framework.urlib

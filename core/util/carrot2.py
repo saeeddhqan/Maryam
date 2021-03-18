@@ -20,13 +20,12 @@ import webbrowser
 
 class main:
 
-	def __init__(self, framework, q):
+	def __init__(self, q):
 		""" carrot2.org search engine
 
-			framework : core attribute
 			q 		  : query for search
 		"""
-		self.framework = framework
+		self.framework = main.framework
 		self.q = q
 		self._pages = ''
 		self._json = {}

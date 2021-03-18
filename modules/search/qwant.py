@@ -15,44 +15,39 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from core.module import BaseModule
 
-class Module(BaseModule):
+meta = {
+	'name': 'Qwant Search',
+	'author': 'Saeed',
+	'version': '0.2',
+	'description': 'Search your query in the qwant.com and show the results(without limit).',
+	'sources': ('qwant',),
+	'options': (
+		('query', None, True, 'Query string', '-q', 'store', str),
+		('method', 'webpages', False, 'Qwant methods("webpages",\
+		 "images", "news", "videos"). default=None', '-m', 'store', str),
+		('limit', 2, False, 'Search limit(number of pages, default=2)', '-l', 'store', int),
+	),
+	'examples': ('qwant -q <QUERY>', 'qwant -q <QUERY> -m images -l 3')
+}
 
-	meta = {
-		'name': 'Qwant Search',
-		'author': 'Saeeddqn',
-		'version': '0.2',
-		'description': 'Search your query in the qwant.com and show the results(without limit).',
-		'sources': ('qwant',),
-		'options': (
-			('query', None, True, 'Query string', '-q', 'store'),
-			('method', 'webpages', False, 'Qwant methods("webpages",\
-			 "images", "news", "videos"). default=None', '-m', 'store'),
-			('limit', 2, False, 'Search limit(number of pages, default=2)', '-l', 'store'),
-			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
-		),
-        'examples': ('qwant -q <QUERY>', 'qwant -q <QUERY> -m images -l 3')
-	}
+def module_api(self):
+	query = self.options['query']
+	run = self.qwant(query, self.options['limit'])
+	method = self.options['method'].lower()
+	if method not in ('webpages', 'images', 'news', 'videos'):
+		method = 'webpages'
 
-	def module_run(self):
-		query = self.options['query']
-		run = self.qwant(query, self.options['limit'])
-		method = self.options['method'].lower()
-		if method not in ('webpages', 'images', 'news', 'videos'):
-			self.error(f'Method name "{method}" is incorrect!')
-			self.verbose('Running with "webpages" method...')
-			method = 'webpages'
+	run.run_crawl(method)
+	output = {'links': run.links_with_title}
+	print(run.links_with_title)
+	self.save_gather(output, 'search/qwant', query, output=self.options['output'])
+	return output
 
-		run.run_crawl(method)
-		links = run.links_with_title
-
-		if links == {}:
-			self.output('Without result')
-		else:
-			for item in links:
-				self.output(f"{item.replace('<b>','').replace('</b>', '')}", 'G')
-				self.output(f"\t{links[item]}")
-				print('')
-
-		self.save_gather(links, 'search/qwant', query, output=self.options['output'])
+def module_run(self):
+	output = module_api(self)
+	print(output['links'])
+	for item in output['links']:
+		title, link = item[1], item[0]
+		self.output(title)
+		self.output(f"\t{link}", 'G')

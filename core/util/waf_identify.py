@@ -39,7 +39,7 @@ class main:
 			con3 = attr not in ('_waf', 'content', 'headers',
 							 'waf', 'run_crawl', 'status_code', 'reason',
 							 'header_check', 'status_check', 'reason_check', 'content_check',
-							 'cookie_check', 'req')
+							 'cookie_check', 'req', 'framework')
 			if con1 and con2 and con3:
 				getattr(self, attr)()
 

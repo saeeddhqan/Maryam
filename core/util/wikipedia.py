@@ -14,13 +14,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class main:
 
-	def __init__(self, framework, q, count=10):
+	def __init__(self, q, count=10):
 		""" wikipedia.org search 
-			framework  : Core attribute
 			q          : Query for search
 			count      : Number of results
 		"""
-		self.framework = framework
+		self.framework = main.framework
 		self.q = q
 		self.num = count
 		self._links = []

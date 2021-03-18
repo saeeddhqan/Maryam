@@ -15,54 +15,53 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from core.module import BaseModule
+from json import loads
 
-class Module(BaseModule):
+meta = {
+	'name': 'Web Applications Identifier',
+	'author': 'Saeed',
+	'version': '0.3',
+	'description': 'Web fingerprinting to identify the applications used with over 1000 pyload.',
+	'sources': ('wappalyzer.com', 'github.com/EnableSecurity/wafw00f'),
+	'options': (
+		('domain', None, True, 'Domain string', '-d', 'store', str),
+	),
+	'examples': ('wapps -d <DOMAIN>',)
+}
 
-	meta = {
-		'name': 'Web Applications Identifier',
-		'author': 'Saeeddqn',
-		'version': '0.3',
-		'description': 'Web fingerprinting to identify the applications used with over 1000 pyload.',
-		'sources': ('wappalyzer.com',),
-		'options': (
-			('domain', BaseModule._global_options.get('target'), True, 'Domain string', '-d', 'store'),
-			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
-		),
-		'examples': ('wapps -d <DOMAIN>',)
-	}
+def module_api(self):
+	domain = self.options['domain']
+	req = self.request(domain)
+	urlib = self.urlib(domain)
+	query = urlib.sub_service('http')
+	headers = req.headers
+	text = req.text
+	resp = {}
+	_wafs = self.waf_identify(req)
+	_wafs.run_crawl()
+	wafs = _wafs._waf
+	resp['waf'] = wafs
+	v = self.wapps(domain, text, headers)
+	wapps = v.run_crawl()
+	resp['wapps'] = wapps
 
-	def module_run(self):
-		domain = self.options['domain']
-		req = self.request(domain)
-		headers = req.headers
-		text = req.text
-		resp = {}
-		
-		v = self.wapps(domain, text, headers)
-		wapps = v.run_crawl()
-		self.alert('WAPPS')
-		resp['wapps'] = []
-		for i in wapps:
-			self.output(f'\t{i} : {wapps[i]}', 'g')
-			resp['wapps'].append((i,wapps[i]))
+	_os = self.os_identify(text, headers)
+	_os.run_crawl()
+	if _os.os:
+		resp['os'] = _os.os
 
-		_os = self.os_identify(text, headers)
-		_os.run_crawl()
-		if _os.os:
-			resp['os'] = _os.os
-			self.alert(f"Used '{_os.os}' operating system")
+	cms = self.cms_identify(text, headers)
+	cms.run_crawl()
+	if cms.cms:
+		resp['cms'] = cms.cms
 
-		cms = self.cms_identify(text, headers)
-		cms.run_crawl()
-		if cms.cms:
-			resp['cms'] = cms.cms
-			self.alert(f"Used '{cms.cms}' content management")
+	lang = self.lang_identify(text, headers)
+	lang.run_crawl()
+	if lang.lang:
+		resp['lang'] = lang.lang
 
-		lang = self.lang_identify(text, headers)
-		lang.run_crawl()
-		if lang.lang:
-			resp['lang'] = lang.lang
-			self.alert(f"Used '{lang.lang}' programming language")
+	self.save_gather(resp, 'footprint/wapps', domain, output=self.options['output'])
+	return resp
 
-		self.save_gather(resp, 'footprint/wapps', domain, output=self.options['output'])
+def module_run(self):
+	self.alert_results(module_api(self))
