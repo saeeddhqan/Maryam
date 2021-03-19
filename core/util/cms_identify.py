@@ -196,6 +196,7 @@ class main:
 					  self.content) is not None
 		if M:
 			self._cms = 'Squarespace'
+			
 	def prestashop(self):
 		M = False
 		if 'set-cookie' in self.headers.keys():
