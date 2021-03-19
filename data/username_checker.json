@@ -1,0 +1,17 @@
+{
+	"3dnews": {
+		"status": "200",
+		"error": "Пользователь не зарегистрирован и не имеет профиля для просмотра.",
+		"url": "http://forum.3dnews.ru/member.php?username={}"
+	},
+	"7Cups": {
+		"status":"404",
+		"error": ["Not Found", "Item Removed"],
+		"url": "https://www.7cups.com/@{}"
+	},
+	"9GAG": {
+		"status": "404",
+		"error":"There's nothing here.",
+		"url": "https://www.9gag.com/u/{}"
+	}
+}
