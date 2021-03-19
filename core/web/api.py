@@ -1,11 +1,13 @@
 from flask import Blueprint, current_app, request, jsonify, abort
 from flask_restful import Resource, Api
-from core import base
+from core import initial
+from core import core
 import json
 import os
 from pathlib import Path
 
-base_obj = base.Base()
+core_obj = core.core()
+base_obj = initial.initialize(core_obj)
 
 home = str(Path.home())
 
@@ -16,12 +18,12 @@ API.init_app(resources)
 class WorkspaceSummary(Resource):
     def post(self):
         workspace = request.json['workspace']
-        base_obj.init_workspace(workspace)
+        base_obj._init_workspace(workspace)
         current_app.config['WORKSPACE'] = workspace
         WORKSPACE = base_obj.workspace.split('/')[-1]
         print((f" * Workspace initialized: {WORKSPACE}"))
         try:
-            filename = os.path.join(home, '.maryam/workspaces/', workspace, 'gather.dat')
+            filename = os.path.join(home, base_obj._config['workspaces_directory_name'], workspace, 'gather.dat')
             file = open(filename)
             data = json.loads(file.read())
         except:
@@ -34,20 +36,37 @@ API.add_resource(WorkspaceSummary, '/workspaces/')
 class RunModules(Resource):
     def get(self):
         meta = {}
-        modules = sorted(list(base_obj._loaded_modules.keys()))
+        modules = []
+        module_path = os.path.abspath(os.path.join(os.getcwd(), 'modules'))
+        for mod_type in os.listdir(module_path):
+            for module in os.listdir(os.path.join(module_path,mod_type)): 
+                if module.split('.')[-1] == 'py' :
+                    modules.append(mod_type + '/' + module.split('.')[0])
+
         for module in modules:
             meta[module.split('/')[-1]] = base_obj.opt_proc(module.split('/')[-1], args=None, output=None)
+            '''
+            mod_opt = []
+            for i in range(len(meta[module.split('/')[-1]]['options'])):
+                mod_opt.append(meta[module.split('/')[-1]]['options'][i][:-1] + tuple(json.dumps(meta[module.split('/')[-1]]['options'][i][-1], default=lambda o: o.__class__.__name__, sort_keys=True, indent=4)))
+            meta[module.split('/')[-1]]['options'] = tuple(mod_opt)
+            '''
+
+        meta = json.dumps(meta, default=lambda o: o.__class__.__name__, sort_keys=True, indent=4)
+        meta = json.loads(meta)
+
         return {
             'modules': modules,
             'meta': meta
         }
+
     def post(self):
         cmd = request.json['cmd']
         args = cmd.split(' ');
         ret = base_obj.onecmd(cmd)
         workspace = current_app.config['WORKSPACE']
         try:
-            filename = os.path.join(home, '.maryam/workspaces/', workspace, 'gather.dat')
+            filename = os.path.join(home, base_obj._config['workspaces_directory_name'], workspace, 'gather.dat')
             file = open(filename)
             data = json.loads(file.read())
         except:

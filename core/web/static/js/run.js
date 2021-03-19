@@ -237,6 +237,7 @@ function getModules(workspace){
 		displayData(data.modules);
 		summary = data.modules;
 		options = data.meta;
+		console.log(options);
 	}).catch(function (error) {
 		console.warn('Something went wrong.', error);
 	});

@@ -1,6 +1,7 @@
 from flask import Flask, cli, render_template
 from flasgger import Swagger
-from core import base
+from core import initial
+from core import core
 from redis import Redis
 import rq
 import os
@@ -15,7 +16,8 @@ from bokeh.models.sources import ColumnDataSource
 
 cli.show_server_banner = lambda *x: None
 
-base_obj = base.Base()
+core_obj = core.core()
+base_obj = initial.initialize(core_obj)
 
 REDIS_URL = os.environ.get('REDIS_URL','redis://')
 SWAGGER = {

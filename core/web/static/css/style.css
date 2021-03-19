@@ -32,6 +32,7 @@ nav{
 	display: flex;
 	height: 100%;
 	top:20px;
+	bottom: 0px;
 	width: 300px;
 	position: absolute;
 	left: 0;

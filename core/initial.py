@@ -350,6 +350,10 @@ class initialize(core):
 			except Exception as e:
 				self.error(f"{tool_name.title()}CodeError: {e}")
 
+		mod_info = meta
+		mod_info['options'] = opts
+		return mod_info
+
 	def run_tool(self, func, tool_name, args, output=None):
 		try:
 			proc = Process(target=getattr(self, func), args=(tool_name, args, output))
