@@ -14,6 +14,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
 import json
+import requests
+from bs4 import BeautifulSoup
 from socket import gethostbyaddr
 
 meta = {
@@ -24,7 +26,7 @@ meta = {
 	'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'baidu', 'startpage',
 				'netcraft', 'threatcrowd', 'virustotal', 'yippy', 'otx', 'carrot2', 'crt',
 				'qwant', 'millionshort', 'threatminer', 'jldc', 'bufferover', 'rapiddns', 'certspotter',
-				'sublist3r', 'riddler', 'sitedossier', 'duckduckgo'),
+				'sublist3r', 'riddler', 'sitedossier', 'duckduckgo', 'dnsdumpster'),
 	'options': (
 		('domain', None,
 		 False, 'Domain name without https?://', '-d', 'store', str),
@@ -161,6 +163,40 @@ def rapiddns(self, q):
 				'https://rapiddns.io/subdomain/' + q + '?full=1')
 	except Exception as e:
 		self.error('Rapiddns is missed!')
+	else:
+		j = self.page_parse(req.text).get_dns(q) or []
+		set_data(j)
+
+def dnsdumpster(self, q):
+	self.verbose('[DNSDUMPSTER] Searching in dnsdumpster...')
+	init_res = requests.get('https://dnsdumpster.com/')  # initial response from dnsdumpster
+	set_cookie = init_res.headers.get('Set-Cookie')  # getting crsftoken from cookie field
+	cookie = set_cookie[:set_cookie.index(';') + 1]
+	headers = {
+		'authority': 'dnsdumpster.com',
+		'cache-control': 'max-age=0',
+		'sec-ch-ua-mobile': '?0',
+		'upgrade-insecure-requests': '1',
+		'origin': 'https://dnsdumpster.com',
+		'content-type': 'application/x-www-form-urlencoded',
+		'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36',
+		'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+		'sec-fetch-site': 'same-origin',
+		'sec-fetch-mode': 'navigate',
+		'sec-fetch-user': '?1',
+		'sec-fetch-dest': 'document',
+		'referer': 'https://dnsdumpster.com/',
+		'accept-language': 'en-US,en;q=0.9',
+		'cookie': cookie
+	}
+	try:
+		soup = BeautifulSoup(init_res.content, 'html.parser')
+		input_tag = soup.find_all('input')[0]  # using BeautifulSoup to scrape the csrfmiddlewaretoken
+		csrf_token = input_tag['value']
+		data = {'csrfmiddlewaretoken': csrf_token, 'targetip': q}
+		req = requests.post('https://dnsdumpster.com/', headers=headers, data=data)
+	except Exception as e:
+		self.error('DNSdumpster is missed!')
 	else:
 		j = self.page_parse(req.text).get_dns(q) or []
 		set_data(j)
