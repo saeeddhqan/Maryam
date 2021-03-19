@@ -97,7 +97,7 @@ def create_app():
     Swagger(app)
 
     app.redis = Redis.from_url(app.config['REDIS_URL'])
-    app.task_queue = rq.Queue('recon-tasks', connection=app.redis)
+    app.task_queue = rq.Queue('tasks', connection=app.redis)
 
     @app.route('/')
     def index():
