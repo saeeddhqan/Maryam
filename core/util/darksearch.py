@@ -20,16 +20,15 @@ import re
 
 class main:
 
-    def __init__(self, framework, q, limit=1):
+    def __init__(self, q, limit=1):
         """
         darksearch.io search engine
 
-        framework  : core attribute
         q          : query for search
         limit      : count of pages
         """
 
-        self.framework = framework
+        self.framework = main.framework
         self.q = q
         self._pages = ''
         self.limit = limit

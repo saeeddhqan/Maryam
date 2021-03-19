@@ -19,14 +19,13 @@ import re
 
 class main:
 
-	def __init__(self, framework, q, limit=2):
+	def __init__(self, q, limit=2):
 		""" millionshort.com search engine
 
-			framework : core attribute
 			q 		  : query for search
 			limit	  : count of pages
 		"""
-		self.framework = framework
+		self.framework = main.framework
 		self.q = q
 		self.limit = limit
 		self._pages = ''

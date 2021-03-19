@@ -19,13 +19,12 @@ import re
 
 class main:
 
-	def __init__(self, framework, q):
+	def __init__(self, q):
 		""" ahmia.fi search engine
 			
-			framework : core attribute
 			q 		  : query for search
 		"""
-		self.framework = framework
+		self.framework = main.framework
 		self.q = self.framework.urlib(q).quote
 		self._pages = ''
 		self._links = []

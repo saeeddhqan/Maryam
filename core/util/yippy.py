@@ -19,13 +19,12 @@ import re
 
 class main:
 
-	def __init__(self, framework, q, limit=2, count=100):
+	def __init__(self, q, limit=2, count=100):
 		""" yippy.com search engine
 
-			framework : core attribute
-			q 		  : query for search
+			q 		  : Query for search
 		"""
-		self.framework = framework
+		self.framework = main.framework
 		self.q = q
 		self.limit = limit
 		self.count = count

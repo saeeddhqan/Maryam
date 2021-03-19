@@ -18,14 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import re
 
 class main:
-
-	def __init__(self, framework, page):
+	def __init__(self, page):
 		""" Page parser
 
-			framework 	: framework attribute
 			Page  		: web page content
 		"""
-		self.framework = framework
+		self.framework = main.framework
 		self.page = page.decode('utf-8') if isinstance(page, bytes) else page
 
 	@property

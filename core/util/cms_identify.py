@@ -34,7 +34,7 @@ class main:
 			con1 = not attr.startswith('__')
 			con2 = not attr.endswith('__')
 			con3 = attr not in ('_cms', 'content', 'headers',
-							 'cms', 'run_crawl')
+							 'cms', 'run_crawl', 'framework', 'initialize')
 			if con1 and con2 and con3:
 				getattr(self, attr)()
 		
