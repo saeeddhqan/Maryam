@@ -21,20 +21,19 @@ import os
 
 class main:
 
-	def __init__(self, framework, q, page, headers):
+	def __init__(self, q, page, headers):
 		""" Web application fingerprint for detect apps. like wappalizer
 			
-			framework : core attribute
 			q 		  : domain name
 			page	  : web page
 			headers	  : web headers
 		"""
-		self.framework = framework
+		self.framework = main.framework
 		self.q = q
 		self.page = page
 		self.headers = headers
 		# Wapps json file
-		self.wfile = os.path.join(framework.data_path, 'wapps.json')
+		self.wfile = os.path.join(self.framework.data_path, 'wapps.json')
 
 	def _req_parse(self):
 		parser = self.framework.page_parse(self.page)
@@ -53,23 +52,28 @@ class main:
 		# Search the easiest things first and save the full-text search of the
 		# HTML for last
 
-		for regex in app['url']:
-			if regex.search(self.q):
-				return True
+		for regexes in app['url']:
+			for regex in regexes:
+				if regex.search(self.q):
+					return True
 				
 		# Headers
-		for name, regex in app['headers'].items():
+		for name, regexes in app['headers'].items():
 			if name in self.headers:
 				content = self.headers[name]
-				if regex.search(content):
-					return True
+				# print(regexes)
+				for regex in regexes:
+					if regex.search(content):
+						return True
 
 		# Javascript links
-		for regex in app['script']:
-			for script in self.scripts:
-				search = re.search(script)
-				if regex.search(script):
-					return search.group()
+		for regexes in app['scripts']:
+			if regexes:
+				for regex in regexes:
+					for script in self.scripts:
+						search = regex.search(script)
+						if search:
+							return search.group()
 
 		# Meta tags
 		for name, regex in app['meta'].items():
@@ -79,21 +83,32 @@ class main:
 					return True
 
 		# Html search
-		for regex in app['html']:
-			if regex.search(self.page):
-				return True
+		for regexes in app['html']:
+			if regexes:
+				for regex in regexes:
+					if regex.search(self.page):
+						return True
 
-	def _init_pattern(self, pattern):
-		regex, _, rest = pattern.partition('\\;')
-		try:
-			return re.compile(regex, re.I)
-		except re.error as e:
-			return re.compile(r'(?!x)x')
+	def _init_pattern(self, patterns):
+		outcome = []
+		if isinstance(patterns, list):
+			for patt in patterns:
+				regex, _, rest = patt.partition('\\;')
+				try:
+					outcome.append(re.compile(regex, re.I))
+				except re.error as e:
+					outcome.append(re.compile(r'(?!x)x'))
+			return outcome
+		else:
+			try:
+				return [re.compile(patterns, re.I)]
+			except re.error as e:
+				return [re.compile(r'(?!x)x')]
 
 	def _init_wfile(self):
 		with open(self.wfile) as wf:
 			jload = json.loads(wf.read())
-		self.apps = jload['apps']
+		self.apps = jload['technologies']
 		self.categories = jload['categories']
 		"""
 		Normalize app data, preparing it for the detection phase.
@@ -103,7 +118,7 @@ class main:
 	
 	def _init_app(self, app):
 		# Ensure these keys' values are lists
-		for key in ['url', 'html', 'script', 'implies']:
+		for key in ['url', 'html', 'scripts', 'implies']:
 			try:
 				value = app[key]
 			except KeyError:
@@ -133,7 +148,7 @@ class main:
 		Strip out key:value pairs from the pattern and compile the regular
 		expression.
 		"""
-		for key in ['url', 'html', 'script']:
+		for key in ['url', 'html', 'scripts']:
 			app[key] = [self._init_pattern(pattern) for pattern in app[key]]
 
 		for key in ['headers', 'meta']:
@@ -189,20 +204,9 @@ class main:
 		return detected_apps
 
 	def run_crawl(self):
-		"""
-			Initialize the wapps file    
-		"""
 		self._init_wfile()
-		"""
-		Constructs a request object for the URL,
-		using the request module to fetch the HTML and headers.
-		"""
 		self._req_parse()
-		"""
-		Return a list of applications that can be detected on the web page.
-		"""
 		app_list = list(self.analyze())
-		# Add Website creator
 		resp = {}
 		for app in app_list:
 			app = re.split(r"\\?;", app)[0]

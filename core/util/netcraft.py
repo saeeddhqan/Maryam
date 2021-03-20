@@ -20,13 +20,12 @@ import re
 
 class main:
 
-	def __init__(self, framework, q, limit=4):
+	def __init__(self, q, limit=4):
 		""" netcraft.com for find dns
 
-			framework : core attribute
-			q 		  : query for search
+			q 		  : Query for search
 		"""
-		self.framework = framework
+		self.framework = main.framework
 		self.q = q
 		self.limit = limit
 		self.base_url = f"https://searchdns.netcraft.com/?restriction=site+ends+with&host={q}"

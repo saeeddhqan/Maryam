@@ -17,16 +17,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class main:
 
-	def __init__(self, framework, q, cookie, _type='Repositories', limit=1):
+	def __init__(self, q, cookie, _type='Repositories', limit=1):
 		""" github.com search
 			
-			framework : Core attribute
 			q 		  : The query for search
 			cookie	  : Your GitHub cookie
 			limit	  : The number of pages
 			count	  : The number of links
 		"""
-		self.framework = framework
+		self.framework = main.framework
 		self.q = self.framework.urlib(q).quote
 		self.cookie = cookie
 		self.limit = limit

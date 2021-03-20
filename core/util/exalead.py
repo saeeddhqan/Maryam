@@ -17,14 +17,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class main:
 
-	def __init__(self, framework, q, limit):
+	def __init__(self, q, limit):
 		""" exalead.com search engine
 
-			framework : core attribute
 			q         : query for search
 			limit     : count of pages
 		"""
-		self.framework = framework
+		self.framework = main.framework
 		self.q = q
 		self._pages = ''
 		self.exalead = 'www.exalead.com'

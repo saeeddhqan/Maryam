@@ -18,14 +18,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class main:
 
-	def __init__(self, framework, q, limit):
+	def __init__(self, q, limit):
 		""" use onionlandsearchengine.com
 
-			framework : core attribute
 			q 		  : query for search
 			limit	  : count of pages
 		"""
-		self.framework = framework
+		self.framework = main.framework
 		self.q = self.framework.urlib(q).quote
 		self.limit = 20 if limit > 20 else limit
 		self._pages = ''

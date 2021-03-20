@@ -15,105 +15,75 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from core.module import BaseModule
 import re
 
-class Module(BaseModule):
+meta = {
+	'name': 'Twitter Search',
+	'author': 'Saeed',
+	'version': '0.5',
+	'description': 'Search your query in the twitter.com and show the results.',
+	'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo'),
+	'options': (
+		('query', None, True, 'Query string', '-q', 'store', str),
+		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
+		('count', 50, False, 'The number of results per page(min=10, max=100,\
+			default=50)', '-c', 'store', int),
+		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
+		('engine', 'google', False, 'Engine names for search(default=google)', '-e', 'store', str),
+	),
+	'examples': ('twitter -q <QUERY> -l 15 --output',)
+}
 
-	meta = {
-		'name': 'Twitter Search',
-		'author': 'Saeeddqn',
-		'version': '0.5',
-		'description': 'Search your query in the twitter.com and show the results.',
-		'sources': ('google', 'carrot2', 'bing', 'yippy', 'millionshort', 'qwant'),
-		'options': (
-			('query', None, True, 'Query string', '-q', 'store'),
-			('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store'),
-			('count', 50, False, 'The number of results per page(min=10, max=100,\
-				default=50)', '-c', 'store'),
-			('engine', 'google', False, 'Engine names for search(default=google)', '-e', 'store'),
-			('output', False, False, 'Save output to workspace', '--output', 'store_true'),
-		),
-		'examples': ('twitter -q <QUERY> -l 15 --output',)
+LINKS = []
+PAGES = ''
+
+def search(self, name, q, q_formats, limit, count):
+	global PAGES,LINKS
+	engine = getattr(self, name)
+	name = engine.__init__.__name__
+	q = f"{name}_q" if f"{name}_q" in q_formats else q_formats['default_q']
+	varnames = engine.__init__.__code__.co_varnames
+	if 'limit' in varnames and 'count' in varnames:
+		attr = engine(q, limit, count)
+	elif 'limit' in varnames:
+		attr = engine(q, limit)
+	else:
+		attr = engine(q)
+
+	attr.run_crawl()
+	LINKS += attr.links
+	PAGES += attr.pages
+
+def module_api(self):
+	query = self.options['query']
+	limit = self.options['limit']
+	count = self.options['count']
+	engines = self.options['engine'].split(',')
+	output = {'links': [], 'people': [], 'hashtags': []}
+	q_formats = {
+		'default_q': f"site:twitter.com {query}",
+		'millionshort_q': f'site:twitter.com "{query}"',
+		'yippy_q': f"twitter.com {query}"
 	}
 
-	def module_run(self):
-		query = self.options['query']
-		limit = self.options['limit']
-		count = self.options['count']
-		engine = self.options['engine'].split(',')
-		q = f"site:twitter.com {query}"
-		millionshort_q = f'site:twitter.com "{query}"'
-		yippy_q = f"twitter.com {query}"
-		run = self.google(q, limit, count)
-		run.run_crawl()
-		links = run.links
-		people = []
-		hashtags = []
-		pages = run.pages
+	self.thread(search, self.options['thread'], engines, query, q_formats, limit, count, meta['sources'])
 
-		if 'bing' in engine:
-			run = self.bing(q, limit, count)
-			run.run_crawl()
-			pages += run.pages
-			for item in run.links_with_title:
-				link,title = item
-				self.verbose(f'\t{title}', 'C')
-				self.verbose(f'\t\t{link}')
-				self.verbose('')
-				links.append(link)
+	usernames = self.page_parse(PAGES).get_networks
+	for _id in list(set(usernames.get('Twitter'))):
+		_id = _id[_id.find('/') + 1:]
+		if _id not in ('i', 'settings', \
+			'notifications', 'messages', 'explore', 'home', 'search'):
+			output['people'].append(_id)
 
-		if 'carrot2' in engine:
-			run = self.carrot2(q)
-			run.run_crawl()
-			pages += run.pages
-			for item in run.json_links:
-				link = item.get('url')
-				self.verbose(item.get('title'), 'C')
-				self.verbose(f"\t{link}")
-				links.append(link)
+	output['links'] = list(self.reglib().filter(r'https?://(www\.)?twitter\.com', list(set(LINKS))))
+	for link in filter(lambda x: '/hashtag/' in x, output['links']):
+		link = re.sub(r'https?://(www\.)?twitter.com/hashtag/', '', link)
+		if re.search(r"^[\w\d_\-]+$", link):
+			output['hashtags'].append(link)
 
-		if 'yippy' in engine:
-			run = self.yippy(yippy_q)
-			run.run_crawl()
-			links += run.links
+	self.save_gather(output,
+		'search/twitter', query, output=self.options.get('output'))
+	return output
 
-		if 'millionshort' in engine:
-			run = self.millionshort(millionshort_q, limit)
-			run.run_crawl()
-			links += run.links
-
-		if 'qwant' in engine:
-			run = self.qwant(q, limit)
-			run.run_crawl('webpages')
-			links += run.links
-
-		usernames = self.page_parse(pages).get_networks
-		self.alert('people')
-		for _id in list(set(usernames.get('Twitter'))):
-			if isinstance(_id, (tuple, list)):
-				_id = _id[0]
-				_id = f"@{_id[_id.find('/') + 1:]}"
-			else:
-				_id = f"@{_id[_id.find('/') + 1:]}"
-			people.append(_id)
-			self.output(f"\t{_id}", 'G')
-
-		links = list(set(links))
-		links = list(self.reglib().filter(lambda x: 'twitter.com' in x and '.twitter.com' not in x, links))
-		if links == []:
-			self.output('Without result')
-		else:
-			self.alert('hashtags')
-			for link in self.reglib().filter(lambda x: '/hashtag/' in x, links):
-				link = link.replace('https://twitter.com/hashtag/', '')
-				if re.search(r"^[\w\d_\-]+$", link):
-					hashtags.append(link)
-					self.output(f"\t#{link}", 'G')
-
-			self.alert('links')
-			for link in links:
-				self.output(f'\t{link}')
-
-		self.save_gather({'links': links, 'people': people, 'hashtags': hashtags},
-			'search/twitter', query, output=self.options.get('output'))
+def module_run(self):
+	self.alert_results(module_api(self))
