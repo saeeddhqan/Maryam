@@ -267,8 +267,7 @@ class initialize(core):
 		threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
 		futures = (threadpool.submit(
 			function, self, name, q, q_formats, limit, count) for name in engines if name in sources)
-		for x in concurrent.futures.as_completed(futures):
-			print(x)
+		for _ in concurrent.futures.as_completed(futures):
 			pass
 
 	def opt_proc(self, tool_name, args=None, output=None):

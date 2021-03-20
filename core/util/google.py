@@ -66,7 +66,6 @@ class main:
 			self._pages += req.text
 			page += 1
 			payload['start'] = set_page(page)
-			print(page)
 			if page >= self.limit:
 				break
 		parser = self.framework.page_parse(self._pages)

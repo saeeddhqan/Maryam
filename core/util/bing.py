@@ -93,4 +93,4 @@ class main:
 
 	@property
 	def docs(self):
-		return self.framework.page_parse(self._pages).get_docs(self.links)
+		return self.framework.page_parse(self._pages).get_docs(self.q, self.links)
