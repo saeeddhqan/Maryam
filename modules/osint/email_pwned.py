@@ -16,19 +16,19 @@ import re
 import cloudscraper
 
 meta = {
-	"name": "Pwned database search",
-	"author": "Vikas Kundu",
-	"version": "1.0",
-	"description": "Search your email for data breaches",
-	"comments": (
-			"Using XmlHttp API of haveibeenpwned.com",
-			"to get JSON data"
+	'name': 'Pwned database search',
+	'author': 'Vikas Kundu',
+	'version': '1.0',
+	'description': 'Search your email for data breaches',
+	'comments': (
+			'Using XmlHttp API of haveibeenpwned.com',
+			'to get JSON data'
 	),
-	"sources": (["https://www.haveibeenpwned.com"]),
-	"options": (
-		("email", None, True, "Email to search for breach", "-e", "store", str),
+	'sources': (['https://www.haveibeenpwned.com']),
+	'options': (
+		('email', None, True, 'Email to search for breach', '-e', 'store', str),
 	),
-	"examples": ("pwned -e <email> --output",)
+	'examples': ('pwned -e <email> --output',)
 }
 
 
@@ -64,7 +64,7 @@ def module_api(self):
 		output['Pastes'] = 'Email Invalid!'
 		
 
-	self.save_gather(output, "osint/email_pwned", email,
+	self.save_gather(output, 'osint/email_pwned', email,
 					 output=self.options['output'])
 	return output
 
