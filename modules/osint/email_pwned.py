@@ -47,7 +47,7 @@ def module_api(self):
 	email = self.options['email']
 
 	if re.search(r"^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$", email):
-		self.verbose(['Searching for pwning...'])
+		self.verbose(['[PAWNED] Searching for pwning...'])
 		pwns = scrap(email)
 		if pwns:
 			output['Breaches'] = [{'BreachName': i['Name'], 'BreachDomain':i['Domain']} for i in pwns['Breaches']]
