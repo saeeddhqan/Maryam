@@ -33,35 +33,39 @@ meta = {
 
 
 def scrap(email):
-	url = "https://haveibeenpwned.com/unifiedsearch/"+email
+	url = f"https://haveibeenpwned.com/unifiedsearch/{email}"
 	scraper = cloudscraper.create_scraper()
 	result = scraper.get(url)
-	if(result.text != ""):
+	if result.text != '':
 		return result.json()
 	else:
 		return False
 
 
 def module_api(self):
-	output, pwns = {}, {}
-	email = self.options["email"]
+	output = {'Breaches':[], 'Pastes':[]}
+	email = self.options['email']
 
-	if(re.search('^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$', email)):
-		self.verbose('Searching for pwning...')
+	if re.search(r"^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$", email):
+		self.verbose(['Searching for pwning...'])
 		pwns = scrap(email)
 		if pwns:
-			output["Breaches"] = [{"BreachName": i["Name"], "BreachDomain":i["Domain"]} for i in pwns["Breaches"]]
-			if pwns["Pastes"]:
-				output["Pastes"] = [{"PasteId": j["Id"], "PasteSource": j["Source"]} for j in pwns["Pastes"]]
+			output['Breaches'] = [{'BreachName': i['Name'], 'BreachDomain':i['Domain']} for i in pwns['Breaches']]
+			if pwns['Pastes']:
+				output['Pastes'] = [{'PasteId': j['Id'], 'PasteSource': j['Source']} for j in pwns['Pastes']]
 			else:
-				output["Pastes"] = "Pastes not available for this email"
+				output['Pastes'] = 'Pastes not available for this email'
 		else:
-			output["Pastes"] = output["Breaches"] = "Email not pwned"
+			output['Pastes'] = 'Email not pwned'
+			output['Breaches'] = 'Email not pwned'
 	else:
-		self.error("Invalid Email")
+		self.error('Invalid Email')
+		output['Breaches'] = 'Email Invalid!'
+		output['Pastes'] = 'Email Invalid!'
+		
 
 	self.save_gather(output, "osint/email_pwned", email,
-					 output=self.options["output"])
+					 output=self.options['output'])
 	return output
 
 
