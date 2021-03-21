@@ -687,7 +687,10 @@ class core(cmd.Cmd):
 		if not modules:
 			self.error(f"No modules found containing '{text}'.")
 		else:
-			self.show_modules(modules)
+			for section in core._cat_module_names:
+				self.heading(section)
+				if text in core._cat_module_names[section]:
+					self.output(f"Found '{text}' under {section}")
 
 	def do_shell(self, params):
 		'''Executes shell commands'''
