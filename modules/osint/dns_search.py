@@ -201,10 +201,8 @@ def yougetsignal(self, q):
 	data = {'remoteAddress': q}
 	try:
 		req = self.request('https://domains.yougetsignal.com/domains.php', method='POST', headers=headers, data=data).json()
-	except Exception:
+	except Exception as e:
 		self.error('YouGetSignal is missed!')
-	if req.get('status') == 'Fail':
-		self.error(f'Message: {req.get("message")}')
 	else:
 		j = list(map(lambda x: x[0], req.get('domainArray')))
 		HOSTNAMES.extend(j)
