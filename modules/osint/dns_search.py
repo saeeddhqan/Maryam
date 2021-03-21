@@ -24,7 +24,7 @@ meta = {
 	'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'baidu', 'startpage',
 				'netcraft', 'threatcrowd', 'virustotal', 'yippy', 'otx', 'carrot2', 'crt',
 				'qwant', 'millionshort', 'threatminer', 'jldc', 'bufferover', 'rapiddns', 'certspotter',
-				'sublist3r', 'riddler', 'sitedossier', 'duckduckgo', 'dnsdumpster'),
+				'sublist3r', 'riddler', 'sitedossier', 'duckduckgo', 'dnsdumpster', 'yougetsignal'),
 	'options': (
 		('domain', None,
 		 False, 'Domain name without https?://', '-d', 'store', str),
@@ -189,6 +189,25 @@ def dnsdumpster(self, q):
 	else:
 		j = self.page_parse(req.text).get_dns(q) or []
 		set_data(j)
+
+def yougetsignal(self, q):
+	self.verbose('[YOUGETSIGNAL] Searching in yougetsignal...')
+	headers = {
+		'authority': 'domains.yougetsignal.com',
+		'accept': 'text/javascript, text/html, application/xml, text/xml, */*',
+		'origin': 'https://www.yougetsignal.com',
+		'referer': 'https://www.yougetsignal.com/',
+	}
+	data = {'remoteAddress': q}
+	try:
+		req = self.request('https://domains.yougetsignal.com/domains.php', method='POST', headers=headers, data=data).json()
+	except Exception:
+		self.error('YouGetSignal is missed!')
+	if req.get('status') == 'Fail':
+		self.error(f'Message: {req.get("message")}')
+	else:
+		j = list(map(lambda x: x[0], req.get('domainArray')))
+		HOSTNAMES.extend(j)
 
 def certspotter(self, q):
 	self.verbose('[CERTSPOTTER] Searching in certspotter...')
