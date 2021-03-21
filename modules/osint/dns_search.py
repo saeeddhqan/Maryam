@@ -58,7 +58,7 @@ def set_data(lst):
 		if sub.startswith('.'):
 			sub = sub[1:]
 		if sub.count('.') < 2:
-			return
+			continue
 		HOSTNAMES.append(sub)
 
 def search(self, name, q, q_format, limit, count):
@@ -204,8 +204,8 @@ def yougetsignal(self, q):
 	except Exception as e:
 		self.error('YouGetSignal is missed!')
 	else:
-		j = list(map(lambda x: x[0], req.get('domainArray')))
-		HOSTNAMES.extend(j)
+		j = [x[0] if len(x)>1 else '' for x in req.get('domainArray')]
+		set_data(j)
 
 def certspotter(self, q):
 	self.verbose('[CERTSPOTTER] Searching in certspotter...')
