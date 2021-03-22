@@ -658,5 +658,785 @@
         "status": "404",
         "error": "",
         "url": "https://www.openstreetmap.org/user/{}"
+    },
+    "Opensource": {
+        "status": "404",
+        "error": "",
+        "url": "https://opensource.com/users/{}"
+    },
+    "Otzovik": {
+        "status": "507",
+        "error": "",
+        "url": "https://otzovik.com/profile/{}"
+    },
+    "OurDJTalk": {
+        "status": "200",
+        "error": "",
+        "url": "https://ourdjtalk.com/members?username={}"
+    },
+    "PCGamer": {
+        "status": "200",
+        "error": "",
+        "url": "https://forums.pcgamer.com/members/?username={}"
+    },
+    "PCPartPicker": {
+        "status": "404",
+        "error": "",
+        "url": "https://pcpartpicker.com/user/{}"
+    },
+    "PSNProfiles.com": {
+        "status": "200",
+        "error": "",
+        "url": "https://psnprofiles.com/{}"
+    },
+    "Packagist": {
+        "status": "200",
+        "error": "",
+        "url": "https://packagist.org/packages/{}/"
+    },
+    "Pastebin": {
+        "status": "404",
+        "error": "",
+        "url": "https://pastebin.com/u/{}"
+    },
+    "Patreon": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.patreon.com/{}"
+    },
+    "Periscope": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.periscope.tv/{}/"
+    },
+    "Pinkbike": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.pinkbike.com/u/{}/"
+    },
+    "Pinterest": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.pinterest.com/{}/"
+    },
+    "PlayStore": {
+        "status": "404",
+        "error": "",
+        "url": "https://play.google.com/store/apps/developer?id={}"
+    },
+    "Pokemon Showdown": {
+        "status": "404",
+        "error": "",
+        "url": "https://pokemonshowdown.com/users/{}"
+    },
+    "Polarsteps": {
+        "status": "200",
+        "error": "",
+        "url": "https://polarsteps.com/{}"
+    },
+    "Polygon": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.polygon.com/users/{}"
+    },
+    "ProductHunt": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.producthunt.com/@{}"
+    },
+    "PromoDJ": {
+        "status": "404",
+        "error": "",
+        "url": "http://promodj.com/{}"
+    },
+    "PyPi": {
+        "status": "404",
+        "error": "",
+        "url": "https://pypi.org/user/{}"
+    },
+    "Quizlet": {
+        "status": "403",
+        "error": "",
+        "url": "https://quizlet.com/{}"
+    },
+    "Quora": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.quora.com/profile/{}"
+    },
+    "Raidforums": {
+        "status": "406",
+        "error": "",
+        "url": "https://raidforums.com/User-{}"
+    },
+    "Rajce.net": {
+        "status": "410",
+        "error": "",
+        "url": "https://{}.rajce.idnes.cz/"
+    },
+    "Rate Your Music": {
+        "status": "503",
+        "error": "",
+        "url": "https://rateyourmusic.com/~{}"
+    },
+    "Redbubble": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.redbubble.com/people/{}"
+    },
+    "Reddit": {
+        "status": "502",
+        "error": "",
+        "url": "https://www.reddit.com/user/{}"
+    },
+    "Repl.it": {
+        "status": "404",
+        "error": "",
+        "url": "https://repl.it/@{}"
+    },
+    "ResearchGate": {
+        "status": "200",
+        "error": "",
+        "url": "https://www.researchgate.net/profile/{}"
+    },
+    "ReverbNation": {
+        "status": "500",
+        "error": "",
+        "url": "https://www.reverbnation.com/{}"
+    },
+    "Roblox": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.roblox.com/user.aspx?username={}"
+    },
+    "RubyGems": {
+        "status": "404",
+        "error": "",
+        "url": "https://rubygems.org/profiles/{}"
+    },
+    "Sbazar.cz": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.sbazar.cz/{}"
+    },
+    "Scratch": {
+        "status": "404",
+        "error": "",
+        "url": "https://scratch.mit.edu/users/{}"
+    },
+    "Scribd": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.scribd.com/{}"
+    },
+    "ShitpostBot5000": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.shitpostbot.com/user/{}"
+    },
+    "Signal": {
+        "status": "404",
+        "error": "",
+        "url": "https://community.signalusers.org/u/{}"
+    },
+    "Slack": {
+        "status": "404",
+        "error": "",
+        "url": "https://{}.slack.com"
+    },
+    "Slashdot": {
+        "status": "404",
+        "error": "",
+        "url": "https://slashdot.org/~{}"
+    },
+    "SlideShare": {
+        "status": "404",
+        "error": "",
+        "url": "https://slideshare.net/{}"
+    },
+    "Smule": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.smule.com/{}"
+    },
+    "SoundCloud": {
+        "status": "404",
+        "error": "",
+        "url": "https://soundcloud.com/{}"
+    },
+    "SourceForge": {
+        "status": "404",
+        "error": "",
+        "url": "https://sourceforge.net/u/{}"
+    },
+    "SoylentNews": {
+        "status": "200",
+        "error": "",
+        "url": "https://soylentnews.org/~{}"
+    },
+    "SparkPeople": {
+        "status": "200",
+        "error": "",
+        "url": "https://www.sparkpeople.com/mypage.asp?id={}"
+    },
+    "Speedrun.com": {
+        "status": "404",
+        "error": "",
+        "url": "https://speedrun.com/user/{}"
+    },
+    "Splits.io": {
+        "status": "404",
+        "error": "",
+        "url": "https://splits.io/users/{}"
+    },
+    "Sporcle": {
+        "status": "403",
+        "error": "",
+        "url": "https://www.sporcle.com/user/{}/people"
+    },
+    "SportsRU": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.sports.ru/profile/{}/"
+    },
+    "Spotify": {
+        "status": "200",
+        "error": "",
+        "url": "https://open.spotify.com/user/{}"
+    },
+    "Star Citizen": {
+        "status": "404",
+        "error": "",
+        "url": "https://robertsspaceindustries.com/citizens/{}"
+    },
+    "Steam": {
+        "status": "200",
+        "error": "",
+        "url": "https://steamcommunity.com/id/{}"
+    },
+    "SteamGroup": {
+        "status": "200",
+        "error": "",
+        "url": "https://steamcommunity.com/groups/{}"
+    },
+    "Steamid": {
+        "status": "403",
+        "error": "",
+        "url": "https://steamid.uk/profile/{}"
+    },
+    "Strava": {
+        "status": "200",
+        "error": "",
+        "url": "https://www.strava.com/athletes/{}"
+    },
+    "SublimeForum": {
+        "status": "404",
+        "error": "",
+        "url": "https://forum.sublimetext.com/u/{}"
+    },
+    "TETR.IO": {
+        "status": "200",
+        "error": "",
+        "url": "https://ch.tetr.io/u/{}"
+    },
+    "Telegram": {
+        "status": "200",
+        "error": "",
+        "url": "https://t.me/{}"
+    },
+    "Tellonym.me": {
+        "status": "403",
+        "error": "",
+        "url": "https://tellonym.me/{}"
+    },
+    "TikTok": {
+        "status": "200",
+        "error": "",
+        "url": "https://tiktok.com/@{}"
+    },
+    "Tinder": {
+        "status": "200",
+        "error": "",
+        "url": "https://www.gotinder.com/@{}"
+    },
+    "TrackmaniaLadder": {
+        "status": "200",
+        "error": "",
+        "url": "http://en.tm-ladder.com/{}_rech.php"
+    },
+    "TradingView": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.tradingview.com/u/{}/"
+    },
+    "Trakt": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.trakt.tv/users/{}"
+    },
+    "TrashboxRU": {
+        "status": "200",
+        "error": "",
+        "url": "https://trashbox.ru/users/{}"
+    },
+    "Trello": {
+        "status": "200",
+        "error": "",
+        "url": "https://trello.com/{}"
+    },
+    "TripAdvisor": {
+        "status": "404",
+        "error": "",
+        "url": "https://tripadvisor.com/members/{}"
+    },
+    "TryHackMe": {
+        "status": "404",
+        "error": "",
+        "url": "https://tryhackme.com/p/{}"
+    },
+    "Twitch": {
+        "status": "200",
+        "error": "",
+        "url": "https://www.twitch.tv/{}"
+    },
+    "Twitter": {
+        "status": "200",
+        "error": "",
+        "url": "https://mobile.twitter.com/{}"
+    },
+    "Typeracer": {
+        "status": "200",
+        "error": "",
+        "url": "https://data.typeracer.com/pit/profile?user={}"
+    },
+    "Ultimate-Guitar": {
+        "status": "404",
+        "error": "",
+        "url": "https://ultimate-guitar.com/u/{}"
+    },
+    "Unsplash": {
+        "status": "404",
+        "error": "",
+        "url": "https://unsplash.com/@{}"
+    },
+    "VK": {
+        "status": "404",
+        "error": "",
+        "url": "https://vk.com/{}"
+    },
+    "VSCO": {
+        "status": "404",
+        "error": "",
+        "url": "https://vsco.co/{}"
+    },
+    "Velomania": {
+        "status": "200",
+        "error": "",
+        "url": "https://forum.velomania.ru/member.php?username={}"
+    },
+    "Venmo": {
+        "status": "403",
+        "error": "",
+        "url": "https://venmo.com/{}"
+    },
+    "Vero": {
+        "status": "404",
+        "error": "",
+        "url": "https://vero.co/{}"
+    },
+    "Vimeo": {
+        "status": "404",
+        "error": "",
+        "url": "https://vimeo.com/{}"
+    },
+    "Virgool": {
+        "status": "403",
+        "error": "",
+        "url": "https://virgool.io/@{}"
+    },
+    "VirusTotal": {
+        "status": "429",
+        "error": "",
+        "url": "https://www.virustotal.com/ui/users/{}/trusted_users"
+    },
+    "Warrior Forum": {
+        "status": "400",
+        "error": "",
+        "url": "https://www.warriorforum.com/members/{}.html"
+    },
+    "Wattpad": {
+        "status": "403",
+        "error": "",
+        "url": "https://www.wattpad.com/user/{}"
+    },
+    "We Heart It": {
+        "status": "404",
+        "error": "",
+        "url": "https://weheartit.com/{}"
+    },
+    "WebNode": {
+        "status": "404",
+        "error": "",
+        "url": "https://{}.webnode.cz/"
+    },
+    "Whonix Forum": {
+        "status": "404",
+        "error": "",
+        "url": "https://forums.whonix.org/u/{}"
+    },
+    "Wikidot": {
+        "status": "200",
+        "error": "",
+        "url": "http://www.wikidot.com/user:info/{}"
+    },
+    "Wikipedia": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.wikipedia.org/wiki/User:{}"
+    },
+    "Windy": {
+        "status": "404",
+        "error": "",
+        "url": "https://community.windy.com/user/{}"
+    },
+    "Wix": {
+        "status": "404",
+        "error": "",
+        "url": "https://{}.wix.com"
+    },
+    "WordPress": {
+        "status": "200",
+        "error": "",
+        "url": "https://{}.wordpress.com/"
+    },
+    "WordPressOrg": {
+        "status": "404",
+        "error": "",
+        "url": "https://profiles.wordpress.org/{}/"
+    },
+    "Xbox Gamertag": {
+        "status": "403",
+        "error": "",
+        "url": "https://xboxgamertag.com/search/{}"
+    },
+    "YouNow": {
+        "status": "200",
+        "error": "",
+        "url": "https://www.younow.com/{}/"
+    },
+    "YouPic": {
+        "status": "404",
+        "error": "",
+        "url": "https://youpic.com/photographer/{}/"
+    },
+    "YouTube": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.youtube.com/{}"
+    },
+    "Zhihu": {
+        "status": "403",
+        "error": "",
+        "url": "https://www.zhihu.com/people/{}"
+    },
+    "akniga": {
+        "status": "404",
+        "error": "",
+        "url": "https://akniga.org/profile/{}"
+    },
+    "allmylinks": {
+        "status": "404",
+        "error": "",
+        "url": "https://allmylinks.com/{}"
+    },
+    "aminoapp": {
+        "status": "404",
+        "error": "",
+        "url": "https://aminoapps.com/u/{}"
+    },
+    "authorSTREAM": {
+        "status": "404",
+        "error": "",
+        "url": "http://www.authorstream.com/{}/"
+    },
+    "babyRU": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.baby.ru/u/{}/"
+    },
+    "babyblogRU": {
+        "status": "200",
+        "error": "",
+        "url": "https://www.babyblog.ru/user/info/{}"
+    },
+    "chaos.social": {
+        "status": "404",
+        "error": "",
+        "url": "https://chaos.social/@{}"
+    },
+    "couchsurfing": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.couchsurfing.com/people/{}"
+    },
+    "d3RU": {
+        "status": "404",
+        "error": "",
+        "url": "https://d3.ru/user/{}/posts"
+    },
+    "dailykos": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.dailykos.com/user/{}"
+    },
+    "datingRU": {
+        "status": "404",
+        "error": "",
+        "url": "http://dating.ru/{}"
+    },
+    "devRant": {
+        "status": "200",
+        "error": "",
+        "url": "https://devrant.com/users/{}"
+    },
+    "drive2": {
+        "status": "402",
+        "error": "",
+        "url": "https://www.drive2.ru/users/{}"
+    },
+    "eGPU": {
+        "status": "404",
+        "error": "",
+        "url": "https://egpu.io/forums/profile/{}/"
+    },
+    "eintracht": {
+        "status": "404",
+        "error": "",
+        "url": "https://community.eintracht.de/fans/{}"
+    },
+    "fixya": {
+        "status": "403",
+        "error": "",
+        "url": "https://www.fixya.com/users/{}"
+    },
+    "fl": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.fl.ru/users/{}"
+    },
+    "forum_guns": {
+        "status": "200",
+        "error": "",
+        "url": "https://forum.guns.ru/forummisc/blog/{}"
+    },
+    "forumhouseRU": {
+        "status": "200",
+        "error": "",
+        "url": "https://www.forumhouse.ru/members/?username={}"
+    },
+    "geocaching": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.geocaching.com/p/default.aspx?u={}"
+    },
+    "gfycat": {
+        "status": "404",
+        "error": "",
+        "url": "https://gfycat.com/@{}"
+    },
+    "habr": {
+        "status": "404",
+        "error": "",
+        "url": "https://habr.com/ru/users/{}"
+    },
+    "hackster": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.hackster.io/{}"
+    },
+    "hunting": {
+        "status": "200",
+        "error": "",
+        "url": "https://www.hunting.ru/forum/members/?username={}"
+    },
+    "iMGSRC.RU": {
+        "status": "200",
+        "error": "",
+        "url": "https://imgsrc.ru/main/user.php?user={}"
+    },
+    "igromania": {
+        "status": "200",
+        "error": "",
+        "url": "http://forum.igromania.ru/member.php?username={}"
+    },
+    "interpals": {
+        "status": "200",
+        "error": "",
+        "url": "https://www.interpals.net/{}"
+    },
+    "irecommend": {
+        "status": "404",
+        "error": "",
+        "url": "https://irecommend.ru/users/{}"
+    },
+    "jbzd.com.pl": {
+        "status": "404",
+        "error": "",
+        "url": "https://jbzd.com.pl/uzytkownik/{}"
+    },
+    "jeuxvideo": {
+        "status": "404",
+        "error": "",
+        "url": "http://www.jeuxvideo.com/profil/{}?mode=infos"
+    },
+    "kofi": {
+        "status": "503",
+        "error": "",
+        "url": "https://ko-fi.com/{}"
+    },
+    "kwork": {
+        "status": "404",
+        "error": "",
+        "url": "https://kwork.ru/user/{}"
+    },
+    "labpentestit": {
+        "status": "200",
+        "error": "",
+        "url": "https://lab.pentestit.ru/profile/{}"
+    },
+    "last.fm": {
+        "status": "404",
+        "error": "",
+        "url": "https://last.fm/user/{}"
+    },
+    "leasehackr": {
+        "status": "404",
+        "error": "",
+        "url": "https://forum.leasehackr.com/u/{}/summary/"
+    },
+    "livelib": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.livelib.ru/reader/{}"
+    },
+    "mastodon.cloud": {
+        "status": "404",
+        "error": "",
+        "url": "https://mastodon.cloud/@{}"
+    },
+    "mastodon.social": {
+        "status": "404",
+        "error": "",
+        "url": "https://mastodon.social/@{}"
+    },
+    "mastodon.technology": {
+        "status": "404",
+        "error": "",
+        "url": "https://mastodon.technology/@{}"
+    },
+    "mastodon.xyz": {
+        "status": "404",
+        "error": "",
+        "url": "https://mastodon.xyz/@{}"
+    },
+    "mercadolivre": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.mercadolivre.com.br/perfil/{}"
+    },
+    "metacritic": {
+        "status": "403",
+        "error": "",
+        "url": "https://www.metacritic.com/user/{}"
+    },
+    "moikrug": {
+        "status": "404",
+        "error": "",
+        "url": "https://moikrug.ru/{}"
+    },
+    "mstdn.io": {
+        "status": "404",
+        "error": "",
+        "url": "https://mstdn.io/@{}"
+    },
+    "nairaland.com": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.nairaland.com/{}"
+    },
+    "nnRU": {
+        "status": "404",
+        "error": "",
+        "url": "https://{}.www.nn.ru/"
+    },
+    "note": {
+        "status": "404",
+        "error": "",
+        "url": "https://note.com/{}"
+    },
+    "npm": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.npmjs.com/~{}"
+    },
+    "opennet": {
+        "status": "200",
+        "error": "",
+        "url": "https://www.opennet.ru/~{}"
+    },
+    "osu!": {
+        "status": "404",
+        "error": "",
+        "url": "https://osu.ppy.sh/users/{}"
+    },
+    "phpRU": {
+        "status": "200",
+        "error": "",
+        "url": "https://php.ru/forum/members/?username={}"
+    },
+    "pr0gramm": {
+        "status": "200",
+        "error": "",
+        "url": "https://pr0gramm.com/user/{}"
+    },
+    "prog.hu": {
+        "status": "200",
+        "error": "",
+        "url": "https://prog.hu/azonosito/info/{}"
+    },
+    "radio_echo_msk": {
+        "status": "404",
+        "error": "",
+        "url": "https://echo.msk.ru/users/{}"
+    },
+    "satsisRU": {
+        "status": "404",
+        "error": "",
+        "url": "https://satsis.info/user/{}"
+    },
+    "social.tchncs.de": {
+        "status": "404",
+        "error": "",
+        "url": "https://social.tchncs.de/@{}"
+    },
+    "spletnik": {
+        "status": "404",
+        "error": "",
+        "url": "https://spletnik.ru/user/{}"
+    },
+    "svidbook": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.svidbook.ru/user/{}"
+    },
+    "toster": {
+        "status": "404",
+        "error": "",
+        "url": "https://www.toster.ru/user/{}/answers"
+    },
+    "uid": {
+        "status": "404",
+        "error": "",
+        "url": "http://uid.me/{}"
     }
 }
