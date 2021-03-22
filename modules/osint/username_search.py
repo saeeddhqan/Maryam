@@ -42,10 +42,14 @@ def thread(self, data, query,thread_count):
 	print('\n')
 
 
-def check(self,url,site, data):
+def check(self, url, site, data):
 	global OUTPUT
 	try:
 		req = self.request(url)
+	except Exception as e:
+		self.error(f"Not fount on {site}")
+		return
+	else:
 		if str(req.status_code) == data[site]['status'] :
 			for error in data[site]['error'] :
 				if error in req.text :
@@ -54,13 +58,9 @@ def check(self,url,site, data):
 		else:
 			OUTPUT['links'][site] = url
 
-	except Exception as e:
-		self.error(f"Not fount on {site}")
-		return
-
 def module_api(self):
 	query = self.options['query']
-	filepath = os.path.join(os.getcwd(), 'data','username_checker.json')
+	filepath = os.path.join(os.getcwd(), 'data', 'username_checker.json')
 	with open(filepath) as file:
 		data = json.loads(file.read())
 	thread(self, data, query,self.options['thread'])
@@ -73,7 +73,7 @@ def module_run(self):
 	output = module_api(self)
 	sites = []
 	for link in output['links']:
-		sites.append((link,output['links'][link]))
+		sites.append((link, output['links'][link]))
 
 	self.alert('Accounts Found')
-	self.table(sites , header=['Site','Account'], linear=True, sep='_')
+	self.table(sites , header=['Site', 'Account'], linear=True, sep='_')
