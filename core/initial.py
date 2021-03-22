@@ -54,7 +54,7 @@ class initialize(core):
 				'workspaces_directory_name': '.maryam/workspaces'
 			}
 		self._name = self._config['name']
-		self._prompt_template = '%s[' + core.Colors.Y + '%s' + core.Colors.N + '] > '
+		self._prompt_template = '%s[%s] > '
 		self._base_prompt = self._prompt_template % ('', self._name)
 		self.path = sys.path[0]
 		self.data_path = os.path.join(

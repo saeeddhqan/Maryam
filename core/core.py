@@ -32,7 +32,6 @@ class FrameworkException(Exception):
 	def __init__(self, message):
 		Exception.__init__(self, message)
 
-
 class Colors(object):
 	N = '\033[m'  # native
 	R = '\033[91m'  # red
@@ -42,7 +41,6 @@ class Colors(object):
 	P = '\033[95m'  # purple
 	C = '\033[0;1;36m'  # cyan
 	Y = '\u001b[38;5;226m'
-
 
 class core(cmd.Cmd):
 	prompt = ">>>"
@@ -138,7 +136,7 @@ class core(cmd.Cmd):
 			return False
 
 	# ////////////////////////////////
-	#           OUTPUT  			//
+	#           OUTPUT              //
 	# ////////////////////////////////
 
 	def print_exception(self, line=''):
@@ -258,7 +256,7 @@ class core(cmd.Cmd):
 			print('')
 
 	# ////////////////////////////////
-	#             EXPORT  			//
+	#             EXPORT              //
 	# ////////////////////////////////
 
 	def save_gather(self, value, module, target, method=None, output=True):
@@ -302,14 +300,12 @@ class core(cmd.Cmd):
 	def json2xml(self, json_obj, line_padding=''):
 		result_list = list()
 
-		json_obj_type = type(json_obj)
-
-		if json_obj_type is list:
-			for sub_elem in json_obj:
+		if isinstance(json_obj_type, list):
+			for sub_elem in range(len(json_obj)):
 				result_list.append(self.json2xml(sub_elem, line_padding))
 			return os.linesep.join(result_list)
 
-		if json_obj_type is dict:
+		if isinstance(json_obj_type, dict):
 			for tag_name in json_obj:
 				sub_obj = json_obj[tag_name]
 				tag_name = re.sub(r"[\W]+", '_', tag_name)
@@ -373,6 +369,7 @@ class core(cmd.Cmd):
 				file.write(text)
 			elif method == 'xml':
 				text = self.json2xml(datasets)
+				text = f'<?xml version="1.0" encoding="UTF-8"?>\n{text}'
 				file.write(text)
 			else:
 				# Default method is txt
@@ -460,7 +457,7 @@ class core(cmd.Cmd):
 			json.dump(config_data, config_file, indent=4)
 
 	# ////////////////////////////////
-	#           request    			//
+	#           request                //
 	# ////////////////////////////////
 
 	def _print_prepared_request(self, prepared):
@@ -515,7 +512,7 @@ class core(cmd.Cmd):
 		return resp
 
 	# ////////////////////////////////
-	#           SHOW    			//
+	#           SHOW                //
 	# ////////////////////////////////
 
 	def show_history(self):
@@ -566,7 +563,7 @@ class core(cmd.Cmd):
 				for x in self.get_names() if x.startswith(prefix)]
 
 	# ////////////////////////////////
-	#           COMMANDS 			//
+	#           COMMANDS            //
 	# ////////////////////////////////
 
 	def do_history(self, params):
@@ -850,7 +847,7 @@ class core(cmd.Cmd):
 					self.output(f"{module} is up to date.", prep='\t')
 
 	# ////////////////////////////////
-	#           VARIABLES 			//
+	#           VARIABLES           //
 	# ////////////////////////////////
 
 	def get_var(self, name):
@@ -910,7 +907,7 @@ class core(cmd.Cmd):
 		json.dump(self.variables, v, indent=4)
 
 	# ////////////////////////////////
-	#             HELP  			//
+	#             HELP              //
 	# ////////////////////////////////
 
 	def help_history(self):
