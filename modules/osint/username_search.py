@@ -71,9 +71,7 @@ def module_api(self):
 
 def module_run(self):
 	output = module_api(self)
-	sites = []
-	for link in output['links']:
-		sites.append((link, output['links'][link]))
+	sites = [(link, output['links'][link]) for link in output['links']]
 
 	self.alert('Accounts Found')
 	self.table(sites , header=['Site', 'Account'], linear=True, sep='_')
