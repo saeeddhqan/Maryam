@@ -17,7 +17,7 @@ import re
 meta = {
 	'name': 'GitHub Search',
 	'author': 'Aman Singh',
-	'version': '0.3',
+	'version': '1.0',
 	'description': 'Search your query in the GitHub and show the results.',
 	'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo', 'github'),
 	'options': (
@@ -32,9 +32,11 @@ meta = {
 
 LINKS = []
 PAGES = ''
+USERS = []
+REPO = []
 
 def search(self, name, q, q_formats, limit, count):
-	global PAGES,LINKS
+	global PAGES,LINKS, USERS, REPO
 	engine = getattr(self, name)
 	eng = name
 	q = q_formats[f"{name}"] if f"{name}" in q_formats else q_formats['default']
@@ -49,6 +51,8 @@ def search(self, name, q, q_formats, limit, count):
 	if eng == 'github':
 		run = self.github(q)
 		run.run_crawl()
+		USERS += run.users
+		REPO += run.repositories
 	else:
 		attr.run_crawl()
 		LINKS += attr.links
@@ -75,10 +79,13 @@ def module_api(self):
 	bactery = ['marketplace', 'pulls', 'explore', 'issues',\
 				'notifications', 'account', 'settings', 'login',\
 				'about', 'pricing', 'site']
-	for user in set(explore['Github']):
+	for user in set(explore['Github'][1:]):
 		user = user.split('/')[1]
 		if user not in bactery:
 			output['usernames'].append(user)
+	for user in USERS[1:]:
+		user = user.split('/')[1]
+		output['usernames'].append(user)
 
 	for link in self.reglib().filter(r"https://(www\.)?github\.com/[\w-]{1,39}/[\w\-\.]+", list(set(LINKS))):
 		repo = re.search(r"(https://(www\.)?github\.com/([\w-]{1,39})/[\w\-\.]+)", link)
@@ -86,7 +93,8 @@ def module_api(self):
 			repo = repo.group(0)
 			if repo not in output['repositories']:
 				output['repositories'].append(repo)
-
+	for link in REPO:
+		output['repositories'].append(link)
 	self.save_gather(output,
 	 'search/github', query, output=self.options.get('output'))
 	return output
