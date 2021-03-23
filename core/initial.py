@@ -25,7 +25,7 @@ import sys
 import shlex
 import textwrap
 import concurrent.futures
-from json import dumps
+import json
 from multiprocessing import Pool,Process
 
 class turn_off:
@@ -338,7 +338,7 @@ class initialize(core):
 					with turn_off():
 						results = mod.module_api(self)
 					if self.options['format']:
-						print(dumps(results, indent=4))
+						print(json.dumps(results, indent=4))
 					else:
 						print(results)
 				else:
