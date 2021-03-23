@@ -301,7 +301,7 @@ class core(cmd.Cmd):
 
 		if isinstance(json_obj, list):
 			for sub_elem in json_obj:
-				result_list.append(str(self.json2xml(sub_elem, line_padding)))
+				result_list.append(self.json2xml(sub_elem, line_padding))
 			return os.linesep.join(result_list)
 
 		if isinstance(json_obj, dict):
