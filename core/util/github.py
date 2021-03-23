@@ -63,10 +63,8 @@ class main:
 
 	@property
 	def users(self):
-		print("I visited users too")
 		return users
 
 	@property
 	def repositories(self):
-		print("and repo too")
 		return repo
