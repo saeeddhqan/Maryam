@@ -63,7 +63,7 @@ class core(cmd.Cmd):
 		self._exit = 0
 
 	# ////////////////////////////////
-	#             OVERRIDE 			//
+	#             OVERRIDE          //
 	# ////////////////////////////////
 
 	def default(self, line):
@@ -116,7 +116,7 @@ class core(cmd.Cmd):
 			self.stdout.write(os.linesep)
 
 	# ////////////////////////////////
-	#           SUPPORT 			//
+	#           SUPPORT             //
 	# ////////////////////////////////
 
 	def to_str(self, obj):
@@ -205,7 +205,6 @@ class core(cmd.Cmd):
 			print(f"{self.spacer}{self.ruler*len(line)}")
 
 	def table(self, data, header, title='', linear=False, sep='-'):
-		'''Accepts a list of rows and outputs a table.'''
 		tdata = list(data)
 		if header:
 			tdata.insert(0, header)
@@ -213,10 +212,8 @@ class core(cmd.Cmd):
 			raise FrameworkException('Row lengths not consistent.')
 		lens = []
 		cols = len(tdata[0])
-		# create a list of max widths for each column
 		for i in range(0, cols):
 			lens.append(len(max([self.to_str(x[i]) if x[i] != None else '' for x in tdata], key=len)))
-		# calculate dynamic widths based on the title
 		title_len = len(title)
 		tdata_len = sum(lens) + (3*(cols-1))
 		diff = title_len - tdata_len
@@ -226,16 +223,13 @@ class core(cmd.Cmd):
 			diff_mod = diff % cols
 			for x in range(0, diff_mod):
 				lens[x] += 1
-		# build ascii table
 		if len(tdata) > 0:
 			separator_str = f"{self.spacer}+{sep}{f'%s{sep*3}'*(cols-1)}%s{sep}+"
 			separator_sub = tuple([sep*x for x in lens])
 			separator = separator_str % separator_sub
 			data_str = f"{self.spacer}| {'%s | '*(cols-1)}%s |"
-			# top of ascii table
 			print('')
 			print(separator)
-			# ascii table data
 			if title:
 				print(f"{self.spacer}| {title.center(tdata_len)} |")
 				print(separator)
@@ -250,12 +244,11 @@ class core(cmd.Cmd):
 				if linear:
 					print(separator)
 			if not linear:
-				# bottom of ascii table
 				print(separator)
 			print('')
 
 	# ////////////////////////////////
-	#             EXPORT              //
+	#             EXPORT            //
 	# ////////////////////////////////
 
 	def save_gather(self, value, module, target, method=None, output=True):
@@ -367,8 +360,8 @@ class core(cmd.Cmd):
 				text = self.csv2text(csv)
 				file.write(text)
 			elif method == 'xml':
-				json = self.json2xml(datasets)
-				text = f'<?xml version="1.0" encoding="UTF-8"?>\n{json}'
+				text = self.json2xml(datasets)
+				text = f'<?xml version="1.0" encoding="UTF-8"?>\n{text}'
 				file.write(text)
 			else:
 				# Default method is txt
@@ -969,7 +962,7 @@ class core(cmd.Cmd):
 		print(f"update check *")
 
 	# ////////////////////////////////
-	#         AUTOCOMPLETE 			//
+	#         AUTOCOMPLETE          //
 	# ////////////////////////////////
 
 	def complete_set(self, text, line, begidx, endidx):
