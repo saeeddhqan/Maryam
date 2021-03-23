@@ -27,7 +27,6 @@ from core.util import rand_uagent
 from io import StringIO
 from textwrap import wrap
 
-
 class FrameworkException(Exception):
 	def __init__(self, message):
 		Exception.__init__(self, message)
@@ -300,17 +299,17 @@ class core(cmd.Cmd):
 	def json2xml(self, json_obj, line_padding=''):
 		result_list = list()
 
-		if isinstance(json_obj_type, list):
-			for sub_elem in range(len(json_obj)):
-				result_list.append(self.json2xml(sub_elem, line_padding))
+		if isinstance(json_obj, list):
+			for sub_elem in json_obj:
+				result_list.append(str(self.json2xml(sub_elem, line_padding)))
 			return os.linesep.join(result_list)
 
-		if isinstance(json_obj_type, dict):
+		if isinstance(json_obj, dict):
 			for tag_name in json_obj:
 				sub_obj = json_obj[tag_name]
 				tag_name = re.sub(r"[\W]+", '_', tag_name)
 				result_list.append(f"{line_padding}\t<{tag_name}>")
-				result_list.append(self.json2xml(sub_obj, '\t' + line_padding))
+				result_list.append((self.json2xml(sub_obj, '\t' + line_padding).replace('&','&amp;')))
 				result_list.append(f"{line_padding}\t</{tag_name}>")
 
 			return f"{os.linesep}{os.linesep.join(result_list)}{os.linesep}"
@@ -368,8 +367,8 @@ class core(cmd.Cmd):
 				text = self.csv2text(csv)
 				file.write(text)
 			elif method == 'xml':
-				text = self.json2xml(datasets)
-				text = f'<?xml version="1.0" encoding="UTF-8"?>\n{text}'
+				json = self.json2xml(datasets)
+				text = f'<?xml version="1.0" encoding="UTF-8"?>\n{json}'
 				file.write(text)
 			else:
 				# Default method is txt
@@ -736,6 +735,7 @@ class core(cmd.Cmd):
 
 	def do_report(self, params):
 		'''Get report from the Gathers and save it to the other formats'''
+		temp_dic={}
 		if not params:
 			self.help_report()
 			return
@@ -786,13 +786,13 @@ class core(cmd.Cmd):
 		if len(arg) == 4:
 			tar_name = arg[3]
 			if tar_name in output:
-				output = output[tar_name]
+				temp_dic[tar_name] = output[tar_name]
 			else:
 				self.error(f"Query name '{tar_name}' is not found.")
 				return
 
 		output_file = os.path.join(self.workspace, arg[1])
-		get_export = self.exporter(output, f"{output_file}.{_format}", _format)
+		get_export = self.exporter(temp_dic, f"{output_file}.{_format}", _format)
 		if get_export:
 			self.output(f"Report saved at {get_export}")
 	
