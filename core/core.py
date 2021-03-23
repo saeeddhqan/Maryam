@@ -27,7 +27,6 @@ from core.util import rand_uagent
 from io import StringIO
 from textwrap import wrap
 
-
 class FrameworkException(Exception):
 	def __init__(self, message):
 		Exception.__init__(self, message)
@@ -64,7 +63,7 @@ class core(cmd.Cmd):
 		self._exit = 0
 
 	# ////////////////////////////////
-	#             OVERRIDE 			//
+	#             OVERRIDE          //
 	# ////////////////////////////////
 
 	def default(self, line):
@@ -117,7 +116,7 @@ class core(cmd.Cmd):
 			self.stdout.write(os.linesep)
 
 	# ////////////////////////////////
-	#           SUPPORT 			//
+	#           SUPPORT             //
 	# ////////////////////////////////
 
 	def to_str(self, obj):
@@ -206,7 +205,6 @@ class core(cmd.Cmd):
 			print(f"{self.spacer}{self.ruler*len(line)}")
 
 	def table(self, data, header, title='', linear=False, sep='-'):
-		'''Accepts a list of rows and outputs a table.'''
 		tdata = list(data)
 		if header:
 			tdata.insert(0, header)
@@ -214,10 +212,8 @@ class core(cmd.Cmd):
 			raise FrameworkException('Row lengths not consistent.')
 		lens = []
 		cols = len(tdata[0])
-		# create a list of max widths for each column
 		for i in range(0, cols):
 			lens.append(len(max([self.to_str(x[i]) if x[i] != None else '' for x in tdata], key=len)))
-		# calculate dynamic widths based on the title
 		title_len = len(title)
 		tdata_len = sum(lens) + (3*(cols-1))
 		diff = title_len - tdata_len
@@ -227,16 +223,13 @@ class core(cmd.Cmd):
 			diff_mod = diff % cols
 			for x in range(0, diff_mod):
 				lens[x] += 1
-		# build ascii table
 		if len(tdata) > 0:
 			separator_str = f"{self.spacer}+{sep}{f'%s{sep*3}'*(cols-1)}%s{sep}+"
 			separator_sub = tuple([sep*x for x in lens])
 			separator = separator_str % separator_sub
 			data_str = f"{self.spacer}| {'%s | '*(cols-1)}%s |"
-			# top of ascii table
 			print('')
 			print(separator)
-			# ascii table data
 			if title:
 				print(f"{self.spacer}| {title.center(tdata_len)} |")
 				print(separator)
@@ -251,12 +244,11 @@ class core(cmd.Cmd):
 				if linear:
 					print(separator)
 			if not linear:
-				# bottom of ascii table
 				print(separator)
 			print('')
 
 	# ////////////////////////////////
-	#             EXPORT              //
+	#             EXPORT            //
 	# ////////////////////////////////
 
 	def save_gather(self, value, module, target, method=None, output=True):
@@ -300,17 +292,17 @@ class core(cmd.Cmd):
 	def json2xml(self, json_obj, line_padding=''):
 		result_list = list()
 
-		if isinstance(json_obj_type, list):
-			for sub_elem in range(len(json_obj)):
+		if isinstance(json_obj, list):
+			for sub_elem in json_obj:
 				result_list.append(self.json2xml(sub_elem, line_padding))
 			return os.linesep.join(result_list)
 
-		if isinstance(json_obj_type, dict):
+		if isinstance(json_obj, dict):
 			for tag_name in json_obj:
 				sub_obj = json_obj[tag_name]
 				tag_name = re.sub(r"[\W]+", '_', tag_name)
 				result_list.append(f"{line_padding}\t<{tag_name}>")
-				result_list.append(self.json2xml(sub_obj, '\t' + line_padding))
+				result_list.append(self.json2xml(sub_obj, '\t' + line_padding).replace('&','&amp;'))
 				result_list.append(f"{line_padding}\t</{tag_name}>")
 
 			return f"{os.linesep}{os.linesep.join(result_list)}{os.linesep}"
@@ -736,6 +728,7 @@ class core(cmd.Cmd):
 
 	def do_report(self, params):
 		'''Get report from the Gathers and save it to the other formats'''
+		temp_dic={}
 		if not params:
 			self.help_report()
 			return
@@ -786,13 +779,16 @@ class core(cmd.Cmd):
 		if len(arg) == 4:
 			tar_name = arg[3]
 			if tar_name in output:
-				output = output[tar_name]
+				temp_dic[tar_name] = output[tar_name]
 			else:
 				self.error(f"Query name '{tar_name}' is not found.")
 				return
 
+		else:
+			temp_dic[mod_name]=output
+
 		output_file = os.path.join(self.workspace, arg[1])
-		get_export = self.exporter(output, f"{output_file}.{_format}", _format)
+		get_export = self.exporter(temp_dic, f"{output_file}.{_format}", _format)
 		if get_export:
 			self.output(f"Report saved at {get_export}")
 	
@@ -966,7 +962,7 @@ class core(cmd.Cmd):
 		print(f"update check *")
 
 	# ////////////////////////////////
-	#         AUTOCOMPLETE 			//
+	#         AUTOCOMPLETE          //
 	# ////////////////////////////////
 
 	def complete_set(self, text, line, begidx, endidx):
