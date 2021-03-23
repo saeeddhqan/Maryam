@@ -309,7 +309,7 @@ class core(cmd.Cmd):
 				sub_obj = json_obj[tag_name]
 				tag_name = re.sub(r"[\W]+", '_', tag_name)
 				result_list.append(f"{line_padding}\t<{tag_name}>")
-				result_list.append((self.json2xml(sub_obj, '\t' + line_padding).replace('&','&amp;')))
+				result_list.append(self.json2xml(sub_obj, '\t' + line_padding).replace('&','&amp;'))
 				result_list.append(f"{line_padding}\t</{tag_name}>")
 
 			return f"{os.linesep}{os.linesep.join(result_list)}{os.linesep}"
@@ -790,6 +790,9 @@ class core(cmd.Cmd):
 			else:
 				self.error(f"Query name '{tar_name}' is not found.")
 				return
+
+		else:
+			temp_dic[mod_name]=output
 
 		output_file = os.path.join(self.workspace, arg[1])
 		get_export = self.exporter(temp_dic, f"{output_file}.{_format}", _format)
