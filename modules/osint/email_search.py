@@ -15,7 +15,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 meta = {
 	'name': 'Find Emails',
 	'author': 'Saeed',
-	'version': '0.5',
+	'version': '1.0',
 	'description': 'Search in open-sources to find emails.',
 	'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 
 				'ask', 'baidu', 'startpage', 'yippy', 'qwant', 'duckduckgo', 'hunter'),
@@ -35,10 +35,10 @@ EMAILS = []
 def search(self, name, q, q_formats, limit, count):
 	global EMAILS
 	engine = getattr(self, name)
+	eng = name
 	name = engine.__init__.__name__
 	varnames = engine.__init__.__code__.co_varnames
-	if name == 'ask':
-		q = q.replace('"', '')
+	q = q_formats[f"{eng}"] if f"{eng}" in q_formats else q_formats['default']
 	if 'limit' in varnames and 'count' in varnames:
 		attr = engine(q, limit, count)
 	elif 'limit' in varnames:
@@ -49,14 +49,19 @@ def search(self, name, q, q_formats, limit, count):
 	EMAILS.extend(attr.emails)
 
 def module_api(self):
+	query = self.options['query']
 	domain = self.options['query'].replace('@', '')
 	urlib = self.urlib(domain)
 	domain = self.urlib(domain).netroot if '/' in domain else domain
 	limit = self.options['limit']
 	count = self.options['count']
 	engines = self.options['engines'].split(',')
-	query = f'"%40{domain}"'
-	self.thread(search, self.options['thread'], engines, query, {}, limit, count, meta['sources'])
+	q_formats = {
+		'default': f'"%40{domain}"',
+		'ask': f"%40{domain}",
+		'hunter': f"{domain}"
+	}
+	self.thread(search, self.options['thread'], engines, query, q_formats, limit, count, meta['sources'])
 	output = {'emails': list(set(EMAILS))}
 
 	self.save_gather(output, 'osint/email_search', domain,\

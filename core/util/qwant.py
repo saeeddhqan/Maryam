@@ -58,7 +58,7 @@ class main:
 			self.framework.verbose(f"[QWANT] Searching in {url} page...")
 			try:
 				req = self.framework.request(url=urls[url], headers=headers)
-				print("QWANT "+req.url)
+#				print("QWANT "+req.url)
 			except:
 				self.framework.error('[QWANT] ConnectionError')
 				self.framework.error('Qwant is missed!')

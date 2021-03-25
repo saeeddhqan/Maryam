@@ -41,7 +41,7 @@ class main:
 			self.framework.debug(f"[YANDEX] Searching in {url} page...")
 			try:
 				req = self.framework.request(url=urls[url], allow_redirects=True)
-				print("YANDEX "+req.url)
+#				print("YANDEX "+req.url)
 			except:
 				self.framework.error('[YANDEX] ConnectionError')
 				max_attempt -= 1

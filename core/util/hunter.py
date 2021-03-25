@@ -27,7 +27,7 @@ class main:
 		self.framework = main.framework
 		self.q = q
 		self.limit = limit
-		self.key = '0c9dd3b1a68561873ec505a87876db32b76a3cfc'
+		self.key = '0c9dd3b1a68561873ec505a87876db32b76a3cfc' #Any key used while debug has been revoked
 		self._pages = ''
 		self._json_pages = ''
 		self.hunter_api = f"https://api.hunter.io/v2/domain-search?domain={self.q}&api_key={self.key}"                                                                                                               
@@ -36,24 +36,29 @@ class main:
 		self.framework.verbose('[HUNTER] Searching in hunter...')
 		try:
 			req = self.framework.request(self.hunter_api)
-			print(req.url)
-			print(req.text)
+#			print(req.url)
+#			print(req.text)
 		except:
 			self.framework.debug('[HUNTER] ConnectionError')
 			self.framework.error('Hunter is missed!')
 			return
 		self._pages = req.text
 		self._json_pages = req.json()
+#		print(req.json().get('errors')[0]['id'])
 
 		# Key validation
 		if 'errors' in self._json_pages:
-			self.framework.error(f"[HUNTER] api key is incorrect:'self.key'")
+			code = self._json_pages.get('errors')[0]['id']
+			self.framework.error(f"[HUNTER] failed with key:{self.key}\n error id: {code}")
 			self.acceptable = False
 			return
 
 		# Request validation
 		if not self._json_pages.get('data').get('emails'):
-			self.framework.verbose('[HUNTER] request was not accepted!')
+			if self._json_pages.get('meta').get('results') == 0:
+				self.framework.verbose('[HUNTER] no results found')
+			else:
+				self.framework.verbose('[HUNTER] request was not accepted!')
 		else:
 			self.acceptable = True
 

@@ -37,7 +37,7 @@ class main:
 			self.framework.verbose(f"[METACRAWLER] Searching in {url} page...")
 			try:
 				req = self.framework.request(url=urls[url])
-				print("META "+req.url)
+#				print("META "+req.url)
 			except:
 				self.framework.error('[METACRAWLER] ConnectionError')
 				max_attempt -= 1

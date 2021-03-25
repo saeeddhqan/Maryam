@@ -42,7 +42,7 @@ class main:
 			self.framework.verbose(f"[YAHOO] Searching in {url} page...")
 			try:
 				req = self.framework.request(url=urls[url])
-				print("YAHOO "+req.url)
+#				print("YAHOO "+req.url)
 			except:
 				self.framework.error('[YAHOO] ConnectionError')
 				max_attempt -= 1

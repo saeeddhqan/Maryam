@@ -52,7 +52,7 @@ class main:
 					params=payload,
 					headers={'User-Agent': self.agent},
 					allow_redirects=True)
-				print("GOOGLE "+req.url)
+#				print("GOOGLE "+req.url)
 			except Exception as e:
 				self.framework.error(f"[GOOGLE] ConnectionError: {e}")
 				return
