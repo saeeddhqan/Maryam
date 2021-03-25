@@ -69,8 +69,10 @@ def module_api(self):
 	self.thread(search, self.options['thread'], engines, query, q_formats, limit, count, meta['sources'])
 	
 	output['links'] = list(self.reglib().filter(r"https?://([\w\-\.]+\.)?trello\.com/", list(set(LINKS))))
-	output['usernames'] = [ i for i in set(re.findall(r"\([\w]{3,}\)", PAGES)) if query in i  ]
-	output['handles'] = [ i for i in set(re.findall(r"@[\w]+", PAGES)) if i not in ['@keyframes', '@media']  ]
+	output['handles'] = [ i for i in set(re.findall(r"@[\w]+", PAGES)) if i not in ['@keyframes', '@media','@font']  ]
+
+	output['usernames'] = [ i.replace('(','@') for i in set(re.findall(r"\([\w]{3,}\)", PAGES)) if query in i  ]
+	output['usernames'] = [ i.replace(')','') for i in output['usernames'] ]
 
 	#using re directly instead of reglib().filter because when PAGES is passed a list,
 	#it becomes useless for searching trello usernames. See: https://ibb.co/Rz182Bj
