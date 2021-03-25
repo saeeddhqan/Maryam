@@ -17,14 +17,14 @@ import re
 meta = {
 	'name': 'GitHub Search',
 	'author': 'Aman Singh',
-	'version': '0.3',
+	'version': '1.0',
 	'description': 'Search your query in the GitHub and show the results.',
-	'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo'),
+	'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo', 'github'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
 		('count', 50, False, 'Number of links per page(min=10, max=100, default=50)', '-c', 'store', int),
-		('engine', 'google', False, 'Engine names for search(default=google)', '-e', 'store', str),
+		('engine', 'google,github', False, 'Engine names for search(default=google, github)', '-e', 'store', str),
 		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
 	),
     'examples': ('github -q <QUERY> -l 15 -e carrot2,bing,qwant --output',)
@@ -32,12 +32,15 @@ meta = {
 
 LINKS = []
 PAGES = ''
+USERS = []
+REPO = []
 
 def search(self, name, q, q_formats, limit, count):
-	global PAGES,LINKS
+	global PAGES,LINKS, USERS, REPO
 	engine = getattr(self, name)
+	eng = name
+	q = q_formats[f"{name}"] if f"{name}" in q_formats else q_formats['default']
 	name = engine.__init__.__name__
-	q = f"{name}_q" if f"{name}_q" in q_formats else q_formats['default_q']
 	varnames = engine.__init__.__code__.co_varnames
 	if 'limit' in varnames and 'count' in varnames:
 		attr = engine(q, limit, count)
@@ -45,10 +48,15 @@ def search(self, name, q, q_formats, limit, count):
 		attr = engine(q, limit)
 	else:
 		attr = engine(q)
-
-	attr.run_crawl()
-	LINKS += attr.links
-	PAGES += attr.pages
+	if eng == 'github':
+		run = self.github(q)
+		run.run_crawl()
+		USERS += run.users
+		REPO += run.repositories
+	else:
+		attr.run_crawl()
+		LINKS += attr.links
+		PAGES += attr.pages
 
 def module_api(self):
 	query = self.options['query']
@@ -57,10 +65,11 @@ def module_api(self):
 	engines = self.options['engine'].split(',')
 	output = {'repositories': [], 'blogs': [], 'usernames': []}
 	q_formats = {
-		'default_q': f"site:github.com {query}",
-		'yippy_q': f'"github.com" {query}',
-		'millionshort_q': f'site:github.com "{query}"',
-		'qwant_q': f'site:github.com {query}'
+		'default': f"site:github.com {query}",
+		'yippy': f'"github.com" {query}',
+		'millionshort': f'site:github.com "{query}"',
+		'qwant': f'site:github.com {query}',
+		'github': f'{query}'
 	}
 
 	self.thread(search, self.options['thread'], engines, query, q_formats, limit, count, meta['sources'])
@@ -70,10 +79,13 @@ def module_api(self):
 	bactery = ['marketplace', 'pulls', 'explore', 'issues',\
 				'notifications', 'account', 'settings', 'login',\
 				'about', 'pricing', 'site']
-	for user in set(explore['Github']):
+	for user in set(explore['Github'][1:]):
 		user = user.split('/')[1]
 		if user not in bactery:
 			output['usernames'].append(user)
+	for user in USERS[1:]:
+		user = user.split('/')[1]
+		output['usernames'].append(user)
 
 	for link in self.reglib().filter(r"https://(www\.)?github\.com/[\w-]{1,39}/[\w\-\.]+", list(set(LINKS))):
 		repo = re.search(r"(https://(www\.)?github\.com/([\w-]{1,39})/[\w\-\.]+)", link)
@@ -81,7 +93,8 @@ def module_api(self):
 			repo = repo.group(0)
 			if repo not in output['repositories']:
 				output['repositories'].append(repo)
-
+	for link in REPO:
+		output['repositories'].append(link)
 	self.save_gather(output,
 	 'search/github', query, output=self.options.get('output'))
 	return output

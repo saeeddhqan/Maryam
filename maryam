@@ -21,7 +21,6 @@ __VERSION__ = '2.0.0'
 import sys
 import platform
 import argparse
-import signal
 
 # Check the OS
 if platform.system() not in ('Linux', 'Darwin', 'OSX', "FreeBSD"):
@@ -54,16 +53,14 @@ def cui(args, format_help):
 			x.onecmd(command)
 	else:
 		x = x('run')
-	try:
-		def signal_handler(signum, frame):  
-			print('\n[!] Use exit command to exit (or press enter to continue)')
-			return
-		signal.signal(signal.SIGINT, signal_handler)
-		x.cmdloop()
-	except KeyboardInterrupt:
-		print('')
-	except Exception as e:
-		raise e
+	while True:
+		try:
+			x.cmdloop()
+			break
+		except KeyboardInterrupt:
+			print('\n[!] Use exit command to exit ')
+		except Exception as e:
+			raise e
 
 
 desc = 'maryam -h'
