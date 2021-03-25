@@ -43,9 +43,9 @@ def search(self, name, q, q_formats, limit, count):
 	if 'limit' in varnames and 'count' in varnames:
 		attr = engine(q, limit, count)
 	elif 'limit' in varnames and 'key' in varnames:
-		key = q.split("&api_key=")[1]
-		k_q = q.split("&api_key=")[0]
-		if key == "None":
+		key = q.split('&api_key=')[1]
+		k_q = q.split('&api_key=')[0]
+		if key == 'None':
 			self.error('-k <API KEY> is required for hunter')
 			return
 		else:
