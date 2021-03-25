@@ -30,18 +30,19 @@ meta = {
 		('domain', None, False, 'Domain name without https?://', '-d', 'store', str),
 		('count', None, False, 'Number of payloads len(max=count of payloads). default is max',
 							 '-c', 'store', int),
-		('wordlist', None, False, 
+		('wordlist', 'https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/RobotsDisallowed-Top500.txt', False, 
 							'wordlist address. default is dnsnames.txt in data folder', '-w', 'store', str),
 		('thread', 8, False, 'The number of links that open per round(default=8)', '-t', 'store', int),
 		('wordlists', False, False, 'List of most common DNS wordlists', '-l', 'store_true', bool),
 		('status_codes', '200,201,204', False, 'List of good status codes(default="200,201,204")', '-s', 'store', str),
 		('redirect', True, False, 'Allow redirection(default=True)', '-r', 'store_true', bool),
 	),
-	'examples': ('fbrute -d <DOMAIN> --output',
-				'fbrute -d <DOMAIN> -w <WORDLIST>')
+	'examples': ('filebrute -d <DOMAIN> --output',
+				'filebrute -d <DOMAIN> -w <WORDLIST>')
 }
 
 URLS = []
+
 LISTS = {"https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/CMS/wp-plugins.fuzz.txt": 'small',
 		 "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/CMS/wp-themes.fuzz.txt": 'small',
 		 "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/CMS/wordpress.fuzz.txt": 'small',
@@ -53,8 +54,9 @@ LISTS = {"https://raw.githubusercontent.com/danielmiessler/SecLists/master/Disco
 		 "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/RobotsDisallowed-Top100.txt": 'small',
 		 "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/RobotsDisallowed-Top500.txt": 'small',
 		 "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/RobotsDisallowed-Top1000.txt": 'small',
-		 "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/CMS/sitemap-magento.txt": 'mediom',
+		 "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/CMS/sitemap-magento.txt": 'medium',
 		 "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/LinuxFileList.txt": 'large',
+		 "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/SVNDigger/all.txt": 'large',
 }
 def thread(self, function, hostname, wordlist, thread_count, status_codes):
 	threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
