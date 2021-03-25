@@ -24,9 +24,8 @@ import shutil
 import sys
 import shlex
 import textwrap
-import signal
 import concurrent.futures
-from json import dumps
+import json
 from multiprocessing import Pool,Process
 
 class turn_off:
@@ -54,7 +53,7 @@ class initialize(core):
 				'workspaces_directory_name': '.maryam/workspaces'
 			}
 		self._name = self._config['name']
-		self._prompt_template = '%s[' + core.Colors.Y + '%s' + core.Colors.N + '] > '
+		self._prompt_template = '%s[%s] > '
 		self._base_prompt = self._prompt_template % ('', self._name)
 		self.path = sys.path[0]
 		self.data_path = os.path.join(
@@ -339,7 +338,7 @@ class initialize(core):
 					with turn_off():
 						results = mod.module_api(self)
 					if self.options['format']:
-						print(dumps(results, indent=4))
+						print(json.dumps(results, indent=4))
 					else:
 						print(results)
 				else:
@@ -358,14 +357,12 @@ class initialize(core):
 			proc = Process(target=getattr(self, func), args=(tool_name, args, output))
 			proc.start()
 			proc.join()
-			def signal_handler(signum, frame):  
-				print(f"\nStopping {tool_name} module(press enter to continue)...")
-				if 'kill' in dir(proc):
-					proc.kill()
-			signal.signal(signal.SIGINT, signal_handler)
-			if 'kill' in dir(proc):
+			if proc.is_alive():
 				proc.kill()
+			return
 		except KeyboardInterrupt as e:
-			pass
-		except:
+			print(f"\nStopping {tool_name} module...")
+			if proc.is_alive():
+				proc.kill()
+		except Exception as e:
 			self.print_exception()

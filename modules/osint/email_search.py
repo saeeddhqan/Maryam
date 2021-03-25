@@ -57,7 +57,7 @@ def module_api(self):
 	engines = self.options['engines'].split(',')
 	query = f'"%40{domain}"'
 	self.thread(search, self.options['thread'], engines, query, {}, limit, count, meta['sources'])
-	output = list(set(EMAILS))
+	output = {'emails': list(set(EMAILS))}
 
 	self.save_gather(output, 'osint/email_search', domain,\
 		output=self.options['output'])
