@@ -39,32 +39,20 @@ def search(self, name, q, q_formats, limit, count):
 	eng = name
 	name = engine.__init__.__name__
 	varnames = engine.__init__.__code__.co_varnames
-#	print(varnames)
 	q = q_formats[f"{eng}"] if f"{eng}" in q_formats else q_formats['default']
 	if 'limit' in varnames and 'count' in varnames:
-#		print("l and c")
 		attr = engine(q, limit, count)
 	elif 'limit' in varnames and 'key' in varnames:
-#	print("l and k")
-#	print(key)
-#	if key is None:
-#		self.core.error('-k [API key] is required')
-#		print("Yes ")
-#	else:
-#		print("query "+q)
 		key = q.split("&api_key=")[1]
 		k_q = q.split("&api_key=")[0]
-#		print(f"Now key {type(key)} and q {k_q}")
 		if key == "None":
 			self.error('-k <API KEY> is required for hunter')
 			return
 		else:
 			attr = engine(k_q, key, limit)
 	elif 'limit' in varnames:
-#		print("l")
 		attr = engine(q, limit)
 	else:
-#		print("none")
 		attr = engine(q)
 	attr.run_crawl()
 	EMAILS.extend(attr.emails)
@@ -78,11 +66,9 @@ def module_api(self):
 	count = self.options['count']
 	engines = self.options['engines'].split(',')
 	key = self.options['key']
-#	print("KEY "+key)
 	q_formats = {
 		'default': f'"%40{domain}"',
 		'ask': f"%40{domain}",
-#		'hunter': f"{domain}"
 		'hunter': f"{domain}&api_key={key}"
 	}
 	self.thread(search, self.options['thread'], engines, query, q_formats, limit, count, meta['sources'])

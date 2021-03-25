@@ -27,7 +27,7 @@ class main:
 		self.framework = main.framework
 		self.q = q
 		self.limit = limit
-		self.key = key #Any key used while debug has been revoked
+		self.key = key 
 		self._pages = ''
 		self._json_pages = ''
 		self.hunter_api = f"https://api.hunter.io/v2/domain-search?domain={self.q}&api_key={self.key}"                                                                                                               
@@ -36,15 +36,12 @@ class main:
 		self.framework.verbose('[HUNTER] Searching in hunter...')
 		try:
 			req = self.framework.request(self.hunter_api)
-			print(req.url)
-			print(req.text)
 		except:
 			self.framework.debug('[HUNTER] ConnectionError')
 			self.framework.error('Hunter is missed!')
 			return
 		self._pages = req.text
 		self._json_pages = req.json()
-#		print(req.json().get('errors')[0]['id'])
 
 		# Key validation
 		if 'errors' in self._json_pages:
