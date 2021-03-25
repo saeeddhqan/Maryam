@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class main:
 
-	def __init__(self, q, key='', limit=10):
+	def __init__(self, q, key, limit=10):
 		""" hunter.io search engine
 
 			q 		  : query for search
@@ -27,7 +27,7 @@ class main:
 		self.framework = main.framework
 		self.q = q
 		self.limit = limit
-		self.key = '0c9dd3b1a68561873ec505a87876db32b76a3cfc' #Any key used while debug has been revoked
+		self.key = key #Any key used while debug has been revoked
 		self._pages = ''
 		self._json_pages = ''
 		self.hunter_api = f"https://api.hunter.io/v2/domain-search?domain={self.q}&api_key={self.key}"                                                                                                               
@@ -36,8 +36,8 @@ class main:
 		self.framework.verbose('[HUNTER] Searching in hunter...')
 		try:
 			req = self.framework.request(self.hunter_api)
-#			print(req.url)
-#			print(req.text)
+			print(req.url)
+			print(req.text)
 		except:
 			self.framework.debug('[HUNTER] ConnectionError')
 			self.framework.error('Hunter is missed!')
@@ -48,8 +48,8 @@ class main:
 
 		# Key validation
 		if 'errors' in self._json_pages:
-			code = self._json_pages.get('errors')[0]['id']
-			self.framework.error(f"[HUNTER] failed with key:{self.key}\n error id: {code}")
+			code = self._json_pages.get('errors')[0]['details']
+			self.framework.error(f"[HUNTER] failed with error: {code}")
 			self.acceptable = False
 			return
 
