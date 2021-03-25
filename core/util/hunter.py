@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class main:
 
-	def __init__(self, q, key, limit=100):
+	def __init__(self, q, key='', limit=10):
 		""" hunter.io search engine
 
 			q 		  : query for search
@@ -27,15 +27,17 @@ class main:
 		self.framework = main.framework
 		self.q = q
 		self.limit = limit
-		self.key = key
+		self.key = '0c9dd3b1a68561873ec505a87876db32b76a3cfc'
 		self._pages = ''
 		self._json_pages = ''
-		self.hunter_api = f"https://api.hunter.io/v2/email-finder?domain={self.q}&limit={self.limit}&api_key={self.key}"
+		self.hunter_api = f"https://api.hunter.io/v2/domain-search?domain={self.q}&api_key={self.key}"                                                                                                               
 		self.acceptable = False
 	def run_crawl(self):
 		self.framework.verbose('[HUNTER] Searching in hunter...')
 		try:
 			req = self.framework.request(self.hunter_api)
+			print(req.url)
+			print(req.text)
 		except:
 			self.framework.debug('[HUNTER] ConnectionError')
 			self.framework.error('Hunter is missed!')
@@ -50,7 +52,7 @@ class main:
 			return
 
 		# Request validation
-		if not self._json_pages.get('data').get('accept_all'):
+		if not self._json_pages.get('data').get('emails'):
 			self.framework.verbose('[HUNTER] request was not accepted!')
 		else:
 			self.acceptable = True
@@ -71,8 +73,8 @@ class main:
 	def json_emails(self):
 		emails = []
 		if self.acceptable:
-			for email in self._json_pages.get('data')['emails']:
-				emails.append(email.get('value'))
+			for x in range(self.limit):
+				emails.append(self._json_pages['data']['emails'][x]['value'])
 			return emails
 		return []
 	
