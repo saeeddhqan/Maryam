@@ -27,7 +27,7 @@ meta = {
 	'sources': ('https://github.com/sherlock-project/sherlock',),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
-		('thread', 8, False, 'The number of sites that are being checked per round(default=8)', '-t', 'store', int),
+		('thread', 64, False, 'The number of sites that are being checked per round(default=8)', '-t', 'store', int),
 	),
     'examples': ('username_search -q <QUERY> --output',)
 }
@@ -45,15 +45,14 @@ def thread(self, data, query,thread_count):
 def check(self, url, site, data):
 	global OUTPUT
 	try:
-		req = self.request(url)
+		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+		req = self.request(url , headers=headers,timeout=20)
 	except Exception as e:
-		self.error(f"Not fount on {site}")
 		return
 	else:
 		if str(req.status_code) == data[site]['status'] :
 			for error in data[site]['error'] :
 				if error in req.text :
-					self.error(f"Not fount on {site}")
 					return
 		else:
 			OUTPUT['links'][site] = url
