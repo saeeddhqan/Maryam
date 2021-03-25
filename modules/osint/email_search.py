@@ -23,7 +23,7 @@ meta = {
 		('query', None, True, 'Domain name or company name', '-q', 'store', str),
 		('limit', 3, False, 'Search limit(number of pages, default=3)', '-l', 'store', int),
 		('count', 50, False, 'number of results per page(min=10, max=100, default=50)', '-c', 'store', int),
-		('engines', 'google,metacrawler,bing', True, 'Search engine names. e.g bing,google,..', '-e', 'store', str),
+		('engines', None, True, 'Search engine names. e.g bing,google,..', '-e', 'store', str),
 		('key', None, False, 'Give a valid hunter API key. Limit for free plan is 10 results', '-k', 'store', str),
 		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
 	),
