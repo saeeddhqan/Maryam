@@ -36,7 +36,6 @@ class main:
 			self.framework.verbose(f"[STARTPAGE] Searching in {url} page...")
 			try:
 				req = self.framework.request(url=urls[url])
-#				print("Start "+req.url)
 			except:
 				self.framework.error('[STARTPAGE] ConnectionError')
 				max_attempt -= 1

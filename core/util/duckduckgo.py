@@ -40,7 +40,6 @@ class main:
 						method='POST',
 						params=payload,
 						allow_redirects=False)
-#				print("DUCK "+req.url)
 			except:
 				self.framework.error('[DUCKDUCKGO] ConnectionError')
 				return

@@ -40,7 +40,6 @@ class main:
 			self.framework.verbose(f"[BING] Searching in {url} page...")
 			try:
 				req = self.framework.request(url=urls[url], allow_redirects=True)
-#				print("BING "+req.url)
 			except:
 				self.framework.error('[BING] ConnectionError')
 				max_attempt -= 1

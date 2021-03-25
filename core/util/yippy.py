@@ -38,7 +38,6 @@ class main:
 		self.framework.verbose('[YIPPY] Searching in the yippy.com...', end='\r')
 		try:
 			req = self.framework.request(url=geturl)
-#			print("YIPPY "+req.url)
 		except:
 			self.framework.error('[YIPPY] ConnectionError')
 			self.framework.error('Yippy is missed!')

@@ -39,7 +39,6 @@ class main:
 			self.framework.verbose(f"[BAIDU] Searching in {url} page...")
 			try:
 				req = self.framework.request(url=urls[url])
-#				print("BAIDU: "+req.url)
 			except:
 				self.framework.error('[BAIDU] ConnectionError')
 				max_attempt -= 1
