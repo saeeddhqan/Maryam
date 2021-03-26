@@ -41,7 +41,7 @@ class main:
 		for url in range(len(urls)):
 			self.framework.verbose(f"[YAHOO] Searching in {url} page...")
 			try:
-				req = self.framework.request(url=urls[url])
+				req = self.framework.request(url=urls[url],allow_redirects=True)
 			except:
 				self.framework.error('[YAHOO] ConnectionError')
 				max_attempt -= 1
