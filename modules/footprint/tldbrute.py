@@ -20,8 +20,8 @@ import concurrent.futures
 from socket import gethostbyname
 from os.path import dirname as up
 
-ROOT = up(up(up(os.path.realpath(__file__))))
 
+ROOT = up(up(up(os.path.realpath(__file__))))
 meta = {
 	'name': 'DNS Brute Force',
 	'author': 'Saeed',
