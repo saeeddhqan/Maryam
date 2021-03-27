@@ -93,16 +93,4 @@ def module_api(self):
 	return output
 
 def module_run(self):
-	output = module_api(self)
-	self.alert('usernames')
-	for user in output['usernames']:
-		self.output(f"\t{user}", 'G')
-	self.alert('music')
-	for user in output['music']:
-		self.output(f"\t{user}", 'G')
-	self.alert('tags')
-	for user in output['tags']:
-		self.output(f"\t{user}", 'G')
-	self.alert('videos')
-	for user in output['videos']:
-		self.output(f"\t{user}", 'G')
+	self.alert_results(module_api(self))
