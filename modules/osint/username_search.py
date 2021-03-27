@@ -38,7 +38,7 @@ OUTPUT = {'links': {}}
 def thread(self, data, query,thread_count):
 	threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
 	futures = (threadpool.submit(check, self, data[site]['url'].format(query), site, data) for site in data)
-	for results in concurrent.futures.as_completed(futures):
+	for _ in concurrent.futures.as_completed(futures):
 		print(f"Found {len(OUTPUT['links'])} accounts" , end= '\r')
 	print('\n')
 
@@ -47,7 +47,7 @@ def check(self, url, site, data):
 	global OUTPUT
 	try:
 		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
-		req = self.request(url , headers=headers,timeout=20)
+		req = self.request(url, headers=headers, timeout=20)
 	except Exception as e:
 		return
 	else:

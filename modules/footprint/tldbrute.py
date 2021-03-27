@@ -37,8 +37,8 @@ meta = {
 		('thread', 8, False, 'The number of links that open per round(default=8)', '-t', 'store', int),
 		('ips', False, False, 'Show ip addresses', '-i', 'store_true', bool),
 	),
-	'examples': ('dbrute -d <DOMAIN> --output',
-				'dbrute -d <DOMAIN> -w <WORDLIST>')
+	'examples': ('tldbrute -d <DOMAIN> --output',
+				'tldbrute -d <DOMAIN> -w <WORDLIST>')
 }
 
 HOSTNAMES = []
