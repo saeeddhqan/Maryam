@@ -45,14 +45,8 @@ class RunModules(Resource):
 
         for module in modules:
             meta[module.split('/')[-1]] = base_obj.opt_proc(module.split('/')[-1], args=None, output=None)
-            '''
-            mod_opt = []
-            for i in range(len(meta[module.split('/')[-1]]['options'])):
-                mod_opt.append(meta[module.split('/')[-1]]['options'][i][:-1] + tuple(json.dumps(meta[module.split('/')[-1]]['options'][i][-1], default=lambda o: o.__class__.__name__, sort_keys=True, indent=4)))
-            meta[module.split('/')[-1]]['options'] = tuple(mod_opt)
-            '''
 
-        meta = json.dumps(meta, default=lambda o: o.__class__.__name__, sort_keys=True, indent=4)
+        meta = json.dumps(meta, default=lambda o: o.__name__, sort_keys=True, indent=4)
         meta = json.loads(meta)
 
         return {
