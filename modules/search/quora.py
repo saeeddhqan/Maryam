@@ -83,4 +83,13 @@ def module_api(self):
 	return output
 
 def module_run(self):
-	self.alert_results(module_api(self))
+	output = module_api(self)
+	self.alert('usernames')
+	for user in output['usernames']:
+		self.output(f"\t{user}", 'G')
+	self.alert('links')
+	for item in output['links']:
+		title, link = item[1], item[0]
+		self.output(title)
+		self.output(f"\t{link}", 'G')
+		print('')
