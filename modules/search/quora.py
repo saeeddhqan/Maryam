@@ -69,9 +69,8 @@ def module_api(self):
 
 	links = list(set(LINKS))
 	for link in self.reglib().filter(r"https?://(www\.)?quora\.com/profile/", links):
-		if re.search(r'^[\w\d_\-\/]+$', link):
-			if link not in output['usernames']:
-				output['usernames'].append(link)
+		if link not in output['usernames']:
+			output['usernames'].append(link)
 
 	for link in links:
 		if re.search(r"https?://(www\.)?quora\.com", link) and '/profile' not in link:
@@ -84,9 +83,4 @@ def module_api(self):
 	return output
 
 def module_run(self):
-	output = module_api(self)
-	for item in output['links']:
-		title, link = item[1], item[0]
-		self.output(title)
-		self.output(f"\t{link}", 'G')
-		print('')
+	self.alert_results(module_api(self))
