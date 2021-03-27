@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import json
 import concurrent.futures
+from os.path import dirname as up
 
 meta = {
 	'name': 'Username Search',
@@ -29,7 +30,7 @@ meta = {
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('thread', 64, False, 'The number of sites that are being checked per round(default=8)', '-t', 'store', int),
 	),
-    'examples': ('username_search -q <QUERY> --output',)
+	'examples': ('username_search -q <QUERY> --output',)
 }
 
 OUTPUT = {'links': {}}
@@ -59,9 +60,12 @@ def check(self, url, site, data):
 
 def module_api(self):
 	query = self.options['query']
-	filepath = os.path.join(os.getcwd(), 'data', 'username_checker.json')
-	with open(filepath) as file:
-		data = json.loads(file.read())
+	project_root = up(up(up(__file__)))
+	filepath = os.path.join(project_root,
+				'data',
+				'username_checker.json')
+	with open(filepath) as handle:
+		data = json.load(handle)
 	thread(self, data, query,self.options['thread'])
 	output = OUTPUT
 
