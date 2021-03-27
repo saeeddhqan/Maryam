@@ -40,7 +40,7 @@ class main:
             return
         else:
             if not result_json['total']:
-                self.framework.verbose('[URLSCAN] Not yet in our database. You can still submit a scan at https://urlscan.io/ \n\tand then retry scanning.')
+                self.framework.verbose('[URLSCAN] Not yet in our database.')
                 return
             elif 'results' not in result_json:
                 self.framework.error(f'[URLSCAN] failed with an error: {result_json["description"]}')
