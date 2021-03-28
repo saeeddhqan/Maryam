@@ -30,9 +30,8 @@ meta = {
 }
 
 PAGES = ''
-DOMAINS = []
 def search(self, name, q, q_formats, limit, count):
-	global PAGES, DOMAINS
+	global PAGES
 	engine = getattr(self, name)
 	eng = name
 	name = engine.__init__.__name__
@@ -43,7 +42,7 @@ def search(self, name, q, q_formats, limit, count):
 		reg_dom = self.reglib().domain_m
 		if eng == 'urlscan':
 			if not re.search(reg_dom, q):
-				self.verbose("Invalid domain name. Cannot run urlscan")
+				self.verbose('Invalid domain name. Cannot run urlscan')
 				return
 			else:
 				attr = engine(q, limit)
@@ -52,10 +51,9 @@ def search(self, name, q, q_formats, limit, count):
 
 	attr.run_crawl()
 	PAGES += attr.pages
-	DOMAINS += attr.dns
 
 def module_api(self):
-	global PAGES, DOMAINS
+	global PAGES
 	query = '@' + self.options['query']
 	limit = self.options['limit']
 	count = self.options['count']
