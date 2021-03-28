@@ -24,7 +24,7 @@ meta = {
 	'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'baidu', 'startpage',
 				'netcraft', 'threatcrowd', 'virustotal', 'yippy', 'otx', 'carrot2', 'crt',
 				'qwant', 'millionshort', 'threatminer', 'jldc', 'bufferover', 'rapiddns', 'certspotter',
-				'sublist3r', 'riddler', 'sitedossier', 'duckduckgo', 'dnsdumpster', 'yougetsignal'),
+				'sublist3r', 'riddler', 'sitedossier', 'duckduckgo', 'dnsdumpster', 'yougetsignal', 'urlscan'),
 	'options': (
 		('domain', None,
 		 False, 'Domain name without https?://', '-d', 'store', str),
@@ -41,7 +41,7 @@ meta = {
 			Input could be a list of ip addresses(with comma separator)\
 			 or could be a filename that contains ip addresses', '-r', 'store', str),
 	),
-	'examples': ('dns_search -d example.com --output', 'dns_search -d example.com -e \
+	'examples': ('dns_search -d example.com --output', 'dns_search -d example.com -e\
 		google,bing,yahoo -l 3 -t 3 --output', 
 				 'dns_search -d example.com --max --validate --silent --output',
 				 'dns_search --reverse 1.1.1.1,2.2.2.2,3.3.3.3',
@@ -90,7 +90,7 @@ def search(self, name, q, q_format, limit, count):
 		set_data(attr.dns)
 
 def riddler(self, q):
-	self.verbose('[RIDDLER] Searching in reddler...')
+	self.verbose('[RIDDLER] Searching in riddler...')
 	try:
 		req = self.request(
 			f"https://riddler.io/search?q=pld:{q}&view_type=data_table")

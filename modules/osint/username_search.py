@@ -19,6 +19,7 @@ import os
 import json
 import concurrent.futures
 import urllib
+from os.path import dirname as up
 
 meta = {
 	'name': 'Username Search',
@@ -30,7 +31,7 @@ meta = {
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('thread', 64, False, 'The number of sites that are being checked per round(default=8)', '-t', 'store', int),
 	),
-    'examples': ('username_search -q <QUERY> --output',)
+	'examples': ('username_search -q <QUERY> --output',)
 }
 
 OUTPUT = {'links': {}}
@@ -47,7 +48,7 @@ def check(self, url, site, data):
 	global OUTPUT
 	try:
 		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
-		req = self.request(url , headers=headers,timeout=20)
+		req = self.request(url, headers=headers, timeout=20)
 	except Exception as e:
 		return
 	else:
@@ -60,9 +61,12 @@ def check(self, url, site, data):
 
 def module_api(self):
 	query = self.options['query']
-	filepath = os.path.join(os.getcwd(), 'data', 'username_checker.json')
-	with open(filepath) as file:
-		data = json.loads(file.read())
+	project_root = up(up(up(__file__)))
+	filepath = os.path.join(project_root,
+				'data',
+				'username_checker.json')
+	with open(filepath) as handle:
+		data = json.load(handle)
 	thread(self, data, query,self.options['thread'])
 	output = OUTPUT
 

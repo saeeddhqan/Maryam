@@ -19,10 +19,10 @@ import re
 
 
 meta = {
-	'name': 'Quora Search',
-	'author': 'Aman Rawat',
-	'version': '0.2',
-	'description': 'Search your query in the quora.com and show the results.',
+	'name': 'TikTok Search',
+	'author': 'Prakhar Jain',
+	'version': '0.1',
+	'description': 'Search your query on TikTok and show the results.',
 	'sources': ('google', 'yahoo', 'bing', 'yippy', 'metacrawler', 'millionshort', 'carrot2', 'qwant', 'duckduckgo'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
@@ -31,7 +31,7 @@ meta = {
 		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
 		('engine', 'bing', False, 'Engine names for search(default=bing)', '-e', 'store', str),
 	),
-	'examples': ('quora -q <QUERY> -l 15 --output',)
+	'examples': ('tiktok -q <QUERY> -l 15 --output',)
 }
 
 LINKS = []
@@ -57,39 +57,40 @@ def module_api(self):
 	limit = self.options['limit']
 	count = self.options['count']
 	engines = self.options['engine'].split(',')
-	output = {'links': [], 'usernames': []}
+	output = {'videos': [], 'usernames': [], 'tags': [], 'music': []}
 	q_formats = {
-		'default_q': f"site:www.quora.com {query}",
-		'yippy_q': f'"www.quora.com" {query}',
-		'millionshort_q': f'site:www.quora.com "{query}"',
-		'qwant_q': f'site:www.quora.com {query}'
+		'default_q': f"site:www.tiktok.com {query}",
+		'yippy_q': f'"www.tiktok.com" {query}',
+		'millionshort_q': f'site:www.tiktok.com "{query}"',
+		'qwant_q': f'site:www.tiktok.com {query}'
 	}
 
 	self.thread(search, self.options['thread'], engines, query, q_formats, limit, count, meta['sources'])
 
 	links = list(set(LINKS))
-	for link in self.reglib().filter(r"https?://(www\.)?quora\.com/profile/", links):
-		if link not in output['usernames']:
-			output['usernames'].append(link)
+	for link in self.reglib().filter(r"https?://(www\.)?tiktok\.com/@", links):
+			user_url = re.sub(r"https?://(www\.)?tiktok\.com/", '', link)
+			user_url = user_url.rsplit('/')
+			user = user_url[0]
+			if user not in output['usernames']:
+				output['usernames'].append(user)
 
-	for link in links:
-		if re.search(r"https?://(www\.)?quora\.com", link) and '/profile' not in link:
-			title = re.sub(r"https?://(www\.)?quora\.com/", '', link)
-			title = title.replace('-', ' ')
-			title = self.urlib(title).unquote.split('?')[0]
-			output['links'].append([link, title])
+	for link in self.reglib().filter(r"https?://(www\.)?tiktok\.com/music/", links):
+			if link not in output['music']:
+				output['music'].append(link)
 
-	self.save_gather(output, 'search/quora', query, output=self.options.get('output'))
+	for link in self.reglib().filter(r"https?://(www\.)?tiktok\.com/amp/tag/", links):
+			if link not in output['tags']:
+				output['tags'].append(link)
+
+	for link in self.reglib().filter(r"https?://(www\.)?tiktok\.com/", links):
+		if '/video/' in link:
+			if link not in output['videos']:
+				output['videos'].append(link)
+
+
+	self.save_gather(output, 'search/tiktok', query, output=self.options.get('output'))
 	return output
 
 def module_run(self):
-	output = module_api(self)
-	self.alert('usernames')
-	for user in output['usernames']:
-		self.output(f"\t{user}", 'G')
-	self.alert('links')
-	for item in output['links']:
-		title, link = item[1], item[0]
-		self.output(title)
-		self.output(f"\t{link}", 'G')
-		print('')
+	self.alert_results(module_api(self))

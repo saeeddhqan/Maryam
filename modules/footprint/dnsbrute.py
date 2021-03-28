@@ -1,16 +1,13 @@
 """
 OWASP Maryam!
-
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 any later version.
-
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
@@ -18,7 +15,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import concurrent.futures
 from socket import gethostbyname
+from os.path import dirname as up
 
+ROOT = up(up(up(os.path.realpath(__file__))))
 meta = {
 	'name': 'DNS Brute Force',
 	'author': 'Saeeddqn',
@@ -29,8 +28,8 @@ meta = {
 		('domain', None, False, 'Domain name without https?://', '-d', 'store', str),
 		('count', None, False, 'Number of payloads len(max=count of payloads). default is max',
 							 '-c', 'store', int),
-		('wordlist', os.path.join(os.getcwd() + '/' + 'data', 'dnsnames.txt'), False, 
-							'wordlist address. default is dnsnames.txt in data folder', '-w', 'store', str),
+		('wordlist', os.path.join(ROOT, 'data', 'dnsnames.txt'), False, 
+			   'wordlist address. default is dnsnames.txt in data folder', '-w', 'store', str),
 		('thread', 8, False, 'The number of links that open per round(default=8)', '-t', 'store', int),
 		('wordlists', False, False, 'List of most common DNS wordlists', '-l', 'store_true', bool),
 		('ips', False, False, 'Show ip addresses', '-i', 'store_true', bool),
@@ -43,7 +42,7 @@ HOSTNAMES = []
 LISTS = {"https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/DNS/subdomains-top1million-5000.txt": 'small',
 		 "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/DNS/fierce-hostlist.txt": 'small',
 		 "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/DNS/namelist.txt": 'small',
-		 "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/DNS/subdomains-top1million-20000.txt": 'mediom',
+		 "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/DNS/subdomains-top1million-20000.txt": 'medium',
 		 "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/DNS/subdomains-top1million-110000.txt": 'large',
 		 "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/DNS/deepmagic.com-prefixes-top50000.txt": 'large',
 		 "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/DNS/shubs-subdomains.txt": 'large'
