@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import json
 import concurrent.futures
+import urllib
 from os.path import dirname as up
 
 meta = {
@@ -37,8 +38,8 @@ OUTPUT = {'links': {}}
 
 def thread(self, data, query,thread_count):
 	threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
-	futures = (threadpool.submit(check, self, data[site]['url'].format(query), site, data) for site in data)
-	for _ in concurrent.futures.as_completed(futures):
+	futures = (threadpool.submit(check, self, data[site]['url'].format(urllib.parse.quote_plus(query).replace('.','%2E')), site, data) for site in data)
+	for results in concurrent.futures.as_completed(futures):
 		print(f"Found {len(OUTPUT['links'])} accounts" , end= '\r')
 	print('\n')
 
@@ -51,11 +52,11 @@ def check(self, url, site, data):
 	except Exception as e:
 		return
 	else:
-		if str(req.status_code) == data[site]['status'] :
-			for error in data[site]['error'] :
+		if str(req.status_code) == data[site]['status']:
+			for error in data[site]['error']:
 				if error in req.text :
 					return
-		else:
+		elif(str(req.status_code)[0] == '2' or str(req.status_code)[0] == '3'):
 			OUTPUT['links'][site] = url
 
 def module_api(self):
