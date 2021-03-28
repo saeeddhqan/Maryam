@@ -21,7 +21,7 @@ meta = {
 	'author': 'Saeed',
 	'version': '2.5',
 	'description': 'Search in the open-sources to find subdomans.',
-	'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'baidu', 'startpage',
+	'sources': ('securitytrails', 'bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'baidu', 'startpage',
 				'netcraft', 'threatcrowd', 'virustotal', 'yippy', 'otx', 'carrot2', 'crt',
 				'qwant', 'millionshort', 'threatminer', 'jldc', 'bufferover', 'rapiddns', 'certspotter',
 				'sublist3r', 'riddler', 'sitedossier', 'duckduckgo', 'dnsdumpster', 'yougetsignal', 'urlscan'),
@@ -30,7 +30,7 @@ meta = {
 		 False, 'Domain name without https?://', '-d', 'store', str),
 		('limit', 3, False, 'Search limit(number of pages, default=3)', '-l', 'store', int),
 		('count', 30, False, 'number of results per page(min=10, max=100, default=30)', '-c', 'store', int),
-		('engines', 'otx', False, 'Search engine names. e.g bing,google,...[otx by default]', '-e', 'store', str),
+		('engines', 'otx,securitytrails', False, 'Search engine names. e.g bing,google,...[otx by default]', '-e', 'store', str),
 		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
 		('max', False, False, 'Using all of sources(max limit=15, max count=50)', '--max', 'store_true', bool),
 		('validate', False, False, 'Validate the domains(Remove dead subdomains) \
@@ -269,6 +269,23 @@ def otx(self, q):
 	else:
 		j = self.page_parse(req.text).get_dns(q)
 		set_data(j)
+
+def securitytrails(self, q):
+	sectrail_url = 'securitytrails.com'
+	enu_url = f"https://{sectrail_url}/list/apex_domain/{q}"
+	trim = ['<script id="__NEXT_DATA__" type="application/json">','</script><script nomodule=""']
+	domains = []
+	self.verbose('[SECTRAILS] Enumerating dns records...')
+	try:
+		req = self.request(enu_url)
+	except Exception as e:
+		self.error("Sectrails is missed!")
+	else:
+		result = req.text.split(trim[0])[1].split(trim[1])[0]
+		req_json = json.loads(result)
+		for x in req_json['props']['pageProps']['apexDomainData']['data']['records']:
+			domains.append(x['hostname'])
+		set_data(domains)
 
 def reverse_dns(self, ips):
 	reg_ip = self.reglib().ip_m
