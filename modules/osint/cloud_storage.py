@@ -18,9 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 meta = {
 	'name': 'Cloud Storage',
 	'author': 'Vikas Kundu',
-	'version': '0.5',
-	'description': 'Search cloud storage sites and show the results.',
-	'sources': (	'google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo'),
+	'version': '0.1',
+	'description': 'Search clouds such as Drive, S3, DropBox, OneBox, and Box to find the query related files.',
+	'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
@@ -51,31 +51,29 @@ def search(self, name, q, q_formats, limit, count):
 	LINKS += attr.links
 	PAGES += attr.pages
 
-def module_api(self,site_name,site_url):
+def module_api(self):
 	query = self.options['query']
 	limit = self.options['limit']
 	count = self.options['count']
 	engine = self.options['engine'].split(',')
-	output = {'site': '', 'links': [] }
-	q_formats = {
-		'default_q': f'site:{site_url} {query}',
-		'yippy_q': f'"{site_url}" {query}',
-		'millionshort_q': f'site:{site_url} "{query}"',
-		'qwant_q': f'site:{site_url} {query}'
-	}
+	output = {'links': []}
+	sites = {'GoogleDrive': 'drive.google.com', 'DropBox': 'dl.dropboxusercontent.com',\
+	 'OneDrive': '1drv.ms', 'Box': 'box.com/s', 'Amazon S3': 's3.amazonaws.com'}
+	for site_name,site_url in sites.items():
+		q_formats = {
+			'default_q': f'site:{site_url} {query}',
+			'yippy_q': f'"{site_url}" {query}',
+			'millionshort_q': f'site:{site_url} "{query}"',
+			'qwant_q': f'site:{site_url} {query}'
+		}
 	
-	self.thread(search, self.options['thread'], engine, query, q_formats, limit, count, meta['sources'])
+		self.thread(search, self.options['thread'], engine, query, q_formats, limit, count, meta['sources'])
 
-	output['site'] = site_name
-	output['links'] = list(self.reglib().filter(r"https?://([\w\-\.]+\.)?"\
-	+site_url.replace('.','\.')+"/", list(set(LINKS)))) #escaping . for regex search using replace()
+		output['links'] += list(self.reglib().filter(r"https?://([\w\-\.]+\.)?"\
+		+ site_url.replace('.', '\.') + '/', list(set(LINKS)))) # Escaping. for regex search using replace()
 
 	self.save_gather(output, 'osint/cloud_storage', query, output=self.options.get('output'))
 	return output
 
 def module_run(self):
-	sites = {'GoogleDrive': 'drive.google.com', 'DropBox': 'dl.dropboxusercontent.com',\
-	 'OneDrive': '1drv.ms', 'Box': 'box.com/s', 'Amazon S3': 's3.amazonaws.com'}
-
-	for site_name,site_url in sites.items():
-		self.alert_results(module_api(self,site_name, site_url))
+	self.alert_results(module_api(self))
