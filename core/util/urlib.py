@@ -65,9 +65,13 @@ class main:
 	def quote(self):
 		if '%' not in self.url:
 			self.url = urlparse.quote(self.url)
-			return self.url
-		else:
-			return self.url
+		return self.url
+
+	@property
+	def quote_plus(self):
+		if '%' not in self.url:
+			self.url = urlparse.quote(self.url)
+		return self.url
 
 	@property
 	def unquote(self):
