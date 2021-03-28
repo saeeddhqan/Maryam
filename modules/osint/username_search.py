@@ -57,7 +57,7 @@ def check(self, url, site, data):
 				if error in req.text :
 					return
 		elif(str(req.status_code)[0] == '2' or str(req.status_code)[0] == '3'):
-			OUTPUT['links'][site] = url
+			OUTPUT['links'][site] = {'url': url, 'rank': data[site]['rank']}
 
 def module_api(self):
 	query = self.options['query']
@@ -75,7 +75,9 @@ def module_api(self):
 
 def module_run(self):
 	output = module_api(self)
-	sites = [(link, output['links'][link]) for link in output['links']]
+	results = sorted(list(output['links'].items()), key=lambda e: int(e[1]['rank']))
 
-	self.alert('Accounts Found')
+	sites = [(name, meta['url']) for name, meta in results]
+
+	self.alert('Accounts Found (sorted by site\'s rank)')
 	self.table(sites , header=['Site', 'Account'], linear=True, sep='_')
