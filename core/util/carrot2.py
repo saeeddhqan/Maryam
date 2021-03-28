@@ -43,7 +43,7 @@ class main:
 				   'Upgrade-Insecure-Requests': '1', 'Cache-Control': 'max-age=0'}
 		self.framework.debug(f"[eTOOLS] Searching in 'etools.ch'...")
 		try:
-			req = self.framework.request(url=self.etools, params=params, headers=headers)
+			req = self.framework.request(url=self.etools, params=params, headers=headers,allow_redirects=True)
 		except:
 			self.framework.error('[eTOOLS] ConnectionError')
 			self.framework.error('eTOOLS is missed!')

@@ -18,7 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import concurrent.futures
 from socket import gethostbyname
+from os.path import dirname as up
 
+
+ROOT = up(up(up(os.path.realpath(__file__))))
 meta = {
 	'name': 'DNS Brute Force',
 	'author': 'Saeed',
@@ -29,13 +32,13 @@ meta = {
 		('domain', None, True, 'Domain name without https?://', '-d', 'store', str),
 		('count', None, False, 'Number of payloads len(max=count of payloads). default is max',
 							 '-c', 'store', int),
-		('wordlist', os.path.join(os.getcwd() + '/' + 'data', 'tlds.txt'), False, 
+		('wordlist', os.path.join(ROOT, 'data', 'tlds.txt'), False, 
 							'wordlist address. default is dnsnames.txt in data folder', '-w', 'store', str),
 		('thread', 8, False, 'The number of links that open per round(default=8)', '-t', 'store', int),
 		('ips', False, False, 'Show ip addresses', '-i', 'store_true', bool),
 	),
-	'examples': ('dbrute -d <DOMAIN> --output',
-				'dbrute -d <DOMAIN> -w <WORDLIST>')
+	'examples': ('tldbrute -d <DOMAIN> --output',
+				'tldbrute -d <DOMAIN> -w <WORDLIST>')
 }
 
 HOSTNAMES = []

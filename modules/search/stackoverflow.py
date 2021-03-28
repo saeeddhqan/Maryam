@@ -68,12 +68,12 @@ def module_api(self):
 	self.thread(search, self.options['thread'], engine, query, q_formats, limit, count, meta['sources'])
 	links = list(self.reglib().filter(r'https?://(www\.)?stackoverflow\.com', list(set(LINKS))))
 	for link in links:
-		first_type = re.search(r'stackoverflow\.com/questions/[\d]+/([\w\d\-_]+)/?', link)
+		first_type = re.search(r'stackoverflow\.com/[Qq]uestions/[\d]*/([\w\d\-_]+)/?', link)
 		if first_type:
 			title = first_type.group(1).replace('-', ' ').title()
 			title = self.urlib(title).unquote.title()
 		else:
-			title = 'Without Title'
+			title = 'Matching Result [Without Title]'
 		output['links'].append([link, title])
 
 	for link in links:
@@ -92,9 +92,7 @@ def module_api(self):
 
 def module_run(self):
 	output = module_api(self)
-	for i in range(len(output['titles'])):
-		self.output(output['titles'][i])
-		self.output(f"\t{output['links'][i]}", 'G')
-	output.pop('titles')
+	for i in range(len(output['links'])):
+		self.output(f"{output['links'][i][1]} \n\t{output['links'][i][0]}", 'G')
 	output.pop('links')
 	self.alert_results(output)

@@ -17,7 +17,7 @@ meta = {
 	'author': 'Saeed',
 	'version': '1.0',
 	'description': 'Search to find Usernames in social networks.',
-	'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'startpage'),
+	'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'startpage', 'urlscan'),
 	'options': (
 		('query', None, True, 'Company Name or Query', '-q', 'store', str),
 		('engines', 'google,bing', False, 'Search engine names. e.g `bing,google,..`', '-e', 'store', str),
@@ -25,21 +25,27 @@ meta = {
 		('count', 100, False, 'number of results per page(min=10, max=100, default=100)', '-c', 'store', int),
 		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
 	),
-	'examples': ('social_nets -n microsoft -e google,bing,yahoo -c 50 -t 3 --output',
-		'social_nets -n microsoft -e google')
+	'examples': ('social_nets -q microsoft -e google,bing,yahoo -c 50 -t 3 --output',
+		'social_nets -q microsoft -e google')
 }
 
 PAGES = ''
-
 def search(self, name, q, q_formats, limit, count):
 	global PAGES
 	engine = getattr(self, name)
+	eng = name
 	name = engine.__init__.__name__
 	varnames = engine.__init__.__code__.co_varnames
 	if 'limit' in varnames and 'count' in varnames:
 		attr = engine(q, limit, count)
 	elif 'limit' in varnames:
-		attr = engine(q, limit)
+		reg_dom = self.reglib().domain_m
+		if eng == 'urlscan':
+			if not re.search(reg_dom, q):
+				self.verbose('Invalid domain name. Cannot run urlscan')
+				return
+			else:
+				attr = engine(q, limit)
 	else:
 		attr = engine(q)
 

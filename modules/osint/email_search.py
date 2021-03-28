@@ -15,15 +15,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 meta = {
 	'name': 'Find Emails',
 	'author': 'Saeed',
-	'version': '0.5',
+	'version': '1.0',
 	'description': 'Search in open-sources to find emails.',
 	'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 
-				'ask', 'baidu', 'startpage', 'yippy', 'qwant', 'duckduckgo'),
+				'ask', 'baidu', 'startpage', 'yippy', 'qwant', 'duckduckgo', 'hunter'),
 	'options': (
 		('query', None, True, 'Domain name or company name', '-q', 'store', str),
 		('limit', 3, False, 'Search limit(number of pages, default=3)', '-l', 'store', int),
 		('count', 50, False, 'number of results per page(min=10, max=100, default=50)', '-c', 'store', int),
-		('engines', 'google,metacrawler,bing', True, 'Search engine names. e.g bing,google,..', '-e', 'store', str),
+		('engines', None, True, 'Search engine names. e.g bing,google,..', '-e', 'store', str),
+		('key', None, False, 'Give a valid hunter API key. Limit for free plan is 10 results', '-k', 'store', str),
 		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
 	),
 	'examples': ('email_search -q microsoft.com -e bing --output',
@@ -35,12 +36,20 @@ EMAILS = []
 def search(self, name, q, q_formats, limit, count):
 	global EMAILS
 	engine = getattr(self, name)
+	eng = name
 	name = engine.__init__.__name__
 	varnames = engine.__init__.__code__.co_varnames
-	if name == 'ask':
-		q = q.replace('"', '')
+	q = q_formats[f"{eng}"] if f"{eng}" in q_formats else q_formats['default']
 	if 'limit' in varnames and 'count' in varnames:
 		attr = engine(q, limit, count)
+	elif 'limit' in varnames and 'key' in varnames:
+		key = q.split('&api_key=')[1]
+		k_q = q.split('&api_key=')[0]
+		if key == 'None':
+			self.error('-k <API KEY> is required for hunter')
+			return
+		else:
+			attr = engine(k_q, key, limit)
 	elif 'limit' in varnames:
 		attr = engine(q, limit)
 	else:
@@ -49,14 +58,20 @@ def search(self, name, q, q_formats, limit, count):
 	EMAILS.extend(attr.emails)
 
 def module_api(self):
+	query = self.options['query']
 	domain = self.options['query'].replace('@', '')
 	urlib = self.urlib(domain)
 	domain = self.urlib(domain).netroot if '/' in domain else domain
 	limit = self.options['limit']
 	count = self.options['count']
 	engines = self.options['engines'].split(',')
-	query = f'"%40{domain}"'
-	self.thread(search, self.options['thread'], engines, query, {}, limit, count, meta['sources'])
+	key = self.options['key']
+	q_formats = {
+		'default': f'"%40{domain}"',
+		'ask': f"%40{domain}",
+		'hunter': f"{domain}&api_key={key}"
+	}
+	self.thread(search, self.options['thread'], engines, query, q_formats, limit, count, meta['sources'])
 	output = {'emails': list(set(EMAILS))}
 
 	self.save_gather(output, 'osint/email_search', domain,\
