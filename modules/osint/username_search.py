@@ -37,7 +37,7 @@ OUTPUT = {'links': {}}
 
 def thread(self, data, query,thread_count):
 	threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
-	futures = (threadpool.submit(check, self, data[site]['url'].format(self.urlib(query).quote_plus(query).replace('.','%2E')), site, data) for site in data)
+	futures = (threadpool.submit(check, self, data[site]['url'].format(self.urlib(query).quote_plus.replace('.','%2E')), site, data) for site in data)
 	for results in concurrent.futures.as_completed(futures):
 		print(f"Found {len(OUTPUT['links'])} accounts" , end= '\r')
 	print('\n')
