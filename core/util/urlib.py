@@ -70,7 +70,7 @@ class main:
 	@property
 	def quote_plus(self):
 		if '%' not in self.url:
-			self.url = urlparse.quote(self.url)
+			self.url = urlparse.quote_plus(self.url)
 		return self.url
 
 	@property
