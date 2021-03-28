@@ -70,14 +70,63 @@ def module_api(self):
 	thread(self, data, query,self.options['thread'])
 	output = OUTPUT
 
-	self.save_gather(output, 'osint/username_search', query, output=self.options.get('output'))
+	self.save_gather(
+		output,
+		'osint/username_search',
+		query,
+		output=self.options.get('output')
+	)
+
 	return output
 
 def module_run(self):
 	output = module_api(self)
-	results = sorted(list(output['links'].items()), key=lambda e: int(e[1]['rank']))
+	results = sorted(
+		list(output['links'].items()), key=lambda e: int(e[1]['rank'])
+	)
 
 	sites = [(name, meta['url']) for name, meta in results]
 
 	self.alert('Accounts Found (sorted by site\'s rank)')
 	self.table(sites , header=['Site', 'Account'], linear=True, sep='_')
+
+def refresh_username_checker_siteranks():
+	"""
+	Function which refreshes the `rank` properity in `username_checker.json`.
+	This method should only be called manually.
+	To fetch data you need an API key. To obtain it, register at:
+	https://www.domcop.com/openpagerank/
+	"""
+	import requests
+	from urllib.parse import urlparse, quote
+
+	API_KEY = input("Please input your OpenSiteRank API key: ")
+
+	def getRank(url):
+		header = {"API-OPR": API_KEY}
+		req_url = f"https://openpagerank.com/api/v1.0/getPageRank?domains[]={url}"
+		r = requests.get(req_url, headers=header)
+		result = json.loads(r.text)	
+		return result
+
+	data = dict()
+
+	project_root = up(up(up(__file__)))
+	filepath = os.path.join(project_root,
+				'data',
+				'username_checker.json')
+
+	with open(filepath, "r") as f:
+		data = json.load(f) 
+
+	for site in data:
+		domain = urlparse(data[site]['url']).netloc.replace("{}.", "")
+		rank = getRank(domain)
+		if rank['status_code'] != 200:
+			print("\nERROR:\n", rank)
+		else:
+			data[site]['rank'] = rank['response'][0]['rank']
+
+	with open(filepath, "w") as f:
+		f.write(json.dumps(data))
+
