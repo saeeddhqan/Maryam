@@ -52,11 +52,11 @@ def check(self, url, site, data):
 	except Exception as e:
 		return
 	else:
-		if str(req.status_code) == data[site]['status'] :
-			for error in data[site]['error'] :
+		if str(req.status_code) == data[site]['status']:
+			for error in data[site]['error']:
 				if error in req.text :
 					return
-		elif(str(req.status_code)[0] == "2" or str(req.status_code)[0]=="3"):
+		elif(str(req.status_code)[0] == '2' or str(req.status_code)[0] == '3'):
 			OUTPUT['links'][site] = url
 
 def module_api(self):
