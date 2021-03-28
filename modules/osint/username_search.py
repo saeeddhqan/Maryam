@@ -75,18 +75,18 @@ def module_api(self):
 		query,
 		output=self.options.get('output')
 	)
+
+    
 	output['links'] = sorted(
 		list(output['links'].items()), key=lambda x: int(x[1]['rank'])
 	)
+
 	return output
 
 def module_run(self):
 	output = module_api(self)
-	results = sorted(
-		list(output['links'].items()), key=lambda e: int(e[1]['rank'])
-	)
 
-	sites = [(name, meta['url']) for name, meta in results['links']]
+	sites = [(name, meta['url']) for name, meta in output['links']]
 
 	self.alert("Accounts Found (sorted by site's rank)")
 	self.table(sites , header=['Site', 'Account'], linear=True, sep='_')
