@@ -28,7 +28,7 @@ meta = {
 		('engine', 'bing', False, 'Engine names for search(default=google)', '-e', 'store', str),
 		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
 	),
-	'examples': ('Cloud Storage -q <QUERY> -l 15 --output',)
+	'examples': ('cloud_storage -q <QUERY> -l 15 --output',)
 }
 
 LINKS = []
