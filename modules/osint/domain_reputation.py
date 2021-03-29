@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
 import concurrent.futures
+import requests
 
 meta = {
 	'name': 'Domain Reputation',
@@ -26,7 +27,8 @@ meta = {
 	'sources': ('barracudacentral', 'mxtoolbox', 'multirbl'),
 	'options': (
 		('domain', None, True, 'Domain name without https?://', '-d', 'store', str),
-		('engines', 'barracudacentral,multirbl,mxtoolbox', True, 'Search engine names(default=[barracudacentral,multirbl])'
+		('engines', 'barracudacentral,multirbl,mxtoolbox', True, 'Search engine names(default=[barracudacentral,'
+                                                                 'multirbl, mxtoolbox])'
 		 , '-e', 'store', str),
 		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
 	),
@@ -80,7 +82,7 @@ def mxtoolbox(self, q):
 				   'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 '
 								 '(KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
 				   }
-		req = self.requests(f'http://mxtoolbox.com/api/v1/Lookup?command=blacklist&argument={q}&resultIndex=1'
+		req = requests.get(f'http://mxtoolbox.com/api/v1/Lookup?command=blacklist&argument={q}&resultIndex=1'
 						   f'&disableRhsbl=true&format=2', headers=headers)
 		j = req.json()
 		j = j['HTML_Value']
