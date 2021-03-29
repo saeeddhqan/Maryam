@@ -17,7 +17,7 @@ meta = {
         'name': 'Piratebay',
         'author': 'Kaushik',
         'version': '0.1',
-        'description': 'Piratebay is the world\'s most persistent torrenting site\
+        'description': 'Piratebay is the world\'s most persistent torrenting site. \
                  Please refrain from abusive usage.',
         'sources': ('piratebay'),
         'options': (
