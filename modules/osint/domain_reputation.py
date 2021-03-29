@@ -142,12 +142,13 @@ def __multirbl(self, l_id, hash, l_ids, q):
 def module_api(self):
     global LISTS
     query = self.options['domain']
-    engines = self.options['engines']
+    engines = self.options['engines'].split(',')
     thread(self, search, self.options['thread'], engines, query, meta['sources'])
     output['number of presence on blacklist'] = len(list(set(BLACKLIST)))
     output['blacklists'] = list(set(BLACKLIST))
-    presence = len(list(set(BLACKLIST))) / LISTS
-    output['absence % on blacklist'] = 100 - (presence*100)
+    if LISTS!=0:
+        presence = len(list(set(BLACKLIST))) / LISTS
+        output['absence % on blacklist'] = 100 - (presence*100)
     return output
 
 def module_run(self):
