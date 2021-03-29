@@ -88,15 +88,17 @@ def mxtoolbox(self, q):
         j = j['HTML_Value']
         num_reg = re.compile(r'<strong>([\d]+)</strong>')
         num_lists = num_reg.findall(j)[0]
-        LISTS += int(num_lists)
         list_reg = re.compile('<tr>(.+?)</tr>')
         blacklist_reg = re.compile(r'<span class="bld_name">([\d\w\s]+)</span>')
         lists = list_reg.findall(j)[:-1]
         for blacklist in lists:
             if 'LISTED' in blacklist:
-                list_name = blacklist_reg.findall(blacklist)[0]
+                try:
+                    list_name = blacklist_reg.findall(blacklist)[0]
+                except:
+                    pass
                 BLACKLIST.append(list_name)
-
+        LISTS += int(num_lists)
     except Exception as e:
         self.verbose('Mxtoolbox is missed')
         print(e)
