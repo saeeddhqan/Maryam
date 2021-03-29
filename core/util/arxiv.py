@@ -39,8 +39,7 @@ class main:
                 self.q = urllib.parse.quote_plus(self.q)
                 url = f'https://export.arxiv.org/api/query?search_query=all:'\
                            + f'{self.q}&start=0&max_results={self.max}'
-                self.framework.verbose('Opening the arxiv.org domain...')
-                self.framework.verbose(f"[ARXIV] Searching in {url}...")
+                self.framework.verbose('Searching the arxiv.org domain...')
                 try:
                         req = self.framework.request(url=url)
                 except:
