@@ -55,26 +55,26 @@ def barracudacentral(self, q):
 	self.verbose('[Barracuda] Searching in barracuda...')
 	data = {
 		'lookup_entry': q,
-		'submit':'Check Reputation'
+		'submit': 'Check Reputation'
 	}
 	try:
 		req = self.request('https://www.barracudacentral.org/lookups/lookup-reputation', method='POST',
 						   data=data)
 	except Exception as e:
 		self.error('Barracuda is missed!')
-	reg = re.compile(r"categories: <strong>([\w\d\s-]+)")
-	if 'listed as "poor"' not in req.text:
-		category = reg.findall(req.text)[0]
-		OUTPUT['category'] = category
 	else:
-		BLACKLIST.append('BARRACUDA')
-	LISTS += 1
+		reg = re.compile(r"categories: <strong>([\w\d\s-]+)")
+		if 'listed as "poor"' not in req.text:
+			category = reg.findall(req.text)[0]
+			OUTPUT['category'] = category
+		else:
+			BLACKLIST.append('BARRACUDA')
+		LISTS += 1
 
 def mxtoolbox(self, q):
 	global LISTS
 	self.verbose('[MXTOOLBOX] Searching in mxtoolbox...')
 	try:
-		# Use requests module to preserve casing in headers
 		headers = {'TempAuthorization': 'ca1e3b2f-cd6c-4886-9446-88f4ff7a960d',
 				   'Referer': f'https://mxtoolbox.com/SuperTool.aspx?action=blacklist:{q}&run=toolpage',
 				   'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 '
@@ -89,6 +89,9 @@ def mxtoolbox(self, q):
 		list_reg = re.compile('<tr>(.+?)</tr>')
 		blacklist_reg = re.compile(r'<span class="bld_name">([\d\w\s]+)</span>')
 		lists = list_reg.findall(j)[:-1]
+	except Exception as e:
+		self.verbose('Mxtoolbox is missed')
+	else:
 		for blacklist in lists:
 			if 'LISTED' in blacklist:
 				try:
@@ -97,28 +100,27 @@ def mxtoolbox(self, q):
 					pass
 				BLACKLIST.append(list_name)
 		LISTS += int(num_lists)
-	except Exception as e:
-		self.verbose('Mxtoolbox is missed')
-		print(e)
 
 def multirbl(self, q):
 	global LISTS
 	self.verbose('[Multirbl] Searching in multirbl.valli.org...')
 	try:
 		req = self.request(f'http://multirbl.valli.org/lookup/{q}.html', verify=False)
+		text = req.text
 		hash_reg = re.compile(r'"asessionHash": "([\w]+)"')
 		l_id_hash = re.compile(r'<td class="l_id">([\d]+)')
-		hash = hash_reg.findall(req.text)[0]
-		l_ids = l_id_hash.findall(req.text)
+		hash = hash_reg.findall(text)[0]
+		l_ids = l_id_hash.findall(text)
 		num_test_reg = re.compile(r'nof: ([\d]+),')
-		num_test = num_test_reg.findall(req.text)[0]
+		num_test = num_test_reg.findall(text)[0]
+	except Exception as e:
+		self.verbose('Multirbl is missed')
+	else:
 		thread_pool = concurrent.futures.ThreadPoolExecutor(max_workers=2)
 		futures = (thread_pool.submit(__multirbl, self, l_id, hash, l_ids, q) for l_id in range(int(num_test)))
 		for _ in concurrent.futures.as_completed(futures):
 			pass
 		LISTS += int(num_test)
-	except Exception as e:
-		self.verbose('Multirbl is missed')
 
 def __multirbl(self, l_id, hash, l_ids, q):
 	try:
