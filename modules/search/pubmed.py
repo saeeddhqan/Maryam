@@ -38,7 +38,7 @@ def module_api(self):
         for item in links:
                 output['results'].append(item)
 
-        self.save_gather(output, 'search/scholar', query, output=self.options['output'])
+        self.save_gather(output, 'search/pubmed', query, output=self.options['output'])
         return output
 
 def module_run(self):
