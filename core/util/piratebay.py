@@ -66,10 +66,8 @@ class main:
                 seedandleech = lambda x: re.findall( '<td align="right">(.*?)</td>', x)
                 
 
-                limitcount = 0
-                for torrent in self._torrents:
-                        limitcount+=1
-                        if limitcount>self.max:
+                for count,torrent in enumerate(self._torrents):
+                        if count==self.max:
                             break
 
                         title = findtitle(torrent)
