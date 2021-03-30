@@ -45,6 +45,7 @@ class main:
                 except:
                         self.framework.error('[PIRATEBAY] ConnectionError')
                         self.framework.error('Piratebay is missed!')
+                        self.framework.error('Try again after a few seconds!')
                         return
                 self._rawhtml = req.text
                 self._torrents = list(re.findall('(?<=<tr>).*?(?=</tr>)', 

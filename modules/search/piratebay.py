@@ -50,3 +50,6 @@ def module_run(self):
                 self.output(item['date']+' '+item['uploader'])
                 self.output('Seeders  :'+item['seeders'])
                 self.output('Leechers :'+item['leechers'])
+
+        print()
+        self.output('Paste the magnet link into your torrent client to start downloading.')
