@@ -48,7 +48,7 @@ class main:
                         self.framework.error('Try again after a few seconds!')
                         return
                 self._rawhtml = req.text
-                self._torrents = list(re.findall('(?<=<tr>).*?(?=</tr>)', 
+                self._torrents = list(re.findall('<tr>(.*?)</tr>', 
                         self._rawhtml, 
                         flags=re.DOTALL))
 
@@ -58,12 +58,12 @@ class main:
 
         @property
         def links_with_data(self):
-                findtitle = lambda x: re.findall('(?<=Details for ).*?(?=">)', x, flags=re.DOTALL)
-                magnet_regex = '(?<=<a href=")magnet:.*?(?=" title="Download this torrent using magnet">)'
+                findtitle = lambda x: re.findall('Details for (.*?)">', x, flags=re.DOTALL)
+                magnet_regex = r'<a href="(magnet:.*?)" title="Download this torrent using magnet">'
                 findmagnet = lambda x: re.findall(magnet_regex, x)
-                finduploader = lambda x: re.findall('(?<=title="Browse ).*?(?=")', x)
+                finduploader = lambda x: re.findall('title="Browse (.*?)"', x)
                 finddatesize = lambda x: re.findall('Uploaded .*?, ULed by', x)
-                seedandleech = lambda x: re.findall( '(?<=<td align="right">).*?(?=</td>)', x)
+                seedandleech = lambda x: re.findall( '<td align="right">(.*?)</td>', x)
                 
 
                 limitcount = 0

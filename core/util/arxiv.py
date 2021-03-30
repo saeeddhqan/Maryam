@@ -47,7 +47,7 @@ class main:
                         self.framework.error('ArXiv is missed!')
                         return
                 self._rawxml = req.text
-                self._articles = list(re.findall('(?<=<entry>).*?(?=</entry>)', 
+                self._articles = list(re.findall('<entry>(.*?)</entry>', 
                         self._rawxml, 
                         flags=re.DOTALL))
 
@@ -61,15 +61,15 @@ class main:
 
         @property
         def links(self):
-                self._links = re.findall('http://arxiv.org/abs/.*(?=<)',
+                self._links = re.findall('(http://arxiv.org/abs/.*)<',
                         self._rawxml)
                 return self._links
 
         @property
         def links_with_data(self):
-                findlink = lambda x: re.findall('http://arxiv.org/abs/.*?(?=<)', x)
-                findauthors = lambda x: re.findall('(?<=<name>).*?(?=</name>)', x)
-                findtitle = lambda x: re.findall('(?<=<title>).*?(?=</title>)', x, flags=re.DOTALL)
+                findlink = lambda x: re.findall('(http://arxiv.org/abs/.*?)<', x)
+                findauthors = lambda x: re.findall('<name>(.*?)</name>', x)
+                findtitle = lambda x: re.findall('<title>(.*?)</title>', x, flags=re.DOTALL)
 
                 for article in self._articles:
                         self._links_with_data.append({'authors':findauthors(article),
