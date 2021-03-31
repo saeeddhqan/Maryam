@@ -41,38 +41,27 @@ class main:
 					first={set_page(i)}&form=QBLH&pq={self.query.lower()}" for i in range(1, self.limit+1)]
 		url_a = [f"https://{self.ask}/web?q={self.query}&page={i}" for i in range(1, self.limit+1)]
 		max_attempt_b = len(url_b)
-		self.framework.verbose(f"[PASTEBIN] Searching inside pastes...")
-		for url in range(max_attempt_b):
-			try:
-				req_b = self.framework.request(url=url_b[url], allow_redirects=True)
-			except:
-				self.framework.error('[PASTEBIN] ConnectionError')
-				max_attempt -= 1
-				if max_attempt == 0:
-					self.framework.error('Error. Try again!')
-					break
-			else:
-				page = req_b.text
-				if 'title="Next page"' not in page:
-					self._pages += page
-					break
-				self._pages += page
 		max_attempt_a = len(url_a)
-		for url in range(max_attempt_a):
-			try:
+		self.framework.verbose(f"[PASTEBIN] Searching inside pastes...")
+		try:
+			for url in range(max_attempt_b):
+				req_b = self.framework.request(url=url_b[url], allow_redirects=True)
+			for url in range(max_attempt_a):
 				req_a = self.framework.request(url=url_a[url])
-			except:
-				self.framework.error('[PASTEBIN] ConnectionError')
-				max_attempt -= 1
-				if max_attempt == 0:
-					self.framework.error('Error. Try again!')
-					break
-			else:
-				page = req_a.text
-				if '>Next</li>' not in page:
-					self._pages += page
-					break
+		except:
+			self.framework.error('[PASTEBIN] ConnectionError')
+			max_attempt -= 1
+			if max_attempt == 0:
+				self.framework.error('Error. Try again!')
+		else:
+			page = req_b.text
+			if 'title="Next page"' not in page:
 				self._pages += page
+			self._pages += page
+			page = req_a.text
+			if '>Next</li>' not in page:
+				self._pages += page
+			self._pages += page
 		parser = self.framework.page_parse(self._pages)
 		parser.pclean
 		links = parser.findall(r'<a target="_blank" href="([^"]+)" h="ID=SERP,[\d\.]+">')
