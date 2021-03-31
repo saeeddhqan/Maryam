@@ -56,7 +56,7 @@ def search(self, name, q, q_formats, limit, count):
 def scrap(self,query,limit):
 	global PAGES,LINKS	
 	channel_links = []
-	for page_no in range(1, limit + 1): # SCrapping all groups available
+	for page_no in range(1, limit + 1): # Scrapping all groups available
 		self.verbose(f'[TELEGRAMCHANNELS] Searching in page {page_no}')
 		try:
 			req = self.request(f'https://telegramchannels.me/search?type=channel&page={page_no}&search={query}').text
@@ -69,7 +69,7 @@ def scrap(self,query,limit):
 			channel_links += set(re.findall(r"https://telegramchannels\.me/channels/[\w]+", req)) # Find all channels
 	
 	pointer, total = 0, len(channel_links) # Variables for progress monitor
-	# not using {channel_links.index(link)/{len(channel_links)} as sometimes out of order iteration happens}	
+	# not using {channel_links.index(link)}/{len(channel_links)} as sometimes out of order iteration happens
 	for link in set(channel_links): # Scraping channels individually
 		pointer += 1
 		self.verbose(f'[Telegramchannels.me ] Searching in channel {pointer}/{total}' )
@@ -78,7 +78,7 @@ def scrap(self,query,limit):
 			LINKS += set(re.findall(r"t\.me/[\w]+", req))
 			PAGES += req
 		except Exception as e:
-			self.error('Channel {link} is missed!')
+			self.error(f'Channel {link} is missed!')
 	
 def module_api(self):
 	query = self.options['query']
@@ -96,7 +96,8 @@ def module_api(self):
 	self.thread(search, self.options['thread'], engines, query, q_formats, limit, count, meta['sources'])
 	
 	scrap(self, query, limit)
-	LINKS = list(set(LINKS))
+	global LINKS #To avoid the error: local variable 'LINKS' referenced before assignment.
+	LINKS = list(set(LINKS)) 
 	output['group-links'] = list(self.reglib().filter(r"https?://([\w\-\.]+\.)?t\.me/joinchat/", LINKS))
 	
 	output['group-links'] += list(self.reglib().filter(r"t\.me/[\w]+", LINKS)) # Output for scraping sepertely
@@ -108,7 +109,7 @@ def module_api(self):
 	# ... (simply 10 digits followed by a space)
 	
 	for i in phone_set:	# Cleaning up the mobile numbers format
-		i = re.sub(r"[^\d\+-]", '', i) # Remove all chars excpet digits, + and -
+		i = re.sub(r"[^\d\+-]", '', i) # Remove all chars except digits, + and -
 		output['phone-numbers'].append(i)
 		
 	self.save_gather(output, 'search/telegram', query, output=self.options.get('output'))
