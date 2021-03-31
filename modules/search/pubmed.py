@@ -14,23 +14,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 meta = {
-        'name': 'Piratebay',
+        'name': 'Pubmed',
         'author': 'Kaushik',
         'version': '0.1',
-        'description': 'Piratebay is the world\'s most persistent torrenting site. \
-                 Please refrain from abusive usage.',
-        'sources': ('piratebay'),
+        'description': 'PubMed comprises more than 32 million citations for biomedical \
+                literature from MEDLINE, life science journals, and online books.',
+        'sources': ('pubmed'),
         'options': (
                 ('query', None, True, 'Query string', '-q', 'store', str),
                 ('limit', 15, False, 'Max result count (default=15)', '-l', 'store', int),
         ),
-        'examples': ('piratebay -q <QUERY> -l 15 --output',)
+        'examples': ('pubmed -q <QUERY> -l 15 --output',)
 }
 
 def module_api(self):
         query = self.options['query']
         limit = self.options['limit']
-        run = self.piratebay(query, limit)
+        run = self.pubmed(query, limit)
         run.run_crawl()
         output = {'results': []}
         links = run.links_with_data
@@ -38,7 +38,7 @@ def module_api(self):
         for item in links:
                 output['results'].append(item)
 
-        self.save_gather(output, 'search/piratebay', query, output=self.options['output'])
+        self.save_gather(output, 'search/pubmed', query, output=self.options['output'])
         return output
 
 def module_run(self):
@@ -46,10 +46,5 @@ def module_run(self):
         for item in output:
                 print()
                 self.output(item['title'])
-                self.output(item['magnet'])
-                self.output(item['date']+' '+item['uploader'])
-                self.output('Seeders  :'+item['seeders'])
-                self.output('Leechers :'+item['leechers'])
-
-        print()
-        self.output('Paste the magnet link into your torrent client to start downloading.')
+                self.output(item['authors'])
+                self.output(item['link'])

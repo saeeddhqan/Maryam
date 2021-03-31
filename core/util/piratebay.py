@@ -45,9 +45,10 @@ class main:
                 except:
                         self.framework.error('[PIRATEBAY] ConnectionError')
                         self.framework.error('Piratebay is missed!')
+                        self.framework.error('Try again after a few seconds!')
                         return
                 self._rawhtml = req.text
-                self._torrents = list(re.findall('(?<=<tr>).*?(?=</tr>)', 
+                self._torrents = list(re.findall(r'<tr>(.*?)</tr>', 
                         self._rawhtml, 
                         flags=re.DOTALL))
 
@@ -57,18 +58,16 @@ class main:
 
         @property
         def links_with_data(self):
-                findtitle = lambda x: re.findall('(?<=Details for ).*?(?=">)', x, flags=re.DOTALL)
-                magnet_regex = '(?<=<a href=")magnet:.*?(?=" title="Download this torrent using magnet">)'
+                findtitle = lambda x: re.findall(r'Details for (.*?)">', x, flags=re.DOTALL)
+                magnet_regex = r'<a href="(magnet:.*?)" title="Download this torrent using magnet">'
                 findmagnet = lambda x: re.findall(magnet_regex, x)
-                finduploader = lambda x: re.findall('(?<=title="Browse ).*?(?=")', x)
-                finddatesize = lambda x: re.findall('Uploaded .*?, ULed by', x)
-                seedandleech = lambda x: re.findall( '(?<=<td align="right">).*?(?=</td>)', x)
+                finduploader = lambda x: re.findall(r'title="Browse (.*?)"', x)
+                finddatesize = lambda x: re.findall(r'Uploaded .*?, ULed by', x)
+                seedandleech = lambda x: re.findall(r'<td align="right">(.*?)</td>', x)
                 
 
-                limitcount = 0
-                for torrent in self._torrents:
-                        limitcount+=1
-                        if limitcount>self.max:
+                for count,torrent in enumerate(self._torrents):
+                        if count==self.max:
                             break
 
                         title = findtitle(torrent)
