@@ -19,9 +19,9 @@ import re
 meta = {
 	'name': 'Search public telegram groups',
 	'author': 'Vikas Kundu',
-	'version': '0.5',
+	'version': '0.1',
 	'description': 'Search the publicly listed telegram groups for juicy info like emails, phone numbers etc',
-	'sources': ('https://telegramchannels.me','google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo'),
+	'sources': ('telegramchannels.me','google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
@@ -56,8 +56,8 @@ def search(self, name, q, q_formats, limit, count):
 def scrap(self,query,limit):
 	global PAGES,LINKS	
 	channel_links = []
-	for page_no in range(1,limit+1): #SCrapping all groups available
-		self.verbose(f'[Telegramchannels.me ] Searching in page {page_no}')
+	for page_no in range(1, limit + 1): # SCrapping all groups available
+		self.verbose(f'[TELEGRAMCHANNELS] Searching in page {page_no}')
 		try:
 			req = self.request(f'https://telegramchannels.me/search?type=channel&page={page_no}&search={query}').text
 		except Exception as e:
@@ -66,12 +66,11 @@ def scrap(self,query,limit):
 		if 'There are no media! Try another search!' in req:
 			break
 		else:
-			channel_links+=set(re.findall(r"https://telegramchannels\.me/channels/[\w]+", req)) #find all channels
+			channel_links += set(re.findall(r"https://telegramchannels\.me/channels/[\w]+", req)) # Find all channels
 	
-	pointer, total = 0, len(channel_links) #variables for progress monitor
-	#not using {channel_links.index(link)/{len(channel_links)} as sometimes out of order iteration happens}
-		
-	for link in set(channel_links): #scraping channels individually
+	pointer, total = 0, len(channel_links) # Variables for progress monitor
+	# not using {channel_links.index(link)/{len(channel_links)} as sometimes out of order iteration happens}	
+	for link in set(channel_links): # Scraping channels individually
 		pointer += 1
 		self.verbose(f'[Telegramchannels.me ] Searching in channel {pointer}/{total}' )
 		try:
@@ -96,20 +95,20 @@ def module_api(self):
 
 	self.thread(search, self.options['thread'], engines, query, q_formats, limit, count, meta['sources'])
 	
-	scrap(self,query,limit)
+	scrap(self, query, limit)
+	LINKS = list(set(LINKS))
+	output['group-links'] = list(self.reglib().filter(r"https?://([\w\-\.]+\.)?t\.me/joinchat/", LINKS))
 	
-	output['group-links'] = list(self.reglib().filter(r"https?://([\w\-\.]+\.)?t\.me/joinchat/", list(set(LINKS))))
-	
-	output['group-links'] += list(self.reglib().filter(r"t\.me/[\w]+", list(set(LINKS)))) #output for scraping sepertely
+	output['group-links'] += list(self.reglib().filter(r"t\.me/[\w]+", LINKS)) # Output for scraping sepertely
 
-	output['handles'] = [ i for i in set(re.findall(r"@[\w]+", PAGES)) if i not in [ '@media', '@keyframes', '@font' ] ]
+	output['handles'] = [i for i in set(re.findall(r"@[\w]+", PAGES)) if i not in ['@media', '@keyframes', '@font'] ]
 	
-	phone_set = [ str(i) for i in set(re.findall(r"(\+?\d{1,3}[- ]?)?(\d{10}\s)", PAGES)) ]
-	#The regex is that: (it may start with a + or digits ranging from 1 to 3 optionally followed by space or -) or
-	#(simply 10 digits followed by a space)
+	phone_set = [str(i) for i in set(re.findall(r"(\+?\d{1,3}[- ]?)?(\d{10}\s)", PAGES)) ]
+	# The regex is that: (it may start with a + or digits ranging from 1 to 3 optionally followed by space or -) or
+	# ... (simply 10 digits followed by a space)
 	
-	for i in phone_set:	#Cleaning up the mobile numbers format
-		i = re.sub("[^\d\+-]", "", i) #remove all chars excpet digits, + and -
+	for i in phone_set:	# Cleaning up the mobile numbers format
+		i = re.sub(r"[^\d\+-]", '', i) # Remove all chars excpet digits, + and -
 		output['phone-numbers'].append(i)
 		
 	self.save_gather(output, 'search/telegram', query, output=self.options.get('output'))
@@ -117,4 +116,3 @@ def module_api(self):
 
 def module_run(self):
 	self.alert_results(module_api(self))
-
