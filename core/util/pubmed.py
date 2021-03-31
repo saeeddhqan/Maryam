@@ -64,11 +64,11 @@ class main:
         @property
         def links_with_data(self):
                 findlink = lambda x: list(map(lambda x: self.pubmed+x, 
-                        re.findall('<a.*?class="docsum-title".*?href="(.*?)".*?>', x, flags=re.DOTALL)))
-                findauthors = lambda x: re.findall('<span class="docsum-authors full-authors">(.*?)</span>', 
+                        re.findall(r'<a.*?class="docsum-title".*?href="(.*?)".*?>', x, flags=re.DOTALL)))
+                findauthors = lambda x: re.findall(r'<span class="docsum-authors full-authors">(.*?)</span>', 
                         x, flags=re.DOTALL)
                 findtitle = lambda x: list(map(lambda x: html.unescape(re.sub('</?b>','',x)).strip(),
-                        re.findall('<a.*?class="docsum-title".*?>(.*?)</a>', x, flags=re.DOTALL)))
+                        re.findall(r'<a.*?class="docsum-title".*?>(.*?)</a>', x, flags=re.DOTALL)))
 
                 for count,article in enumerate(self._articles):
                         if count==self.max:
