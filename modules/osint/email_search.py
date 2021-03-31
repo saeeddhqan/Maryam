@@ -17,7 +17,7 @@ meta = {
 	'author': 'Saeed',
 	'version': '1.0',
 	'description': 'Search in open-sources to find emails.',
-	'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 
+	'sources': ('bing', 'pastebin', 'google', 'yahoo', 'yandex', 'metacrawler',
 				'ask', 'baidu', 'startpage', 'yippy', 'qwant', 'duckduckgo', 'hunter'),
 	'options': (
 		('query', None, True, 'Domain name or company name', '-q', 'store', str),
@@ -55,7 +55,6 @@ def search(self, name, q, q_formats, limit, count):
 	else:
 		attr = engine(q)
 	attr.run_crawl()
-	EMAILS.extend(attr.emails)
 
 def module_api(self):
 	query = self.options['query']
@@ -68,6 +67,7 @@ def module_api(self):
 	key = self.options['key']
 	q_formats = {
 		'default': f'"%40{domain}"',
+		'pastebin': f'{domain}',
 		'ask': f"%40{domain}",
 		'hunter': f"{domain}&api_key={key}"
 	}
