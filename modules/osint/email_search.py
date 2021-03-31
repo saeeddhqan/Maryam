@@ -55,6 +55,7 @@ def search(self, name, q, q_formats, limit, count):
 	else:
 		attr = engine(q)
 	attr.run_crawl()
+	EMAILS.extend(attr.emails)
 
 def module_api(self):
 	query = self.options['query']
