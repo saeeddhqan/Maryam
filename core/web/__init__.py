@@ -90,7 +90,6 @@ def create_bar_chart(data, title, x_name, y_name, hover_tool=None,
 headings = ('Type', 'Modules', 'Targets', 'Results')
 def create_app():
 
-    # setting the static_url_path to blank serves static files from the web root
     app = Flask(__name__, static_url_path='')
     app.config.from_object(__name__)
 
@@ -101,6 +100,10 @@ def create_app():
 
     @app.route('/')
     def index():
+        return render_template('index.html', workspaces=base_obj._get_workspaces(), headings=headings)
+
+    @app.route('/framework')
+    def framework():
         r = requests.get('http://localhost:5000/api/graph/')
         dataPoints = json.loads(r.text)
 
@@ -109,11 +112,11 @@ def create_app():
 
         script, div = components(plot)
 
-        return render_template('index.html', workspaces=base_obj._get_workspaces(), headings=headings, div = div, script=script)
+        return render_template('framework.html', workspaces=base_obj._get_workspaces(), headings=headings, div = div, script=script)
 
-    @app.route('/run')
-    def run():
-        return render_template('run.html', workspaces=base_obj._get_workspaces(), headings=headings)
+    @app.route('/search')
+    def search():
+        return render_template('search.html')
 
     from core.web.api import resources
     app.register_blueprint(resources)

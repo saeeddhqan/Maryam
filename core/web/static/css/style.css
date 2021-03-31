@@ -1,41 +1,31 @@
-.container{  	
-	width: 100%;
-	display: block;
-}
-
 .content{
-	width: 100%;
-	top: 70px;
-	position: relative;
+	width: 80%;
 	display: block;
-	padding: 1em;
-}
-
-.title{
-	z-index: 1;
-	position: absolute;
-	left:0px;
-	display: block;
-	align-content: center;
-	overflow: hidden;
-	width: 100%;
-	color: #212529;
+	padding-left: 20em;
+	padding-top: 1em;
 }
 
 nav{
+	z-index: 1;
 	position: relative;
 	align-items: center;
 	padding: 2em;
 }
 
 .sidebar{
+	width: 15em;
+	padding-top: 80px;
 	display: flex;
 	height: 100%;
-	top:20px;
+	top:0px;
 	bottom: 0px;
-	width: 300px;
 	position: absolute;
 	left: 0;
+	position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+}
+
+.card:hover {
+	box-shadow:  0 0 10px grey;
 }
 
 .table{
