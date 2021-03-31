@@ -637,7 +637,9 @@ class core(cmd.Cmd):
 					print(f"{name} is an int option. got {value}")
 					return
 			else:
-				self._global_options[name] = value
+                        	if value == 'None':
+                        		value = None
+                        	self._global_options[name] = value
 			print(f"{name.upper()} => {value}")
 			self._save_config(name)
 		else:
