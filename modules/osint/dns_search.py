@@ -338,7 +338,6 @@ def module_api(self):
 		engines = 'otx,duckduckgo'
 	engines = meta['sources'] if MAX else self.options['engines'].lower().split(',')
 	self.thread(search, self.options['thread'], engines, query, {}, limit, count, meta['sources'])
-	# print(HOSTNAMES)
 	output['hostnames'] = list(set(HOSTNAMES))
 	if self.options['validate']:
 		validate_hosts = []

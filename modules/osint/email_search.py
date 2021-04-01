@@ -68,7 +68,6 @@ def module_api(self):
 	key = self.options['key']
 	q_formats = {
 		'default': f'"%40{domain}"',
-		'pastebin': f'{domain}',
 		'ask': f"%40{domain}",
 		'hunter': f"{domain}&api_key={key}"
 	}
