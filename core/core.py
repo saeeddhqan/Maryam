@@ -616,7 +616,7 @@ class core(cmd.Cmd):
 		name = options[0].lower()
 		if name in self._global_options:
 			value = ' '.join(options[1:])
-			if self._global_options_[name][2] and not value:
+			if self._global_options_[name][2] and (not value or value == 'None'):
 				print(f"{name} is a required option.")
 				return
 			if value[:1] == '$':
@@ -637,9 +637,9 @@ class core(cmd.Cmd):
 					print(f"{name} is an int option. got {value}")
 					return
 			else:
-                        	if value == 'None':
-                        		value = None
-                        	self._global_options[name] = value
+				if value == 'None':
+					value = None
+				self._global_options[name] = value
 			print(f"{name.upper()} => {value}")
 			self._save_config(name)
 		else:
