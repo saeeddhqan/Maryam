@@ -14,14 +14,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
 import concurrent.futures
-import urllib
 from bs4 import BeautifulSoup
 import json
 
 meta = {
 	'name': 'GitHub Leaks',
 	'author': 'Aman Singh',
-	'version': '1.0',
+	'version': '0.1',
 	'description': 'Search your query in the GitHub and show the potentially leaked info.',
 	'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo', 'github'),
 	'options': (
@@ -40,8 +39,8 @@ REPO = []
 OUTPUT = {'links': {}}
 
 def checks(self, repo):
-	threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=8)
-	futures = (threadpool.submit(leaks, self, re.sub('https://github.com/', '', link)) for link in repo)
+	threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=16)
+	futures = (threadpool.submit(leaks, self, link) for link in repo)
 	for results in concurrent.futures.as_completed(futures):
 		print(f"Found {len(OUTPUT['links'])} links" , end= '\r')
 	print('\n')
@@ -49,7 +48,7 @@ def checks(self, repo):
 def leaks(self, repo):
 	checks = ['password','npmrc _auth','dockercfg','pem private','id_rsa','aws_access_key_id','s3cfg','htpasswd','git-credentials','bashrc password','sshd_config','xoxp OR xoxb OR xoxa','SECRET_KEY','client_secret','sshd_config','github_token','api_key','FTP','app_secret','passwd','s3.yml','.exs','beanstalkd.yml','deploy.rake','mysql','credentials','PWD','deploy.rake','.bash_history','.sls','secrets','composer.json']
 	for term in checks:
-		url = f"https://github.com/{re.sub('https://github.com/', '',repo)}/search?q={urllib.parse.quote(term)}"
+		url = f"{repo}/search?q={self.urlib(term).quote_plus.replace('.','%2E')}"
 		try:
 			headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
 			req = self.request(url, headers=headers, timeout=20)
@@ -58,10 +57,10 @@ def leaks(self, repo):
 		else:
 			try:
 				soup = BeautifulSoup(req.content, 'html.parser')
-				results = soup.find_all('div', class_='f4 text-normal')
+				results = soup.find_all('div', class_='width-full')
 				if len(results) > 0:
 					for result in results:
-						OUTPUT['links'][url] = json.loads(result.find('a')['data-hydro-click'])['payload']['result']['url']
+						OUTPUT['links'][json.loads(result.find('a')['data-hydro-click'])['payload']['result']['url']] = [re.sub(term , '\033[91m' +term+'\033[0m', line) for line in str(''.join([code.text for code in result.find_all('td' ,class_ ="blob-code blob-code-inner")])).split('\n') if term in line]
 			except:
 				return
 
@@ -124,4 +123,10 @@ def module_api(self):
 	return output
 
 def module_run(self):
-	self.alert_results(module_api(self))
+	output = module_api(self)
+	self.alert("Links\n")
+	for url in output['links']:
+		self.output('\033[1m' + url + '\033[0m', 'G')
+		for line in output['links'][url]:
+			self.output(f"{re.sub(' +',' ', line)}")
+		self.output('\n')
