@@ -29,7 +29,7 @@ meta = {
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
 		('count', 50, False, 'Number of results per page(min=10, max=100, default=50)', '-c', 'store', int),
 		('thread', 3, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
-		('engine', 'pastebin', False, 'Engine names for search(default=google)', '-e', 'store', str),
+		('engine', 'pastebin', False, 'Engine names for search', '-e', 'store', str),
 	),
 	'examples': ('pastebin -q "syntax error" -l 15 --output',)
 }
