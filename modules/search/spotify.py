@@ -33,9 +33,8 @@ meta = {
 
 LINKS = []
 
-
 def search(self, name, q, q_formats, limit, count):
-    global PAGES, LINKS
+    global LINKS
     engine = getattr(self, name)
     name = engine.__init__.__name__
     q = f"{name}_q" if f"{name}_q" in q_formats else q_formats['default_q']
@@ -50,12 +49,12 @@ def search(self, name, q, q_formats, limit, count):
     attr.run_crawl()
     LINKS += attr.links
 
-
 def module_api(self):
+    global LINKS
     query = self.options['query']
     limit = self.options['limit']
     count = self.options['count']
-    engine = self.options['engine'].split(',')
+    engines = self.options['engine'].split(',')
     output = {'user': [], 'artist': [], 'playlist': [], 'album': []}
     q_formats = {
         'default_q': f"site:open.spotify.com {query}",
@@ -64,9 +63,9 @@ def module_api(self):
         'qwant_q': f'site:open.spotify.com {query}'
     }
 
-    self.thread(search, self.options['thread'], engine, query, q_formats, limit, count, meta['sources'])
+    self.thread(search, self.options['thread'], engines, query, q_formats, limit, count, meta['sources'])
 
-    global LINKS
+    
     LINKS = list(self.reglib().filter(r"https?://(open\.)?spotify\.com/", list(set(LINKS))))
 
     for link in self.reglib().filter(r"https?://(open\.)?spotify\.com/user/", LINKS):
