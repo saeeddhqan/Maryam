@@ -24,7 +24,7 @@ meta = {
 	'sources': ('securitytrails', 'bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'baidu', 'startpage',
 				'netcraft', 'threatcrowd', 'virustotal', 'yippy', 'otx', 'carrot2', 'crt',
 				'qwant', 'millionshort', 'threatminer', 'jldc', 'bufferover', 'rapiddns', 'certspotter',
-				'sublist3r', 'riddler', 'sitedossier', 'duckduckgo', 'dnsdumpster', 'yougetsignal', 'urlscan'),
+				'sublist3r', 'riddler', 'sitedossier', 'duckduckgo', 'dnsdumpster', 'yougetsignal', 'pastebin', 'urlscan'),
 	'options': (
 		('domain', None,
 		 False, 'Domain name without https?://', '-d', 'store', str),
