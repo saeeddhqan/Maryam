@@ -616,7 +616,7 @@ class core(cmd.Cmd):
 		name = options[0].lower()
 		if name in self._global_options:
 			value = ' '.join(options[1:])
-			if self._global_options_[name][2] and not value :
+			if self._global_options_[name][2] and (not value or value == 'None'):
 				print(f"{name} is a required option.")
 				return
 			if value[:1] == '$':
