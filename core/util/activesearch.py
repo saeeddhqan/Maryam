@@ -77,10 +77,6 @@ class main:
 						req.text)))
 
 					if len(max_pages)==0:
-						print(req.text)
-						print(max_pages)
-						print("Cant find max pages text")
-						print(payload)
 						break
 
 					else:
