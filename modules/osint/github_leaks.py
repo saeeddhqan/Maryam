@@ -60,7 +60,7 @@ def leaks(self, repo, term):
 	try:
 		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
 		req = self.request(url, headers=headers, timeout=20)
-		if('We couldn’t find any code matching' in req.text):
+		if 'We couldn’t find any code matching' in req.text:
 			return
 	except Exception as e:
 		return
@@ -70,7 +70,7 @@ def leaks(self, repo, term):
 			results = soup.find_all('div', class_='width-full')
 			if len(results) > 0:
 				for result in results:
-					OUTPUT['links'][json.loads(result.find('a')['data-hydro-click'])['payload']['result']['url']] = [re.sub(' +',' ', line) for line in str(''.join([code.text for code in result.find_all('td' ,class_ ="blob-code blob-code-inner")])).split('\n') if term in line]
+					OUTPUT['links'][json.loads(result.find('a')['data-hydro-click'])['payload']['result']['url']] = [re.sub(' +', ' ', line) for line in str(''.join([code.text for code in result.find_all('td' ,class_ ="blob-code blob-code-inner")])).split('\n') if term in line]
 		except:
 			return
 
@@ -123,20 +123,16 @@ def module_api(self):
 			REPO.append(repo)
 
 	REPO = list(set(REPO))
-
 	checks(self, REPO)
-
-	output = OUTPUT
-
-	self.save_gather(output,
+	self.save_gather(OUTPUT,
 	 'osint/github_leaks', query, output=self.options.get('output'))
-	return output
+	return OUTPUT
 
 def module_run(self):
 	output = module_api(self)
-	self.alert("Links\n")
+	self.alert('Links\n')
 	for url in output['links']:
 		self.output(url, 'G')
 		for line in output['links'][url]:
 			self.output(f"{line}")
-		self.output('\n')
+		print('')
