@@ -16,8 +16,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import re
-import urllib.parse
 import html
+import urllib.parse
+from bs4 import BeautifulSoup as bs
 
 class main:
 
@@ -37,6 +38,7 @@ class main:
 			self._links = []
 			self._links_with_data = []
 			self._pageno = 0
+			self._soup = ''
 			self.active_search = 'www.activesearchresults.com'
 			
 
@@ -73,11 +75,11 @@ class main:
 
 				if self._pageno==1:
 					max_pages = list(map(int, re.findall(
-						r"<a href='/searchsubmit.php\?pageno=(\d*?)'>LAST",
+						r"<a href='/searchsubmit.php\?pageno=(\d+[^']+)'>LAST",
 						req.text)))
 
 					if len(max_pages)==0:
-						break
+						return
 
 					else:
 						max_pages = max_pages[0]
@@ -88,16 +90,19 @@ class main:
 				if self._pageno > max_pages or self._pageno*100>self._max:
 					break
 					    
-			self._clubbedrows = '\n'.join(re.findall(r'<small>(.*?)</small>',
-				self._rawhtml,
-				flags=re.DOTALL))
+			self._soup = bs(self._rawhtml,'html.parser')
+			self._clubbedrows = self._soup.find_all('small')[5]
+			self._rows = self._clubbedrows.find_all('a')
 
-			self._rows = re.findall(r'<a.*?<hr>', 
-				self._clubbedrows, 
-				flags=re.DOTALL)
+			for count, row in enumerate(self._rows):
+				if count>self._max:
+					break
+				self._links.append(row['href'])
+				self._links_with_data.append({
+					'title': row['href'],
+					'link' : row.text
+					})
 
-			self._links = re.findall(r"<a href='(.*?)'.*?>.*?<br>",
-				self._clubbedrows)[:self._max]
 
 		@property
 		def raw(self):
@@ -125,21 +130,4 @@ class main:
 
 		@property
 		def links_with_data(self):
-			findlink = lambda x: re.findall(r"<a href='(.*?)'.*?>.*?<br>", x)
-			findtitle = lambda x: list(map(
-				html.unescape,
-				re.findall(r"<a href='.*?'.*?>(.*?)</a>.*?<br>", 
-					x, 
-					flags=re.DOTALL)))
-
-			for count, row in enumerate(self._rows):
-				if count>self._max:
-					break
-
-				self._links_with_data.append({
-					'title': findtitle(row)[0],
-					'link' : findlink(row)[0]
-					})
-
-
 			return self._links_with_data 

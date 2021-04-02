@@ -33,18 +33,19 @@ def module_api(self):
 	limit = self.options['limit']
 	run = self.activesearch(query, limit)
 	run.run_crawl()
-	links = run.links
-	output = {'links': links}
 
-	# To get titles along with links
-	# output = {'results': []}
-	# links = run.links_with_data
+	output = {'results': []}
+	links = run.links_with_data
 
-	# for item in links:
-	# 	output['results'].append(item)
+	for item in links:
+		output['results'].append(item)
 
 	self.save_gather(output, 'search/activesearch', query, output=self.options['output'])
 	return output
 
 def module_run(self):
-	self.alert_results(module_api(self))
+	output = module_api(self)['results']
+	for item in output:
+		print()
+		self.output(item['title'])
+		self.output(item['link'])
