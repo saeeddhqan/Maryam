@@ -39,30 +39,40 @@ REPO = []
 OUTPUT = {'links': {}}
 
 def checks(self, repo):
-	threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=16)
-	futures = (threadpool.submit(leaks, self, link) for link in repo)
-	for results in concurrent.futures.as_completed(futures):
-		print(f"Found {len(OUTPUT['links'])} links" , end= '\r')
+	checks = ['filename:.npmrc filename:.dockercfg filename:id_rsa filename:credentials filename:.s3cfg',#NOT MORE THAN 500 CHAR IN ONE QUERY
+	'filename:wp-config.php filename:.htpasswd filename:.git-credentials filename:.bashrc filename:.bash_profile', 
+	'filename:.netrc filename:config filename:connections.xml filename:express.conf filename:.pgpass', 
+	'filename:proftpdpasswd filename:server.cfg filename:.bash_history filename:.cshrc filename:.history filename:.sh_history filename:sshd_config', 
+	'filename:dhcpd.conf filename:prod.exs filename:shadow filename:passwd filename:.esmtprc filename:logins.json', 
+	'filename:CCCam.cfg filename:settings filename:secrets filename:master.key filename:WebServers.xml',
+	'password', 'DB_USERNAME', 'TOKEN', 'API_KEY' , 'SECRET_KEY', 'credentials',
+	'extension:pem extension:ppk extension:sql extension:sls'
+	]
+	for term in checks:
+		threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=4)
+		futures = (threadpool.submit(leaks, self, link, term) for link in repo)
+		for results in concurrent.futures.as_completed(futures):
+			print(f"Found {len(OUTPUT['links'])} links" , end= '\r')
 	print('\n')
 
-def leaks(self, repo):
-	checks = ['password','npmrc _auth','dockercfg','pem private','id_rsa','aws_access_key_id','s3cfg','htpasswd','git-credentials','bashrc password','sshd_config','xoxp OR xoxb OR xoxa','SECRET_KEY','client_secret','sshd_config','github_token','api_key','FTP','app_secret','passwd','s3.yml','.exs','beanstalkd.yml','deploy.rake','mysql','credentials','PWD','deploy.rake','.bash_history','.sls','secrets','composer.json']
-	for term in checks:
-		url = f"{repo}/search?q={self.urlib(term).quote_plus.replace('.','%2E')}"
-		try:
-			headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
-			req = self.request(url, headers=headers, timeout=20)
-		except Exception as e:
+def leaks(self, repo, term):
+	url = f"{repo}/search?q={self.urlib(term).quote_plus.replace('.','%2E')}"
+	try:
+		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+		req = self.request(url, headers=headers, timeout=20)
+		if('We couldn’t find any code matching' in req.text):
 			return
-		else:
-			try:
-				soup = BeautifulSoup(req.content, 'html.parser')
-				results = soup.find_all('div', class_='width-full')
-				if len(results) > 0:
-					for result in results:
-						OUTPUT['links'][json.loads(result.find('a')['data-hydro-click'])['payload']['result']['url']] = [re.sub(term , '\033[91m' +term+'\033[0m', line) for line in str(''.join([code.text for code in result.find_all('td' ,class_ ="blob-code blob-code-inner")])).split('\n') if term in line]
-			except:
-				return
+	except Exception as e:
+		return
+	else:
+		try:
+			soup = BeautifulSoup(req.content, 'html.parser')
+			results = soup.find_all('div', class_='width-full')
+			if len(results) > 0:
+				for result in results:
+					OUTPUT['links'][json.loads(result.find('a')['data-hydro-click'])['payload']['result']['url']] = [re.sub(' +',' ', line) for line in str(''.join([code.text for code in result.find_all('td' ,class_ ="blob-code blob-code-inner")])).split('\n') if term in line]
+		except:
+			return
 
 def search(self, name, q, q_formats, limit, count):
 	global PAGES,LINKS, USERS, REPO
@@ -126,7 +136,7 @@ def module_run(self):
 	output = module_api(self)
 	self.alert("Links\n")
 	for url in output['links']:
-		self.output('\033[1m' + url + '\033[0m', 'G')
+		self.output(url, 'G')
 		for line in output['links'][url]:
-			self.output(f"{re.sub(' +',' ', line)}")
+			self.output(f"{line}")
 		self.output('\n')
