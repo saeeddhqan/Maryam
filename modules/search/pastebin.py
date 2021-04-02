@@ -64,21 +64,19 @@ def module_api(self):
 		'default_q': f"{query}"
 	}
 	self.thread(search, self.options['thread'], engine, query, q_formats, limit, count, meta['sources'])
-	links = list(self.reglib().filter(r'https?://pastebin\.com/[\w\d]{2,}', list(set(LINKS))))
-	self.verbose('Rearranging paste links [give it a few seconds]...')
+	links = list(self.reglib().filter(r"https?://pastebin\.com/[\w\d]{2,}", list(set(LINKS))))
+	self.verbose("Rearranging paste links [give it a few seconds]...")
 	for link in links:
-		heading = re.search(r'pastebin\.com/([\w\d]+)', link)
+		heading = re.search(r"pastebin\.com/([\w\d]+)", link)
 		if heading:
-			head_raw = f'https://pastebin.com/raw/{heading.group(1)}'
+			head_raw = f"https://pastebin.com/raw/{heading.group(1)}"
 			try:
 				head_req = self.request(url=head_raw).text.splitlines()[0].lstrip()
 			except:
-				self.verbose('Pastebin is missed!')
+				self.verbose("Pastebin is missed!")
 			else:
-				if re.search(r'[Pp]assword:|[Uu]sername:|@|bin|_|\*|=|:', head_req):
-					title = 'Title too long to display'
-				else:
-					title = head_req.title()
+				head_title = f"{query} pastes {head_req}".ljust(10, ' ')[:30]
+				title = head_title.title()
 		output['pastes'].append([link, title])
 	self.save_gather(output, 'search/pastebin', query, output=self.options.get('output'))
 	return output
