@@ -65,15 +65,15 @@ def module_api(self):
 	}
 	self.thread(search, self.options['thread'], engine, query, q_formats, limit, count, meta['sources'])
 	links = list(self.reglib().filter(r"https?://pastebin\.com/[\w\d]{2,}", list(set(LINKS))))
-	self.verbose("Rearranging paste links [give it a few seconds]...")
+	self.verbose('Rearranging paste links [give it a few seconds]...')
 	for link in links:
 		heading = re.search(r"pastebin\.com/([\w\d]+)", link)
 		if heading:
 			head_raw = f"https://pastebin.com/raw/{heading.group(1)}"
 			try:
 				head_req = self.request(url=head_raw).text.splitlines()[0].lstrip()
-			except:
-				self.verbose("Pastebin is missed!")
+			except Exception as e:
+				self.verbose('Pastebin is missed!')
 			else:
 				head_title = f"{query} pastes {head_req[:30]}...".ljust(10, ' ')
 				title = head_title.title()
