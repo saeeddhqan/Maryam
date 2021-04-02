@@ -75,7 +75,7 @@ def module_api(self):
 			except:
 				self.verbose("Pastebin is missed!")
 			else:
-				head_title = f"{query} pastes {head_req}".ljust(10, ' ')[:30]
+				head_title = f"{query} pastes {head_req[:30]}...".ljust(10, ' ')
 				title = head_title.title()
 		output['pastes'].append([link, title])
 	self.save_gather(output, 'search/pastebin', query, output=self.options.get('output'))
