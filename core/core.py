@@ -1,16 +1,13 @@
 """
 OWASP Maryam!
-
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 any later version.
-
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
@@ -22,10 +19,13 @@ import re
 import subprocess
 import sys
 import traceback
-import requests
-from core.util import rand_uagent
 from io import StringIO
 from textwrap import wrap
+
+import requests
+
+from core.util import rand_uagent
+
 
 class FrameworkException(Exception):
 	def __init__(self, message):
@@ -103,7 +103,7 @@ class core(cmd.Cmd):
 					return self.default(line)
 				try:
 					return func(arg)
-				except Exception:
+				except Exception as e:
 					self.print_exception()
 
 	def print_topics(self, header, cmds, cmdlen, maxcol):
@@ -986,5 +986,6 @@ class core(cmd.Cmd):
 		return [x for x in ['off', 'on', 'status', 'all', 'from ', 'clear'] if x.startswith(text.lower())]
 
 	def complete_show(self, text, line, begidx, endidx):
+		# args = line.split()
 		options = sorted(self._get_show_names())
 		return [x for x in options if x.startswith(text)]
