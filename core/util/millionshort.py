@@ -40,7 +40,6 @@ class main:
 		set_page = lambda x: x*10
 		urls = [f'https://{self.millionshort}/api/search?keywords={self.q}&remove=0&offset={set_page(i)}'
 					for i in range(self.limit)]
-		self.framework.verbose('Opening the millionshort.com domain...', end='\r')
 		for url in range(len(urls)):
 			self.framework.verbose(f"[MILLIONSHORT] Searching in {url} page...")
 			try:
