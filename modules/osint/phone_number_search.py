@@ -30,17 +30,16 @@ meta = {
 
 def module_api(self):
 	num = self.options['number']
-	if re.search(r"^\+\d{1,2}\s?\d{10}$", num):
-		run = self.numverify(num)
-		run.run_crawl()
-		output = run.json
-		self.save_gather(output, 'osint/phone_number_search', num, output=self.options['output'])
-		return output
-	else:
-		self.error('Invalid Number!')
-		self.error("Number must be of the form '+{area code}{ten digit number}'")
+	run = self.numverify(num)
+	run.run_crawl()
+	output = run.json
+	self.save_gather(output, 'osint/phone_number_search', num, output=self.options['output'])
+	return output
 
 def module_run(self):
 	output = module_api(self)
-	if output is not None:
+	if output['valid']:
 		self.alert_results(output)
+	else:
+		self.error('Invalid Number!')
+		self.error("Number must be of the form '+{area code}{ten digit number}'")
