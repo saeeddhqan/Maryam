@@ -31,7 +31,7 @@ meta = {
 		('thread', 3, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
 		('engine', 'pastebin', False, 'Engine names for search', '-e', 'store', str),
 	),
-	'examples': ('pastebin -q "syntax error" -l 15 --output',)
+	'examples': ('pastebin -q passwords -l 15 --output',)
 }
 
 LINKS = []
