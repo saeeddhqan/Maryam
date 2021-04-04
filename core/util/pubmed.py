@@ -37,7 +37,6 @@ class main:
 			self.pubmed = 'https://pubmed.ncbi.nlm.nih.gov'
 
 		def run_crawl(self):
-			start = 0
 			self.q = urllib.parse.quote_plus(self.q)
 			self.framework.verbose('Searching the pubmed domain...')
 

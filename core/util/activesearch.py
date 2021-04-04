@@ -95,7 +95,7 @@ class main:
 			self._rows = self._clubbedrows.find_all('a')
 
 			for count, row in enumerate(self._rows):
-				if count>self._max:
+				if count>=self._max:
 					break
 				self._links.append(row['href'])
 				self._links_with_data.append({
