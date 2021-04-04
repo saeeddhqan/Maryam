@@ -48,7 +48,6 @@ class main:
 			try:
 				req = self.framework.request(url=urls[url], allow_redirects=True)
 			except Exception as e:
-				print(req.text)
 				self.framework.error('[DISCORD] ConnectionError')
 				max_attempt -= 1
 				if max_attempt == 0:
