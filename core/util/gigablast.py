@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import re
-from time import sleep
+import json
 from bs4 import BeautifulSoup as bs
 
 class main:
@@ -54,6 +54,22 @@ class main:
 		@property
 		def json(self):
 			return self._json
+
+		@property
+		def raw(self):
+			return json.dumps(self._json)
+
+		@property
+		def dns(self):
+			return self.framework.page_parse(self.raw).get_dns(self.q)
+
+		@property
+		def emails(self):
+			return self.framework.page_parse(self.raw).get_emails(self.q)
+
+		@property
+		def docs(self):
+			return self.framework.page_parse(self.raw).get_docs(self.q)
 
 		@property
 		def links_with_data(self):
