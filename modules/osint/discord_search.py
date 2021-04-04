@@ -26,11 +26,11 @@ meta = {
 	'options': (
 		('user', None, False, 'User flag (search for a user)', '-u', 'store', str),
 		('server', None, False, 'Server flag (search for a server)', '-s', 'store', str),
-		('limit', 3, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
+		('limit', 3, False, 'Search limit(number of pages, default=3)', '-l', 'store', int),
 		('engine', 'discord', False, 'Engine used is discord', '-e', 'store', str),
 		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
 	),
-	'examples': ('discord -u <QUERY> --output', 'discord -s <QUERY> -l 5')
+	'examples': ('discord_search -u <QUERY> --output', 'discord_search -s <QUERY> -l 5')
 	}
 
 PAGES = ''
