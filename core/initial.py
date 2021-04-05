@@ -91,6 +91,8 @@ class initialize(core):
 			'checking the framework version before running')
 		self._global_options_['api_mode'] = ('api_mode', False, True,\
 			'Activating API mode causes results will be shown in JSON format(warn: it doesnt show any other information)')
+		self._global_options_['autoproxy'] = ('autoproxy', False, False,\
+			'Fetches available online proxies and rotates them')
 		for key in self._global_options_:
 			self._global_options[key] = self._global_options_[key][1]
 
