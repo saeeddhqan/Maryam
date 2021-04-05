@@ -35,18 +35,20 @@ meta = {
 	'examples': ('bing_mobile_view -u <URL>  --output',)
 }
 
+project_root = up(up(up(__file__)))
+
 def blacklist_check(self, image_data):
-	project_root = project_root = up(up(up(__file__)))
+	global project_root
 	black_img_path = os.path.join(project_root, 'data', 'images', 'blacklist', f'{self.options["blacklist"]}.json')
 
-	if os.path.isfile(black_img_path) == False: #Check if blacklisted image exists?
+	if not os.path.isfile(black_img_path) : #Check if blacklisted image exists?
 		self.error('[Mobile Screenshot] The blacklisted image name entered by user does not exist.')
 		return False
 	
 	blacklisted_image_data = json.load(open(black_img_path)) #Load the data of blacklisted image
 	
 	counter, run = 1, self.bing_mobile_view(self.options['url'])
-	while blacklisted_image_data["img-data"] == image_data and counter <= self.options['retries']:
+	while blacklisted_image_data['img-data'] == image_data and counter <= self.options['retries']:
 		self.verbose(f'[Bing Mobile View] Image scraped is blacklisted. Retry No:{counter}')
 		if run.screenshot() == False:
 			self.verbose(f'[Bing Mobile View] Error on retry no. {counter} \
@@ -109,10 +111,10 @@ def module_api(self):
 	folder_name = splitted_url[0]
 	file_name = splitted_url[1]
 
-	project_root = project_root = up(up(up(__file__)))
+	global project_root
 	folder_filepath = os.path.join(project_root, 'data', 'images', folder_name)
 
-	if os.path.isdir(folder_filepath) == False: #If no pre-existing folder for image, make one
+	if not os.path.isdir(folder_filepath) : #If no pre-existing folder for image, make one
 		os.mkdir(folder_filepath)
 	
 	final_filepath = os.path.join(folder_filepath, f'{file_name}')
