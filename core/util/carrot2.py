@@ -44,8 +44,8 @@ class main:
 		self.framework.debug(f"[eTOOLS] Searching in 'etools.ch'...")
 		try:
 			req = self.framework.request(url=self.etools, params=params, headers=headers,allow_redirects=True)
-		except:
-			self.framework.error('[eTOOLS] ConnectionError')
+		except Exception as e:
+			self.framework.error(f"[eTOOLS] ConnectionError: {e}")
 			self.framework.error('eTOOLS is missed!')
 		else:
 			self._pages = req.text
