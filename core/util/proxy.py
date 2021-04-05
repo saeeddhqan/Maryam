@@ -4,12 +4,12 @@ import time
 
 class main:
 
-    def __init__(self, use=False):
+    def __init__(self, use=False, verbose=False):
         '''
         use : Determine whether to use proxy or not.
         '''
         self.use=use
-
+        self.verbose=verbose
     iplist=[]
     proxydict={}
 
@@ -53,11 +53,12 @@ class main:
                 try:
                     if int(requests.get(ips[j]).status_code)==200:
                         ips2.append(ips[j])
-                    
-                    print(f"{ips[j]} is available! Yay! :D")
+                    if self.verbose==True:
+                        print(f"{ips[j]} is available! Yay! :D")
                 except Exception as e2:
-                    print(f"{ips[j]} is not available. :(")
-                    print(f"An error occured. Error details: {e2}")
+                    if self.verbose==True:
+                        print(f"{ips[j]} is not available. :(")
+                        print(f"An error occured. Error details: {e2}")
                 finally:
                     j+=1 
             ips=[]                   
