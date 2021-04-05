@@ -13,7 +13,7 @@ class main:
     iplist=[]
     proxydict={}
 
-    def getproxy(use=False):
+    def getproxy(self,use=False):
         if self.use==True:
             print("[PROXY] Gathering proxies. It's quite time consuming, so do some pushups in the meantime :P")
             URL=['https://premproxy.com/list/']
@@ -59,8 +59,9 @@ class main:
                     print(f"{ips[j]} is not available. :(")
                     print(f"An error occured. Error details: {e2}")
                 finally:
-                    j+=1            
-            #print(ips)
+                    j+=1 
+            ips=[]                   
+            #print(ips2)
             print("[PROXY] Availability check completed! Writing to file...")
             f=open('proxy_fetch.txt','w')
             
@@ -74,7 +75,7 @@ class main:
 #For debugging purposes, uncomment the line below     
 #getproxy(use=True)   
 
-    def readip():
+    def readip(self):
         global iplist
         print("[PROXY] Reading from generated proxy list...")
         iplist=open("proxy_fetch.txt","r").readlines()
@@ -82,7 +83,7 @@ class main:
     #For debugging purposes, uncomment the line below     
     #readip()     
 
-    def rotateip(k):
+    def rotateip(self,k):
         global iplist
         if k<iplist[k]:
             return {"http":iplist[k]}
