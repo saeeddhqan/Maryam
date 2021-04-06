@@ -32,7 +32,7 @@ class main:
 		self.framework.verbose('[Bing Mobile View] Fetching mobile view of the URL...')
 		bing_api_url = 'https://www.bing.com/webmaster/tools/mobile-friendliness-result'
 		
-		self.rand_agent = True
+		self._global_options['rand_agent'] = True
 				
 		try:
 			response = self.framework.request(url=bing_api_url, method='POST', \
