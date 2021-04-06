@@ -26,14 +26,14 @@ meta = {
 	'author': 'Vikas Kundu',
 	'version': '0.1',
 	'description': 'Get screenshot of a URL in Bing mobile friendly view',
-	'sources': (['bing']),
+	'sources': ('bing',),
 	'options': (
 		('url', None, True, 'URL whose mobile screenshot needs to be taken', '-u', 'store', str),
-		('blacklist', None, False, 'If this image is found retry, available= \
-		[linkedin_authwall_en, add-your-custom]', '-b', 'store', str),
+		('blacklist', None, False, 'If this image is found retry, available='\
+		'[linkedin_authwall_en, add-your-custom]', '-b', 'store', str),
 		('retries', 2, False, 'Number of times to try again if blacklist image found, default=2', '-r', 'store', int),
 	),
-	'examples': ('bing_mobile_view -u <URL>  --output',)
+	'examples': ('bing_mobile_view -u <URL>',)
 }
 
 project_root = up(up(up(__file__)))
@@ -41,26 +41,22 @@ project_root = up(up(up(__file__)))
 def blacklist_check(self, image_data):
 	global project_root
 	black_img_path = os.path.join(project_root, 'data', 'images', 'blacklist', f'{self.options["blacklist"]}.json')
-
-	if not os.path.isfile(black_img_path) : #Check if blacklisted image exists?
+	if not os.path.isfile(black_img_path) : # Check if blacklisted image exists?
 		self.error('[Mobile Screenshot] The blacklisted image name entered by user does not exist.')
 		return False
-	
-	blacklisted_image_data = json.load(open(black_img_path)) #Load the data of blacklisted image
-	
+
+	blacklisted_image_data = json.load(open(black_img_path)) # Load the data of blacklisted image
 	counter, run = 1, self.bing_mobile_view(self.options['url'])
-	
-	#print(image_data,'\n\n\n\n', blacklisted_image_data['img-data'])
 	while blacklisted_image_data['img-data'] == image_data and counter <= self.options['retries']:
-		self.verbose(f'[Bing Mobile View] Image scraped is blacklisted. Retry No:{counter}')
+		self.verbose(f"[Bing Mobile View] Image scraped is blacklisted. Retry No:{counter}")
 		if run.screenshot() == False:
-			self.verbose(f'[Bing Mobile View] Error on retry no. {counter}. Maybe this is not a public URL.')
+			self.verbose(f"[Bing Mobile View] Error on retry no. {counter}. Maybe this is not a public URL.")
 			return False
 	
 		image_data = run.raw_image_data
-		counter+=1
+		counter += 1
 	
-	if counter-1 == self.options['retries']: #If all retries are done then return false otherwise image data
+	if counter-1 == self.options['retries']: # If all retries are done then return false otherwise image data
 		self.error('[Bing Mobile View] Exhausted retries, maybe this is not a public profile.')
 		return False
 	else:
@@ -71,11 +67,11 @@ def module_api(self):
 	url = self.options['url']
 	blacklisted_img_name = self.options['blacklist']
 	retries = self.options['retries']
-	output = {'Image-Location': [] }
+	output = {'Image-Location': []}
 
 	run = self.bing_mobile_view(url)
 
-	if run.screenshot() == False: #If some error has occured while taking screenshot, return output to avoid further errors.
+	if not run.screenshot(): # If some error has occured while taking screenshot, return output to avoid further errors.
 		return output
 
 	image_data = run.raw_image_data
@@ -87,13 +83,13 @@ def module_api(self):
 	'''
 	Blacklisted images are images like authwall of linkedin, if they are found, retry.
 	To add your own image, go to data/images/blacklist/ and save in file_name.json format
-	like {'img-data':'base-64-data-of-image'}. Then pass it using -b param i.e. -b custom-blacklist-image
+	like {'img-data': 'base-64-data-of-image'}. Then pass it using -b param i.e. -b custom-blacklist-image
 	For more info, see add-your-custom.json file.
 	'''
 	if blacklisted_img_name is not None:
 		self.verbose('[Bing Mobile View] Checking if the image obtained is blacklisted...')
 		image_data = blacklist_check(self, image_data)	
-		if image_data == False: #If some error while blacklist_check function then exit
+		if not image_data: # If some error while blacklist_check function then exit
 			return output
 			
 	'''
@@ -104,12 +100,12 @@ def module_api(self):
 	'''
 
 	folder_name = urllib.parse.urlparse(str(url)).netloc if urllib.parse.urlparse(str(url)).netloc \
-	else  urllib.parse.quote_plus(url) #Folder name is the domain name. If empty then folder name == URL
-	file_name = f'{urllib.parse.quote_plus(url)} {str(datetime.datetime.now())}.jpg' #File name is url encode+timestamp
+	else urllib.parse.quote_plus(url) #Folder name is the domain name. If empty then folder name == URL
+	file_name = f"{urllib.parse.quote_plus(url)} {str(datetime.datetime.now())}.jpg" #File name is url encode+timestamp
 	
 	folder_filepath = os.path.join(project_root, 'data', 'images', folder_name)
 
-	if not os.path.isdir(folder_filepath) : #If no pre-existing folder for image, make one
+	if not os.path.isdir(folder_filepath) : # If no pre-existing folder for image, make one
 		os.mkdir(folder_filepath)
 	
 	final_filepath = os.path.join(folder_filepath, f'{file_name}')
