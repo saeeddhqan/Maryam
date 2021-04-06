@@ -27,8 +27,7 @@ class main:
         '''
         self.use=self._global_options_['autoproxy']
         self.verbose = verbose
-    iplist = []
-    proxydict = {}
+        self.iplist = []
 
     def getproxy(self):
         if self.use == True:
@@ -88,16 +87,14 @@ class main:
 #getproxy(use=True)   
 
     def readip(self):
-         global iplist
         self.framework.output("[PROXY] Reading from generated proxy list...")
-        iplist = open("proxy_fetch.txt","r").readlines()
+        self.iplist = open("proxy_fetch.txt","r").readlines()
 #For debugging purposes, uncomment the line below     
 #readip()     
 
     def rotateip(self,k):
-        global iplist
-        if k<iplist[k]:
-            return {"http":iplist[k]}
+        if k<self.iplist[k]:
+            return {"http":self.iplist[k]}
         else:
             return -1
 
