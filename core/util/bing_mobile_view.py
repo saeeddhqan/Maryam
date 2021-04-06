@@ -36,11 +36,12 @@ class main:
 				
 		try:
 			response = self.framework.request(url=bing_api_url, method='POST', \
+			data={'url': self.url, 'retry': '0'}, timeout=40).text # Setting high timeout of as some req take long
 		except:
 			self.framework.error('[Bing Mobile View] ConnectionError.')
 			return  False
 		else:
-			data = {'url': self.url, 'retry': '0'}, timeout=40).text # Setting high timeout of as some req take long
+			
 			if 'Bing Webmaster services could not be reached' in response :
 				self.framework.error('[Bing Mobile View] Bing Webmaster services could not be reached')
 				return False
