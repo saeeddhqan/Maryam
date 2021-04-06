@@ -71,7 +71,7 @@ def module_api(self):
 
 	run = self.bing_mobile_view(url)
 
-	if not run.screenshot(): # If some error has occured while taking screenshot, return output to avoid further errors.
+	if run.screenshot() == 'False': # If some error has occured while taking screenshot, return output to avoid further errors.
 		return output
 
 	image_data = run.raw_image_data
