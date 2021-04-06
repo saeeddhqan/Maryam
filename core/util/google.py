@@ -20,14 +20,14 @@ import os
 #from core.util import proxy
 class main:
 	# framework = None
-	def __init__(self, q, limit=1, count=10, google_api=None, google_cx=None)#, autoproxy=False):
+	def __init__(self, q, limit=1, count=10, google_api=None, google_cx=None):
 		""" google.com search engine
 
 			q          : Query for search
 			limit      : Number of pages
 			google_api : Google api(if you need to use api_run_crawl)
 			google_cx  : Google cx(if you need to use api_run_crawl)
-            autoproxy  : Use rotating proxies
+			autoproxy  : Use rotating proxies
 		"""
 		self.framework = main.framework
 		self.q = q
@@ -38,8 +38,8 @@ class main:
 		self.google_api = google_api
 		self.google_cx = google_cx
 		self._links = []
-		self.autoproxy=self._global_options_['autoproxy']
-		self.countip=0
+		self.autoproxy = self._global_options_['autoproxy']
+		self.countip = 0
 
 	def run_crawl(self):
 		page = 1
@@ -49,33 +49,29 @@ class main:
 		max_attempt = 0
 		while True:
 			self.framework.verbose(f'[GOOGLE] Searching in {page} page...', end='\r')
+			proxies = self.framework.proxy.rotateip(self.countip) if self.autoproxy else None
 			try:
-				if self.autoproxy==True:
-					req = self.framework.request(
-						url=url,
-						params=payload,
-						headers={'User-Agent': self.agent},
+				req = self.framework.request(
+					url=url,
+					params=payload,
+					headers={'User-Agent': self.agent},
 					allow_redirects=True,
-					proxies=self.framework.proxy.rotateip(self.countip))
-				else:
-					req = self.framework.request(
-						url=url,
-						params=payload,
-						headers={'User-Agent': self.agent})	
+					proxies=proxies)	
 			except Exception as e:
 				self.framework.error(f"[GOOGLE] ConnectionError: {e}")
 				return
-			if req.status_code in (503, 429):
-				req = self.framework.error('[GOOGLE] Google CAPTCHA triggered.')
-				if self.autoproxy == True:
-					self.countip+=1
-					if proxy.rotateip(self.countip)==-1:
-						self.framework.output('[PROXY] End of proxy list. ')
-						break
+			else:
+				if req.status_code in (503, 429):
+					req = self.framework.error('[GOOGLE] Google CAPTCHA triggered.')
+					if self.autoproxy:
+						self.countip += 1
+						if proxy.rotateip(self.countip) == -1:
+							self.framework.output('[PROXY] End of proxy list.')
+							break
+						else:
+							continue
 					else:
-						continue
-				else:
-					break
+						break
 				
 			if req.status_code in (301, 302):
 				redirect = req.headers['location']
