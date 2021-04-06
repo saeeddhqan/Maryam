@@ -32,24 +32,24 @@ class main:
 		self.framework.verbose('[Bing Mobile View] Fetching mobile view of the URL...')
 		bing_api_url = 'https://www.bing.com/webmaster/tools/mobile-friendliness-result'
 		
-		self.rand_agent= True
+		self.rand_agent = True
 				
 		try:
-			response = self.framework.request(url=bing_api_url, method="POST", \
-			data={'url': self.url, 'retry':'0'}, timeout=40 ).text #Setting high timeout of as some req take long
+			response = self.framework.request(url=bing_api_url, method='POST', \
 		except:
 			self.framework.error('[Bing Mobile View] ConnectionError.')
 			return  False
+		else:
+			data = {'url': self.url, 'retry': '0'}, timeout=40).text # Setting high timeout of as some req take long
+			if 'Bing Webmaster services could not be reached' in response :
+				self.framework.error('[Bing Mobile View] Bing Webmaster services could not be reached')
+				return False
 
-		if 'Bing Webmaster services could not be reached' in response :
-			self.framework.error('[Bing Mobile View] Bing Webmaster services could not be reached')
-			return False
-		
-		self._raw_image_data = re.findall(r"data\:image.*\"", response) #Regex for base64 encoded image 
+			self._raw_image_data = re.findall(r'data\:image.*"', response) # Regex for base64 encoded image 
 
 	@property
 	def raw_image_data(self):
-		if self._raw_image_data == []: #If no image return empty string else first image
+		if self._raw_image_data == []: # If no image return empty string else first image
 			return ''
 		return self._raw_image_data[0]
 
