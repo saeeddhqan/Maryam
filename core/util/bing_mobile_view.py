@@ -40,12 +40,12 @@ class main:
 		except:
 			self.framework.error('[Bing Mobile View] ConnectionError.')
 			return  False
-		
+
 		if 'Bing Webmaster services could not be reached' in response :
 			self.framework.error('[Bing Mobile View] Bing Webmaster services could not be reached')
 			return False
 		
-		self._raw_image_data = re.findall(r"data\:image.*[=]{1,2}", response) #Regex for base64 encoded image 
+		self._raw_image_data = re.findall(r"data\:image.*\"", response) #Regex for base64 encoded image 
 
 	@property
 	def raw_image_data(self):

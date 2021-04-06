@@ -14,6 +14,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+import re
 import os
 import urllib
 import json
@@ -48,11 +49,12 @@ def blacklist_check(self, image_data):
 	blacklisted_image_data = json.load(open(black_img_path)) #Load the data of blacklisted image
 	
 	counter, run = 1, self.bing_mobile_view(self.options['url'])
+	
+	#print(image_data,'\n\n\n\n', blacklisted_image_data['img-data'])
 	while blacklisted_image_data['img-data'] == image_data and counter <= self.options['retries']:
 		self.verbose(f'[Bing Mobile View] Image scraped is blacklisted. Retry No:{counter}')
 		if run.screenshot() == False:
-			self.verbose(f'[Bing Mobile View] Error on retry no. {counter} \
-			Maybe this is not a public profile.')
+			self.verbose(f'[Bing Mobile View] Error on retry no. {counter}. Maybe this is not a public URL.')
 			return False
 	
 		image_data = run.raw_image_data
@@ -64,18 +66,8 @@ def blacklist_check(self, image_data):
 	else:
 		return image_data
 
-def url_split(url):
-	folder_name = re.findall(r"/{2}[\w\.-]+/{1}",url) #Find string between // and /
-	folder_name = folder_name[0].replace('/','') #Use first such string as folder name i.e. domain name
-
-	trim_point = url.index(folder_name[-1:]) #Find index of last element of folder_name 
-	image_name = f'{url[trim_point+1:]} {str(datetime.datetime.now())}.jpg' #Start file name from that point and add timestamp
-	image_name = image_name.replace('/','-') #Replace char '/' to avoid directory errors
-	#image_name = urllib.parse.quote_plus(image_name) #Or use full url encoding if still errors 
-	
-	return [folder_name, image_name]
-
 def module_api(self):
+	global project_root
 	url = self.options['url']
 	blacklisted_img_name = self.options['blacklist']
 	retries = self.options['retries']
@@ -87,6 +79,10 @@ def module_api(self):
 		return output
 
 	image_data = run.raw_image_data
+
+	if image_data == '':
+		self.error('[Bing Mobile View] Unable to detect image in the page')
+		return output
 
 	'''
 	Blacklisted images are images like authwall of linkedin, if they are found, retry.
@@ -107,11 +103,10 @@ def module_api(self):
 	where timestamp is added to make each image name unique.	
 	'''
 
-	splitted_url = url_split(url) #Fucntion to split URL into folder name and file name
-	folder_name = splitted_url[0]
-	file_name = splitted_url[1]
-
-	global project_root
+	folder_name = urllib.parse.urlparse(str(url)).netloc if urllib.parse.urlparse(str(url)).netloc \
+	else  urllib.parse.quote_plus(url) #Folder name is the domain name. If empty then folder name == URL
+	file_name = f'{urllib.parse.quote_plus(url)} {str(datetime.datetime.now())}.jpg' #File name is url encode+timestamp
+	
 	folder_filepath = os.path.join(project_root, 'data', 'images', folder_name)
 
 	if not os.path.isdir(folder_filepath) : #If no pre-existing folder for image, make one
@@ -119,14 +114,13 @@ def module_api(self):
 	
 	final_filepath = os.path.join(folder_filepath, f'{file_name}')
 
+	self.verbose('[Bing Mobile View] Dumping the image...')	
 	response = urllib.request.urlopen(image_data)
-	self.verbose('[Bing Mobile View] Dumping the image...')
-
 	with open(final_filepath, 'wb') as f:
         	f.write(response.file.read())
     
 	output['Image-Location'] += [str(final_filepath)]
-
+	
 	self.save_gather(output, 'osint/bing_mobile_view', url, output=self.options.get('output'))
 	return output
 
