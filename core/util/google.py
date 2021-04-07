@@ -32,7 +32,7 @@ class main:
 		self.q = q
 		self.agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:86.0) Gecko/20100101 Firefox/86.0'
 		self._pages = ''
-		self.limit = limit+1
+		self.limit = limit + 1
 		self.num = count
 		self.google_api = google_api
 		self.google_cx = google_cx
@@ -59,7 +59,7 @@ class main:
 				self.framework.error('[GOOGLE] Google CAPTCHA triggered.')
 				self.framework.verbose('[GOOGLE] Switching to SearchPortal..')
 				req = self.framework.searchportal(self.q, self.limit, self.num).run_crawl()
-				if not None:
+				if not req:
 					break
 
 			if req.status_code in (301, 302):
