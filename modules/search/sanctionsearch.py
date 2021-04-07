@@ -44,8 +44,7 @@ def module_api(self):
 	if name is None and id is None:
 		self.error('Either name or id is required')
 		return
-	if name is not None and id is not None:
-		print(id)
+	elif name is not None and id is not None:
 		self.error('Only specify either name or id not both')
 		return
 	elif name is not None:
@@ -78,7 +77,7 @@ def module_run(self):
 		for name in output:
 			print()
 			self.output(name['name'])
-			if len(name['address'].strip())!=0:
+			if len(name['address'].strip())>0:
 				self.output(name['address'])
 			self.output(name['link'])
 	else:

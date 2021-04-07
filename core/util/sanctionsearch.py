@@ -30,7 +30,7 @@ class main:
 			self._max = limit
 			self._id = id
 			self._json = ''
-			self.sanctionsearch = 'https://sanctionssearch.ofac.treas.gov'
+			self.sanctionsearch = 'https://sanctionssearch.ofac.treas.gov/'
 			self._rows = []
 
 			if self._name is not None:
@@ -94,7 +94,7 @@ class main:
 
 		def id_crawl(self):
 			self._data = {}
-			url = self.sanctionsearch + f'/Details.aspx?id={self._id}'
+			url = self.sanctionsearch + f'Details.aspx?id={self._id}'
 			req = self.framework.request(url=url)
 			soup = bs(req.text,'html.parser')
 
