@@ -45,6 +45,7 @@ class main:
 		except Exception as e:
 			self.framework.error(f"[searchportal] ConnectionError: {e}")
 			self.framework.error('searchportal in missed!')
+			req = None
 		else:
 			self._pages = req.text
 			try:
