@@ -34,8 +34,8 @@ class main:
 		params = {'rsz': 'filtered_cse', 'num': self.limit, 'hl': 'en', 
 				  'source': 'gcsc', 'start': 0, 'gss': '.co', 'cselibv': '323d4b81541ddb5b',
 				  'cx': 'partner-pub-3426987762009703:6481020877', 'q': self.q,
-				  'safe': 'active', 'cse_tok': 'AJvRUv2sKCcBImVTNGgaP-yBkyQH:1617602091379',
-				  'exp': 'csqr,cc',	'callback': 'google.search.cse.api17755'}
+				  'safe': 'active', 'cse_tok': 'AJvRUv2PCYhnuZKbJ7GmKl26vVAA:1617742214106',
+				  'exp': 'csqr,cc',	'callback': 'google.search.cse.api3934'}
 		
 		self.framework.verbose(f'Searching in searchportal.co ...')
 		try:
@@ -49,7 +49,7 @@ class main:
 		else:
 			self._pages = req.text
 			try:
-				self._json = json.loads(req.text[35:-2])
+				self._json = json.loads(req.text[34:-2])
 			except:
 				if req.status_code in (400,):
 					self.framework.error('The server cannot process the request because it is malformed')
