@@ -45,12 +45,12 @@ class main:
 		payload = {'num': self.num, 'start': set_page(page), 'ie': 'utf-8', 'oe': 'utf-8', 'q': self.q, 'filter': '0'}
 		max_attempt = 0
 		while True:
-			self.framework.verbose(f'[GOOGLE] Searching in {page} page...', end='\r')
+			self.framework.verbose(f"[GOOGLE] Searching in {page} page...", end='\r')
 			try:
 				req = self.framework.request(
 					url=url,
 					params=payload,
-					headers={'User-Agent': self.agent},
+					headers={'user-agent': self.agent},
 					allow_redirects=True)
 			except Exception as e:
 				self.framework.error(f"[GOOGLE] ConnectionError: {e}")
@@ -94,7 +94,7 @@ class main:
 		page = 0
 		self.verbose(f"[GOOGLEAPI] Searching Google API for: {self.q}")
 		while True:
-			self.framework.verbose(f'[GOOGLE] Searching in {page} page...', end='\r')
+			self.framework.verbose(f'[GOOGLEAPI] Searching in {page} page...', end='\r')
 			resp = self.framework.request(url, params=payload)
 			if resp.json() is None:
 				raise self.framework.FrameworkException(f"Invalid JSON response.{os.linesep}{resp.text}")

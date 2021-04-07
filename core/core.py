@@ -478,7 +478,7 @@ class core(cmd.Cmd):
 		if self._global_options['rand_agent']:
 			headers['user-agent'] = rand_uagent.main().get
 		else:
-			headers['user-agent'] = headers.get('user_agent', False) or self._global_options['agent']
+			headers['user-agent'] = headers.get('user-agent', False) or self._global_options['agent']
 		# normalize capitalization of the User-Agent header
 		headers = {k.title(): v for k, v in headers.items()}
 		kwargs['headers'] = headers
