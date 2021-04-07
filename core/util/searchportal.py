@@ -54,6 +54,8 @@ class main:
 				if req.status_code in (400,):
 					self.framework.error('The server cannot process the request because it is malformed')
 				self.framework.error('searchportal is missed!')
+				
+		return req
 
 	@property
 	def pages(self):
