@@ -34,8 +34,8 @@ class main:
 		params = {'rsz': 'filtered_cse', 'num': self.limit, 'hl': 'en', 
 				  'source': 'gcsc', 'start': 0, 'gss': '.co', 'cselibv': '323d4b81541ddb5b',
 				  'cx': 'partner-pub-3426987762009703:6481020877', 'q': self.q,
-				  'safe': 'active', 'cse_tok': 'AJvRUv2PCYhnuZKbJ7GmKl26vVAA:1617742214106',
-				  'exp': 'csqr,cc',	'callback': 'google.search.cse.api3934'}
+				  'safe': 'active', 'cse_tok': 'AJvRUv2j70Wv82apD6mZynCCFiFb:1617800006292',
+				  'exp': 'csqr,cc',	'callback': 'google.search.cse.api4433'}
 		
 		self.framework.verbose(f'Searching in searchportal.co ...')
 		try:
