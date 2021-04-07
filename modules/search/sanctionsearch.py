@@ -14,7 +14,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import re
 
 meta = {
         'name': 'SanctionSearch',
@@ -24,12 +23,12 @@ meta = {
 		personnel and entities.',
         'sources': ('sanctionsearch'),
         'options': (
-		('query', None, False, 'name to search', '-q', 'store', str),
-		('id', None, False, 'id to search', '-i', 'store', int),
+		('query', None, False, 'Name to search', '-q', 'store', str),
+		('id', None, False, 'Id to search', '-i', 'store', int),
 		('limit', 15, False, 'Max result count (default=15)', '-l', 'store', int),
         ),
-        'examples': ("sanctionsearch -n <QUERY> -l 20 ",
-		"sanctionsearch -i <ID>")
+        'examples': ('sanctionsearch -q <QUERY> -l 20',
+		'sanctionsearch -i <ID>')
 }
 
 NAMESEARCH = False
@@ -57,11 +56,8 @@ def module_api(self):
 		run.name_crawl()
 		output = {'results': []}
 		links = run.data
-
 		for item in links:
 			output['results'].append(item)
-
-
 	else:
 		output_param = id
 		run.id_crawl()
