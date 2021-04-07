@@ -33,7 +33,7 @@ meta = {
 def module_api(self):
 	query = self.options['query']
 	limit = self.options['limit']
-	run = self.searchportal(query, limit)
+	run = self.searchportal(query, 0 ,limit)
 	run.run_crawl()
 
 	output = {'results': [[link.get('titleNoFormatting'), link.get('contentNoFormatting'), link.get('url')] for link in run.json_links]}

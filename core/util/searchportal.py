@@ -18,11 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import json
 
 class main:
-	def __init__(self, q, limit):
+	def __init__(self, q, page, num):
 
 		self.framework = main.framework
 		self.q = q
-		self.limit = limit
+		self.page = page
+		self.num = num
 		self._pages = ''
 		self._json = {}
 		self._links = []
@@ -30,8 +31,8 @@ class main:
 
 	def run_crawl(self):
 		url = 'https://cse.google.com/cse/element/v1'
-		params = {'rsz': 'filtered_cse', 'num': self.limit, 'hl': 'en', 
-				  'source': 'gcsc', 'start': 0, 'gss': '.co', 'cselibv': '323d4b81541ddb5b',
+		params = {'rsz': 'filtered_cse', 'num': self.num, 'hl': 'en', 
+				  'source': 'gcsc', 'start': self.page , 'gss': '.co', 'cselibv': '323d4b81541ddb5b',
 				  'cx': 'partner-pub-3426987762009703:6481020877', 'q': self.q,
 				  'safe': 'active', 'cse_tok': 'AJvRUv2j70Wv82apD6mZynCCFiFb:1617800006292',
 				  'exp': 'csqr,cc', 'callback': 'google.search.cse.api4433'}

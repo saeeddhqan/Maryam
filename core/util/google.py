@@ -58,7 +58,7 @@ class main:
 			if req.status_code in (503, 429):
 				self.framework.error('[GOOGLE] Google CAPTCHA triggered.')
 				self.framework.verbose('[GOOGLE] Switching to SearchPortal..')
-				req = self.framework.searchportal(self.q, self.limit, self.num).run_crawl()
+				req = self.framework.searchportal(self.q, self.page-1, self.num).run_crawl()
 				if not req:
 					break
 
