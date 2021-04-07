@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import re
 import json
 
 class main:
@@ -30,14 +29,14 @@ class main:
 		self._json_links = []
 
 	def run_crawl(self):
-		url = f"https://cse.google.com/cse/element/v1"
+		url = 'https://cse.google.com/cse/element/v1'
 		params = {'rsz': 'filtered_cse', 'num': self.limit, 'hl': 'en', 
 				  'source': 'gcsc', 'start': 0, 'gss': '.co', 'cselibv': '323d4b81541ddb5b',
 				  'cx': 'partner-pub-3426987762009703:6481020877', 'q': self.q,
 				  'safe': 'active', 'cse_tok': 'AJvRUv2j70Wv82apD6mZynCCFiFb:1617800006292',
-				  'exp': 'csqr,cc',	'callback': 'google.search.cse.api4433'}
+				  'exp': 'csqr,cc', 'callback': 'google.search.cse.api4433'}
 		
-		self.framework.verbose(f'Searching in searchportal.co ...')
+		self.framework.verbose('Searching in searchportal.co ...')
 		try:
 			req = self.framework.request(
 				url=url,
