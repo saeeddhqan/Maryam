@@ -24,7 +24,7 @@ meta = {
 		personnel and entities.',
         'sources': ('sanctionsearch'),
         'options': (
-		('name', None, False, 'name to search', '-n', 'store', str),
+		('query', None, False, 'name to search', '-q', 'store', str),
 		('id', None, False, 'id to search', '-i', 'store', int),
 		('limit', 15, False, 'Max result count (default=15)', '-l', 'store', int),
         ),
@@ -37,23 +37,23 @@ NAMESEARCH = False
 def module_api(self):
 	global NAMESEARCH
 
-	name = self.options['name']
+	query = self.options['query']
 	limit = self.options['limit']
 	id = self.options['id']
 
-	if name is None and id is None:
-		self.error('Either name or id is required')
+	if query is None and id is None:
+		self.error('Either query or id is required')
 		return
-	elif name is not None and id is not None:
-		self.error('Only specify either name or id not both')
+	elif query is not None and id is not None:
+		self.error('Only specify either query or id not both')
 		return
-	elif name is not None:
+	elif query is not None:
 		NAMESEARCH = True
 	
-	run = self.sanctionsearch(name=name, id=id, limit=limit)
+	run = self.sanctionsearch(query=query, id=id, limit=limit)
 
 	if NAMESEARCH:
-		output_param = name
+		output_param = query
 		run.name_crawl()
 		output = {'results': []}
 		links = run.data
@@ -78,10 +78,9 @@ def module_run(self):
 		for name in output:
 			print()
 			self.output(name['name'])
-			if len(name['address'].strip())>0:
+			if len(name['address'].strip()) > 0:
 				self.output(name['address'])
 			self.output(name['link'])
 	else:
-		output = module_api(self)
 		if output is not None:
 			self.alert_results(output)

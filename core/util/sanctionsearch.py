@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup as bs
 
 class main:
 
-		def __init__(self, name, id=None, typ='individual', limit=15):
+		def __init__(self, query=None, id=None, typ='individual', limit=15):
 			""" Sanctionsearch.ofac.treas.gov search engine
 					name     : name to search
 					id       : id to search
@@ -27,7 +27,7 @@ class main:
 					limit	 : number of results (only applicable for name search)
 			"""
 			self.framework = main.framework
-			self._name = name
+			self._query = query
 			self._type = typ
 			self._listid = 'ALL'
 			self._max = limit
@@ -35,10 +35,10 @@ class main:
 			self._json = ''
 			self.sanctionsearch = 'https://sanctionssearch.ofac.treas.gov/'
 			self._rows = []
-			self._data = [] if self._name is not None else {}
+			self._data = [] if self._query is not None else {}
 
 		def name_crawl(self):
-			self._name = self.framework.urlib(self._name).quote
+			self._query = self.framework.urlib(self._query).quote
 			self.framework.verbose('Searching sanctionsearch...')
 			headers = {
 				'Content-Type': 'application/x-www-form-urlencoded',
@@ -59,7 +59,7 @@ class main:
 				'id': '__VIEWSTATE'})['value']
 
 			data = {'__VIEWSTATE': viewstate,
-				'ctl00$MainContent$txtLastName': self._name,
+				'ctl00$MainContent$txtLastName': self._query,
 				'ctl00$MainContent$btnSearch': 'Search'}
 			try:
 				req = self.framework.request(
@@ -75,14 +75,11 @@ class main:
 			soup = bs(req.text, 'html.parser')
 			table = soup.find('table', {'id': 'gvSearchResults'})
 
-			if table is not None:
-				self._rows = table.find_all('tr')
-			else:
-				self._rows = None
+			self._rows = table.find_all('tr') if table is not None else None
 
 			if self._rows is not None:
 				for count, row in enumerate(self._rows):
-					if count>=self._max:
+					if count  >= self._max:
 						break
 
 					name = row.find('a').text
@@ -97,8 +94,8 @@ class main:
 
 
 		def id_crawl(self):
-			self._data = {}
-			url = self.sanctionsearch + f'Details.aspx?id={self._id}'
+			self.framework.verbose('Searching sanctionsearch...')
+			url = self.sanctionsearch + f"Details.aspx?id={self._id}"
 			req = self.framework.request(url=url)
 			soup = bs(req.text, 'html.parser')
 
@@ -109,7 +106,7 @@ class main:
 			if details_table is not None:
 				details_fields = map(lambda x: x.text, 
 					details_table.find_all('tr'))
-				details = list(filter(lambda x: len(x)>0, 
+				details = list(filter(lambda x: len(x) > 0, 
 					(''.join(details_fields)).split('\n')))
 
 				self._data['details'] = {}
@@ -129,7 +126,7 @@ class main:
 
 				self._data['identification'] = {}
 				for i in range(len(id_th)):
-					if len(id_td[i].strip())>0:
+					if len(id_td[i].strip()) > 0:
 						self._data['identification'][id_th[i]] = id_td[i]
 
 			# Aliases
@@ -144,7 +141,7 @@ class main:
 
 				self._data['Aliases'] = {}
 				for i in range(len(al_th)):
-					if len(al_td[i].strip())>0:
+					if len(al_td[i].strip()) > 0:
 						self._data['Aliases'][al_th[i]] = al_td[i]
 
 			# ADDRESS
@@ -155,7 +152,7 @@ class main:
 				address_table = address_table_div.find('table')
 				address_th = list(map(lambda x: x.text, 
 					address_table.find_all('th')))
-				address_rows =list(filter(lambda x:len(''.join(x.text).strip())>0, 
+				address_rows =list(filter(lambda x:len(''.join(x.text).strip()) > 0, 
 					address_table.find_all('tr')))[1:]
 
 				self._data['addresses'] = {}
@@ -164,7 +161,7 @@ class main:
 						row.find_all('td')))
 					self._data['addresses'][str(i)] = {}
 					for j in range(len(cols)):
-						if len(cols[j])>0:
+						if len(cols[j]) > 0:
 							self._data['addresses'][str(i)][address_th[j]] = cols[j]
 
 
