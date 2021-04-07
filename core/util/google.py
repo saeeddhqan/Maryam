@@ -59,6 +59,8 @@ class main:
 				self.framework.error('[GOOGLE] Google CAPTCHA triggered.')
 				self.framework.verbose('[GOOGLE] Switching to SearchPortal..')
 				req = self.framework.searchportal(self.q, self.limit, self.num).run_crawl()
+				if not None:
+					break
 
 			if req.status_code in (301, 302):
 				redirect = req.headers['location']
