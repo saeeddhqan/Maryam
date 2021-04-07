@@ -22,6 +22,9 @@ class main:
 		def __init__(self, name, id=None, typ='individual', limit=15):
 			""" Sanctionsearch.ofac.treas.gov search engine
 					name     : name to search
+					id       : id to search
+					typ      : either 'individual' or 'entity'
+					limit	 : number of results (only applicable for name search)
 			"""
 			self.framework = main.framework
 			self._name = name
@@ -32,12 +35,7 @@ class main:
 			self._json = ''
 			self.sanctionsearch = 'https://sanctionssearch.ofac.treas.gov/'
 			self._rows = []
-
-			if self._name is not None:
-				self._data = []
-			else:
-				self._data = {}
-
+			self._data = [] if self._name is not None else {}
 
 		def name_crawl(self):
 			self._name = self.framework.urlib(self._name).quote
@@ -49,27 +47,33 @@ class main:
 			try:
 				# First request to get viewstate from input tag
 				req = self.framework.request(url=self.sanctionsearch)
-				soup = bs(req.text,'html.parser')
-				viewstate = soup.find('input',
-					{'type':'hidden',
-					'name':'__VIEWSTATE',
-					'id':'__VIEWSTATE'})['value']
+			except:
+				self.framework.error('[SANCTIONSEARCH] ConnectionError')
+				self.framework.error('Sanctionsearch is missed!')
+				return
 
-				data = {'__VIEWSTATE':viewstate,
-					'ctl00$MainContent$txtLastName':self._name,
-					'ctl00$MainContent$btnSearch':'Search',}
+			soup = bs(req.text, 'html.parser')
+			viewstate = soup.find('input',
+				{'type': 'hidden',
+				'name': '__VIEWSTATE',
+				'id': '__VIEWSTATE'})['value']
+
+			data = {'__VIEWSTATE': viewstate,
+				'ctl00$MainContent$txtLastName': self._name,
+				'ctl00$MainContent$btnSearch': 'Search'}
+			try:
 				req = self.framework.request(
 						url=self.sanctionsearch,
 						method='POST',
 						data=data,
 						headers=headers)
-
 			except:
 				self.framework.error('[SANCTIONSEARCH] ConnectionError')
 				self.framework.error('Sanctionsearch is missed!')
+				return
 
-			soup = bs(req.text,'html.parser')
-			table = soup.find('table', {'id':'gvSearchResults'})
+			soup = bs(req.text, 'html.parser')
+			table = soup.find('table', {'id': 'gvSearchResults'})
 
 			if table is not None:
 				self._rows = table.find_all('tr')
@@ -96,11 +100,11 @@ class main:
 			self._data = {}
 			url = self.sanctionsearch + f'Details.aspx?id={self._id}'
 			req = self.framework.request(url=url)
-			soup = bs(req.text,'html.parser')
+			soup = bs(req.text, 'html.parser')
 
 			# DETAILS
 			details_table = soup.find('table',
-				{'class':'MainTable'})
+				{'class': 'MainTable'})
 
 			if details_table is not None:
 				details_fields = map(lambda x: x.text, 
@@ -111,16 +115,16 @@ class main:
 				self._data['details'] = {}
 				for x,y in zip(details,details[1:]):
 					if x.endswith(':') and not y.endswith(':'):
-						self._data['details'][x]=y
+						self._data['details'][x] = y
 
 			# IDENTIFICATION
 			id_table = soup.find('table',
-				{'id':'ctl00_MainContent_gvIdentification'})
+				{'id': 'ctl00_MainContent_gvIdentification'})
 
 			if id_table is not None:
-				id_th = list(map(lambda x:x.text,
-					id_table.find_all('th', {'class':'borderline'})))
-				id_td = list(map(lambda x:x.text,
+				id_th = list(map(lambda x: x.text,
+					id_table.find_all('th', {'class': 'borderline'})))
+				id_td = list(map(lambda x: x.text,
 					id_table.find_all('td')))
 
 				self._data['identification'] = {}
@@ -130,12 +134,12 @@ class main:
 
 			# Aliases
 			al_table = soup.find('table',
-				{'id':'ctl00_MainContent_gvAliases'})
+				{'id': 'ctl00_MainContent_gvAliases'})
 
 			if al_table is not None:
-				al_th = list(map(lambda x:x.text,
-					al_table.find_all('th', {'class':'borderline'})))
-				al_td = list(map(lambda x:x.text,
+				al_th = list(map(lambda x: x.text,
+					al_table.find_all('th', {'class': 'borderline'})))
+				al_td = list(map(lambda x: x.text,
 					al_table.find_all('td')))
 
 				self._data['Aliases'] = {}
@@ -145,18 +149,18 @@ class main:
 
 			# ADDRESS
 			address_table_div = soup.find('div',
-				{'id':'ctl00_MainContent_pnlAddress'})
+				{'id': 'ctl00_MainContent_pnlAddress'})
 
 			if address_table_div is not None:
 				address_table = address_table_div.find('table')
-				address_th = list(map(lambda x:x.text, 
+				address_th = list(map(lambda x: x.text, 
 					address_table.find_all('th')))
 				address_rows =list(filter(lambda x:len(''.join(x.text).strip())>0, 
 					address_table.find_all('tr')))[1:]
 
 				self._data['addresses'] = {}
-				for i,row in enumerate(address_rows,1):
-					cols = list(map(lambda x:x.text.strip(),
+				for i,row in enumerate(address_rows, 1):
+					cols = list(map(lambda x: x.text.strip(),
 						row.find_all('td')))
 					self._data['addresses'][str(i)] = {}
 					for j in range(len(cols)):

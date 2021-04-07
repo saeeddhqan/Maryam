@@ -29,7 +29,7 @@ meta = {
 		('limit', 15, False, 'Max result count (default=15)', '-l', 'store', int),
         ),
         'examples': ("sanctionsearch -n <QUERY> -l 20 ",
-		"sanctionsearch -i <ID> -l 20 ")
+		"sanctionsearch -i <ID>")
 }
 
 NAMESEARCH = False
@@ -48,11 +48,12 @@ def module_api(self):
 		self.error('Only specify either name or id not both')
 		return
 	elif name is not None:
-		NAMESEARCH=True
+		NAMESEARCH = True
 	
-	run = self.sanctionsearch(name=name,id=id,limit=limit)
+	run = self.sanctionsearch(name=name, id=id, limit=limit)
 
 	if NAMESEARCH:
+		output_param = name
 		run.name_crawl()
 		output = {'results': []}
 		links = run.data
@@ -60,13 +61,13 @@ def module_api(self):
 		for item in links:
 			output['results'].append(item)
 
-		self.save_gather(output, 'search/sanctionsearch', name, output=self.options['output'])
 
 	else:
+		output_param = id
 		run.id_crawl()
 		output = run.data
 
-		self.save_gather(output, 'search/sanctionsearch', id, output=self.options['output'])
+	self.save_gather(output, 'search/sanctionsearch', output_param, output=self.options['output'])
 
 	return output
 
