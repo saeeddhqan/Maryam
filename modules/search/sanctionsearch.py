@@ -21,7 +21,7 @@ meta = {
         'version': '0.1',
         'description': 'SanctionSearch is an international list of blacklisted, dangerous\
 		personnel and entities.',
-        'sources': ('sanctionsearch'),
+        'sources': ('sanctionsearch',),
         'options': (
 		('query', None, False, 'Name to search', '-q', 'store', str),
 		('id', None, False, 'Id to search', '-i', 'store', int),
@@ -55,8 +55,8 @@ def module_api(self):
 		output_param = query
 		run.name_crawl()
 		output = {'results': []}
-		links = run.data
-		for item in links:
+		data = run.data
+		for item in data:
 			output['results'].append(item)
 	else:
 		output_param = id
@@ -64,7 +64,6 @@ def module_api(self):
 		output = run.data
 
 	self.save_gather(output, 'search/sanctionsearch', output_param, output=self.options['output'])
-
 	return output
 
 def module_run(self):

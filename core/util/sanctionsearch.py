@@ -14,21 +14,17 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import json
 from bs4 import BeautifulSoup as bs
-
 class main:
 
-		def __init__(self, query=None, id=None, typ='individual', limit=15):
+		def __init__(self, query=None, id=None, limit=15):
 			""" Sanctionsearch.ofac.treas.gov search engine
 					name     : name to search
 					id       : id to search
-					typ      : either 'individual' or 'entity'
 					limit	 : number of results (only applicable for name search)
 			"""
 			self.framework = main.framework
 			self._query = query
-			self._type = typ
 			self._listid = 'ALL'
 			self._max = limit
 			self._id = id
@@ -92,7 +88,6 @@ class main:
 						'link': self.sanctionsearch+link
 						})
 
-
 		def id_crawl(self):
 			self.framework.verbose('Searching sanctionsearch...')
 			url = f"{self.sanctionsearch}Details.aspx?id={self._id}"
@@ -114,8 +109,7 @@ class main:
 						self._data['details'][x] = y
 
 			# IDENTIFICATION
-			id_table = soup.find('table',
-				{'id': 'ctl00_MainContent_gvIdentification'})
+			id_table = soup.find('table', {'id': 'ctl00_MainContent_gvIdentification'})
 
 			if id_table is not None:
 				id_th = list(map(lambda x: x.text,
@@ -143,8 +137,7 @@ class main:
 						self._data['aliases'][al_th[i]] = al_td[i]
 
 			# ADDRESS
-			address_table_div = soup.find('div',
-				{'id': 'ctl00_MainContent_pnlAddress'})
+			address_table_div = soup.find('div', {'id': 'ctl00_MainContent_pnlAddress'})
 
 			if address_table_div is not None:
 				address_table = address_table_div.find('table')
@@ -161,7 +154,6 @@ class main:
 					for j in range(len(cols)):
 						if len(cols[j]) > 0:
 							self._data['addresses'][str(i)][address_th[j]] = cols[j]
-
 
 		@property
 		def rows(self):

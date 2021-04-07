@@ -20,7 +20,7 @@ meta = {
 	'description': 'Active Search Results (ASR) is an independent Internet Search \
 		Engine using a proprietary page ranking technology with Millions of \
 		popular Web sites indexed.',
-	'sources': ('activesearch'),
+	'sources': ('activesearch',),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 15, False, 'Max result count (default=15)', '-l', 'store', int),
