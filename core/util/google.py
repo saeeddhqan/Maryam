@@ -27,7 +27,7 @@ class main:
 			limit      : Number of pages
 			google_api : Google api(if you need to use api_run_crawl)
 			google_cx  : Google cx(if you need to use api_run_crawl)
-			autoproxy  : Use rotating proxies
+            autoproxy  : Use rotating proxies
 		"""
 		self.framework = main.framework
 		self.q = q
@@ -40,7 +40,8 @@ class main:
 		self._links = []
 		self.autoproxy = self._global_options_['autoproxy']
 		self.countip = 0
-
+		if self.autoproxy:
+			self.framework.proxy.getproxy()
 	def run_crawl(self):
 		page = 1
 		url = 'https://www.google.com/search'
@@ -50,28 +51,29 @@ class main:
 		while True:
 			self.framework.verbose(f'[GOOGLE] Searching in {page} page...', end='\r')
 			proxies = self.framework.proxy.rotateip(self.countip) if self.autoproxy else None
+
 			try:
 				req = self.framework.request(
-					url=url,
-					params=payload,
-					headers={'User-Agent': self.agent},
-					allow_redirects=True,
-					proxies=proxies)	
+					url = url,
+					params = payload,
+					headers = {'User-Agent': self.agent},
+				allow_redirects = True,
+				proxies = proxies)
+			
 			except Exception as e:
 				self.framework.error(f"[GOOGLE] ConnectionError: {e}")
 				return
-			else:
-				if req.status_code in (503, 429):
-					req = self.framework.error('[GOOGLE] Google CAPTCHA triggered.')
-					if self.autoproxy:
-						self.countip += 1
-						if proxy.rotateip(self.countip) == -1:
-							self.framework.output('[PROXY] End of proxy list.')
-							break
-						else:
-							continue
-					else:
+			if req.status_code in (503, 429):
+				req = self.framework.error('[GOOGLE] Google CAPTCHA triggered.')
+				if self.autoproxy == True:
+					self.countip += 1
+					if proxy.rotateip(self.countip) == -1:
+						self.framework.output('[PROXY] End of proxy list. ')
 						break
+					else:
+						continue
+				else:
+					break
 				
 			if req.status_code in (301, 302):
 				redirect = req.headers['location']
@@ -103,7 +105,7 @@ class main:
 			return
 
 		url = 'https://www.googleapis.com/customsearch/v1'
-		payload = {'alt': 'json', 'prettyprint': 'false', 'key': self.google_api, 'cx': self.google_cx, 'q': self.q}
+		payload = {'alt': 'json', 'prettyPrint': 'false', 'key': self.google_api, 'cx': self.google_cx, 'q': self.q}
 		page = 0
 		self.verbose(f"[GOOGLEAPI] Searching Google API for: {self.q}")
 		while True:
