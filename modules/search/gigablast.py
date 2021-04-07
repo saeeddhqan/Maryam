@@ -22,7 +22,7 @@ meta = {
         'version': '0.1',
         'description': 'Gigablast provides large-scale, high-performance, \
 			real-time information retrieval technology and services for partner sites',
-        'sources': ('gigablast'),
+        'sources': ('gigablast',),
         'options': (
                 ('query', None, True, 'Query to search', '-q', 'store', str),
 		('limit', 15, False, 'Max result count (default=15)', '-l', 'store', int),
