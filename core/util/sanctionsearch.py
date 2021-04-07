@@ -95,13 +95,12 @@ class main:
 
 		def id_crawl(self):
 			self.framework.verbose('Searching sanctionsearch...')
-			url = self.sanctionsearch + f"Details.aspx?id={self._id}"
+			url = f"{self.sanctionsearch}Details.aspx?id={self._id}"
 			req = self.framework.request(url=url)
 			soup = bs(req.text, 'html.parser')
 
 			# DETAILS
-			details_table = soup.find('table',
-				{'class': 'MainTable'})
+			details_table = soup.find('table', {'class': 'MainTable'})
 
 			if details_table is not None:
 				details_fields = map(lambda x: x.text, 
@@ -110,7 +109,7 @@ class main:
 					(''.join(details_fields)).split('\n')))
 
 				self._data['details'] = {}
-				for x,y in zip(details,details[1:]):
+				for x,y in zip(details, details[1:]):
 					if x.endswith(':') and not y.endswith(':'):
 						self._data['details'][x] = y
 
@@ -129,9 +128,8 @@ class main:
 					if len(id_td[i].strip()) > 0:
 						self._data['identification'][id_th[i]] = id_td[i]
 
-			# Aliases
-			al_table = soup.find('table',
-				{'id': 'ctl00_MainContent_gvAliases'})
+			# AlIASES
+			al_table = soup.find('table', {'id': 'ctl00_MainContent_gvAliases'})
 
 			if al_table is not None:
 				al_th = list(map(lambda x: x.text,
@@ -139,10 +137,10 @@ class main:
 				al_td = list(map(lambda x: x.text,
 					al_table.find_all('td')))
 
-				self._data['Aliases'] = {}
+				self._data['aliases'] = {}
 				for i in range(len(al_th)):
 					if len(al_td[i].strip()) > 0:
-						self._data['Aliases'][al_th[i]] = al_td[i]
+						self._data['aliases'][al_th[i]] = al_td[i]
 
 			# ADDRESS
 			address_table_div = soup.find('div',
