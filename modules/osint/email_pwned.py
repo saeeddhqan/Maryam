@@ -36,7 +36,7 @@ def scrap(email):
 	url = f"https://haveibeenpwned.com/unifiedsearch/{email}"
 	scraper = cloudscraper.create_scraper()
 	result = scraper.get(url)
-	if result.text != '':
+	if result.text:
 		return result.json()
 	else:
 		return False
@@ -64,10 +64,7 @@ def module_run(self):
 		if isinstance(output[section], str):
 			self.output(output[section])
 			break
-		elif not output:
-			break
-		headers = list(output[section][0].keys())
 		rows = []
 		for data in output[section]:
 			rows.append(list(data.values()))
-		self.table(rows, headers, section)
+		self.table(rows, ['breache', 'pastes'], section)
