@@ -38,18 +38,16 @@ def module_api(self):
 
 	query = self.options['query']
 	limit = self.options['limit']
-	id = self.options['id']
+	_id = self.options['id']
 
-	if query is None and id is None:
-		self.error('Either query or id is required')
-		return
-	elif query is not None and id is not None:
-		self.error('Only specify either query or id not both')
-		return
+	if query is None and _id is None:
+		return {}
+	elif query is not None and _id is not None:
+		_id = None
 	elif query is not None:
 		NAMESEARCH = True
 	
-	run = self.sanctionsearch(query=query, id=id, limit=limit)
+	run = self.sanctionsearch(query=query, id=_id, limit=limit)
 
 	if NAMESEARCH:
 		output_param = query
@@ -59,7 +57,7 @@ def module_api(self):
 		for item in data:
 			output['results'].append(item)
 	else:
-		output_param = id
+		output_param = _id
 		run.id_crawl()
 		output = run.data
 
