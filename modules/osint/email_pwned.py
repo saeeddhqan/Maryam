@@ -28,7 +28,7 @@ meta = {
 	'options': (
 		('email', None, True, 'Email to search for breach', '-e', 'store', str),
 	),
-	'examples': ('pwned -e <email> --output',)
+	'examples': ('email_pwned -e <email> --output',)
 }
 
 
@@ -46,7 +46,7 @@ def module_api(self):
 	output = {'Breaches':[], 'Pastes':[]}
 	email = self.options['email']
 
-	if re.search(r"^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$", email):
+	if re.search(r"^([a-z0-9]+[a-z0-9]*[_\.]?[a-z0-9]+)@(([a-z0-9]+\.)*[a-z0-9]{2,}\.)+[a-z]{2,}$", email):
 		self.verbose('[PAWNED] Searching for pwning...')
 		pwns = scrap(email)
 		if pwns:
