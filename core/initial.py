@@ -244,8 +244,9 @@ class initialize(core):
 	# ////////////////////////////////
 
 	def alert_results(self, output, prefix='\t',depth:int = 0,color='N'):
-		if output == [] or output == {}: 
-			self.output('Without result')
+		if output == [] or output == {}:
+			if depth != 0:
+				self.output('Without result')
 		
 		if isinstance(output, dict):
 			for key,value in output.items():

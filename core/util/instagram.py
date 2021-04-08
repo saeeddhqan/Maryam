@@ -66,10 +66,7 @@ class main:
                 self.framework.heading(f"showing similar users",0)
 
             for index,user in enumerate(similar_users,1):
-                self.framework.alert(f"{index}. username : {user['username']}")
-                self.framework.alert(" "*len(str(index)) + f"account-id : {user['pk']}")
-                self.framework.alert(" "*len(str(index)) + f"profile_pic: {user['profile_pic_url']}")
-                print()
+                self.framework.alert(f"{index}. user : {user['username']} --> {self.base_url+user['username']}")
             return
 
         if self.is_private or req.status_code != 200 :
