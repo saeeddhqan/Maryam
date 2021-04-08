@@ -243,31 +243,31 @@ class initialize(core):
 	#           MODULES 			//
 	# ////////////////////////////////
 
-	def alert_results(self, output, prefix=''):
+	def alert_results(self, output, prefix='\t',depth:int = 0,color='N'):
+		if output == [] or output == {}: 
+			self.output('Without result')
+		
 		if isinstance(output, dict):
-			for key in output:
-				self.alert(f"{prefix}{key.upper()}")
-				if isinstance(output[key], dict):
-					self.alert_results(output[key], prefix='\t')
-				elif isinstance(output[key], list):
-					self.alert_results(output[key], prefix='\t')
-				else:
-					self.output(f"\t{output[key]}", 'G')
-		elif isinstance(output, list):
-			if output == []:
-				self.output('Without result')
-			else:
-				for value in output:
-					self.output(f"\t{value}", 'G')
-		else:
-			self.output(output)
+			for key,value in output.items():
+				if isinstance(value,list) or isinstance(value,dict):
+					self.alert(f"{prefix*depth}{key.upper()}")
+					self.alert_results(value,prefix=prefix,depth=depth+1,color="G")
+				else :
+					value = value.strip().replace('\n',' ').replace('\\x',' ') if isinstance(value,str) else value
+					self.output(f"{prefix*depth}{key.upper()} : {value}",color)
 
-	def thread(self, function, thread_count, engines, q, q_formats, limit, count, sources):
-		threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
-		futures = (threadpool.submit(
-			function, self, name, q, q_formats, limit, count) for name in engines if name in sources)
-		for _ in concurrent.futures.as_completed(futures):
-			pass
+		elif isinstance(output, list):
+			for key in output:
+				self.alert_results(key, prefix='\t',depth=depth,color="G")
+		
+		else:
+			output = output.strip().replace('\n',' ').replace('\\x',' ')
+			self.output(f"{prefix*depth}{output}",color)
+
+	def thread(self,*args):
+		""" self, function, thread_count, engines, {all args}, sources"""
+		with concurrent.futures.ThreadPoolExecutor(max_workers=args[1]) as executor:
+			[executor.submit(args[0], self, name, *args[3:-1]) for name in args[2] if name in args[-1]]
 
 	def opt_proc(self, tool_name, args=None, output=None):
 		mod = self._loaded_modules[tool_name]
