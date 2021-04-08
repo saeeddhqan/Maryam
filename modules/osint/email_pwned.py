@@ -49,7 +49,7 @@ def module_api(self):
 	pwns = scrap(email)
 	if pwns:
 		output['breaches'] = [{'breach_name': x['Name'], 'breach_domain': x['Domain']} for x in pwns['Breaches']]
-		if pwns['pastes']:
+		if pwns['Pastes']:
 			output['pastes'] = [{'paste_id': x['Id'], 'paste_source': x['Source']} for x in pwns['Pastes']]
 
 	self.save_gather(output, 'osint/email_pwned', email,
@@ -67,4 +67,4 @@ def module_run(self):
 		rows = []
 		for data in output[section]:
 			rows.append(list(data.values()))
-		self.table(rows, ['breache', 'pastes'], section)
+		self.table(rows, ['breaches', 'pastes'], section)
