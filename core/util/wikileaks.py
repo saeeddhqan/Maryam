@@ -23,7 +23,7 @@ class main:
 	def __init__(self, q, limit=1):
 		""" wikileaks.org search engine
 
-			q		: query for search
+			q	: query for search
 			limit	: Number of Pages
 
 		"""
@@ -38,26 +38,27 @@ class main:
 		self._links_with_data = []
 
 	def run_crawl(self):
-		page = 1
+		max_attempts = 0
 		url = 'https://search.wikileaks.org/advanced'
 		params = {'query': self.q, 'include_external_sources': True, 'page': page}
 		while True:
-			self.framework.verbose(f"[Wikileaks] Searching in {page} page ....", end = '\r')
+			self.framework.verbose(f"[WIKILEAKS] Searching in {page} page ....", end='\r')
 			try:
 				req = self.framework.request(
-					url = url,
-					params = params,
-					headers = {'User-Agent': self.agent},
-					allow_redirects = True)
+					url=url,
+					params=params,
+					headers={'User-Agent': self.agent},
+					allow_redirects=True)
 			except Exception as e:
 				self.framework.error(f"[Wikileaks] ConnectionError: {e}")
-				self.framework.error('Wikileaks is missed!')
-				return
+				max_attempts += 1
+				if max_attempts == self.limit:
+					self.framework.error('Wikileaks is missed!')
+					return
 			else:
-				self._pages+= req.text
-				page+=1
-				params['page'] = page
-				if page >=self.limit:
+				self._pages += req.text
+				params['page'] += 1
+				if params['page'] >= self.limit:
 					break
 
 		soup = bs(self._pages, 'html.parser')
