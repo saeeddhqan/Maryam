@@ -35,13 +35,14 @@ def cui(args, format_help):
 			print(format_help)
 			exit(0)
 		core = core('execute')
-		if option in ['-e', '--execute','-s', '--start']:
+		if option in ['-e', '--execute', '-s', '--start']:
 			core.onecmd(' '.join(args[1:]))
 			if option in ['-e', '--execute']:
 				exit(0)
-	else : 
+	else:
 		core = core('run')
-	while True :
+
+	while True:
 		try:
 			core.cmdloop()
 			break
