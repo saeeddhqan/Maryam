@@ -20,9 +20,9 @@ import re
 meta = {
 	'name': 'Instagram Search',
 	'author': 'Rishabh Jain, Aman Singh',
-	'version': '0.2',
+	'version': '0.5',
 	'description': 'Search your query in the Instagram and show the results.',
-	'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo','instagram'),
+	'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo', 'instagram'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
@@ -77,7 +77,7 @@ def module_api(self):
 	query = self.options['query']
 	limit = self.options['limit']
 	count = self.options['count']
-	session_id = self.options['session_id'] or ""
+	session_id = self.options['session_id'] or ''
 	engine = self.options['engine'].split(',')
 
 	output = {
@@ -106,11 +106,11 @@ def module_api(self):
 	links = list(self.reglib().filter(r"https?://(www\.)?instagram\.com/", list(set(LINKS))))
 	for link in self.reglib().filter(lambda x: '/explore/tags/' in x, links):
 		tag = re.sub(r'https?://(www\.)?instagram\.com/explore/tags/', '', link)
-		if re.search(r'^[\w\d_\-\/]+$', tag):
+		if re.search(r'"[\w\d_\-\/]+$", tag):
 			tag = tag.rsplit('/')
 			output['hashtags'].append(tag[0])
 
-	post_data_extracted= self.reglib().filter(r'https?://(www\.)?instagram\.com/p/[\w_\-0-9]+/', links)
+	post_data_extracted= self.reglib().filter(r"https?://(www\.)?instagram\.com/p/[\w_\-0-9]+/", links)
 	for link in post_data_extracted:
 		output['posts'].append(link)
 
@@ -121,7 +121,7 @@ def module_api(self):
 		self.heading('Extracting User account', 0)
 		for key,value in saving_output['USERDATA'].items():
 			if isinstance(value, str) and '\n' in value: 
-				value =  value.encode('utf-8')
+				value = value.encode('utf-8')
 			self.output(f"\t{key} : {value}", color='G')
 
 	if POST:
@@ -134,19 +134,19 @@ def module_api(self):
 				output.pop('posts')
 		self.heading('Extracting User Post', 0)
 		for i in saving_output['POSTS']:
-			self.output("\t"+i, color='G')
+			self.output('\t' + i, color='G')
 
 	if FOLLOWERS:
 		saving_output['FOLLOWERS'] = FOLLOWERS
 		self.heading('Extracting User followers', 0)
 		for user in saving_output['FOLLOWERS'] :
-			self.output(f"\tuser : {user['username']} --> https://www.instagram.com/{user['username']}", color="G")
+			self.output(f"\tuser : {user['username']} --> https://www.instagram.com/{user['username']}", color='G')
 	
 	if FOLLOWING:
 		saving_output['FOLLOWING']= FOLLOWING
 		self.heading('Extracting User following', 0)
 		for user in saving_output['FOLLOWERS']:
-			self.output(f"\tuser : {user['username']} --> https://www.instagram.com/{user['username']}", color="G")
+			self.output(f"\tuser : {user['username']} --> https://www.instagram.com/{user['username']}", color='G')
 
 	output = {key: val for key, val in output.items() if val} 
 
