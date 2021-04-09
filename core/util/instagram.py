@@ -18,15 +18,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import requests
 
 class main:
-    def __init__(self, q, limit=50,session_id=""):
+    def __init__(self, q, limit=50, session_id=''):
         """ instagram.com search
             
             q 		  : The query for search
             limit	  : The number of details min 50 if exist
-            session_id: Your Instagrta session id
+            session_id: Your Instagram session id
         """
-        
-        self.framework = main.framework
         
         self.q = q
         self.limit = int(limit/50) or 1
@@ -37,7 +35,7 @@ class main:
                         'Content-Type': 'application/x-www-form-urlencoded',
                         }
         if self.session_id:
-            self.headers['Cookie'] = f'sessionid={self.session_id};'
+            self.headers['Cookie'] = f"sessionid={self.session_id};"
 
         # request requrements
         self.data = {}
@@ -55,25 +53,25 @@ class main:
         self.session = requests.Session()
 
     def run_crawl(self):
-        self.framework.output(f"[INSTAGRAM] Extracting Data From API")
+        self.framework.verbose('[INSTAGRAM] Extracting Data From API')
         # 1.1 account details find user on instagram 
         req = self.get_user_account_info()
         if req.status_code == 404 or self.data == {} :
             # user not found - show similar account names
-            self.framework.error(f"Account not Found.")
+            self.framework.error('Account not Found.')
             similar_users = self.get_similar_users()
             if similar_users:
-                self.framework.heading(f"showing similar users",0)
+                self.framework.heading('showing similar users', 0)
 
-            for index,user in enumerate(similar_users,1):
-                self.framework.alert(f"{index}. user : {user['username']} --> {self.base_url+user['username']}")
+            for index,user in enumerate(similar_users, 1):
+                self.framework.alert(f"{index}. user : {user['username']} --> {self.base_url + user['username']}")
             return
 
         if self.is_private or req.status_code != 200 :
             # return if account is private or request fails
             if self.is_private : 
-                self.framework.error(f"Account is Private.")
-                if self.session_id == "":
+                self.framework.error('Account is Private.')
+                if self.session_id == '':
                     return
 
             else :
@@ -93,40 +91,40 @@ class main:
             if not self.get_user_following():
                 break
 
-          
+
     def get_user_account_info(self):
         """extracting required user info form request"""
         req = self.session.get(url=self.base_url + f'{self.q}/?__a=1',headers=self.headers)    
         try : 
             self.data = req.json()
         except:
-            self.framework.error("Request Fail !! Too many tries")
+            self.framework.error('Request Fail !! Too many tries')
             return
         if self.data:
             # id
-            self._userdata['id'] = self.data["graphql"]["user"]['id']
+            self._userdata['id'] = self.data['graphql']['user']['id']
             # username
-            self._userdata['username'] = self.data["graphql"]["user"]['full_name']
+            self._userdata['username'] = self.data['graphql']['user']['full_name']
             # bio
-            self._userdata['bio'] = self.data["graphql"]["user"]['biography']
+            self._userdata['bio'] = self.data['graphql']['user']['biography']
             # followers
-            self._userdata['followers'] = self.data["graphql"]["user"]['edge_followed_by']['count']
+            self._userdata['followers'] = self.data['graphql']['user']['edge_followed_by']['count']
             # following
-            self._userdata['following'] = self.data["graphql"]["user"]['edge_follow']['count']
+            self._userdata['following'] = self.data['graphql']['user']['edge_follow']['count']
             # post 
-            self._userdata['post_count'] = self.data["graphql"]["user"]['edge_owner_to_timeline_media']['count']
+            self._userdata['post_count'] = self.data['graphql']['user']['edge_owner_to_timeline_media']['count']
             # profile_pic
-            self._userdata['profile_pic'] = self.data["graphql"]["user"]['profile_pic_url_hd']
+            self._userdata['profile_pic'] = self.data['graphql']['user']['profile_pic_url_hd']
             # is a private account
-            self.is_private = self.data["graphql"]["user"]['is_private']
+            self.is_private = self.data['graphql']['user']['is_private']
         return req
 
     def get_similar_users(self):
         '''return 20 similar users'''
-        url = "https://www.instagram.com/web/search/topsearch/?query="
+        url = 'https://www.instagram.com/web/search/topsearch/?query='
         r = requests.get(url = url+self.q,headers = self.headers)
         # return first 20 similar names 
-        return [i["user"] for i in r.json()['users']][:20]
+        return [i['user'] for i in r.json()['users']][:20]
 
     def get_user_posts(self):
         '''return boolean : if there is more data to extract'''

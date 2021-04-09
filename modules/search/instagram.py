@@ -28,7 +28,7 @@ meta = {
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
 		('count', 50, False, 'Number of links per page(min=10, max=100, default=50)', '-c', 'store', int),
 		('engine', 'google,instagram', False, 'Engine names for search(default=google, instagram)', '-e', 'store', str),
-		('session_id', None, False, 'Session_id for more details results (default="")', '-s', 'store', str),
+		('session_id', None, False, 'Insta Account Session_id for more details results (default="")', '-s', 'store', str),
 		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
 	),
     'examples': ('instagram -q <QUERY> -l 150 -s <session> --output',)
@@ -52,13 +52,13 @@ def search(self, name, q, q_formats, limit, count,session_id):
 
 	# for instagram
 	if eng == 'instagram':
-		attr = self.instagram(query,limit=limit,session_id=session_id)
+		attr = self.instagram(query, limit=limit, session_id=session_id)
 		attr.run_crawl()
 		USERDATA = attr.userdata
 		FOLLOWERS = attr.followers
 		FOLLOWING = attr.following
 		POST = attr.post
-		
+
 	# for others
 	else :
 		if 'limit' in varnames and 'count' in varnames:
@@ -89,7 +89,7 @@ def module_api(self):
 		'google_q': f"site:www.instagram.com inurl:{query}",
 		'default_q': f"site:www.instagram.com {query}",
 		'yippy_q': f"www.instagram.com {query}",
-		'instagram': f'{query}'
+		'instagram': f"{query}"
 	}
 	
 	self.thread(search, self.options['thread'], engine, query, q_formats, limit, count,session_id, meta['sources'])
@@ -97,7 +97,7 @@ def module_api(self):
 	# for other modules
 	usernames = self.page_parse(PAGES).get_networks
 	for _id in list(set(usernames.get('Instagram'))):
-		if _id[-2:] == "/p" or _id[-8:] == '/explore':
+		if _id[-2:] == '/p' or _id[-8:] == '/explore':
 			continue
 		_id = f"{_id[_id.find('/')+1:]}"
 		if _id not in output['people']:
@@ -118,11 +118,11 @@ def module_api(self):
 	saving_output = output.copy()
 	if USERDATA :
 		saving_output['USERDATA'] = USERDATA
-		self.heading(f"Extracting User account",0)
+		self.heading('Extracting User account', 0)
 		for key,value in saving_output['USERDATA'].items():
 			if isinstance(value, str) and '\n' in value: 
-				value =  value.encode("utf-8")
-			self.output(f"\t{key} : {value}", color="G")
+				value =  value.encode('utf-8')
+			self.output(f"\t{key} : {value}", color='G')
 
 	if POST:
 		saving_output['POSTS'] = POST
@@ -132,19 +132,19 @@ def module_api(self):
 					saving_output['POSTS'].append(po) 
 			else:
 				output.pop('posts')
-		self.heading(f"Extracting User Post",0)
+		self.heading('Extracting User Post', 0)
 		for i in saving_output['POSTS']:
-			self.output("\t"+i, color="G")
+			self.output("\t"+i, color='G')
 
 	if FOLLOWERS:
 		saving_output['FOLLOWERS'] = FOLLOWERS
-		self.heading(f"Extracting User followers",0)
+		self.heading('Extracting User followers', 0)
 		for user in saving_output['FOLLOWERS'] :
 			self.output(f"\tuser : {user['username']} --> https://www.instagram.com/{user['username']}", color="G")
 	
 	if FOLLOWING:
 		saving_output['FOLLOWING']= FOLLOWING
-		self.heading(f"Extracting User following",0)
+		self.heading('Extracting User following', 0)
 		for user in saving_output['FOLLOWERS']:
 			self.output(f"\tuser : {user['username']} --> https://www.instagram.com/{user['username']}", color="G")
 

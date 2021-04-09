@@ -249,23 +249,23 @@ class initialize(core):
 				self.output('Without result')
 		
 		if isinstance(output, dict):
-			for key,value in output.items():
-				if isinstance(value,list) or isinstance(value,dict):
+			for key, value in output.items():
+				if isinstance(value, list) or isinstance(value, dict):
 					self.alert(f"{prefix*depth}{key.upper()}")
-					self.alert_results(value,prefix=prefix,depth=depth+1,color="G")
+					self.alert_results(value, prefix=prefix, depth=depth+1, color="G")
 				else :
-					value = value.strip().replace('\n',' ').replace('\\x',' ') if isinstance(value,str) else value
-					self.output(f"{prefix*depth}{key.upper()} : {value}",color)
+					value = value.strip().replace('\n', ' ').replace('\\x', ' ') if isinstance(value, str) else value
+					self.output(f"{prefix*depth}{key.upper()} : {value}", color)
 
 		elif isinstance(output, list):
 			for key in output:
-				self.alert_results(key, prefix='\t',depth=depth,color="G")
+				self.alert_results(key, prefix='\t', depth=depth, color="G")
 		
 		else:
-			output = output.strip().replace('\n',' ').replace('\\x',' ')
-			self.output(f"{prefix*depth}{output}",color)
+			output = output.strip().replace('\n', ' ').replace('\\x', ' ')
+			self.output(f"{prefix*depth}{output}", color)
 
-	def thread(self,*args):
+	def thread(self, *args):
 		""" self, function, thread_count, engines, {all args}, sources"""
 		with concurrent.futures.ThreadPoolExecutor(max_workers=args[1]) as executor:
 			[executor.submit(args[0], self, name, *args[3:-1]) for name in args[2] if name in args[-1]]
