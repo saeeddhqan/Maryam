@@ -21,60 +21,60 @@ import html
 
 class main:
 
-        def __init__(self, q, limit=15):
-                """ arxiv.org search engine
+		def __init__(self, q, limit=15):
+			""" arxiv.org search engine
 
-                        q         : query for search
-                        limit     : maximum result count
-                """
-                self.framework = main.framework
-                self.q = q
-                self.max = limit
-                self._rawxml = ''
-                self._articles = []
-                self._links = []
-                self._links_with_data = []
+					q         : query for search
+					limit     : maximum result count
+			"""
+			self.framework = main.framework
+			self.q = q
+			self.max = limit
+			self._rawxml = ''
+			self._articles = []
+			self._links = []
+			self._links_with_data = []
 
-        def run_crawl(self):
-                self.q = urllib.parse.quote_plus(self.q)
-                url = f'https://export.arxiv.org/api/query?search_query=all:'\
-                           + f'{self.q}&start=0&max_results={self.max}'
-                self.framework.verbose('Searching the arxiv.org domain...')
-                try:
-                        req = self.framework.request(url=url)
-                except:
-                        self.framework.error('[ARXIV] ConnectionError')
-                        self.framework.error('ArXiv is missed!')
-                        return
-                self._rawxml = req.text
-                self._articles = list(re.findall(r'<entry>(.*?)</entry>', 
-                        self._rawxml, 
-                        flags=re.DOTALL))
+		def run_crawl(self):
+			self.q = urllib.parse.quote_plus(self.q)
+			url = f'https://export.arxiv.org/api/query?search_query=all:'\
+					   + f'{self.q}&start=0&max_results={self.max}'
+			self.framework.verbose('Searching the arxiv.org domain...')
+			try:
+					req = self.framework.request(url=url)
+			except:
+					self.framework.error('[ARXIV] ConnectionError')
+					self.framework.error('ArXiv is missed!')
+					return
+			self._rawxml = req.text
+			self._articles = list(re.findall(r'<entry>(.*?)</entry>', 
+					self._rawxml, 
+					flags=re.DOTALL))
 
-        @property
-        def raw(self):
-                return self._rawxml
+		@property
+		def raw(self):
+			return self._rawxml
 
-        @property
-        def articles(self):
-                return self._articles
+		@property
+		def articles(self):
+			return self._articles
 
-        @property
-        def links(self):
-                self._links = re.findall(r'(http://arxiv.org/abs/.*)<',
-                        self._rawxml)
-                return self._links
+		@property
+		def links(self):
+			self._links = re.findall(r'(http://arxiv.org/abs/.*)<',
+					self._rawxml)
+			return self._links
 
-        @property
-        def links_with_data(self):
-                findlink = lambda x: re.findall(r'(http://arxiv.org/abs/.*?)<', x)
-                findauthors = lambda x: re.findall(r'<name>(.*?)</name>', x)
-                findtitle = lambda x: re.findall(r'<title>(.*?)</title>', x, flags=re.DOTALL)
+		@property
+		def links_with_data(self):
+			findlink = lambda x: re.findall(r'(http://arxiv.org/abs/.*?)<', x)
+			findauthors = lambda x: re.findall(r'<name>(.*?)</name>', x)
+			findtitle = lambda x: re.findall(r'<title>(.*?)</title>', x, flags=re.DOTALL)
 
-                for article in self._articles:
-                        self._links_with_data.append({'authors':findauthors(article),
-                                'title': list(map(html.unescape,findtitle(article))),
-                                'link' : findlink(article)
-                                })
+			for article in self._articles:
+					self._links_with_data.append({'authors':findauthors(article),
+							'title': list(map(html.unescape,findtitle(article))),
+							'link' : findlink(article)
+							})
 
-                return self._links_with_data
+			return self._links_with_data
