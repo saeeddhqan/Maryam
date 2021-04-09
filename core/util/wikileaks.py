@@ -40,9 +40,9 @@ class main:
 	def run_crawl(self):
 		max_attempts = 0
 		url = 'https://search.wikileaks.org/advanced'
-		params = {'query': self.q, 'include_external_sources': True, 'page': page}
+		params = {'query': self.q, 'include_external_sources': True, 'page': 1}
 		while True:
-			self.framework.verbose(f"[WIKILEAKS] Searching in {page} page ....", end='\r')
+			self.framework.verbose(f"[WIKILEAKS] Searching in {params['page']} page ....", end='\r')
 			try:
 				req = self.framework.request(
 					url=url,
