@@ -29,17 +29,20 @@ class main:
 		self.title = title
 		self.author = author
 		self.limit = limit
-		self.order = f'thold {order}'
+		self.order = f"thold {order}"
 		self._xml_data = ''
 				
 	def search(self):
 		self.framework.verbose('[Worldcat Search] Fetching data for the query...')
 		api_url = 'http://classify.oclc.org/classify2/Classify'
 		url_with_payload = f'{api_url}?title={self.title}&author={self.author}&maxRecs={self.limit}&orderBy={self.order}'
-		response = self.framework.request(url=url_with_payload)
-		self._xml_data = response.content
+		try:
+			response = self.framework.request(url=url_with_payload)
+		except Excetion as e:
+			self.framework.error('Worldcat is missed!')
+		else:
+			self._xml_data = response.content
 
 	@property
 	def xml_data(self):
-		return self._xml_data if self._xml_data else ''
-
+		return self._xml_data
