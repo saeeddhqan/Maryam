@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = "v2.0.0"
+__version__ = 'v2.0.0'
 import argparse
 import imp
 import os
@@ -128,11 +128,10 @@ class initialize(core):
 			local = re.search(pattern, open('maryam').read()).group(1)
 		except Exception as e:
 			self.error(f"Version check failed ({type(e).__name__}).")
-		else:
-			if remote != local:
-				self.alert('Your version of Maryam does not match the latest release')
-				self.output(f"Remote version:  {remote}")
-				self.output(f"Local version:   {local}")
+		if remote != local:
+			self.alert('Your version of Maryam does not match the latest release')
+			self.output(f"Remote version:  {remote}")
+			self.output(f"Local version:   {local}")
 
 	def _load_modules(self):
 		self.loaded_category = {}
@@ -244,7 +243,7 @@ class initialize(core):
 	#           MODULES 			//
 	# ////////////////////////////////
 
-	def alert_results(self, output, prefix='\t', depth:int = 0, color='N'):
+	def alert_results(self, output, prefix='\t', depth=0, color='N'):
 		if output == [] or output == {}:
 			if depth != 0:
 				self.output('Without result')
@@ -255,18 +254,18 @@ class initialize(core):
 					self.alert_results(value, prefix=prefix, depth=depth + 1, color='G')
 				else :
 					value = value.strip().replace('\n', ' ').replace('\\x', ' ') if isinstance(value, str) else value
-					self.output(f"{prefix*depth}{key.upper()} : {value}", color)
-
+					self.alert(f"{prefix*depth}{key.upper()}")
+					self.output(f"{prefix*(depth+1)}{value}", color)
+					print('')
 		elif isinstance(output, list):
 			for key in output:
 				self.alert_results(key, prefix='\t', depth=depth, color='G')
-		
 		else:
 			output = output.strip().replace('\n', ' ').replace('\\x', ' ')
 			self.output(f"{prefix*depth}{output}", color)
 
 	def thread(self, *args):
-		""" self, function, thread_count, engines, {all args}, sources"""
+		""" self, function, thread_count, engines, {...all args}, sources"""
 		with concurrent.futures.ThreadPoolExecutor(max_workers=args[1]) as executor:
 			[executor.submit(args[0], self, name, *args[3:-1]) for name in args[2] if name in args[-1]]
 
