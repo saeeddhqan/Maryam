@@ -35,7 +35,7 @@ meta = {
 
 def module_api(self):
 	# Add more error codes when found
-	error_code = {
+	error_codes = {
 		'102': 'No data found for this query'
 	}
 	title = self.options['title']
@@ -79,6 +79,6 @@ def module_api(self):
 
 def module_run(self):
 	output = module_api(self)
-	for data in output:
+	for data in output['results']:
 		table_list = [[key, data[key]] for key in data.keys() ]
-		self.table(table_list, ['Key', 'Value'], title=f"Entry No. {output.index(data)+1}")
+		self.table(table_list, ['Key', 'Value'], title=f"Entry No. {output['results'].index(data)+1}")
