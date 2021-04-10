@@ -38,7 +38,7 @@ class main:
 		url_with_payload = f'{api_url}?title={self.title}&author={self.author}&maxRecs={self.limit}&orderBy={self.order}'
 		try:
 			response = self.framework.request(url=url_with_payload)
-		except Excetion as e:
+		except Exception as e:
 			self.framework.error('Worldcat is missed!')
 		else:
 			self._xml_data = response.content
