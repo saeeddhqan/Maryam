@@ -59,24 +59,24 @@ class main:
         req = self.get_user_account_info()
         if req.status_code == 404 or self.data == {} :
             # user not found - show similar account names
-            self.framework.error('Account not Found.')
+            self.framework.error('[INSTAGRAM] Account not Found.')
             similar_users = self.get_similar_users()
             if similar_users:
                 self.framework.heading('showing similar users', 0)
 
             for index,user in enumerate(similar_users, 1):
-                self.framework.alert(f"{index}. user : {user['username']} --> {self.base_url + user['username']}")
+                self.framework.alert(f" {index}. user: {user['username']} --> {self.base_url + user['username']}")
             return
 
         if self.is_private or req.status_code != 200 :
             # return if account is private or request fails
             if self.is_private : 
-                self.framework.error('Account is Private.')
+                self.framework.error('[INSTAGRAM] Account is Private.')
                 if self.session_id == '':
                     return
 
             else :
-                self.framework.error(f"Request Fails, Url : {req.url}")
+                self.framework.error(f"[INSTAGRAM] Request Fails, Url: {req.url}")
                 return
         
         # 2. get post and follwers and following
@@ -95,7 +95,7 @@ class main:
 
     def get_user_account_info(self):
         """extracting required user info form request"""
-        req = self.session.get(url=self.base_url + f'{self.q}/?__a=1', headers=self.headers)    
+        req = self.session.get(url=f'{self.base_url}{self.q}/?__a=1', headers=self.headers)    
         try : 
             self.data = req.json()
         except:
@@ -121,20 +121,20 @@ class main:
         return req
 
     def get_similar_users(self):
-        '''return 20 similar users'''
+        """return 20 similar users"""
         url = f"{self.base_url}web/search/topsearch/?query={self.q}"
         r = requests.get(url=url, headers=self.headers)
         # return first 20 similar names 
         return [i['user'] for i in r.json()['users']][:20]
 
     def get_user_posts(self):
-        '''return boolean : if there is more data to extract'''
+        """return boolean : if there is more data to extract"""
         url = f"{self.base_url}graphql/query/?"
 
         # set payload - id is target-id  and have max limit is 50 at a request
-        payload = {"id": self._userdata["id"], "first": 50}
+        payload = {'id': self._userdata['id'], 'first': 50}
         if self.posts_next_page  :
-            payload["after"] = self.posts_next_page
+            payload['after'] = self.posts_next_page
         
         payload = json.dumps(payload)
 
@@ -158,17 +158,17 @@ class main:
                 self.posts_next_page  = None
                 return False
         else:
-            self.framework.error('Request For collecting User POST is unsuccessful.')
+            self.framework.error('[INSTAGRAM] Request For collecting User POST is unsuccessful.')
             return False
 
     def get_user_followers(self):
-        '''return boolean : if there is more data to extract'''
+        """return boolean : if there is more data to extract"""
         url = f"{self.base_url}graphql/query/?"
 
         # set payload - id is target-id  and have max limit is 50 at a request
-        payload = {"id": self._userdata["id"], "include_reel": True, "fetch_mutual": True, "first": 50}
+        payload = {'id': self._userdata['id'], 'include_reel': True, 'fetch_mutual': True, 'first': 50}
         if self.followers_next_page :
-            payload["after"] = self.followers_next_page
+            payload['after'] = self.followers_next_page
         
         payload = json.dumps(payload)
 
@@ -196,17 +196,17 @@ class main:
                 return False
 
         else:
-            self.framework.error('Request For collecting User Followers is unsuccessful.')
+            self.framework.error('[INSTAGRAM] Request For collecting User Followers is unsuccessful.')
             return False
     
     def get_user_following(self):
-        '''return boolean : if there is more data to extract'''
+        """return boolean : if there is more data to extract"""
         url = f"{self.base_url}graphql/query/?"
 
         # set payload - id is target-id  and have max limit is 50 at a request
-        payload = {"id": self._userdata["id"], "include_reel": True, "fetch_mutual": True, "first": 50}
+        payload = {'id': self._userdata['id'], 'include_reel': True, 'fetch_mutual': True, 'first': 50}
         if self.following_next_page  :
-            payload["after"] = self.following_next_page
+            payload['after'] = self.following_next_page
         
         payload = json.dumps(payload)
         
@@ -234,7 +234,7 @@ class main:
                 return False
 
         else:
-            self.framework.error('Request For collecting User Following is unsuccessful.')
+            self.framework.error('[INSTAGRAM] Request For collecting User Following is unsuccessful.')
             return False
 
 

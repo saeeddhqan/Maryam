@@ -106,7 +106,7 @@ def module_api(self):
 	links = list(self.reglib().filter(r"https?://(www\.)?instagram\.com/", list(set(LINKS))))
 	for link in self.reglib().filter(lambda x: '/explore/tags/' in x, links):
 		tag = re.sub(r'https?://(www\.)?instagram\.com/explore/tags/', '', link)
-		if re.search(r'"[\w\d_\-\/]+$", tag):
+		if re.search(r'"[\w\d_\-\/]+$"', tag):
 			tag = tag.rsplit('/')
 			output['hashtags'].append(tag[0])
 
