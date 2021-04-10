@@ -147,7 +147,7 @@ class main:
         # extracting data from the response
         if data['status'] == 'ok':
             for node in data['data']['user']['edge_owner_to_timeline_media']['edges']:
-                post = self.base_url+"p/"+node['node']['shortcode']
+                post = f"{self.base_url}p/{node['node']['shortcode']}"
                 self._post.append(post)
                 
             # have more posts 
