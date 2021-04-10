@@ -43,7 +43,6 @@ class main:
 		url = 'https://www.google.com/search'
 		set_page = lambda x: (x - 1) * self.num
 		payload = {'num': self.num, 'start': set_page(page), 'ie': 'utf-8', 'oe': 'utf-8', 'q': self.q, 'filter': '0'}
-		max_attempt = 0
 		while True:
 			self.framework.verbose(f"[GOOGLE] Searching in {page} page...", end='\r')
 			try:
@@ -91,7 +90,7 @@ class main:
 		url = 'https://www.googleapis.com/customsearch/v1'
 		payload = {'alt': 'json', 'prettyPrint': 'false', 'key': self.google_api, 'cx': self.google_cx, 'q': self.q}
 		page = 0
-		self.verbose(f"[GOOGLEAPI] Searching Google API for: {self.q}")
+		self.framework.verbose(f"[GOOGLEAPI] Searching Google API for: {self.q}")
 		while True:
 			self.framework.verbose(f'[GOOGLEAPI] Searching in {page} page...', end='\r')
 			resp = self.framework.request(url, params=payload)

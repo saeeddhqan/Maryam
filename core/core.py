@@ -986,6 +986,5 @@ class core(cmd.Cmd):
 		return [x for x in ['off', 'on', 'status', 'all', 'from ', 'clear'] if x.startswith(text.lower())]
 
 	def complete_show(self, text, line, begidx, endidx):
-		args = line.split()
 		options = sorted(self._get_show_names())
 		return [x for x in options if x.startswith(text)]
