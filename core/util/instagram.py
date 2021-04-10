@@ -64,7 +64,7 @@ class main :
             if similar_users :
                 self.framework.heading('showing similar users', 0)
 
-            for index, user in enumerate(similar_users, 1):
+            for index, user in enumerate(similar_users, 1) :
                 self.framework.alert(f" {index}. user: {user['username']} --> {self.base_url + user['username']}")
             return
 
@@ -84,7 +84,7 @@ class main :
             if not self.get_user_posts() :
                 break
         
-        for _ in range(self.limit):
+        for _ in range(self.limit) :
             if not self.get_user_followers() :
                 break
         
@@ -154,10 +154,10 @@ class main :
             if data['data']['user']['edge_owner_to_timeline_media']['page_info']['has_next_page'] :
                 self.posts_next_page = data['data']['user']['edge_owner_to_timeline_media']['page_info']['end_cursor']
                 return True
-            else:
+            else :
                 self.posts_next_page = None
                 return False
-        else:
+        else :
             self.framework.error('[INSTAGRAM] Request For collecting User POST is unsuccessful.')
             return False
 
@@ -191,11 +191,11 @@ class main :
             if data['data']['user']['edge_followed_by']['page_info']['has_next_page'] :
                 self.followers_next_page = data['data']['user']['edge_followed_by']['page_info']['end_cursor']
                 return True
-            else:
+            else :
                 self.followers_next_page = None
                 return False
 
-        else:
+        else :
             self.framework.error('[INSTAGRAM] Request For collecting User Followers is unsuccessful.')
             return False
     
@@ -229,11 +229,11 @@ class main :
             if data['data']['user']['edge_follow']['page_info']['has_next_page'] :
                 self.following_next_page = data['data']['user']['edge_follow']['page_info']['end_cursor']
                 return True
-            else:
+            else :
                 self.following_next_page  = None
                 return False
 
-        else:
+        else :
             self.framework.error('[INSTAGRAM] Request For collecting User Following is unsuccessful.')
             return False
 
