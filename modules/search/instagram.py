@@ -19,7 +19,7 @@ import re
 
 meta = {
 	'name': 'Instagram Search',
-	'author': 'Rishabh Jain, Aman Singh',
+	'author': 'Aman Singh, Rishabh Jain',
 	'version': '0.2',
 	'description': 'Search your query in the Instagram and show the results.',
 	'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo','instagram'),
@@ -140,13 +140,13 @@ def module_api(self):
 		saving_output['FOLLOWERS'] = FOLLOWERS
 		self.heading('Extracting User followers', 0)
 		for user in saving_output['FOLLOWERS'] :
-			self.output(f"\tuser : {user['username']} --> https://www.instagram.com/{user['username']}", color="G")
+			self.output(f"\tuser: {user['username']} --> https://www.instagram.com/{user['username']}", color="G")
 	
 	if FOLLOWING:
 		saving_output['FOLLOWING']= FOLLOWING
 		self.heading('Extracting User following', 0)
-		for user in saving_output['FOLLOWERS']:
-			self.output(f"\tuser : {user['username']} --> https://www.instagram.com/{user['username']}", color="G")
+		for user in saving_output['FOLLOWING']:
+			self.output(f"\tuser: {user['username']} --> https://www.instagram.com/{user['username']}", color="G")
 
 	output = {key: val for key, val in output.items() if val} 
 

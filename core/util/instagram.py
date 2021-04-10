@@ -16,6 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import requests
+import json
 
 class main:
     def __init__(self, q, limit=50, session_id=''):
@@ -94,11 +95,11 @@ class main:
 
     def get_user_account_info(self):
         """extracting required user info form request"""
-        req = self.session.get(url=self.base_url + f'{self.q}/?__a=1',headers=self.headers)    
+        req = self.session.get(url=self.base_url + f'{self.q}/?__a=1', headers=self.headers)    
         try : 
             self.data = req.json()
         except:
-            self.framework.error('Request Fail !! Too many tries')
+            self.framework.error('[INSTAGRAM] Request Fail!! Too many tries')
             return
         if self.data:
             # id
@@ -121,22 +122,24 @@ class main:
 
     def get_similar_users(self):
         '''return 20 similar users'''
-        url = 'https://www.instagram.com/web/search/topsearch/?query='
-        r = requests.get(url = url+self.q,headers = self.headers)
+        url = f"{self.base_url}web/search/topsearch/?query={self.q}"
+        r = requests.get(url=url, headers=self.headers)
         # return first 20 similar names 
         return [i['user'] for i in r.json()['users']][:20]
 
     def get_user_posts(self):
         '''return boolean : if there is more data to extract'''
-        url = self.base_url + 'graphql/query/?'
+        url = f"{self.base_url}graphql/query/?"
 
         # set payload - id is target-id  and have max limit is 50 at a request
-        payload = '{' + f'"id":"{self._userdata["id"]}"'+ ',"first":50' + '}'
-        if self.posts_next_page != None:
-            payload = '{' + f'"id":"{self._userdata["id"]}"'+ ',"first":50' + f',"after":"{self.posts_next_page}"' +'}'
+        payload = {"id": self._userdata["id"], "first": 50}
+        if self.posts_next_page  :
+            payload["after"] = self.posts_next_page
+        
+        payload = json.dumps(payload)
 
         # encode the payload and add in params
-        params = {'query_hash':'003056d32c2554def87228bc3fd9668a','variables': payload.encode()}    
+        params = {'query_hash': '003056d32c2554def87228bc3fd9668a', 'variables': payload.encode()}    
         
         # geting response
         data = self.session.get(url,params=params,headers=self.headers).json()
@@ -160,18 +163,20 @@ class main:
 
     def get_user_followers(self):
         '''return boolean : if there is more data to extract'''
-        url = self.base_url + 'graphql/query/?'
+        url = f"{self.base_url}graphql/query/?"
 
         # set payload - id is target-id  and have max limit is 50 at a request
-        payload = '{' + f'"id":"{self._userdata["id"]}"'+ ',"include_reel":"true","fetch_mutual":"true","first":50'.replace('"true"','true') + '}'
-        if self.followers_next_page != None:
-            payload = '{' + f'"id":"{self._userdata["id"]}"'+ ',"include_reel":"true","fetch_mutual":"true","first":50'.replace('"true"','true') + f',"after":"{self.followers_next_page}"' +'}'
+        payload = {"id": self._userdata["id"], "include_reel": True, "fetch_mutual": True, "first": 50}
+        if self.followers_next_page :
+            payload["after"] = self.followers_next_page
         
+        payload = json.dumps(payload)
+
         # encode the payload and add in params        
-        params = {'query_hash':'c76146de99bb02f6415203be841dd25a','variables': payload.encode()}
+        params = {'query_hash': 'c76146de99bb02f6415203be841dd25a', 'variables': payload.encode()}
         
         # geting response
-        data = self.session.get(url,params=params,headers=self.headers).json()
+        data = self.session.get(url, params=params, headers=self.headers).json()
         
         # extracting data from the response
         if data['status'] == 'ok':
@@ -196,15 +201,17 @@ class main:
     
     def get_user_following(self):
         '''return boolean : if there is more data to extract'''
-        url = self.base_url + 'graphql/query/?'
+        url = f"{self.base_url}graphql/query/?"
 
         # set payload - id is target-id  and have max limit is 50 at a request
-        payload = '{' + f'"id":"{self._userdata["id"]}"'+ ',"include_reel":"true","fetch_mutual":"true","first":50'.replace('"true"','true') + '}'
-        if self.following_next_page != None:
-            payload = '{' + f'"id":"{self._userdata["id"]}"'+ ',"include_reel":"true","fetch_mutual":"true","first":50'.replace('"true"','true') + f',"after":"{self.following_next_page}"' +'}'
+        payload = {"id": self._userdata["id"], "include_reel": True, "fetch_mutual": True, "first": 50}
+        if self.following_next_page  :
+            payload["after"] = self.following_next_page
+        
+        payload = json.dumps(payload)
         
         # encode the payload and add in params        
-        params = {'query_hash':'3dec7e2c57367ef3da3d987d89f9dbc8','variables': payload.encode()}
+        params = {'query_hash': '3dec7e2c57367ef3da3d987d89f9dbc8', 'variables': payload.encode()}
         
         # geting response
         data = self.session.get(url,params=params,headers=self.headers).json()
