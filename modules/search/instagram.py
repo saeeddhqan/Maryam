@@ -19,8 +19,8 @@ import re
 
 meta = {
 	'name': 'Instagram Search',
-	'author': 'Aman Singh, Rishabh Jain',
-	'version': '0.2',
+	'author': 'Aman Singh',
+	'version': '0.5',
 	'description': 'Search your query in the Instagram and show the results.',
 	'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo', 'instagram'),
 	'options': (
@@ -79,20 +79,29 @@ def module_api(self):
 	count = self.options['count']
 	session_id = self.options['session_id'] or ''
 	engine = self.options['engine'].split(',')
-
 	output = {
+		'error': None,
 		'people': [],
 		'posts': [],
 		'hashtags': [],
+		'followers': [],
+		'following': [],
+		'userdata': {},
 		}
+	if 'instagram' in engine and not session_id:
+		msg = '"sessionid" field from cookies is required for instagram engine.'
+		self.error(msg)
+		output['error'] = msg
+		return
+
 	q_formats = {
 		'google_q': f"site:www.instagram.com inurl:{query}",
 		'default_q': f"site:www.instagram.com {query}",
 		'yippy_q': f"www.instagram.com {query}",
 		'instagram': f"{query}"
 	}
-	
-	self.thread(search, self.options['thread'], engine, query, q_formats, limit, count,session_id, meta['sources'])
+
+	self.thread(search, self.options['thread'], engine, query, q_formats, limit, count, session_id, meta['sources'])
 
 	# for other modules
 	usernames = self.page_parse(PAGES).get_networks
@@ -115,42 +124,20 @@ def module_api(self):
 		output['posts'].append(link)
 
 	# for insta
-	saving_output = output.copy()
-	if USERDATA :
-		saving_output['USERDATA'] = USERDATA
-		self.heading('Extracting User account', 0)
-		for key,value in saving_output['USERDATA'].items():
-			if isinstance(value, str) and '\n' in value: 
-				value = value.encode('utf-8')
-			self.output(f"\t{key} : {value}", color='G')
+	if USERDATA:
+		self.output(USERDATA)
+		for key in USERDATA:
+			if isinstance(USERDATA[key], str) and '\n' in USERDATA[key]: 
+				USERDATA[key] = USERDATA[key].encode('utf-8')
+			output['userdata'][key] = USERDATA[key]
 
-	if POST:
-		saving_output['POSTS'] = POST
-		if output['posts']:
-			for po in output['posts']:
-				if po not in saving_output['POSTS']:
-					saving_output['POSTS'].append(po) 
-			else:
-				output.pop('posts')
-		self.heading('Extracting User Post', 0)
-		for i in saving_output['POSTS']:
-			self.output('\t' + i, color='G')
-
-	if FOLLOWERS:
-		saving_output['FOLLOWERS'] = FOLLOWERS
-		self.heading('Extracting User followers', 0)
-		for user in saving_output['FOLLOWERS'] :
-			self.output(f"\tuser: {user['username']} --> https://www.instagram.com/{user['username']}", color="G")
-
-	if FOLLOWING:
-		saving_output['FOLLOWING']= FOLLOWING
-		self.heading('Extracting User following', 0)
-		for user in saving_output['FOLLOWING']:
-			self.output(f"\tuser: {user['username']} --> https://www.instagram.com/{user['username']}", color="G")
+	output['posts'].extend(POST) 
+	output['followers'] = FOLLOWERS
+	output['following']= FOLLOWING
 
 	output = {key: val for key, val in output.items() if val} 
 
-	self.save_gather(saving_output,'search/instagram', query, output=self.options.get('output'))
+	self.save_gather(output,'search/instagram', query, output=self.options.get('output'))
 	return output
 
 def module_run(self):
