@@ -46,10 +46,11 @@ def module_run(self):
         for item in output:
                 print()
                 self.output(item['title'])
+                self.output(item['link'])
                 self.output(item['magnet'])
-                self.output(item['date']+' '+item['uploader'])
-                self.output('Seeders  :'+item['seeders'])
-                self.output('Leechers :'+item['leechers'])
+                self.output(item['dateuploader'])
+                self.output('Seeders  : '+item['seeders'])
+                self.output('Leechers : '+item['leechers'])
 
         print()
         self.output('Paste the magnet link into your torrent client to start downloading.')
