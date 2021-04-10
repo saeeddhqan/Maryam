@@ -23,28 +23,26 @@ meta = {
 	'author': 'Vikas Kundu',
 	'version': '0.1',
 	'description': 'Search books on Worldcat using author name or book title. ',
-	'sources': (['Worldcat API']),
+	'sources': ('Worldcat API',),
 	'options': (
 		('title', '', False, 'Query string for title of a book', '-t', 'store', str),
 		('author', '', False, 'Query string for author of a book', '-a', 'store', str),
 		('limit', 25, False, 'Search limit(number of results, default=25)', '-l', 'store', int),
 		('order', 'desc', False, 'Search order(asc or desc, default=desc)', '-o', 'store', str)
 	),
-    'examples': ('worldcat -t <TITLE> -l 15 --output',)
+    'examples': ('worldcat -t <TITLE> -l 15',)
 }
 
-#Add more error codes when found
-error_codes = {
-	'102': 'No data found for this query'
-	}
-
 def module_api(self):
-	global error_codes
+	# Add more error codes when found
+	error_code = {
+		'102': 'No data found for this query'
+	}
 	title = self.options['title']
 	author = self.options['author']
 	limit = self.options['limit']
 	order = self.options['order']
-	output = []
+	output = {'results': []}
 
 	run = self.worldcat(title, author, limit, order)
 	if run.search() == 'False':
@@ -70,11 +68,11 @@ def module_api(self):
 
 	#Parsing book data
 	works = xml_root.findall('.//{http://classify.oclc.org}works')	
-	output = [ {} for _ in range(limit)]
-	for index in range(0,limit):
+	output['results'] = [{} for _ in range(limit)]
+	for index in range(0, limit):
     		for i in works:
         		for key,value in i[index].attrib.items():
-		            output[index].update({key:value})
+		            output['results'][index].update({key: value})
 	
 	self.save_gather(output, 'search/worldcat', title, output=self.options.get('output'))
 	return output
@@ -82,13 +80,5 @@ def module_api(self):
 def module_run(self):
 	output = module_api(self)
 	for data in output:
-		table_list = [ [key, data[key]] for key in data.keys() ]
-		self.table(table_list, ['Key','Value'], title=f'Entry No. {output.index(data)+1}')
-	
-	
-	
-	
-	
-	
-	
-	
+		table_list = [[key, data[key]] for key in data.keys() ]
+		self.table(table_list, ['Key', 'Value'], title=f"Entry No. {output.index(data)+1}")
