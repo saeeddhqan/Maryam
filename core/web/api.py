@@ -15,24 +15,6 @@ resources = Blueprint('resources', __name__, url_prefix='/api')
 API = Api()
 API.init_app(resources)
 
-class WorkspaceSummary(Resource):
-    def post(self):
-        workspace = request.json['workspace']
-        base_obj._init_workspace(workspace)
-        current_app.config['WORKSPACE'] = workspace
-        WORKSPACE = base_obj.workspace.split('/')[-1]
-        print((f" * Workspace initialized: {WORKSPACE}"))
-        try:
-            filename = os.path.join(home, base_obj._config['workspaces_directory_name'], workspace, 'gather.dat')
-            file = open(filename)
-            data = json.loads(file.read())
-        except:
-            data = {}
-        return data
-
-API.add_resource(WorkspaceSummary, '/workspaces/')
-
-
 class RunModules(Resource):
     def get(self):
         meta = {}
@@ -82,24 +64,3 @@ class RunModules(Resource):
         }
 
 API.add_resource(RunModules, '/run/')
-
-
-class PlotGraph(Resource):
-    def get(self):
-        workspace = current_app.config['WORKSPACE']
-        try:
-            filename = os.path.join(home, '.maryam/workspaces/', workspace, 'gather.dat')
-            file = open(filename)
-            data = json.loads(file.read())
-        except:
-            data = {}
-
-        dataPoints = {"modules" : [] , "targets": [], "name": []}
-        for modules in sorted(list(data.keys())):
-            dataPoints['modules'].append(modules.split('/')[1])
-            dataPoints['targets'].append(len(data[modules]))
-            dataPoints['name'].append(', '.join(data[modules].keys()))
-
-        return dataPoints
-
-API.add_resource(PlotGraph, '/graph/')
