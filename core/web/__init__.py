@@ -6,6 +6,8 @@ import os
 import requests
 import json
 
+cli.show_server_banner = lambda *x: None
+
 core_obj = core.core()
 base_obj = initial.initialize(core_obj)
 
