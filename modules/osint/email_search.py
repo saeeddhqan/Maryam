@@ -46,7 +46,7 @@ def search(self, name, q, q_formats, limit, count):
 		key = q.split('&api_key=')[1]
 		k_q = q.split('&api_key=')[0]
 		if key == 'None':
-			self.error('-k <API KEY> is required for hunter')
+			self.error('-k <API KEY> is required for hunter', 'email_search', 'search')
 			return
 		else:
 			attr = engine(k_q, key, limit)

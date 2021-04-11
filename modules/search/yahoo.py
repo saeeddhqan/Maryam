@@ -16,28 +16,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 meta = {
-	'name': 'Google Search',
+	'name': 'Yahoo Search',
 	'author': 'Saeed',
-	'version': '0.5',
-	'description': 'Search your query in the google.com and show the results.',
-	'sources': ('google',),
+	'version': '0.1',
+	'description': 'Search your query in the search.yahoo.com and show the results.',
+	'sources': ('yahoo',),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
 		('count', 50, False, 'Number of results per page(min=10, max=100, default=50)', '-c', 'store', int),
 	),
-	'examples': ('google -q <QUERY> -l 15 --output --api',)
+	'examples': ('yahoo -q <QUERY> -l 15 --output --api',)
 }
 
 def module_api(self):
 	query = self.options['query']
 	limit = self.options['limit']
 	count = self.options['count']
-	run = self.google(query, limit, count)
+	run = self.yahoo(query, limit, count)
 	run.run_crawl()
 	results = run.results
 	output = {'results': results}
-	self.save_gather(output, 'search/google', query, output=self.options['output'])
+	self.save_gather(output, 'search/yahoo', query, output=self.options['output'])
 	return output
 
 def module_run(self):

@@ -40,12 +40,12 @@ class main:
 			self.q = urllib.parse.quote_plus(self.q)
 			self.framework.verbose('Searching the pubmed domain...')
 
-			url = f'https://pubmed.ncbi.nlm.nih.gov/?term={self.q}&size=200'
+			url = f"https://pubmed.ncbi.nlm.nih.gov/?term={self.q}&size=200"
 			try:
 				req = self.framework.request(url=url)
-			except:
-					self.framework.error('[PUBMED] ConnectionError')
-					self.framework.error('Pubmed is missed!')
+			except Exception as e:
+					self.framework.error(f"ConnectionError {e}.", 'util/pubmed', 'run_crawl')
+					self.framework.error('Pubmed is missed!', 'util/pubmed', 'run_crawl')
 					return
 			self._rawhtml += req.text
 			self._articles.extend(re.findall(r'<article .*?>(.*?)</article>', 

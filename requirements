@@ -1,6 +1,7 @@
 requests
 cloudscraper
 bs4
+lxml
 flask
 flasgger
 Flask-RESTful

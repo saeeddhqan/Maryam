@@ -22,7 +22,8 @@ class main:
 
 		def __init__(self, q, limit=15):
 			""" Gigablast search engine
-					q     : query to search
+					q     : Query to search
+					limit : Number of pages
 			"""
 			self.framework = main.framework
 			self.q = q
@@ -41,15 +42,14 @@ class main:
 				script = soup.find('body')['onload']
 				rand = re.findall(r'rand=(\d+[^&]+)&x', script)[0]
 				xkhh = re.findall(r"khh=(\d+[^']+)'", script)[0]
-
 				final_url =  ''.join([f'https://www.gigablast.com/search?',
 					f'q={self.q}&format=json&rand={rand}&xkhh={xkhh}'])
 
 				req = self.framework.request(url=final_url)
 				self._json = req.json()['results']
 			except:
-				self.framework.error('[GIGABLAST] ConnectionError')
-				self.framework.error('Gigablast is missed!')
+				self.framework.error('ConnectionError.', 'util/gigablast', 'run_crawl')
+				self.framework.error('Gigablast is missed!', 'util/gigablast', 'run_crawl')
 
 		@property
 		def json(self):
@@ -76,7 +76,6 @@ class main:
 			for count, result in enumerate(self._json):
 				if count>=self._max:
 					break
-
 				self._links_with_data.append({
 					'title': result['title'],
 					'subtitle': result.get('subTitle'),
@@ -84,4 +83,3 @@ class main:
 					'link': result['url']
 					})
 			return self._links_with_data
-

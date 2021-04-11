@@ -25,10 +25,10 @@ class main:
 	def __init__(self, url, debug=False, limit=1, thread_count=1):
 		""" Web scraper with thread support
 
-			url		  	 : first page address
-			debug	  	 : show the result at moment
-			limit	  	 : web scrap level(if it's 1 that's mean just search in first page)
-			thread_count : count of links for open at per lap
+			url		  	 : First page address
+			debug	  	 : Show the result at moment
+			limit	  	 : Web scrap level(if it's 1 that's mean just search in first page)
+			thread_count : Count of links for open at per lap
 		"""
 		self.framework = main.framework
 		# ADD http:// 

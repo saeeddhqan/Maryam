@@ -14,7 +14,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import re
 
 meta = {
         'name': 'Phone Number Search',
@@ -41,5 +40,5 @@ def module_run(self):
 	if output['valid']:
 		self.alert_results(output)
 	else:
-		self.error('Invalid Number!')
-		self.error("Number must be of the form '+{area code}{ten digit number}'")
+		self.error('Invalid Number!', 'phone_number_search', 'module_run')
+		self.error("Number must be of the form '+{area code}{ten digit number}'", 'phone_number_search', 'module_run')

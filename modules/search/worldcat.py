@@ -45,7 +45,7 @@ def module_api(self):
 	output = {'results': []}
 
 	run = self.worldcat(title, author, limit, order)
-	if run.search() == 'False':
+	if run.run_crawl() == False:
 		return output
 	
 	xml_root = ElementTree.fromstring(run.xml_data)	
@@ -54,16 +54,16 @@ def module_api(self):
 	response_code = xml_root.findall('.//{http://classify.oclc.org}response')[0].attrib['code']
 	if response_code != '4': #If not success
 		if response_code in error_codes:
-			self.error(f'[Worldcat Search] {error_codes[response_code]}')
+			self.error(f"{error_codes[response_code]}", 'worldcat', 'module_api')
 		else:
-			self.error('[Worldcat Search] Something went wrong!')
+			self.error('Something went wrong!', 'worldcat', 'module_api')
 		return output
 
 	#Parsing total entries available for this query
 	workCount = xml_root.findall('.//{http://classify.oclc.org}workCount')
 	total_entries = workCount[0].text	
 	if limit > int(total_entries): 
-		self.alert(f'[Worldcat Search] Only {total_entries} entries available for this query instead of {limit}')
+		self.alert(f'Only {total_entries} entries available for this query instead of {limit}')
 		limit = int(total_entries)
 
 	#Parsing book data

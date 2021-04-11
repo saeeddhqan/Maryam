@@ -20,7 +20,7 @@ class main:
 	def __init__(self, q):
 		""" crt.sh search engine
 
-			q 		  : query for search
+			q 		  : Query for search
 		"""
 		self.framework = main.framework
 		self.q = q
@@ -34,7 +34,7 @@ class main:
 			req = self.framework.request(self.crt)
 		except:
 			self.framework.debug('[CRT] ConnectionError')
-			self.framework.error('CRT is missed!')
+			self.framework.error('CRT is missed!', 'util/crt', 'run_crawl')
 			return
 		self._pages = req.text
 		try:

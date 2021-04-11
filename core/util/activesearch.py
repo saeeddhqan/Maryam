@@ -25,8 +25,8 @@ class main:
 		def __init__(self, q, limit=15):
 			""" activesearchresults.com search engine
 
-					q         : query for search
-					limit     : maximum result count
+					q     : Query for search
+					limit : Maximum result count
 			"""
 			self.framework = main.framework
 			self.q = q
@@ -67,8 +67,8 @@ class main:
 						headers=header
 						)
 				except:
-					self.framework.error('[ACTIVESEARCH] ConnectionError')
-					self.framework.error('activesearchresults is missed!')
+					self.framework.error('ConnectionError', 'util/activesearch', 'run_crawl')
+					self.framework.error('activesearchresults is missed!', 'util/activesearch', 'run_crawl')
 					return
 
 				self._rawhtml += req.text

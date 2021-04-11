@@ -56,7 +56,7 @@ class main :
 		req = self.get_user_account_info()
 		if req.status_code == 404 or self.data == {}:
 			# user not found - show similar account names
-			self.framework.error('[INSTAGRAM] Account not Found.')
+			self.framework.error('Account not Found.', 'util/instagram', 'run_crawl')
 			similar_users = self.get_similar_users()
 			if similar_users :
 				self.framework.heading('showing similar users', 0)
@@ -68,12 +68,12 @@ class main :
 		if self.is_private or req.status_code != 200:
 			# return if account is private or request fails
 			if self.is_private: 
-				self.framework.error('[INSTAGRAM] Account is Private.')
+				self.framework.error('Account is Private.', 'util/instagram', 'run_crawl')
 				if self.session_id == '':
 					return
 
 			else:
-				self.framework.error(f"[INSTAGRAM] Request Fails, Url: {req.url}")
+				self.framework.error(f"Request Fails, Url: {req.url}", 'util/instagram', 'run_crawl')
 				return
 		
 		# 2. get post and follwers and following
@@ -96,7 +96,7 @@ class main :
 		try: 
 			self.data = req.json()
 		except:
-			self.framework.error('[INSTAGRAM] Request Fail!! Too many tries')
+			self.framework.error('Request Fail!! Too many tries', 'util/instagram', 'get_user_account_info')
 			return
 		if self.data:
 			# id
@@ -155,7 +155,7 @@ class main :
 				self.posts_next_page = None
 				return False
 		else:
-			self.framework.error('[INSTAGRAM] Request For collecting User POST is unsuccessful.')
+			self.framework.error('Request For collecting User POST is unsuccessful.', 'util/instagram', 'get_user_posts')
 			return False
 
 	def get_user_followers(self):
@@ -193,7 +193,7 @@ class main :
 				return False
 
 		else:
-			self.framework.error('[INSTAGRAM] Request For collecting User Followers is unsuccessful.')
+			self.framework.error('Request For collecting User Followers is unsuccessful.', 'util/instagram', 'get_user_followers')
 			return False
 	
 	def get_user_following(self):

@@ -40,9 +40,9 @@ class main:
 		try:
 			req = self.framework.request(url=url)
 		except:
-			self.framework.error('[PIRATEBAY] ConnectionError')
-			self.framework.error('Piratebay is missed!')
-			self.framework.error('[PIRATEBAY] Try again after a few seconds!')
+			self.framework.error('ConnectionError.', 'util/piratebay', 'run_crawl')
+			self.framework.error('Piratebay is missed!', 'util/piratebay', 'run_crawl')
+			self.framework.error('Try again after a few seconds!', 'util/piratebay', 'run_crawl')
 		else:
 			soup = bs(req.text, 'html.parser')
 			self._torrents = soup.find_all('tr')[1:-1]

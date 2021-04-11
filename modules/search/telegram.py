@@ -61,7 +61,7 @@ def scrap(self,query,limit):
 		try:
 			req = self.request(f'https://telegramchannels.me/search?type=channel&page={page_no}&search={query}').text
 		except Exception as e:
-			self.error('Telegramchannels.me is missed!')
+			self.error('Telegramchannels.me is missed!', 'telegram', 'scrap')
 
 		if 'There are no media! Try another search!' in req:
 			break
@@ -78,7 +78,7 @@ def scrap(self,query,limit):
 			LINKS += set(re.findall(r"t\.me/[\w]+", req))
 			PAGES += req
 		except Exception as e:
-			self.error(f'Channel {link} is missed!')
+			self.error(f"Channel {link} is missed!", 'telegram', 'scrap')
 	
 def module_api(self):
 	query = self.options['query']

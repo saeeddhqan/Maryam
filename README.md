@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/saeeddhqan/maryam.svg?branch=master)](https://travis-ci.com/saeeddhqan/maryam)
-![Version 2.0](https://img.shields.io/badge/Version-2.0-green.svg)
+![Version 2.0.5](https://img.shields.io/badge/Version-2.0.5-green.svg)
 ![GPLv3 License](https://img.shields.io/badge/License-GPLv3-green.svg)
 ![Python 3.8.x](https://img.shields.io/badge/Python-3.8.x-green.svg)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/40d81c48b3444ee78ffc6c5c8639134c)](https://www.codacy.com/manual/saeeddhqan/Maryam?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=saeeddhqan/Maryam&amp;utm_campaign=Badge_Grade)
@@ -49,12 +49,13 @@ python3 maryam -e help
 ## Updates
 **Last Updates**
 
- - Rewrite core
+ - Error stack and a better performance for dev
+ - Update google and yahoo: new format
  - Add API interface
  - Combine 'waf' to 'wapps'
  - Add 'update' command to update modules
  - Remove 'record', 'spool', and 'use'
- - Add CVE search module
+
 
 
 ## Contribution

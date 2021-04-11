@@ -41,11 +41,11 @@ class main:
 						params=payload,
 						allow_redirects=False)
 			except:
-				self.framework.error('[DUCKDUCKGO] ConnectionError')
+				self.framework.error('ConnectionError', 'util/duckduckgo', 'run_crawl')
 				return
 			if req.status_code == 403:
-				self.framework.error('[DUCKDUCKGO] 403 Forbidden (Too many requests.)')
-				return
+				self.framework.error('403 Forbidden (Too many requests.)', 'util/duckduckgo', 'run_crawl')
+				break
 			self._pages += req.text
 			# setting next page offset
 			if payload['s'] == 0:
