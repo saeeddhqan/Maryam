@@ -2,6 +2,7 @@ from flask import Blueprint, current_app, request, jsonify, abort
 from flask_restful import Resource, Api
 from core import initial
 from core import core
+import requests
 import json
 import os
 from pathlib import Path
@@ -37,9 +38,25 @@ class RunModules(Resource):
         }
 
     def post(self):
-        cmd = request.json['cmd']
-        args = cmd.split(' ');
-        ret = base_obj.onecmd(cmd)
+        print(request.args)
+        args = request.args
+        data = requests.get('http://localhost:5000/api/modules/').json()
+        module_data = data['meta'][args['module']]
+        cmd = args['module']
+        for option in module_data['options']:
+            try:
+                if(option[5]=='store'):
+                    if(args[option[0]]): #checking if user has supplied the parameter
+                        cmd+= ' ' + option[4] + ' ' + args[option[0]]
+                    else: #if the user has not supplied a mandatory parameter then use default
+                        cmd+= ' ' + option[4] + ' ' + option[1]
+                else:
+                    if(args[option[0]]):
+                        cmd+= ' ' + option[4]
+            except Exception as e:
+                continue
+
+        base_obj.onecmd(cmd)
         workspace = current_app.config['WORKSPACE']
         try:
             filename = os.path.join(home, base_obj._config['workspaces_directory_name'], workspace, 'gather.dat')
@@ -50,17 +67,20 @@ class RunModules(Resource):
 
         output = []
         for module in data:
-            if args[0] in module:
+            if args['module'] in module:
                 for target in data[module]:
-                    if args[2] in target:
+                    if args[module_data['options'][0][0]] in target:
                         output = data[module][target]
                         break
                 break
 
         return {
-            'output': output,
-            'workspace': workspace,
-            'cmd': cmd
+            'meta': {
+                'workspace': workspace,
+                'cmd': cmd,
+                'module': module_data
+                },
+            'output': output
         }
 
-API.add_resource(RunModules, '/run/')
+API.add_resource(RunModules, '/modules/')

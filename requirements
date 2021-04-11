@@ -1,3 +1,6 @@
 requests
 cloudscraper
 bs4
+flask
+flasgger
+Flask-RESTful
