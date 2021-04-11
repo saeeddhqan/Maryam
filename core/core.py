@@ -478,7 +478,7 @@ class core(cmd.Cmd):
 		if self._global_options['rand_agent']:
 			headers['user-agent'] = rand_uagent.main().get
 		else:
-			headers['user-agent'] = headers.get('user_agent', False) or self._global_options['agent']
+			headers['user-agent'] = headers.get('user-agent', False) or self._global_options['agent']
 		# normalize capitalization of the User-Agent header
 		headers = {k.title(): v for k, v in headers.items()}
 		kwargs['headers'] = headers
@@ -616,7 +616,7 @@ class core(cmd.Cmd):
 		name = options[0].lower()
 		if name in self._global_options:
 			value = ' '.join(options[1:])
-			if self._global_options_[name][2] and not value:
+			if self._global_options_[name][2] and (not value or value == 'None'):
 				print(f"{name} is a required option.")
 				return
 			if value[:1] == '$':
@@ -637,9 +637,9 @@ class core(cmd.Cmd):
 					print(f"{name} is an int option. got {value}")
 					return
 			else:
-                        	if value == 'None':
-                        		value = None
-                        	self._global_options[name] = value
+				if value == 'None':
+					value = None
+				self._global_options[name] = value
 			print(f"{name.upper()} => {value}")
 			self._save_config(name)
 		else:
@@ -986,6 +986,5 @@ class core(cmd.Cmd):
 		return [x for x in ['off', 'on', 'status', 'all', 'from ', 'clear'] if x.startswith(text.lower())]
 
 	def complete_show(self, text, line, begidx, endidx):
-		args = line.split()
 		options = sorted(self._get_show_names())
 		return [x for x in options if x.startswith(text)]

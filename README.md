@@ -32,8 +32,8 @@ python3 maryam -e help
 
 ```bash
 # Using dns_search. --max means all of resources. --api shows the results as json.
-# .. -e means use multi-threading.
-./maryam -e dns_search -d ibm.com -e 5 --max --api --form 
+# .. -t means use multi-threading.
+./maryam -e dns_search -d ibm.com -t 5 --max --api --form 
 # Using youtube. -q means query
 ./maryam -e youtube -q "<QUERY>"
 ./maryam -e google -q "<QUERY>"

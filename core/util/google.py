@@ -30,9 +30,9 @@ class main:
 		"""
 		self.framework = main.framework
 		self.q = q
-		self.agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0'
+		self.agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:86.0) Gecko/20100101 Firefox/86.0'
 		self._pages = ''
-		self.limit = limit+1
+		self.limit = limit + 1
 		self.num = count
 		self.google_api = google_api
 		self.google_cx = google_cx
@@ -43,20 +43,19 @@ class main:
 		url = 'https://www.google.com/search'
 		set_page = lambda x: (x - 1) * self.num
 		payload = {'num': self.num, 'start': set_page(page), 'ie': 'utf-8', 'oe': 'utf-8', 'q': self.q, 'filter': '0'}
-		max_attempt = 0
 		while True:
-			self.framework.verbose(f'[GOOGLE] Searching in {page} page...', end='\r')
+			self.framework.verbose(f"[GOOGLE] Searching in {page} page...", end='\r')
 			try:
 				req = self.framework.request(
 					url=url,
 					params=payload,
-					headers={'User-Agent': self.agent},
+					headers={'user-agent': self.agent},
 					allow_redirects=True)
 			except Exception as e:
 				self.framework.error(f"[GOOGLE] ConnectionError: {e}")
 				return
 			if req.status_code in (503, 429):
-				req = self.framework.error('[GOOGLE] Google CAPTCHA triggered.')
+				self.framework.error('[GOOGLE] Google CAPTCHA triggered.')
 				break
 
 			if req.status_code in (301, 302):
@@ -91,9 +90,9 @@ class main:
 		url = 'https://www.googleapis.com/customsearch/v1'
 		payload = {'alt': 'json', 'prettyPrint': 'false', 'key': self.google_api, 'cx': self.google_cx, 'q': self.q}
 		page = 0
-		self.verbose(f"[GOOGLEAPI] Searching Google API for: {self.q}")
+		self.framework.verbose(f"[GOOGLEAPI] Searching Google API for: {self.q}")
 		while True:
-			self.framework.verbose(f'[GOOGLE] Searching in {page} page...', end='\r')
+			self.framework.verbose(f'[GOOGLEAPI] Searching in {page} page...', end='\r')
 			resp = self.framework.request(url, params=payload)
 			if resp.json() is None:
 				raise self.framework.FrameworkException(f"Invalid JSON response.{os.linesep}{resp.text}")
