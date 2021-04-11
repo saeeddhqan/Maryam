@@ -14,14 +14,16 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+
 from bs4 import BeautifulSoup as bs
+
 class main:
 
 		def __init__(self, query=None, id=None, limit=15):
 			""" Sanctionsearch.ofac.treas.gov search engine
-					name     : name to search
-					id       : id to search
-					limit	 : number of results (only applicable for name search)
+					name     : Mame to search
+					id       : Id to search
+					limit	 : Number of results (only applicable for name search)
 			"""
 			self.framework = main.framework
 			self._query = query
@@ -43,9 +45,9 @@ class main:
 			try:
 				# First request to get viewstate from input tag
 				req = self.framework.request(url=self.sanctionsearch)
-			except:
-				self.framework.error('[SANCTIONSEARCH] ConnectionError')
-				self.framework.error('Sanctionsearch is missed!')
+			except Exception as e:
+				self.framework.error(f"ConnectionError {e}.", 'util/sanctionsearch', 'name_crawl')
+				self.framework.error('Sanctionsearch is missed!', 'util/sanctionsearch', 'name_crawl')
 				return
 
 			soup = bs(req.text, 'html.parser')
@@ -63,9 +65,9 @@ class main:
 						method='POST',
 						data=data,
 						headers=headers)
-			except:
-				self.framework.error('[SANCTIONSEARCH] ConnectionError')
-				self.framework.error('Sanctionsearch is missed!')
+			except Exception as e:
+				self.framework.error(f"ConnectionError {e}.", 'util/sanctionsearch', 'name_crawl')
+				self.framework.error('Sanctionsearch is missed!', 'util/sanctionsearch', 'name_crawl')
 				return
 
 			soup = bs(req.text, 'html.parser')
@@ -143,7 +145,7 @@ class main:
 				address_table = address_table_div.find('table')
 				address_th = list(map(lambda x: x.text, 
 					address_table.find_all('th')))
-				address_rows =list(filter(lambda x:len(''.join(x.text).strip()) > 0, 
+				address_rows = list(filter(lambda x:len(''.join(x.text).strip()) > 0, 
 					address_table.find_all('tr')))[1:]
 
 				self._data['addresses'] = {}
@@ -162,4 +164,3 @@ class main:
 		@property
 		def data(self):
 			return self._data
-

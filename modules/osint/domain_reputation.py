@@ -63,7 +63,7 @@ def barracudacentral(self, q):
 		req = self.request('https://www.barracudacentral.org/lookups/lookup-reputation', method='POST',
 						   data=data)
 	except Exception as e:
-		self.error('Barracuda is missed!')
+		self.error('Barracuda is missed!', 'domain_reputation', 'barracudacentral')
 	else:
 		reg = re.compile(r"categories: <strong>([\w\d\s-]+)")
 		if 'listed as "poor"' not in req.text:
@@ -92,7 +92,7 @@ def mxtoolbox(self, q):
 		blacklist_reg = re.compile(r'<span class="bld_name">([\d\w\s]+)</span>')
 		lists = list_reg.findall(j)[:-1]
 	except Exception as e:
-		self.verbose('Mxtoolbox is missed')
+		self.error('Mxtoolbox is missed!', 'domain_reputation', 'mxtoolbox')
 	else:
 		for blacklist in lists:
 			if 'LISTED' in blacklist:
@@ -116,7 +116,7 @@ def multirbl(self, q):
 		num_test_reg = re.compile(r'nof: ([\d]+),')
 		num_test = num_test_reg.findall(text)[0]
 	except Exception as e:
-		self.verbose('Multirbl is missed')
+		self.error('Multirbl is missed', 'domain_reputation', 'multirbl')
 	else:
 		thread_pool = concurrent.futures.ThreadPoolExecutor(max_workers=2)
 		futures = (thread_pool.submit(__multirbl, self, l_id, hash, l_ids, q) for l_id in range(int(num_test)))

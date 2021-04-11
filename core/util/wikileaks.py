@@ -23,7 +23,7 @@ class main:
 	def __init__(self, q, limit=1):
 		""" wikileaks.org search engine
 
-			q	: query for search
+			q		: Query for search
 			limit	: Number of Pages
 
 		"""
@@ -50,10 +50,10 @@ class main:
 					headers={'User-Agent': self.agent},
 					allow_redirects=True)
 			except Exception as e:
-				self.framework.error(f"[Wikileaks] ConnectionError: {e}")
+				self.framework.error(f"ConnectionError: {e}", 'util/wikileaks', 'run_crawl')
 				max_attempts += 1
 				if max_attempts == self.limit:
-					self.framework.error('Wikileaks is missed!')
+					self.framework.error('Wikileaks is missed!', 'util/wikileaks', 'run_crawl')
 					return
 			else:
 				self._pages += req.text

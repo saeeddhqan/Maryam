@@ -42,7 +42,7 @@ def blacklist_check(self, image_data):
 	global project_root
 	black_img_path = os.path.join(project_root, 'data', 'images', 'blacklist', f'{self.options["blacklist"]}.json')
 	if not os.path.isfile(black_img_path) : # Check if blacklisted image exists?
-		self.error('[Mobile Screenshot] The blacklisted image name entered by user does not exist.')
+		self.error('The blacklisted image name entered by user does not exist.', 'bing_mobile_view', 'blacklist_check')
 		return False
 
 	blacklisted_image_data = json.load(open(black_img_path)) # Load the data of blacklisted image
@@ -57,7 +57,7 @@ def blacklist_check(self, image_data):
 		counter += 1
 	
 	if counter-1 == self.options['retries']: # If all retries are done then return false otherwise image data
-		self.error('[Bing Mobile View] Exhausted retries, maybe this is not a public profile.')
+		self.error('Exhausted retries, maybe this is not a public profile.', 'bing_mobile_view', 'blacklist_check')
 		return False
 	else:
 		return image_data
@@ -77,7 +77,7 @@ def module_api(self):
 	image_data = run.raw_image_data
 
 	if image_data == '':
-		self.error('[Bing Mobile View] Unable to detect image in the page')
+		self.error('Unable to detect image in the page', 'bing_mobile_view', 'module_api')
 		return output
 
 	'''

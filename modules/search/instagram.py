@@ -90,8 +90,7 @@ def module_api(self):
 		}
 	if 'instagram' in engine and not session_id:
 		msg = '"sessionid" field from cookies is required for instagram engine.'
-		self.error(msg)
-		output['error'] = msg
+		self.error(msg, 'instagram', 'module_api')
 		return
 
 	q_formats = {

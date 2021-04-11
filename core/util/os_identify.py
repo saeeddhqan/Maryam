@@ -22,8 +22,8 @@ class main:
 	def __init__(self, content, headers):
 		""" Detect operation system
 
-			content 	: web page content
-			headers		: web page headers
+			content 	: Web page content
+			headers		: Web page headers
 		"""
 		self.content = content
 		self.headers = headers

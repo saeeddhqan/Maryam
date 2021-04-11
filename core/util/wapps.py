@@ -24,9 +24,9 @@ class main:
 	def __init__(self, q, page, headers):
 		""" Web application fingerprint for detect apps. like wappalizer
 			
-			q 		  : domain name
-			page	  : web page
-			headers	  : web headers
+			q 		  : Domain name
+			page	  : Web page
+			headers	  : Web headers
 		"""
 		self.framework = main.framework
 		self.q = q

@@ -20,8 +20,8 @@ class main:
 	def __init__(self, q, limit):
 		""" exalead.com search engine
 
-			q         : query for search
-			limit     : count of pages
+			q         : Query for search
+			limit     : Number of pages
 		"""
 		self.framework = main.framework
 		self.q = q
@@ -39,10 +39,10 @@ class main:
 			try:
 				req = self.framework.request(url=urls[url])
 			except:
-				self.framework.error('[EXALEAD] ConnectionError')
+				self.framework.error('ConnectionError.', 'util/exalead', 'run_crawl')
 				max_attempt -= 1
 				if max_attempt == 0:
-					self.framework.error('Exalead is missed!')
+					self.framework.error('Exalead is missed!', 'util/exalead', 'run_crawl')
 					break
 			else:
 				self._pages += req.text

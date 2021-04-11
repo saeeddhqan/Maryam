@@ -39,8 +39,8 @@ class main:
 		try:
 			req = self.framework.request(url=geturl)
 		except:
-			self.framework.error('[YIPPY] ConnectionError')
-			self.framework.error('Yippy is missed!')
+			self.framework.error('ConnectionError', 'util/yippy', 'run_crawl')
+			self.framework.error('Yippy is missed!', 'util/yippy', 'run_crawl')
 			return
 
 		txt = req.text

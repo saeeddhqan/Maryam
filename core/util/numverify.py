@@ -51,9 +51,9 @@ class main:
 
 				req = self.framework.request(url=url)
 				self._json = req.json()
-			except:
-				self.framework.error('[NUMVERIFY] ConnectionError')
-				self.framework.error('Numverify is missed!')
+			except Exception as e:
+				self.framework.error(f"ConnectionError {e}.", 'util/numverify', 'run_crawl')
+				self.framework.error('Numverify is missed!', 'util/numverify', 'run_crawl')
 				return
 
 		@property
