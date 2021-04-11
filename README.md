@@ -49,12 +49,13 @@ python3 maryam -e help
 ## Updates
 **Last Updates**
 
+ - Error stack and a better performance for dev
  - Update google and yahoo: new format
  - Add API interface
  - Combine 'waf' to 'wapps'
  - Add 'update' command to update modules
  - Remove 'record', 'spool', and 'use'
- - Add CVE search module
+
 
 
 ## Contribution
