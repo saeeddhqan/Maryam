@@ -16,7 +16,7 @@ resources = Blueprint('resources', __name__, url_prefix='/api')
 API = Api()
 API.init_app(resources)
 
-class RunModules(Resource):
+class ShowModules(Resource):
     def get(self):
         meta = {}
         modules = []
@@ -37,10 +37,13 @@ class RunModules(Resource):
             'meta': meta
         }
 
-    def post(self):
+API.add_resource(ShowModules, '/framework/')
+
+class RunModules(Resource):
+    def get(self):
         print(request.args)
         args = request.args
-        data = requests.get('http://localhost:5000/api/modules/').json()
+        data = requests.get('http://localhost:5000/api/framework/').json()
         module_data = data['meta'][args['module']]
         cmd = args['module']
         for option in module_data['options']:
@@ -69,7 +72,7 @@ class RunModules(Resource):
         for module in data:
             if args['module'] in module:
                 for target in data[module]:
-                    if args[module_data['options'][0][0]] in target:
+                    if args[module_data['options'][0][0]] == target:
                         output = data[module][target]
                         break
                 break
