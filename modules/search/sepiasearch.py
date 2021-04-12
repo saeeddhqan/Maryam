@@ -16,7 +16,7 @@ meta = {
 	'name': 'sepiasearch',
 	'author': 'Rishabh Jain',
 	'version': '0.1',
-	'description': "Sepia Search is a video search engine optimised for PeerTube channels.",
+	'description': "Sepia Search is a video search engine optimized for PeerTube channels.",
 	'sources': ('sepiasearch',),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
