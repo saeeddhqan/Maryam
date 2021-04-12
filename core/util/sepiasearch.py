@@ -31,8 +31,10 @@ class main :
         self._result_found = 0
         
     def run_crawl(self):
+        self.framework.verbose('[SEPIASEARCH] Extracting Data From API')
         response = requests.get(self.url, params=self.params, headers=self.headers)
         if response.status_code != 200:
+            self.framework.error('Request Fail', 'util/sepiasearch', 'run_crawl')
             return
         
         response = response.json()
