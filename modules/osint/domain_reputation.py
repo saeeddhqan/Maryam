@@ -22,7 +22,7 @@ import requests
 meta = {
 	'name': 'Domain Reputation',
 	'author': 'Kunal Khandelwal',
-	'version': '0.1',
+	'version': '0.3',
 	'description': 'Check domain reputation with different sources and provide a summary of combined results.',
 	'sources': ('barracudacentral', 'mxtoolbox', 'multirbl', 'norton'),
 	'options': (
@@ -41,6 +41,7 @@ BLACKLIST = []
 OUTPUT = {}
 LISTS = 0
 RESULT = ''
+OUTPUT = {'category': '', 'number': 0, 'blacklists': [], 'absence': 0, 'norton': ''}
 
 def thread(self, function, thread_count, engines, q, sources):
 	threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
@@ -55,7 +56,7 @@ def search(self, name, q):
 
 def norton(self, q):
 	global RESULT
-	self.verbose('[NORTON] Scanning domain ...')
+	self.verbose('[NORTON] Scanning domain...')
 	try:
 		req = self.request(f'https://safeweb.norton.com/report/show?url={q}')
 	except Exception as e:
@@ -165,13 +166,20 @@ def module_api(self):
 	query = self.options['domain']
 	engines = self.options['engines'].split(',')
 	thread(self, search, self.options['thread'], engines, query, meta['sources'])
-	OUTPUT['number of presence on blacklist'] = len(list(set(BLACKLIST)))
+	OUTPUT['number'] = len(list(set(BLACKLIST)))
 	OUTPUT['blacklists'] = list(set(BLACKLIST))
 	if LISTS!=0:
 		presence = len(list(set(BLACKLIST))) / LISTS
-		OUTPUT['absence % on blacklist'] = 100 - (presence*100)
-	OUTPUT['Norton Safe Web Report:'] = RESULT
+		OUTPUT['absence'] = 100 - (presence*100)
+	OUTPUT['norton'] = RESULT
 	return OUTPUT
 
 def module_run(self):
-	self.alert_results(module_api(self))
+	output = module_api(self)
+	self.output(f"CATEGORY\n\t{output['category']}")
+	self.output(f"NUMBER OF PRESENCE ON BLACKLIST\n\t{output['number']}")
+	self.output('BLACKLISTS')
+	for i in output['blacklists']:
+		self.output(i, 'B')
+	self.output(f"ABSENCE PERCENTAGE\n\t{output['absence']}")
+	self.output(f"NORTON SAFE WEB REPORT\n\t{output['norton']}")
