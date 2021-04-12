@@ -37,15 +37,20 @@ class main:
 		self.lang = lang
 		self.extension = extension
 		self.count = count
-		self.limit = math.ceil(count/50) #No. of pages to scrap. 50 entries per page so total = ceil of limit/50
+		self.limit = math.ceil(count/50) # No. of pages to scrap. 50 entries per page so total = ceil of limit/50
 		self._books_data = ''
 		self._articles_data = ''
+		self.original_rand_agent_val = self.framework._global_options['rand_agent']
 		self.framework._global_options['rand_agent'] = True
+	
+	# Adding destructor to set global option to same as before
+	def __del__(self):
+		self.framework._global_options['rand_agent'] = self.original_rand_agent_val
 				
 	def search_all(self, url, payload, source):
 		scrap_result = ''
 		self.framework.verbose(f'[Zlibrary Search] Fetching query in {source}...')
-		cookies = {'zlib-searchView':'table'} #Cookie needed for table view instead of list
+		cookies = {'zlib-searchView':'table'} # Cookie needed for table view instead of list
 		total_entries = 0
 		
 		for page_no in range(1, self.limit+1):
@@ -54,12 +59,12 @@ class main:
 				return scrap_result
 
 			self.framework.verbose(f'[Zlibrary Search] Fetching page {page_no}...')
-			total_entries += 50 #50 table entries present per page
+			total_entries += 50 # 50 table entries present per page
 
 			try:
-				scrap_result += self.framework.request(f'{url}{payload}&page={page_no}' , cookies=cookies).text
+				scrap_result += self.framework.request(f"{url}{payload}&page={page_no}" , cookies=cookies).text
 			except Exception as e:
-				self.framework.error(f'Zlibrary {source}, page {page_no} is missed!')
+				self.framework.error(f"Zlibrary {source}, page {page_no} is missed!", 'util/zlibrary', 'search_all')
 	
 		return scrap_result
 
@@ -70,20 +75,21 @@ class main:
 		try:
 			response = self.framework.request(welcome_page_url)
 		except Exception as e:
-			self.framework.error('Zlibrary is missed!')
+			self.framework.error(f"Zlibrary is missed!", 'util/zlibrary', 'search')
 			return False
 		else:	
-			parsed_html = BeautifulSoup(response.text,features="lxml")
+			parsed_html = BeautifulSoup(response.text, features='lxml')
 
-			zlib_books_url = parsed_html.body.find('span', attrs={'class':'domain-check-domain','data-mode':'books'}).text
-			zlib_articles_url = parsed_html.body.find('span', attrs={'class':'domain-check-domain','data-mode':'articles'}).text
+			zlib_books_url = parsed_html.body.find('span', attrs={'class': 'domain-check-domain', 'data-mode': 'books'}).text
+			zlib_articles_url = parsed_html.body.find('span', attrs={'class': 'domain-check-domain', 'data-mode': 'articles'}).text
 
 			payload_books = f"/s/{self.query}/?e={int(self.exact)}&yearFrom={self.start_year}&"+\
 			f"yearTo={self.end_year}&language={self.lang}&extension={self.extension}"
 			payload_articles = f"/s/{self.query}/?e={int(self.exact)}&yearFrom={self.start_year}&yearTo={self.end_year}"
-			#Language and extension options not present in article search so payloads different
+			# Language and extension options not present in article search so payloads different
 			
-			self._books_data = self.search_all(f"https://{zlib_books_url}", payload_books, 'books') #Appending https:// else url invalid
+			# Appending https:// else url invalid
+			self._books_data = self.search_all(f"https://{zlib_books_url}", payload_books, 'books') 
 			self._articles_data = self.search_all(f"https://{zlib_articles_url}", payload_articles, 'articles')
 
 	@property
