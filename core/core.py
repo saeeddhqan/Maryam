@@ -171,13 +171,18 @@ class core(cmd.Cmd):
 		'''Formats and presents normal output.'''
 		line = self.to_str(line)
 		line = f'{prep}{Colors.B}[*]{getattr(Colors, color.upper())} {line}\033[m'
-		if not line.endswith(os.linesep) and linesep:
-			line += os.linesep
+		if not line.endswith(os.linesep) and end != os.linesep and linesep:
+			end = os.linesep
 		print(line, end=end)
 
-	def alert(self, line):
+	def alert(self, line, end='\n'):
 		'''Formats and presents important output.'''
-		print(f"{Colors.G}[*]{Colors.N} {line}")
+		print(f"{Colors.G}[*]{Colors.N} {line}", end=end)
+
+	def print_special(self, line, color='G', end='\n'):
+		'''Formats and presents any user given output.'''
+		line = f'{getattr(Colors, color.upper())}{line}\033[m'
+		print(line, end=end)
 
 	def verbose(self, line, color='n', end=''):
 		'''Formats and presents output if in verbose mode.'''
