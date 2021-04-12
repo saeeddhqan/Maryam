@@ -24,10 +24,10 @@ meta = {
 	'author': 'Kunal Khandelwal',
 	'version': '0.1',
 	'description': 'Check domain reputation with different sources and provide a summary of combined results.',
-	'sources': ('barracudacentral', 'mxtoolbox', 'multirbl'),
+	'sources': ('barracudacentral', 'mxtoolbox', 'multirbl', 'norton'),
 	'options': (
 		('domain', None, True, 'Domain name without https?://', '-d', 'store', str),
-		('engines', 'barracudacentral,multirbl,mxtoolbox', True, 'Search engine names(default=[barracudacentral,'
+		('engines', 'barracudacentral,multirbl,mxtoolbox,norton', False, 'Search engine names(default=[barracudacentral,'
                                                                  'multirbl, mxtoolbox])'
 		 , '-e', 'store', str),
 		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
@@ -40,6 +40,7 @@ meta = {
 BLACKLIST = []
 OUTPUT = {}
 LISTS = 0
+RESULT = ''
 
 def thread(self, function, thread_count, engines, q, sources):
 	threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
@@ -51,6 +52,23 @@ def thread(self, function, thread_count, engines, q, sources):
 def search(self, name, q):
 	engine = eval(name)
 	engine(self, q)
+
+def norton(self, q):
+	global RESULT
+	self.verbose('[NORTON] Scanning domain ...')
+	try:
+		req = self.request(f'https://safeweb.norton.com/report/show?url={q}')
+	except Exception as e:
+		self.error(f"Norton could not scan! due to {e}")
+	else:
+		e_reg = "is a known dangerous web page"
+		s_reg = "found no issues with"
+		if e_reg in req.text:
+			RESULT = f"Threat Report: {q} {e_reg}"
+		elif s_reg in req.text:
+			RESULT = f"Threat Report: {s_reg} {q}"
+		else:
+			RESULT = f"Threat Report: {q} not yet rated as dangerous."
 
 def barracudacentral(self, q):
 	global LISTS,OUTPUT
@@ -149,6 +167,7 @@ def module_api(self):
 	if LISTS!=0:
 		presence = len(list(set(BLACKLIST))) / LISTS
 		OUTPUT['absence % on blacklist'] = 100 - (presence*100)
+	OUTPUT['Norton Safe Web Report:'] = RESULT
 	return OUTPUT
 
 def module_run(self):
