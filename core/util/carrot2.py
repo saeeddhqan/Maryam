@@ -23,7 +23,7 @@ class main:
 	def __init__(self, q):
 		""" carrot2.org search engine
 
-			q 		  : query for search
+			q 		  : Query for search
 		"""
 		self.framework = main.framework
 		self.q = q
@@ -43,16 +43,16 @@ class main:
 				   'Upgrade-Insecure-Requests': '1', 'Cache-Control': 'max-age=0'}
 		self.framework.debug(f"[eTOOLS] Searching in 'etools.ch'...")
 		try:
-			req = self.framework.request(url=self.etools, params=params, headers=headers,allow_redirects=True)
+			req = self.framework.request(url=self.etools, params=params, headers=headers, allow_redirects=True)
 		except:
-			self.framework.error('[eTOOLS] ConnectionError')
-			self.framework.error('eTOOLS is missed!')
+			self.framework.error('ConnectionError.', 'util/carrot2', 'run_crawl')
+			self.framework.error('eTOOLS is missed!', 'util/carrot2', 'run_crawl')
 		else:
 			self._pages = req.text
 			try:
 				self._json = req.json()
 			except:
-				self.framework.error('eTOOLS is missed!')
+				self.framework.error('eTOOLS is missed!', 'util/carrot2', 'run_crawl')
 
 	@property
 	def pages(self):

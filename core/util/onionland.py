@@ -21,8 +21,8 @@ class main:
 	def __init__(self, q, limit):
 		""" use onionlandsearchengine.com
 
-			q 		  : query for search
-			limit	  : count of pages
+			q 		  : Query for search
+			limit	  : Number of pages
 		"""
 		self.framework = main.framework
 		self.q = self.framework.urlib(q).quote
@@ -43,7 +43,7 @@ class main:
 				self.framework.print_exception()
 				max_attempt -= 1
 				if max_attempt == 0:
-					self.framework.error('Onionland is missed!')
+					self.framework.error('Onionland is missed!', 'util/onionland', 'run_crawl')
 					break
 			else:
 				self._pages += req.text

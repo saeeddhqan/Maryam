@@ -29,9 +29,9 @@ class main:
 		self.thread = 3
 		self._links = []
 		self.q_formats = {
-		'default_q': f'site:pastebin.com "{self.q}"',
-		'yippy_q': f'"pastebin.com" {self.q}',
-		'qwant_q': f'site:pastebin.com {self.q}'
+			'default_q': f'site:pastebin.com "{self.q}"',
+			'yippy_q': f'"pastebin.com" {self.q}',
+			'qwant_q': f'site:pastebin.com {self.q}'
 		}
 		
 

@@ -22,8 +22,8 @@ class main:
 	def __init__(self, q, limit=2):
 		""" qwant.com search engine
 
-			q 		  : query for search
-			limit	  : count of pages
+			q 		  : Query for search
+			limit	  : Number of pages
 		"""
 		self.framework = main.framework
 		self.q = q
@@ -58,22 +58,22 @@ class main:
 			self.framework.verbose(f"[QWANT] Searching in {url} page...")
 			try:
 				req = self.framework.request(url=urls[url], headers=headers)
-			except:
-				self.framework.error('[QWANT] ConnectionError')
-				self.framework.error('Qwant is missed!')
-				return
-			if req.status_code == 429 and "I can't let you do that..." in req.text and '<div class="error-code">' in req.text:
-				self.framework.error('429 Too Many Requests')
-				return
-			self._pages += req.text
-			try:
-				self._json.append(req.json())
 			except Exception as e:
-				self.framework.error('429 Too Many Requests')
-				return
+				self.framework.error(f"ConnectionError {e}.", 'util/qwant', 'name_crawl')
+				self.framework.error('Qwant is missed!', 'util/qwant', 'name_crawl')
 			else:
-				if req.json() == {"status": "error", "error": 22}:
+				if req.status_code == 429 and "I can't let you do that..." in req.text and '<div class="error-code">' in req.text:
 					self.framework.error('429 Too Many Requests')
+					return
+				self._pages += req.text
+				try:
+					self._json.append(req.json())
+				except Exception as e:
+					self.framework.error('429 Too Many Requests')
+					return
+				else:
+					if req.json() == {"status": "error", "error": 22}:
+						self.framework.error('429 Too Many Requests')
 
 	@property
 	def pages(self):

@@ -21,8 +21,8 @@ class main:
 		"""
 		discord users and servers search
 
-		q          : query for search
-		limit      : count of pages
+		q          : Query for search
+		limit      : Number of pages
 		"""
 
 		self.framework = main.framework
@@ -48,10 +48,10 @@ class main:
 			try:
 				req = self.framework.request(url=urls[url], allow_redirects=True)
 			except Exception as e:
-				self.framework.error('[DISCORD] ConnectionError')
+				self.framework.error('ConnectionError', 'util/discord', 'run_crawl')
 				max_attempt -= 1
 				if max_attempt == 0:
-					self.framework.error('Discord is missed!')
+					self.framework.error('Discord is missed!', 'util/discord', 'run_crawl')
 					break
 			self._pages += req.text
 	@property

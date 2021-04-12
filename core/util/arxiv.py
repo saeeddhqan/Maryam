@@ -39,12 +39,12 @@ class main:
 			self.q = urllib.parse.quote_plus(self.q)
 			url = f'https://export.arxiv.org/api/query?search_query=all:'\
 					   + f'{self.q}&start=0&max_results={self.max}'
-			self.framework.verbose('Searching the arxiv.org domain...')
+			self.framework.verbose('[ARXIV] Searching the arxiv.org domain...')
 			try:
 					req = self.framework.request(url=url)
 			except:
-					self.framework.error('[ARXIV] ConnectionError')
-					self.framework.error('ArXiv is missed!')
+					self.framework.error('ConnectionError', 'arxiv', 'run_crawl')
+					self.framework.error('ArXiv is missed!', 'arxiv', 'run_crawl')
 					return
 			self._rawxml = req.text
 			self._articles = list(re.findall(r'<entry>(.*?)</entry>', 

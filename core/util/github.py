@@ -47,9 +47,8 @@ class main:
 				self.framework.verbose(f"[GITHUB] Searching in {page} page...")
 				req = self.framework.request(url=self.urls[page], headers={'Cookie': self.cookie, 'Accept': 'application/vnd.github.v3.text-match+json'}, allow_redirects=True)
 				result_json = req.json()
-			except:
-				self.framework.error('[GITHUB] ConnectionError')
-				return
+			except Exception as e:
+				self.framework.error(f"ConnectionError {e}.", 'util/github', 'run_crawl')
 			else:
 				for results in result_json['items']:
 					if 'fork' not in results:

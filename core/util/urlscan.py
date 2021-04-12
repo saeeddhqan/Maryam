@@ -43,7 +43,7 @@ class main:
                 self.framework.verbose('[URLSCAN] Not yet in our database.')
                 return
             elif 'results' not in result_json:
-                self.framework.error(f'[URLSCAN] failed with an error: {result_json["description"]}')
+                self.framework.error(f"failed with an error: {result_json['description']}", 'util/urlscan', 'run_crawl')
                 return
             else:
                 for results in result_json['results']:

@@ -48,6 +48,7 @@ class core(cmd.Cmd):
 	_loaded_modules = {}
 	_cat_module_names = {}
 	_module_names = []
+	_error_stack = []
 	_history_file = ''
 	workspace = ''
 	variables = {}
@@ -138,16 +139,16 @@ class core(cmd.Cmd):
 	#           OUTPUT              //
 	# ////////////////////////////////
 
-	def print_exception(self, line=''):
+	def print_exception(self, line='', where='nil', which_func='nil'):
 		stack_list = [x.strip() for x in traceback.format_exc().strip().splitlines()]
 		message = stack_list[-1]
 		if self._global_options['verbosity'] == 0:
 			return
 		elif self._global_options['verbosity'] == 1:
 			line = ' '.join([x for x in [message, line] if x])
-			self.error(stack_list[-3])
-			self.error(line)
-		elif self._global_options['verbosity'] == 2:
+			self.error(stack_list[-3], where, which_func)
+			self.error(line, where, which_func)
+		elif self._global_options['verbosity'] >= 2:
 			print(f"{Colors.R}{'-'*60}")
 			traceback.print_exc()
 			print(f"{'-'*60}{Colors.N}")
@@ -160,12 +161,15 @@ class core(cmd.Cmd):
 				size -= 1
 		return '\n'.join([prefix + line for line in wrap(string, size)])
 
-	def error(self, line):
+	def error(self, line, where='nil', which_func='nil'):
 		'''Formats and presents errors.'''
 		if not re.search(r'[.,;!?]$', line):
 			line += '.'
 		line = line[:1].upper() + line[1:]
-		print(f"{Colors.R}[!] {line}{Colors.N}")
+		error = f"[{where}:{which_func}] {line}"
+		print(f"{Colors.O}[!] {error}{Colors.N}")
+		if error not in self._error_stack:
+			self._error_stack.append(error)
 
 	def output(self, line, color='N', end='', prep='', linesep=True):
 		'''Formats and presents normal output.'''
@@ -377,6 +381,13 @@ class core(cmd.Cmd):
 			file.close()
 			return filename
 		return False
+
+	# ////////////////////////////////
+	#           HISTORY 			//
+	# ////////////////////////////////
+
+	def _reset_error_stack(self):
+		self._error_stack.clear()
 
 	# ////////////////////////////////
 	#           HISTORY 			//

@@ -27,13 +27,13 @@ meta = {
                 ('query', None, True, 'Query to search', '-q', 'store', str),
 		('limit', 15, False, 'Max result count (default=15)', '-l', 'store', int),
         ),
-        'examples': ("gigablast -q <QUERY> -l 20 ")
+        'examples': ('gigablast -q <QUERY> -l 20',)
 }
 
 def module_api(self):
 	query = self.options['query']
 	limit = self.options['limit']
-	run = self.gigablast(query,limit)
+	run = self.gigablast(query, limit)
 	run.run_crawl()
 	output = {'results': []}
 	links = run.links_with_data
@@ -48,11 +48,11 @@ def module_run(self):
 	output = module_api(self)['results']
 	for item in output:
 		print()
-		if len(item['title'])>0:
+		if len(item['title']) > 0:
 			self.output(item['title'])
 		if item['subtitle'] is not None:
 			self.output(item['subtitle'])
-		if len(item['summary'])>0:
+		if len(item['summary']) > 0:
 			for line in item['summary'].split('\n'):
 				self.output(line)
 		self.output(item['link'])

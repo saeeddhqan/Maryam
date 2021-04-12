@@ -20,8 +20,8 @@ class main:
 	def __init__(self, q, limit=2):
 		""" startpage.com search engine
 
-			q 		  : query for search
-			limit	  : count of pages
+			q 		  : Query for search
+			limit	  : Number of pages
 		"""
 		self.framework = main.framework
 		self.q = self.framework.urlib(q).quote
@@ -36,11 +36,11 @@ class main:
 			self.framework.verbose(f"[STARTPAGE] Searching in {url} page...")
 			try:
 				req = self.framework.request(url=urls[url])
-			except:
-				self.framework.error('[STARTPAGE] ConnectionError')
+			except Exception as e:
+				self.framework.error(f"ConnectionError {e}.", 'util/startpage', 'run_crawl')
 				max_attempt -= 1
 				if max_attempt == 0:
-					self.framework.error('Startpage is missed!')
+					self.framework.error('Startpage is missed!', 'util/startpage', 'run_crawl')
 					break
 			else:
 				page = req.text

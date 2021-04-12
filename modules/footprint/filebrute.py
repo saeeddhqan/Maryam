@@ -100,7 +100,7 @@ def remote_list(self, addr):
 			wordlist.pop(wordlist.index(''))
 		return wordlist
 	else:
-		self.error(f"{addr} value is not text/plain")
+		self.error(f"{addr} value is not text/plain", 'filebrute', 'remote_list')
 	return []
 
 def module_api(self):

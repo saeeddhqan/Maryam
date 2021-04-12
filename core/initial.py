@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = 'v2.0.0'
+__version__ = 'v2.0.5'
 import argparse
 import imp
 import os
@@ -265,6 +265,14 @@ class initialize(core):
 			output = output.strip().replace('\n', ' ').replace('\\x', ' ')
 			self.output(f"{prefix*depth}{output}", color)
 
+	def search_engine_results(self, output):
+		for i in output['results']:
+			self.output(i['title'])
+			self.output(i['a'])
+			self.output(i['cite'])
+			self.output(i['content'])
+			print()
+
 	def thread(self, *args):
 		""" self, function, thread_count, engines, {...all args}, sources"""
 		with concurrent.futures.ThreadPoolExecutor(max_workers=args[1]) as executor:
@@ -338,6 +346,8 @@ class initialize(core):
 					# Turn off framework prints till the executing of module
 					with turn_off():
 						results = mod.module_api(self)
+						results['errors'] = self._error_stack
+						self._reset_error_stack()
 					if self.options['format']:
 						print(json.dumps(results, indent=4))
 					else:
@@ -347,7 +357,7 @@ class initialize(core):
 			except KeyboardInterrupt:
 				pass
 			except Exception as e:
-				self.error(f"{tool_name.title()}CodeError: {e}")
+				self.print_exception(where=tool_name, which_func='running')
 
 	def run_tool(self, func, tool_name, args, output=None):
 		try:

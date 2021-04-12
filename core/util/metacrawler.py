@@ -38,7 +38,7 @@ class main:
 			try:
 				req = self.framework.request(url=urls[url])
 			except:
-				self.framework.error('[METACRAWLER] ConnectionError')
+				self.framework.error('ConnectionError', 'util/metacrawler', 'run_crawl')
 				max_attempt -= 1
 				if max_attempt == 0:
 					self.framework.error('Metacrawler is missed!')
@@ -46,7 +46,7 @@ class main:
 			else:
 				page = self.framework.to_str(req.text)
 				if 'To continue, please respond below:' in page:
-					self.framework.error("[METACRAWLER] Google CAPTCHA triggered.")
+					self.framework.error('CaptchaError', 'util/metacrawler', 'run_crawl')
 					return
 				if url > 0:
 					if 'Next »' not in page:

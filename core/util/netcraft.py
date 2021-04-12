@@ -35,9 +35,9 @@ class main:
 		cookies = cookies or {}
 		try:
 			req = self.framework.request(url=url, cookies=cookies)
-		except:
-			self.framework.error('[NETCRAFT] ConnectionError')
-			self.framework.error('Netcraft is missed!')
+		except Exception as e:
+			self.framework.error(f"ConnectionError {e}.", 'util/netcraft', 'request')
+			self.framework.error('Netcraft is missed!', 'util/netcraft', 'request')
 			return False
 		return req
 

@@ -36,7 +36,7 @@ class main:
 			req = self.framework.request(url=url)
 		except:
 			self.framework.print_exception()
-			self.framework.error('Ahmia is missed!')
+			self.framework.error('Ahmia is missed!', 'util/ahmia', 'run_crawl')
 		self._pages = req.text
 			
 	@property

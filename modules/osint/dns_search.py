@@ -95,7 +95,7 @@ def riddler(self, q):
 		req = self.request(
 			f"https://riddler.io/search?q=pld:{q}&view_type=data_table")
 	except Exception as e:
-		self.error('Riddler is missed!')
+		self.error('Riddler is missed!', 'dns_search', 'riddler')
 	else:
 		j = self.page_parse(req.text).get_dns(q) or []
 		set_data(j)
@@ -108,7 +108,7 @@ def sitedossier(self, q):
 			req = self.request(
 				f"http://www.sitedossier.com/parentdomain/{q}/{next_page}")
 		except Exception as e:
-			self.error('Sitedossier is missed!')
+			self.error('Sitedossier is missed!', 'dns_search', 'sitedossier')
 			break
 		else:
 			text = req.text
@@ -131,7 +131,7 @@ def threatcrowd(self, q):
 		req = self.request(
 			'https://threatcrowd.org/searchApi/v2/domain/report/?domain=' + q)
 	except Exception as e:
-		self.error('ThreatCrowd is missed!')
+		self.error('ThreatCrowd is missed!', 'dns_search', 'threatcrowd')
 	else:
 		txt = re.sub(r'[\t\n ]+', '', req.text)
 		txt = re.findall(
@@ -149,7 +149,7 @@ def threatminer(self, q):
 		req = self.request(
 			f"https://api.threatminer.org/v2/domain.php?q={q}&rt=5")
 	except Exception as e:
-		self.error('ThreatMiner is missed!')
+		self.error('ThreatMiner is missed!', 'dns_search', 'threatminer')
 	else:
 		j = req.json()['results'] or []
 		set_data(j)
@@ -158,9 +158,9 @@ def rapiddns(self, q):
 	self.verbose('[RAPIDDNS] Searching in rapiddns...')
 	try:
 		req = self.request(
-				'https://rapiddns.io/subdomain/' + q + '?full=1')
+				f"https://rapiddns.io/subdomain/{q}?full=1")
 	except Exception as e:
-		self.error('Rapiddns is missed!')
+		self.error('Rapiddns is missed!', 'dns_search', 'rapiddns')
 	else:
 		j = self.page_parse(req.text).get_dns(q) or []
 		set_data(j)
@@ -185,7 +185,7 @@ def dnsdumpster(self, q):
 		data = {'csrfmiddlewaretoken': csrf_token, 'targetip': q}
 		req = self.request('https://dnsdumpster.com/', method='POST', headers=headers, data=data)
 	except Exception:
-		self.error('DNSdumpster is missed!')
+		self.error('DNSdumpster is missed!', 'dns_search', 'dnsdumpster')
 	else:
 		j = self.page_parse(req.text).get_dns(q) or []
 		set_data(j)
@@ -202,7 +202,7 @@ def yougetsignal(self, q):
 	try:
 		req = self.request('https://domains.yougetsignal.com/domains.php', method='POST', headers=headers, data=data).json()
 	except Exception as e:
-		self.error('YouGetSignal is missed!')
+		self.error('YouGetSignal is missed!', 'dns_search', 'yougetsignal')
 	else:
 		j = [x[0] if len(x)>1 else '' for x in req.get('domainArray')]
 		set_data(j)
@@ -213,11 +213,11 @@ def certspotter(self, q):
 		req = self.request(
 			f"https://api.certspotter.com/v1/issuances?domain={q}&include_subdomains=true&expand=dns_names")
 	except Exception as e:
-		self.error('CERTSPOTTER is missed!')
+		self.error('CERTSPOTTER is missed!', 'dns_search', 'certspotter')
 	else:
 		text = req.text
 		if "rate_limit" in text:
-			self.error('[CERTSPOTTER] Too many request please try again later')
+			self.error('Too many request please try again later', 'dns_search', 'certspotter')
 			return "certspotter"
 		j = self.page_parse(req.text).get_dns(q) or []
 		set_data(j)
@@ -229,7 +229,7 @@ def sublist3r(self, q):
 		req = self.request(
 			'https://api.sublist3r.com/search.php?domain=' + q)
 	except Exception as e:
-		self.error('SUBLIST3R is missed!')
+		self.error('SUBLIST3R is missed!', 'dns_search', 'sublist3r')
 	else:
 		j = json.loads(req.text)
 		set_data(j)
@@ -238,12 +238,12 @@ def jldc(self, q):
 	self.verbose('[JLDC] Searching in jldc.me...')
 	try:
 		req = self.request(
-			'https://jldc.me/anubis/subdomains/' + q)
+			f"https://jldc.me/anubis/subdomains/{q}")
 	except Exception as e:
-		self.error('JLDC is missed!')
+		self.error('JLDC is missed!', 'dns_search', 'jldc')
 	else:
 		if 'Too many request' in req.text:
-			self.error('[JLDC] Too many request please try again later')
+			self.error('Too many request please try again later', 'dns_search', 'jldc')
 			return 'jldc'
 		j = list(req.json()) or []
 		set_data(j)
@@ -254,7 +254,7 @@ def bufferover(self, q):
 		req = self.request(
 			f'https://dns.bufferover.run/dns?q=.{q}')
 	except Exception as e:
-		self.error('BufferOver is missed!')
+		self.error('BufferOver is missed!', 'dns_search', 'bufferover')
 	else:
 		j = list(req.json()['FDNS_A']) or []
 		set_data([(x.split(',')[1] if len(x.split(',')) == 2 else x) for x in j])
@@ -265,7 +265,7 @@ def otx(self, q):
 		req = self.request(
 			f"https://otx.alienvault.com/api/v1/indicators/domain/{q}/passive_dns")
 	except Exception as e:
-		self.error("OTX is missed!")
+		self.error('OTX is missed!', 'dns_search', 'otx')
 	else:
 		j = self.page_parse(req.text).get_dns(q)
 		set_data(j)
@@ -279,7 +279,7 @@ def securitytrails(self, q):
 	try:
 		req = self.request(enu_url)
 	except Exception as e:
-		self.error("Sectrails is missed!")
+		self.error('Sectrails is missed!', 'dns_search', 'securitytrails')
 	else:
 		result = req.text.split(trim[0])[1].split(trim[1])[0]
 		req_json = json.loads(result)

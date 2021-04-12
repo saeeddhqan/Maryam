@@ -31,19 +31,17 @@ class main:
 	def screenshot(self):
 		self.framework.verbose('[Bing Mobile View] Fetching mobile view of the URL...')
 		bing_api_url = 'https://www.bing.com/webmaster/tools/mobile-friendliness-result'
-		
 		self.framework._global_options['rand_agent'] = True
-				
 		try:
 			response = self.framework.request(url=bing_api_url, method='POST', \
 			data={'url': self.url, 'retry': '0'}, timeout=40).text # Setting high timeout of as some req take long
 		except:
-			self.framework.error('[Bing Mobile View] ConnectionError.')
+			self.framework.error('ConnectionError.', 'util/bing_mobile_view', 'screenshot')
 			return  False
 		else:
 			
 			if 'Bing Webmaster services could not be reached' in response :
-				self.framework.error('[Bing Mobile View] Bing Webmaster services could not be reached')
+				self.framework.error('Bing Webmaster services could not be reached', 'util/bing_mobile_view', 'screenshot')
 				return False
 
 			self._raw_image_data = re.findall(r'data\:image.*"', response) # Regex for base64 encoded image 

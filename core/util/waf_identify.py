@@ -23,7 +23,7 @@ class main:
 	def __init__(self, req):
 		""" detect WAFs(Web Application Firewalls)
 			
-			req		  : request attribute
+			req		  : Request attribute
 		"""
 		self.req = req
 		self.content = req.text

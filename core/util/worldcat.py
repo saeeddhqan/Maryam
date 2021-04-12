@@ -32,14 +32,15 @@ class main:
 		self.order = f"thold {order}"
 		self._xml_data = ''
 				
-	def search(self):
+	def run_crawl(self):
 		self.framework.verbose('[Worldcat Search] Fetching data for the query...')
 		api_url = 'http://classify.oclc.org/classify2/Classify'
 		url_with_payload = f'{api_url}?title={self.title}&author={self.author}&maxRecs={self.limit}&orderBy={self.order}'
 		try:
 			response = self.framework.request(url=url_with_payload)
-		except Excetion as e:
-			self.framework.error('Worldcat is missed!')
+		except Exception as e:
+			self.framework.error('Worldcat is missed!', 'util/worldcat', 'search')
+			return False
 		else:
 			self._xml_data = response.content
 

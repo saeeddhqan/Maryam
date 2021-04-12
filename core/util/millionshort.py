@@ -23,7 +23,7 @@ class main:
 		""" millionshort.com search engine
 
 			q 		  : query for search
-			limit	  : count of pages
+			limit	  : Number of pages
 		"""
 		self.framework = main.framework
 		self.q = q
@@ -45,14 +45,13 @@ class main:
 			try:
 				req = self.framework.request(url=urls[url])
 			except:
-				self.framework.error('[MILLIONSHORT] ConnectionError')
-				self.framework.error('Millionshort is missed!')
-				return
-			if 'captcha' in req.json():
-				self.framework.error('Captcha restriction!')
-				return
-			self._pages += req.text
-			self._json.append(req.json())
+				self.framework.error('ConnectionError')
+			else:
+				if 'captcha' in req.json():
+					self.framework.error('CaptchaError', 'util/millionshort', 'run_crawl')
+					return
+				self._pages += req.text
+				self._json.append(req.json())
 
 	@property
 	def pages(self):

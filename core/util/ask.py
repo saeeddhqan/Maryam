@@ -20,8 +20,8 @@ class main:
 	def __init__(self, q, limit=2):
 		""" ask.com search engine
 
-			q 		  : query for search
-			limit	  : count of pages
+			q 		  : Query for search
+			limit	  : Number of pages
 		"""
 		self.framework = main.framework
 		self.q = self.framework.urlib(q).quote
@@ -37,10 +37,10 @@ class main:
 			try:
 				req = self.framework.request(url=urls[url])
 			except:
-				self.framework.error('[ASK] ConnectionError')
+				self.framework.error('ConnectionError', 'util/ask', 'run_crawl')
 				max_attempt -= 1
 				if max_attempt == 0:
-					self.framework.error('Ask is missed!')
+					self.framework.error('Ask is missed!', 'util/ask', 'run_crawl')
 					break
 			else:
 				page = req.text
