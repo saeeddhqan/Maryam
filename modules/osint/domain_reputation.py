@@ -110,7 +110,10 @@ def mxtoolbox(self, q):
 		blacklist_reg = re.compile(r'<span class="bld_name">([\d\w\s]+)</span>')
 		lists = list_reg.findall(j)[:-1]
 	except Exception as e:
-		self.error('Mxtoolbox is missed!', 'domain_reputation', 'mxtoolbox')
+		if 'API' in req.text:
+			self.error('Mxtoolbox needs a valid API key', 'domain_reputation', 'mxtoolbox')
+		else:
+			self.error('Mxtoolbox is missed!', 'domain_reputation', 'mxtoolbox')
 	else:
 		for blacklist in lists:
 			if 'LISTED' in blacklist:
