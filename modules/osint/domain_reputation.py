@@ -58,16 +58,16 @@ def checkemail(self, q):
 	try:
 		req = self.request(f'https://check-mail.org/domain/{q}/')
 	except Exception as e:
-		self.error(f"Domain could not be validated!")
+		self.error(f"Domain could not be validated!", 'domain_reputation', 'check-email')
 	else:
 		res = req.text
-		main_reg = r'Valid:(.*)Tested MX:(.*)Block:(.*)Disposable:(.*)domain\..*Status:(.*)<\/h3>.*DOMAIN RISK: (\d+)'
+		main_reg = r"Valid:(.*)Tested MX:(.*)Block:(.*)Disposable:(.*)domain\..*Status:(.*)<\/h3>.*DOMAIN RISK: (\d+)"
 		res_filter = re.search(main_reg, res)
-		DOMAIN['valid'] = f"{re.compile(r'<[^>]+>').sub(' ', res_filter.group(1))}"
-		DOMAIN['test_mx'] = f"{re.compile(r'<[^>]+>').sub(' ', res_filter.group(2)).strip(',').replace('USE THE API', '').replace('DO NOT SCRAPE THIS DATA', '')}"
-		DOMAIN['block'] = f"{re.compile(r'<[^>]+>').sub(' ', res_filter.group(3))}"
-		DOMAIN['status'] = f"{re.compile(r'<[^>]+>').sub(' ', res_filter.group(5))}"
-		DOMAIN['DR'] = f"{re.compile(r'<[^>]+>').sub(' ', res_filter.group(6))}"
+		DOMAIN['valid'] = f"{re.compile(r"<[^>]+>").sub(' ', res_filter.group(1))}"
+		DOMAIN['test_mx'] = f"{re.compile(r"<[^>]+>").sub(' ', res_filter.group(2)).strip(',').replace('USE THE API', '').replace('DO NOT SCRAPE THIS DATA', '')}"
+		DOMAIN['block'] = f"{re.compile(r"<[^>]+>").sub(' ', res_filter.group(3))}"
+		DOMAIN['status'] = f"{re.compile(r"<[^>]+>").sub(' ', res_filter.group(5))}"
+		DOMAIN['DR'] = f"{re.compile(r"<[^>]+>").sub(' ', res_filter.group(6))}"
 
 def norton(self, q):
 	global RESULT
@@ -120,7 +120,7 @@ def mxtoolbox(self, q):
 						   f'&disableRhsbl=true&format=2', headers=headers)
 		j = req.json()
 		j = j['HTML_Value']
-		num_reg = re.compile(r'<strong>([\d]+)</strong>')
+		num_reg = re.compile(r"<strong>([\d]+)</strong>")
 		num_lists = num_reg.findall(j)[0]
 		list_reg = re.compile('<tr>(.+?)</tr>')
 		blacklist_reg = re.compile(r'<span class="bld_name">([\d\w\s]+)</span>')
@@ -150,7 +150,7 @@ def multirbl(self, q):
 		l_id_hash = re.compile(r'<td class="l_id">([\d]+)')
 		hash = hash_reg.findall(text)[0]
 		l_ids = l_id_hash.findall(text)
-		num_test_reg = re.compile(r'nof: ([\d]+),')
+		num_test_reg = re.compile(r"nof: ([\d]+),")
 		num_test = num_test_reg.findall(text)[0]
 	except Exception as e:
 		self.error('Multirbl is missed', 'domain_reputation', 'multirbl')
