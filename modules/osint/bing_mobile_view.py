@@ -14,12 +14,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import re
+
 import os
 import urllib
 import json
 import datetime
-from os.path import dirname as up 
+
+from core.basedir import BASEDIR
 
 meta = {
 	'name': 'Bing Mobile View',
@@ -36,11 +37,8 @@ meta = {
 	'examples': ('bing_mobile_view -u <URL>',)
 }
 
-project_root = up(up(up(__file__)))
-
 def blacklist_check(self, image_data):
-	global project_root
-	black_img_path = os.path.join(project_root, 'data', 'images', 'blacklist', f'{self.options["blacklist"]}.json')
+	black_img_path = os.path.join(BASEDIR, 'data', 'images', 'blacklist', f'{self.options["blacklist"]}.json')
 	if not os.path.isfile(black_img_path) : # Check if blacklisted image exists?
 		self.error('The blacklisted image name entered by user does not exist.', 'bing_mobile_view', 'blacklist_check')
 		return False
@@ -63,7 +61,6 @@ def blacklist_check(self, image_data):
 		return image_data
 
 def module_api(self):
-	global project_root
 	url = self.options['url']
 	blacklisted_img_name = self.options['blacklist']
 	retries = self.options['retries']
@@ -103,7 +100,7 @@ def module_api(self):
 	else urllib.parse.quote_plus(url) #Folder name is the domain name. If empty then folder name == URL
 	file_name = f"{urllib.parse.quote_plus(url)} {str(datetime.datetime.now())}.jpg" #File name is url encode+timestamp
 	
-	folder_filepath = os.path.join(project_root, 'data', 'images', folder_name)
+	folder_filepath = os.path.join(BASEDIR, 'data', 'images', folder_name)
 
 	if not os.path.isdir(folder_filepath) : # If no pre-existing folder for image, make one
 		os.mkdir(folder_filepath)
