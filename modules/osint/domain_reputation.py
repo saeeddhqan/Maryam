@@ -22,7 +22,7 @@ import requests
 meta = {
 	'name': 'Domain Reputation',
 	'author': 'Kunal Khandelwal',
-	'version': '0.3',
+	'version': '0.5',
 	'description': 'Check domain reputation with different sources and provide a summary of combined results.',
 	'sources': ('barracudacentral', 'mxtoolbox', 'multirbl', 'norton', 'checkemail'),
 	'options': (
