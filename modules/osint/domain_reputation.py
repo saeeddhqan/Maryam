@@ -24,12 +24,10 @@ meta = {
 	'author': 'Kunal Khandelwal',
 	'version': '0.3',
 	'description': 'Check domain reputation with different sources and provide a summary of combined results.',
-	'sources': ('barracudacentral', 'mxtoolbox', 'multirbl', 'norton'),
+	'sources': ('barracudacentral', 'mxtoolbox', 'multirbl', 'norton', 'checkemail'),
 	'options': (
 		('domain', None, True, 'Domain name without https?://', '-d', 'store', str),
-		('engines', 'barracudacentral,multirbl,mxtoolbox,norton', False, 'Search engine names(default=[barracudacentral,'
-					'multirbl, mxtoolbox])'
-		 , '-e', 'store', str),
+		('engines', 'barracudacentral,multirbl,mxtoolbox,norton,checkemail', False, 'Search engine names(default=all)', '-e', 'store', str),
 		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
 	),
 	'examples': ('domain_reputation -d example.com',
@@ -42,6 +40,7 @@ OUTPUT = {}
 LISTS = 0
 RESULT = ''
 OUTPUT = {'category': '', 'number': 0, 'blacklists': [], 'absence': 0, 'norton': ''}
+DOMAIN = {'valid': '', 'test_mx': '', 'block': '', 'status': '', 'DR': ''}
 
 def thread(self, function, thread_count, engines, q, sources):
 	threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
@@ -53,6 +52,22 @@ def thread(self, function, thread_count, engines, q, sources):
 def search(self, name, q):
 	engine = eval(name)
 	engine(self, q)
+
+def checkemail(self, q):
+	self.verbose('[CHECKMAIL] Scanning for spam score...')
+	try:
+		req = self.request(f'https://check-mail.org/domain/{q}/')
+	except Exception as e:
+		self.error(f"Domain could not be validated!")
+	else:
+		res = req.text
+		main_reg = r'Valid:(.*)Tested MX:(.*)Block:(.*)Disposable:(.*)domain\..*Status:(.*)<\/h3>.*DOMAIN RISK: (\d+)'
+		res_filter = re.search(main_reg, res)
+		DOMAIN['valid'] = f"{re.compile(r'<[^>]+>').sub(' ', res_filter.group(1))}"
+		DOMAIN['test_mx'] = f"{re.compile(r'<[^>]+>').sub(' ', res_filter.group(2)).strip(',').replace('USE THE API', '').replace('DO NOT SCRAPE THIS DATA', '')}"
+		DOMAIN['block'] = f"{re.compile(r'<[^>]+>').sub(' ', res_filter.group(3))}"
+		DOMAIN['status'] = f"{re.compile(r'<[^>]+>').sub(' ', res_filter.group(5))}"
+		DOMAIN['DR'] = f"{re.compile(r'<[^>]+>').sub(' ', res_filter.group(6))}"
 
 def norton(self, q):
 	global RESULT
@@ -172,14 +187,20 @@ def module_api(self):
 		presence = len(list(set(BLACKLIST))) / LISTS
 		OUTPUT['absence'] = 100 - (presence*100)
 	OUTPUT['norton'] = RESULT
+	OUTPUT.update(DOMAIN)
 	return OUTPUT
 
 def module_run(self):
 	output = module_api(self)
+	self.output(f"VALID?\n\t{output['valid'].strip()}")
 	self.output(f"CATEGORY\n\t{output['category']}")
+	self.output(f"TESTED MX\n\t{output['test_mx'].strip()}")
 	self.output(f"NUMBER OF PRESENCE ON BLACKLIST\n\t{output['number']}")
 	self.output('BLACKLISTS')
 	for i in output['blacklists']:
 		self.output(i, 'B')
 	self.output(f"ABSENCE PERCENTAGE\n\t{output['absence']}")
+	self.output(f"DOMAIN RISK[/100]: {output['DR']}")
+	self.output(f"BLOCK IT?\n\t{output['block'].strip()}")
 	self.output(f"NORTON SAFE WEB REPORT\n\t{output['norton']}")
+	self.output(f"STATUS:{output['status']}")
