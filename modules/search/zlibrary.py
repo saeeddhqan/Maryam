@@ -33,7 +33,7 @@ meta = {
 		('ext', '', False, 'Extension of the ebook or article(i.e. pdf, epub, txt, rar, mobi)', '-ex', 'store', str),
 		('count', 50, False, 'No. of results to show(default=50)', '-c', 'store', int) # 50 entries per page
 	),
-    'examples': ('zlibrary -q <QUERY> -e pdf',)
+    'examples': ('zlibrary -q <QUERY> -ex pdf',)
 }
 
 def table_format(data):
