@@ -26,14 +26,14 @@ meta = {
 	'sources': ('Zlibrary',),
 	'options': (
 		('query', '', True, 'Query string to search for', '-q', 'store', str),
-		('exact', False, False, 'Search for exact query(True or False, default=False)', '-e', 'store_true', bool),
+		('exact', False, False, 'Search for exact query(True or False, default=False)', '--exact' , 'store_true', bool),
 		('start_year', 0, False, 'Year to start search from(min: 1800 onwards)', '-sy', 'store', int),
 		('end_year', 0, False, 'Year till which to search for(max: present year)', '-ey', 'store', int),
 		('lang', '', False, 'Language in which to search(i.e. English)', '-ln', 'store', str),
-		('ext', '', False, 'Extension of the ebook or article(i.e. pdf, epub, txt, rar, mobi)', '-ex', 'store', str),
+		('ext', '', False, 'Extension of the ebook or article(i.e. pdf, epub, txt, rar, mobi)', '-e', 'store', str),
 		('count', 50, False, 'No. of results to show(default=50)', '-c', 'store', int) # 50 entries per page
 	),
-    'examples': ('zlibrary -q <QUERY> -ex pdf',)
+    'examples': ('zlibrary -q <QUERY> -e pdf',)
 }
 
 def table_format(data):
