@@ -38,9 +38,9 @@ OUTPUT = {'links': {}}
 
 def thread(self, data, query,thread_count):
 	threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
-	futures = (threadpool.submit(check, self, data[site]['url'].format(self.urlib(query).quote_plus.replace('.','%2E')), site, data) for site in data)
+	futures = (threadpool.submit(check, self, data[site]['url'].format(self.urlib(query).quote_plus.replace('.', '%2E')), site, data) for site in data)
 	for results in concurrent.futures.as_completed(futures):
-		print(f"Found {len(OUTPUT['links'])} accounts" , end= '\r')
+		print(f"Found {len(OUTPUT['links'])} accounts" , end='\r')
 	print('\n')
 
 
@@ -68,19 +68,15 @@ def module_api(self):
 		data = json.load(handle)
 	thread(self, data, query,self.options['thread'])
 	output = OUTPUT
-
 	self.save_gather(
 		output,
 		'osint/username_search',
 		query,
 		output=self.options.get('output')
 	)
-
-    
 	output['links'] = sorted(
 		list(output['links'].items()), key=lambda x: int(x[1]['rank'])
 	)
-
 	return output
 
 def module_run(self):
