@@ -124,7 +124,6 @@ def module_api(self):
 
 	# for insta
 	if USERDATA:
-		self.output(USERDATA)
 		for key in USERDATA:
 			if isinstance(USERDATA[key], str) and '\n' in USERDATA[key]: 
 				USERDATA[key] = USERDATA[key].encode('utf-8')
