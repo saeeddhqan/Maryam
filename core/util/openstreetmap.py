@@ -15,8 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from bs4 import BeautifulSoup as bs
-
 
 class main:
 
@@ -29,12 +27,20 @@ class main:
 
         self.framework = main.framework
         self.q = self.framework.urlib(q).quote
-        self._places = []
         self._pages = ''
+        self.xpath_name = {
+            'results': '//li[@class="list-group-item search_results_entry"]',
+            'results_a': './a',
+        }
+        self.xpath = {
+            self.xpath_name['results']: [
+                self.xpath_name['results_a']
+            ]
+        }
 
     def run_crawl(self):
-        urls = [f'https://www.openstreetmap.org/geocoder/search_geonames?query={self.q}',
-                f'https://www.openstreetmap.org/geocoder/search_osm_nominatim?query={self.q}']
+        urls = [f"https://www.openstreetmap.org/geocoder/search_geonames?query={self.q}",
+                f"https://www.openstreetmap.org/geocoder/search_osm_nominatim?query={self.q}"]
         self.framework.verbose('Searching openstreetmap...')
 
         for url in urls:
@@ -54,24 +60,22 @@ class main:
     @property
     def results(self):
         results = []
-        soup = bs(self.pages, 'html.parser')
-        items = soup.find_all('li', class_='list-group-item search_results_entry')
-        for item in items:
-            if item.a.get('data-zoom') is None:
-                category = item.contents[0]
+        parser = self.framework.page_parse(self._pages)
+        xpath_results = parser.html_fromstring(self.xpath)
+        if not xpath_results:
+            return results
+        root = xpath_results[self.xpath_name['results']]
+        for i in range(len(root[self.xpath_name['results_a']])):
+            if root[self.xpath_name['results_a']][i].get('data-prefix') is not None:
+                category = root[self.xpath_name['results_a']][i].get('data-prefix')
             else:
                 category = ''
-            anchor = item.a
-            location = anchor.get_text()
-            link = f"https://www.openstreetmap.org{anchor.get('href')}"
-            latitude = anchor.get('data-lat')
-            longitude = anchor.get('data-lon')
-
+            link = f"https://www.openstreetmap.org{root[self.xpath_name['results_a']][i].get('href')}"
             result = {
                 'category': category,
-                'location': location,
-                'latitude': latitude,
-                'longitude': longitude,
+                'location': root[self.xpath_name['results_a']][i].get('data-name'),
+                'latitude': root[self.xpath_name['results_a']][i].get('data-lat'),
+                'longitude': root[self.xpath_name['results_a']][i].get('data-lon'),
                 'link': link
             }
             results.append(result)
