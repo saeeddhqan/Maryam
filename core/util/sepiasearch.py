@@ -12,7 +12,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import requests
 
 class main :
     def __init__(self, q, limit=15):
@@ -31,7 +30,7 @@ class main :
         
     def run_crawl(self):
         self.framework.verbose('[SEPIASEARCH] Extracting Data From API')
-        response = requests.get(self.url, params=self.params, headers=self.headers)
+        response = self.framework.request(self.url, params=self.params, headers=self.headers)
         if response.status_code != 200:
             self.framework.error('Request Fail', 'util/sepiasearch', 'run_crawl')
             return
