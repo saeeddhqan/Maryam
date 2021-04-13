@@ -41,8 +41,8 @@ class main:
             try:
                 req = self.framework.request(url=url)
             except Exception as e:
-                self.framework.error('ConnectionError', 'openstreetmap', 'run_crawl')
-                self.framework.error('Openstreetmap is missed!', 'openstreetmap', 'run_crawl')
+                self.framework.error('ConnectionError', 'util/openstreetmap', 'run_crawl')
+                self.framework.error('Openstreetmap is missed!', 'util/openstreetmap', 'run_crawl')
                 return
             else:
                 self._pages += req.text
@@ -63,7 +63,7 @@ class main:
                 category = ''
             anchor = item.a
             location = anchor.get_text()
-            link = 'https://www.openstreetmap.org' + anchor.get('href')
+            link = f"https://www.openstreetmap.org{anchor.get('href')}"
             latitude = anchor.get('data-lat')
             longitude = anchor.get('data-lon')
 
