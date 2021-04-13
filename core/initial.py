@@ -254,8 +254,8 @@ class initialize(core):
 					self.alert_results(value, prefix=prefix, depth=depth + 1, color='G')
 				else :
 					value = value.strip().replace('\n', ' ').replace('\\x', ' ') if isinstance(value, str) else value
-					self.output(f"{prefix*depth}{key.upper()}", linesep=False)
-					self.print_special(f"{prefix}: {value}", color)
+					self.alert(f"{prefix*depth}{key.upper()}")
+					self.output(f"{prefix*(depth+1)}{value}", color)
 			print('')
 		elif isinstance(output, list):
 			for key in output:
