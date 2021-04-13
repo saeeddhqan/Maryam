@@ -28,7 +28,7 @@ meta = {
 	'options': (
 		('domain', None, True, 'Domain name without https?://', '-d', 'store', str),
 		('engines', 'barracudacentral,multirbl,mxtoolbox,norton', False, 'Search engine names(default=[barracudacentral,'
-                                                                 'multirbl, mxtoolbox])'
+					'multirbl, mxtoolbox])'
 		 , '-e', 'store', str),
 		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
 	),
@@ -60,10 +60,10 @@ def norton(self, q):
 	try:
 		req = self.request(f'https://safeweb.norton.com/report/show?url={q}')
 	except Exception as e:
-		self.error(f"Norton could not scan! due to {e}")
+		self.error(f"Norton could not scan! due to {e}", 'domain_reputation', 'norton')
 	else:
-		e_reg = "is a known dangerous web page"
-		s_reg = "found no issues with"
+		e_reg = 'is a known dangerous web page'
+		s_reg = 'found no issues with'
 		if e_reg in req.text:
 			RESULT = f"Threat Report: {q} {e_reg}"
 		elif s_reg in req.text:
@@ -168,7 +168,7 @@ def module_api(self):
 	thread(self, search, self.options['thread'], engines, query, meta['sources'])
 	OUTPUT['number'] = len(list(set(BLACKLIST)))
 	OUTPUT['blacklists'] = list(set(BLACKLIST))
-	if LISTS!=0:
+	if LISTS != 0:
 		presence = len(list(set(BLACKLIST))) / LISTS
 		OUTPUT['absence'] = 100 - (presence*100)
 	OUTPUT['norton'] = RESULT
