@@ -14,7 +14,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-
+import re
 from bs4 import BeautifulSoup
 
 # Using default empty strings for query, lang, ext to avoid &ext=None etc.
@@ -39,7 +39,7 @@ meta = {
 def table_format(data):
  	# Declaring output_table here in case no table found on page, return this one
 	output_table = []
-	raw_data = BeautifulSoup(data, 'html.parser')
+	raw_data = BeautifulSoup(data, 'lxml')
 	for table in raw_data.find_all('table', {'class': 'table_book'}):	
 		# If this statement is not used, table will reset each time and only 50 entries will be there
 		if output_table == []:
@@ -47,9 +47,13 @@ def table_format(data):
 		for row in table.find_all('tr'):
 			# Using zip to avoid cartesian product caused by 2 loops
 			for row_data, column in zip(row.find_all('td'), output_table):
-				 # Using split to clean the data and remove trailing spaces, /n, etc.
-				row_data = ' '.join(row_data.text.split())
-				 # Find the key of present column
+				if row_data.find('div',{'class':'authors'}):
+					# Removing integer in front of author name, regex = remove digits, tabs, newline
+					row_data = re.sub(r"[0-9\n\t]", '', row_data.text)
+				else:
+					# Using split to clean other columns except author
+					row_data = ' '.join(row_data.text.split())
+				# Find the key of present column
 				key = [ i for i in column.keys() ][0]
 				# Adding entire row data in one dump to a column
 				column[key].append(row_data) 
@@ -71,10 +75,10 @@ def module_api(self):
 	
 	books_table = table_format(run.books_data)
 	articles_table = table_format(run.articles_data)
-
 	
-	output['results'][0]['books']	= books_table
-	output['results'][1]['articles'] = articles_table
+	# Even if output contains more results, save only as much as count
+	output['results'][0]['books']	= [ {list(i.keys())[0]: list(i.values())[0][:count] } for i in books_table] 
+	output['results'][1]['articles'] = [ {list(i.keys())[0]: list(i.values())[0][:count] } for i in articles_table]
 	
 	self.save_gather(output, 'search/zlibrary', query, output=self.options.get('output'))
 	return output
@@ -85,25 +89,17 @@ def module_run(self):
 	for src in ['books', 'articles']:
 		pos = ['books', 'articles'].index(src) # Index to see books data or articles data
 		base = output['results'][pos][src] # The base to access items
-		columns = rows = []
-
+		
 		no_of_columns = len(base)
 		no_of_rows =  0 if len(base) == 0 else \
 		len([ i for i in base[0].values() ][0])
 		# Populating table headers
 		columns = [j for i in base for j in i.keys() ] 
-		
-		# Using double loop to format data for table
+
 		for row_index in range(0, no_of_rows): 
-			temp = []
+			data = []
 			for col_index in range(0, no_of_columns):
 				key_name = columns[col_index]
-				temp.append(base[col_index][key_name][row_index]) 
-			rows.append(temp) # Dump one row in the rows
-		
-		# Otherwise core will throw error if self.table is given 0 input
-		if no_of_columns == 0:
-			self.table([], ['No output'], title=f"{src}")
-		else:
-			self.table(rows, columns, title=f'{src}')
-		
+				data.append([ columns[col_index], base[col_index][key_name][row_index] ])
+			self.table(data, ['Key','Value'], title=f"{src}: Entry No. {row_index+1}") 
+
