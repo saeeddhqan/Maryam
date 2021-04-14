@@ -26,7 +26,6 @@ class main:
 		"""
 		self.framework = main.framework
 		self.q = q
-		self.agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:86.0) Gecko/20100101 Firefox/86.0'
 		self._pages = ''
 		self.limit = limit
 		self._links = []
@@ -35,10 +34,10 @@ class main:
 
 	def run_crawl(self):
 		self._json['results'] = [] 
-		for url in self.searcx:
+		for url in self.searx:
 			params = {'category_general': 1, 'q': self.q, 
 				  'pageno': 1, 'time_range': None, 
-				  'language': 'en-US', 'format': 'json'}
+				  'format': 'json'}
 			max_attempts = 0
 			while True:
 				self.framework.verbose(f"[SEARX] Searching {url} page {params['pageno']}...", end='\r')
@@ -46,7 +45,6 @@ class main:
 					req = self.framework.request(
 						url=url,
 						params=params,
-						headers={'User-Agent': self.agent},
 						allow_redirects= True)
 				except Exception as e:
 					self.framework.error(f"ConnectionError: {e}", 'util/searx', 'run_crawl')
