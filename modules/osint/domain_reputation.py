@@ -56,24 +56,24 @@ def search(self, name, q):
 def checkemail(self, q):
 	self.verbose('[CHECKMAIL] Scanning for spam score...')
 	try:
-		req = self.request(f'https://check-mail.org/domain/{q}/')
+		req = self.request(f"https://check-mail.org/domain/{q}/")
 	except Exception as e:
-		self.error(f"Domain could not be validated!", 'domain_reputation', 'check-email')
+		self.error('Domain could not be validated!', 'domain_reputation', 'checkemail')
 	else:
 		res = req.text
 		main_reg = r"Valid:(.*)Tested MX:(.*)Block:(.*)Disposable:(.*)domain\..*Status:(.*)<\/h3>.*DOMAIN RISK: (\d+)"
 		res_filter = re.search(main_reg, res)
-		DOMAIN['valid'] = f"{re.compile(r"<[^>]+>").sub(' ', res_filter.group(1))}"
-		DOMAIN['test_mx'] = f"{re.compile(r"<[^>]+>").sub(' ', res_filter.group(2)).strip(',').replace('USE THE API', '').replace('DO NOT SCRAPE THIS DATA', '')}"
-		DOMAIN['block'] = f"{re.compile(r"<[^>]+>").sub(' ', res_filter.group(3))}"
-		DOMAIN['status'] = f"{re.compile(r"<[^>]+>").sub(' ', res_filter.group(5))}"
-		DOMAIN['DR'] = f"{re.compile(r"<[^>]+>").sub(' ', res_filter.group(6))}"
+		DOMAIN['valid'] = f"{re.compile(r'<[^>]+>').sub(' ', res_filter.group(1))}"
+		DOMAIN['test_mx'] = f"{re.compile(r'<[^>]+>').sub(' ', res_filter.group(2)).strip(',').replace('USE THE API', '').replace('DO NOT SCRAPE THIS DATA', '')}"
+		DOMAIN['block'] = f"{re.compile(r'<[^>]+>').sub(' ', res_filter.group(3))}"
+		DOMAIN['status'] = f"{re.compile(r'<[^>]+>').sub(' ', res_filter.group(5))}"
+		DOMAIN['DR'] = f"{re.compile(r'<[^>]+>').sub(' ', res_filter.group(6))}"
 
 def norton(self, q):
 	global RESULT
 	self.verbose('[NORTON] Scanning domain...')
 	try:
-		req = self.request(f'https://safeweb.norton.com/report/show?url={q}')
+		req = self.request(f"https://safeweb.norton.com/report/show?url={q}")
 	except Exception as e:
 		self.error(f"Norton could not scan! due to {e}", 'domain_reputation', 'norton')
 	else:
@@ -116,8 +116,8 @@ def mxtoolbox(self, q):
 				   'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 '
 								 '(KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
 				   }
-		req = requests.get(f'http://mxtoolbox.com/api/v1/Lookup?command=blacklist&argument={q}&resultIndex=1'
-						   f'&disableRhsbl=true&format=2', headers=headers)
+		req = requests.get(f"http://mxtoolbox.com/api/v1/Lookup?command=blacklist&argument={q}&resultIndex=1'
+						   f'&disableRhsbl=true&format=2", headers=headers)
 		j = req.json()
 		j = j['HTML_Value']
 		num_reg = re.compile(r"<strong>([\d]+)</strong>")
@@ -144,7 +144,7 @@ def multirbl(self, q):
 	global LISTS
 	self.verbose('[Multirbl] Searching in multirbl.valli.org...')
 	try:
-		req = self.request(f'http://multirbl.valli.org/lookup/{q}.html', verify=False)
+		req = self.request(f"http://multirbl.valli.org/lookup/{q}.html", verify=False)
 		text = req.text
 		hash_reg = re.compile(r'"asessionHash": "([\w]+)"')
 		l_id_hash = re.compile(r'<td class="l_id">([\d]+)')
