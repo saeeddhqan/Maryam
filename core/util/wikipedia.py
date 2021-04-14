@@ -25,12 +25,12 @@ class main:
 		self._links = []
 		self._titles = []
 		self._pids = []
-		self.url = "https://en.wikipedia.org/w/api.php"		
-		self.headers = {"User-Agent" : "OWASP Maryam(github.com/saeeddhqan/maryam)"}
+		self.url = 'https://en.wikipedia.org/w/api.php'		
+		self.headers = {'User-Agent' : 'OWASP Maryam(github.com/saeeddhqan/maryam)'}
 
 
 	def run_crawl(self):
-		self.framework.verbose(f"[WIKIPEDIA] Searching...", end='\r')
+		self.framework.verbose('[WIKIPEDIA] Searching...', end='\r')
 		payload = {
 			'action': 'query',
 			'list': 'search',
@@ -84,8 +84,8 @@ class main:
 					headers=self.headers,
 					allow_redirects=False)
 			return req
-		except:
-			self.framework.error('[WIKIPEDIA] ConnectionError')
+		except Exception as e:
+			self.framework.error(f"ConnectionError: {e}", 'util/wikipedia', 'wiki_request')
 			return None
 
 	@property

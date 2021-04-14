@@ -15,76 +15,68 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import re
-import urllib.parse
 import html
+from bs4 import BeautifulSoup as bs
 
 class main:
 
-        def __init__(self, q, limit=15):
-                """ piratebay search engine
+	def __init__(self, q, limit=15):
+		""" piratebay search engine
+			q         : query for search
+			limit     : maximum result count
+		"""
+		self.framework = main.framework
+		self.q = self.framework.urlib(q).quote 
+		self.max = limit
+		self._rawhtml = ''
+		self._torrents = []
+		self._magnets = []
+		self._rows = []
+		self._links_with_data = []
 
-                        q         : query for search
-                        limit     : maximum result count
-                """
-                self.framework = main.framework
-                self.q = q
-                self.max = limit
-                self._rawhtml = ''
-                self._torrents = []
-                self._magnets = []
-                self._rows = []
-                self._links_with_data = []
+	def run_crawl(self):
+		url = f'https://tpb.party/search/{self.q}'
+		self.framework.verbose('Searching piratebay...')
+		try:
+			req = self.framework.request(url=url)
+		except:
+			self.framework.error('ConnectionError.', 'util/piratebay', 'run_crawl')
+			self.framework.error('Piratebay is missed!', 'util/piratebay', 'run_crawl')
+			self.framework.error('Try again after a few seconds!', 'util/piratebay', 'run_crawl')
+		else:
+			soup = bs(req.text, 'html.parser')
+			self._torrents = soup.find_all('tr')[1:-1]
 
-        def run_crawl(self):
-                self.q = urllib.parse.quote(self.q)
-                url = f'https://tpb.party/search/{self.q}'
-                self.framework.verbose('Searching piratebay...')
-                try:
-                        req = self.framework.request(url=url)
-                except:
-                        self.framework.error('[PIRATEBAY] ConnectionError')
-                        self.framework.error('Piratebay is missed!')
-                        self.framework.error('Try again after a few seconds!')
-                        return
-                self._rawhtml = req.text
-                self._torrents = list(re.findall(r'<tr>(.*?)</tr>', 
-                        self._rawhtml, 
-                        flags=re.DOTALL))
+	@property
+	def raw(self):
+		return self._rawhtml
 
-        @property
-        def raw(self):
-                return self._rawhtml
+	@property
+	def links_with_data(self):
+		findtitle = lambda x: x.find('a', {'class': 'detLink'}).text
+		findmagnet =  lambda x: x.find('a', {'title': 'Download this torrent using magnet'})['href']
+		finddateuploader = lambda x: x.find('font', {'class': 'detDesc'}).text
+		seedandleech = lambda x: list(map(lambda x: x.text, 
+		x.find_all('td', {'align': 'right'})))
+		findlink = lambda x: x.find('a', {'class': 'detLink'})['href']
 
-        @property
-        def links_with_data(self):
-                findtitle = lambda x: re.findall(r'Details for (.*?)">', x, flags=re.DOTALL)
-                magnet_regex = r'<a href="(magnet:.*?)" title="Download this torrent using magnet">'
-                findmagnet = lambda x: re.findall(magnet_regex, x)
-                finduploader = lambda x: re.findall(r'title="Browse (.*?)"', x)
-                finddatesize = lambda x: re.findall(r'Uploaded .*?, ULed by', x)
-                seedandleech = lambda x: re.findall(r'<td align="right">(.*?)</td>', x)
-                
+		for count,torrent in enumerate(self._torrents):
+			if count == self.max:
+				break
 
-                for count,torrent in enumerate(self._torrents):
-                        if count==self.max:
-                            break
+			title = findtitle(torrent)
+			magnet = findmagnet(torrent)
+			link = findlink(torrent)
+			dateuploader = finddateuploader(torrent)
+			seedleechcount = seedandleech(torrent)
+		
+			self._links_with_data.append({
+				'title': html.unescape(title),
+				'dateuploader': html.unescape(dateuploader),
+				'magnet': magnet,
+				'link': link,
+				'seeders': seedleechcount[0],
+				'leechers': seedleechcount[1]
+				})
 
-                        title = findtitle(torrent)
-                        magnet = findmagnet(torrent)
-                        uploader = finduploader(torrent)
-                        date = finddatesize(torrent)
-                        seedleechcount = seedandleech(torrent)
-
-                        if len(title)==len(magnet)==len(uploader)==len(date)==1\
-                        and len(seedleechcount)==2:
-                                self._links_with_data.append({
-                                        'title': html.unescape(title[0]),
-                                        'date': html.unescape(date[0]),
-                                        'uploader': uploader[0],
-                                        'magnet' : magnet[0],
-                                        'seeders': seedleechcount[0],
-                                        'leechers': seedleechcount[1]
-                                        })
-
-                return self._links_with_data
+		return self._links_with_data

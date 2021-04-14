@@ -16,62 +16,47 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-__VERSION__ = '2.0.0'
+__VERSION__ = '2.0.5'
 
 import sys
-import platform
 import argparse
-
-# Check the OS
-if platform.system() not in ('Linux', 'Darwin', 'OSX', "FreeBSD"):
-	print('[!] This tool is designed for Linux, Darwin, OSX, and FreeBSD. Maybe not work!')
-
-# Check the version
-if sys.version_info.major != 3:
-	print('[!] Maryam migrated to python3.')
-	exit(0)
 
 # Import framework
 from core import initial
 
 def cui(args, format_help):
-	x = initial.initialize
+	core = initial.initialize
 	if args:
 		option = args[0]
 		if option in ['-v', '--version']:
 			print(f"OWASP MARYAM V.{__VERSION__}")
 			exit(0)
-		command = ' '.join(args[1:])
-		if not v or option not in ['-e', '--execute', '-s', '--start']:
+		if not option or option not in ['-e', '--execute', '-s', '--start']:
 			print(format_help)
 			exit(0)
-		x = x('execute')
-		if option in ['-e', '--execute']:
-			x.onecmd(command)
-			exit(0)
-		elif args[0] in ['-s', '--start']:
-			x.onecmd(command)
+		core = core('execute')
+		if option in ['-e', '--execute', '-s', '--start']:
+			core.onecmd(' '.join(args[1:]))
+			if option in ['-e', '--execute']:
+				exit(0)
 	else:
-		x = x('run')
+		core = core('run')
+
 	while True:
 		try:
-			x.cmdloop()
+			core.cmdloop()
 			break
 		except KeyboardInterrupt:
-			print('\n[!] Use exit command to exit ')
+			print('\n[!] Use exit command to exit')
 		except Exception as e:
 			raise e
 
-
-desc = 'maryam -h'
-parse = argparse.ArgumentParser(description=desc)
-parse.add_argument('-e', help='execute a command and exit', metavar='execute', dest='execute', action='store')
-parse.add_argument('-s', help='run a command without exit', metavar='start', dest='start', action='store')
-parse.add_argument('-v', help='show version and exit', action='version', version=f"OWASP MARYAM V.{__VERSION__}")
-format_help = parse.format_help()
-argv = sys.argv[1:]
-for k, v in enumerate(argv):
-	if ' ' in v:
-		argv[k] = f'"{v}"'
-
-cui(argv, format_help)
+if __name__ == '__main__':
+	desc = 'maryam -h'
+	parse = argparse.ArgumentParser(description=desc)
+	parse.add_argument('-e', help='execute a command and exit', metavar='execute', dest='execute', action='store')
+	parse.add_argument('-s', help='run a command without exit', metavar='start', dest='start', action='store')
+	parse.add_argument('-v', help='show version and exit', action='version', version=f"OWASP MARYAM V.{__VERSION__}")
+	format_help = parse.format_help()
+	argv = [f'"{arg}"' if ' ' in arg else arg for arg in sys.argv[1:]]
+	cui(argv, format_help)

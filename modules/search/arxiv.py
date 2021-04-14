@@ -19,7 +19,7 @@ meta = {
 	'version': '0.1',
 	'description': 'ArXiv is a scientific research repository \
 		with a public API for searching its articles and papers',
-	'sources': ('arxiv'),
+	'sources': ('arxiv',),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 15, False, 'Max result count (default=15)', '-l', 'store', int),

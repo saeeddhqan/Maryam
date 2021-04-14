@@ -16,6 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import re
+from lxml import html
 
 class main:
 	def __init__(self, page):
@@ -32,12 +33,37 @@ class main:
 				|%22|<span dir="[\w]+">|</span>|<h\d>|</h\d>|<q>|</q>'
 		self.page = self.remove_comments(self.page)
 		self.page = re.sub(subs, '', self.page)
-		self.page = re.sub(r'%3a', ' ', self.page)
-		self.page = re.sub(r'%2f', ' ', self.page)
-		self.page = re.sub(r'%2f', ' ', self.page)
+		self.page = re.sub(r"%3a", ' ', self.page)
+		self.page = re.sub(r"%2f", ' ', self.page)
+		self.page = re.sub(r"%2f", ' ', self.page)
+
+	def html_fromstring(self, xpath, parent=None, results={}):
+		if self.page == '':
+			self.framework.error(f"document is nil", 'util/page_parse', 'html_fromstring')
+			return False
+
+		if isinstance(xpath, dict):
+			for root in xpath:
+				results[root] = self.html_fromstring(xpath[root], root)
+		elif isinstance(xpath, list):
+			results = {}
+			for x in xpath:
+				results[x] = self.html_fromstring(x, parent)
+		else:
+			tree = html.fromstring(self.page)
+			results = []
+			try:
+				if parent:
+					for node in tree.xpath(parent):
+						results += node.xpath(xpath)
+				else:
+					results = tree.xpath(xpath)
+			except:
+				self.framework.error(f"invalid xpath: {xpath} or {parent}", 'util/page_parse', 'html_fromstring')
+		return results
 
 	def dork_clean(self, host):
-		# Clear Dork's footprints
+		# Clear dork's fingerprints
 		host = re.sub(r"(['\"]+)|(%40|@)", '', host)
 		return host
 
@@ -81,7 +107,7 @@ class main:
 	def get_emails(self, host):
 		self.pclean
 		host = self.dork_clean(host + '.' if '.' not in host else host)
-		emails = re.findall(r"[A-z0-9.\-]+@[A-z0-9\-\.]{0,255}?%s(?:[A-z]+)?" % host, self.page)
+		emails = re.findall(r"[A-z0-9.\-]+@[A-z0-9\-\.]{0,255}?%s" % host, self.page)
 		return [x.replace('\\', '') for x in list(set(emails))]
 
 	@property

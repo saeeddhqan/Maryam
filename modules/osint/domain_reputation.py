@@ -22,13 +22,13 @@ import requests
 meta = {
 	'name': 'Domain Reputation',
 	'author': 'Kunal Khandelwal',
-	'version': '0.1',
+	'version': '0.3',
 	'description': 'Check domain reputation with different sources and provide a summary of combined results.',
-	'sources': ('barracudacentral', 'mxtoolbox', 'multirbl'),
+	'sources': ('barracudacentral', 'mxtoolbox', 'multirbl', 'norton'),
 	'options': (
 		('domain', None, True, 'Domain name without https?://', '-d', 'store', str),
-		('engines', 'barracudacentral,multirbl,mxtoolbox', True, 'Search engine names(default=[barracudacentral,'
-                                                                 'multirbl, mxtoolbox])'
+		('engines', 'barracudacentral,multirbl,mxtoolbox,norton', False, 'Search engine names(default=[barracudacentral,'
+					'multirbl, mxtoolbox])'
 		 , '-e', 'store', str),
 		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
 	),
@@ -40,6 +40,8 @@ meta = {
 BLACKLIST = []
 OUTPUT = {}
 LISTS = 0
+RESULT = ''
+OUTPUT = {'category': '', 'number': 0, 'blacklists': [], 'absence': 0, 'norton': ''}
 
 def thread(self, function, thread_count, engines, q, sources):
 	threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=thread_count)
@@ -52,6 +54,23 @@ def search(self, name, q):
 	engine = eval(name)
 	engine(self, q)
 
+def norton(self, q):
+	global RESULT
+	self.verbose('[NORTON] Scanning domain...')
+	try:
+		req = self.request(f'https://safeweb.norton.com/report/show?url={q}')
+	except Exception as e:
+		self.error(f"Norton could not scan! due to {e}", 'domain_reputation', 'norton')
+	else:
+		e_reg = 'is a known dangerous web page'
+		s_reg = 'found no issues with'
+		if e_reg in req.text:
+			RESULT = f"Threat Report: {q} {e_reg}"
+		elif s_reg in req.text:
+			RESULT = f"Threat Report: {s_reg} {q}"
+		else:
+			RESULT = f"Threat Report: {q} not yet rated as dangerous."
+
 def barracudacentral(self, q):
 	global LISTS,OUTPUT
 	self.verbose('[Barracuda] Searching in barracuda...')
@@ -63,7 +82,7 @@ def barracudacentral(self, q):
 		req = self.request('https://www.barracudacentral.org/lookups/lookup-reputation', method='POST',
 						   data=data)
 	except Exception as e:
-		self.error('Barracuda is missed!')
+		self.error('Barracuda is missed!', 'domain_reputation', 'barracudacentral')
 	else:
 		reg = re.compile(r"categories: <strong>([\w\d\s-]+)")
 		if 'listed as "poor"' not in req.text:
@@ -92,7 +111,10 @@ def mxtoolbox(self, q):
 		blacklist_reg = re.compile(r'<span class="bld_name">([\d\w\s]+)</span>')
 		lists = list_reg.findall(j)[:-1]
 	except Exception as e:
-		self.verbose('Mxtoolbox is missed')
+		if 'API' in req.text:
+			self.error('Mxtoolbox needs a valid API key', 'domain_reputation', 'mxtoolbox')
+		else:
+			self.error('Mxtoolbox is missed!', 'domain_reputation', 'mxtoolbox')
 	else:
 		for blacklist in lists:
 			if 'LISTED' in blacklist:
@@ -116,7 +138,7 @@ def multirbl(self, q):
 		num_test_reg = re.compile(r'nof: ([\d]+),')
 		num_test = num_test_reg.findall(text)[0]
 	except Exception as e:
-		self.verbose('Multirbl is missed')
+		self.error('Multirbl is missed', 'domain_reputation', 'multirbl')
 	else:
 		thread_pool = concurrent.futures.ThreadPoolExecutor(max_workers=2)
 		futures = (thread_pool.submit(__multirbl, self, l_id, hash, l_ids, q) for l_id in range(int(num_test)))
@@ -144,12 +166,20 @@ def module_api(self):
 	query = self.options['domain']
 	engines = self.options['engines'].split(',')
 	thread(self, search, self.options['thread'], engines, query, meta['sources'])
-	OUTPUT['number of presence on blacklist'] = len(list(set(BLACKLIST)))
+	OUTPUT['number'] = len(list(set(BLACKLIST)))
 	OUTPUT['blacklists'] = list(set(BLACKLIST))
-	if LISTS!=0:
+	if LISTS != 0:
 		presence = len(list(set(BLACKLIST))) / LISTS
-		OUTPUT['absence % on blacklist'] = 100 - (presence*100)
+		OUTPUT['absence'] = 100 - (presence*100)
+	OUTPUT['norton'] = RESULT
 	return OUTPUT
 
 def module_run(self):
-	self.alert_results(module_api(self))
+	output = module_api(self)
+	self.output(f"CATEGORY\n\t{output['category']}")
+	self.output(f"NUMBER OF PRESENCE ON BLACKLIST\n\t{output['number']}")
+	self.output('BLACKLISTS')
+	for i in output['blacklists']:
+		self.output(i, 'B')
+	self.output(f"ABSENCE PERCENTAGE\n\t{output['absence']}")
+	self.output(f"NORTON SAFE WEB REPORT\n\t{output['norton']}")

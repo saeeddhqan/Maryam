@@ -15,9 +15,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import concurrent.futures
 from socket import gethostbyname
-from os.path import dirname as up
 
-ROOT = up(up(up(os.path.realpath(__file__))))
+from core.basedir import BASEDIR
+
 meta = {
 	'name': 'DNS Brute Force',
 	'author': 'Saeeddqn',
@@ -28,14 +28,14 @@ meta = {
 		('domain', None, False, 'Domain name without https?://', '-d', 'store', str),
 		('count', None, False, 'Number of payloads len(max=count of payloads). default is max',
 							 '-c', 'store', int),
-		('wordlist', os.path.join(ROOT, 'data', 'dnsnames.txt'), False, 
+		('wordlist', os.path.join(BASEDIR, 'data', 'dnsnames.txt'), False, 
 			   'wordlist address. default is dnsnames.txt in data folder', '-w', 'store', str),
 		('thread', 8, False, 'The number of links that open per round(default=8)', '-t', 'store', int),
 		('wordlists', False, False, 'List of most common DNS wordlists', '-l', 'store_true', bool),
 		('ips', False, False, 'Show ip addresses', '-i', 'store_true', bool),
 	),
-	'examples': ('dbrute -d <DOMAIN> --output',
-				'dbrute -d <DOMAIN> -w <WORDLIST>')
+	'examples': ('dnsbrute -d <DOMAIN> --output',
+				'dnsbrute -d <DOMAIN> -w <WORDLIST>')
 }
 
 HOSTNAMES = []
@@ -89,7 +89,7 @@ def remote_list(self, addr):
 			wordlist.pop(wordlist.index(''))
 		return wordlist
 	else:
-		self.error(f"{addr} value is not text/plain")
+		self.error(f"{addr} value is not text/plain", 'dnsbrute', 'remote_list')
 	return []
 
 def module_api(self):

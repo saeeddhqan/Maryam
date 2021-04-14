@@ -22,8 +22,8 @@ class main:
 	def __init__(self, content, headers):
 		""" baidu.com search engine
 
-			content	  : web content
-			headers	  : web headers
+			content	  : Web content
+			headers	  : Web headers
 		"""
 		self.content = content
 		self.headers = headers

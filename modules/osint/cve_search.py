@@ -52,7 +52,7 @@ def mitre(self, q, count):
 		req = self.request(
 			f"https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword={q}")
 	except Exception as e:
-		self.error('Mitre is missed!')
+		self.error('Mitre is missed!', 'cve_search', 'mitre')
 	else:
 		hrefs = re.findall(
 			r'<a href="(/cgi-bin/cvename.cgi\?name=[^"]+)">', req.text)[:count]
@@ -69,7 +69,7 @@ def nist(self, q, count):
 		req = self.request(
 			f"https://services.nvd.nist.gov/rest/json/cves/1.0?keyword={q}&resultsPerPage={count}")
 	except Exception as e:
-		self.error('Nist is missed!')
+		self.error('Nist is missed!', 'cve_search', 'nist')
 	else:
 		cve_items = req.json()['result']['CVE_Items']
 		titles = [cve['cve']['CVE_data_meta']['ID'] for cve in cve_items]
@@ -84,7 +84,7 @@ def packetstormsecurity(self, q, count):
 		req = self.request(
 			f"https://packetstormsecurity.com/search/?q={q}", timeout=60)
 	except Exception as e:
-		self.error('Packetstormsecurity is missed')
+		self.error('Packetstormsecurity is missed', 'cve_search', 'packetstormsecurity')
 	else:
 		titles = re.findall(r'<a class="ico text-plain"[^>]+>([^<]+)</a>', req.text)[:count]
 		links = re.findall(r'<a class="ico text-plain" href="([^"]+)"[^>]+>', req.text)[:count]

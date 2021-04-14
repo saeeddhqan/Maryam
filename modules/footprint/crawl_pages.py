@@ -41,7 +41,7 @@ def module_api(self):
 	try:
 		re.compile(regex)
 	except Exception as e:
-		self.error(e)
+		self.error(e, 'crawl_pages', 'module_api')
 		return
 	scrap = self.web_scrap(domain, self.options['debug'], self.options['limit'], self.options['thread'])
 	scrap.run_crawl()

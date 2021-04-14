@@ -41,10 +41,10 @@ class main:
 			try:
 				req = self.framework.request(url=urls[url], allow_redirects=True)
 			except:
-				self.framework.error('[BING] ConnectionError')
+				self.framework.error('ConnectionError', 'util/bing', 'run_crawl')
 				max_attempt -= 1
 				if max_attempt == 0:
-					self.framework.error('Bing is missed!')
+					self.framework.error('Bing is missed!', 'util/bing', 'run_crawl')
 					break
 			else:
 				page = req.text
