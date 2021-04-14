@@ -26,9 +26,11 @@ class main:
 			count : Number of results
 			autoproxy: Use rotating proxies
 		"""
-		self.framework.autoproxy = True#self.framework_global_options_['autoproxy']
-		self.countip=0
+		
+		self.countip = 0
 		self.framework = main.framework
+		self.ob = self.framework.proxy()
+		self.framework.autoproxy = self.framework._global_options_['autoproxy']
 		self.q = q
 		self.agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:86.0) Gecko/20100101 Firefox/86.0'
 		self.url = 'https://www.google.com/search'
@@ -58,10 +60,9 @@ class main:
 		while True:
 			self.framework.verbose(f"[GOOGLE] Searching in {page} page...", end='\r')
 			if self.framework.autoproxy:
-				ob=self.framework.proxy()
-				ob.getproxy()
-				ob.readip()
-			proxy = ob.rotateip(k=self.countip) if self.framework.autoproxy else None
+				self.ob.getproxy()
+				self.ob.readip()
+			proxy = self.ob.rotateip(k=self.countip) if self.framework.autoproxy else None
 
 			try:
 				req = self.framework.request(
@@ -77,7 +78,7 @@ class main:
 					self.framework.error('Google CAPTCHA triggered.', 'util/google', 'run_crawl')
 					if self.autoproxy == True:
 						self.countip += 1
-						if ob.rotateip(k=self.countip) == -1:
+						if self.ob.rotateip(k=self.countip) == -1:
 							self.framework.output('[PROXY] End of proxy list. ')
 							break
 						else:
