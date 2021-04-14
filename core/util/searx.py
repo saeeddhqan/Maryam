@@ -18,9 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class main:
 
 	def __init__(self, q, limit=1):
-		""" searcx search engine
+		""" searx search engine
 
-			q		: Query for search
+			q	: Query for search
 			limit	: Number of Pages
 
 		"""
@@ -31,18 +31,17 @@ class main:
 		self.limit = limit
 		self._links = []
 		self._json = {}
-		self._links_with_data = []
-		self.searcx = ['https://searx.prvcy.eu/search', 'https://searx.xyz/search', 'https://searx.bar/search']
+		self.searx = ['https://searx.prvcy.eu/search', 'https://searx.xyz/search', 'https://searx.bar/search']
 
 	def run_crawl(self):
 		self._json['results'] = [] 
 		for url in self.searcx:
 			params = {'category_general': 1, 'q': self.q, 
-					  'pageno': 1, 'time_range': None, 
-					  'language': 'en-US', 'format': 'json'}
+				  'pageno': 1, 'time_range': None, 
+				  'language': 'en-US', 'format': 'json'}
 			max_attempts = 0
 			while True:
-				self.framework.verbose(f"[SEARCX] Searching {url} page {params['pageno']} ...", end='\r')
+				self.framework.verbose(f"[SEARX] Searching {url} page {params['pageno']}...", end='\r')
 				try:
 					req = self.framework.request(
 						url=url,
@@ -50,17 +49,17 @@ class main:
 						headers={'User-Agent': self.agent},
 						allow_redirects= True)
 				except Exception as e:
-					self.framework.error(f"ConnectionError: {e}", 'util/searcx', 'run_crawl')
+					self.framework.error(f"ConnectionError: {e}", 'util/searx', 'run_crawl')
 					max_attempts += 1
 					if max_attempts == self.limit:
-						self.framework.error(f"Searcx {url} is missed!", 'util/searcx', 'run_crawl')
+						self.framework.error(f"Searx {url} is missed!", 'util/searx', 'run_crawl')
 						return
 				else:
 					self._pages += req.text
 					try:
 						self._json['results'] += req.json()['results']
 					except:
-						self.framework.error(f"Searcx {url} is missed!", 'util/searcx', 'run_crawl')
+						self.framework.error(f"Searx {url} is missed!", 'util/searcx', 'run_crawl')
 					params['pageno'] += 1
 					if params['pageno'] >= self.limit:
 						break
@@ -76,22 +75,22 @@ class main:
 		return self._links
 
 	@property
-	def links_with_data(self):
+	def results(self):
+		results = []
 		for result in self._json['results']:
-			try:
-				self._links_with_data.append({
-					'title': result['title'],
-					'link': result['url'],
-					'desc': result['content']
-					})
-			except:
-				self._links_with_data.append({
-					'title': result['title'],
-					'link': result['url'],
-					'desc': ''
-					})
+			if 'content' in resunt:
+				content = result['content']
+			else:
+				content = 'No description provided'
+			cite = self.framework.meta_search_util().make_cite(result['url'])
+			self._links_with_data.append({
+				'title': result['title'],
+				'a': result['url'],
+				'cite': cite,
+				'content': content
+			})
 
-		return self._links_with_data
+		return results
 	
 	@property
 	def json(self):
