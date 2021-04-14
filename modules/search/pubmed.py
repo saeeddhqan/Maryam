@@ -19,7 +19,7 @@ meta = {
 	'version': '0.1',
 	'description': 'PubMed comprises more than 32 million citations for biomedical \
 		literature from MEDLINE, life science journals, and online books.',
-	'sources': ('pubmed'),
+	'sources': ('pubmed',),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 15, False, 'Max result count (default=15)', '-l', 'store', int),

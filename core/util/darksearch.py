@@ -24,8 +24,8 @@ class main:
         """
         darksearch.io search engine
 
-        q          : query for search
-        limit      : count of pages
+        q          : Query for search
+        limit      : Number of pages
         """
 
         self.framework = main.framework
@@ -38,7 +38,6 @@ class main:
         self._json_links = []
 
     def run_crawl(self):
-
         urls = [f"https://{self.darksearch}/api/search?query={self.q}&page={i}" for i in range(1, self.limit+1)]
         max_attempt = len(urls)
         for url in range(max_attempt):
@@ -46,10 +45,10 @@ class main:
             try:
                 req = self.framework.request(url=urls[url], allow_redirects=True)
             except Exception as e:
-                self.framework.error('[DARKSEARCH] ConnectionError')
+                self.framework.error('ConnectionError', 'util/darksearch', 'run_crawl')
                 max_attempt -= 1
                 if max_attempt == 0:
-                    self.framework.error('Darksearch is missed!')
+                    self.framework.error('Darksearch is missed!', 'util/darksearch', 'run_crawl')
                     break
 
             if req.json()['data'] is None:

@@ -59,7 +59,7 @@ class main:
 			try:
 				req = self.framework.request(url, method=method, data=data)
 			except Exception as e:
-				self.framework.error('[KEYWORDS] connection error!')
+				self.framework.error('ConnectionError', 'util/keywords', 'run_crawl')
 				self.framework.print_exception()
 			keys[source] = req
 

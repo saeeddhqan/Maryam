@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 meta = {
 	'name': 'Google Search',
 	'author': 'Saeed',
-	'version': '0.2',
+	'version': '0.5',
 	'description': 'Search your query in the google.com and show the results.',
 	'sources': ('google',),
 	'options': (
@@ -35,10 +35,10 @@ def module_api(self):
 	count = self.options['count']
 	run = self.google(query, limit, count)
 	run.run_crawl()
-	links = run.links
-	output = {'links': links}
+	results = run.results
+	output = {'results': results}
 	self.save_gather(output, 'search/google', query, output=self.options['output'])
 	return output
 
 def module_run(self):
-	self.alert_results(module_api(self))
+	self.search_engine_results(module_api(self))

@@ -1,2 +1,4 @@
 requests
 cloudscraper
+bs4
+lxml

@@ -24,8 +24,8 @@ class main:
 		""" yandex.com search engine
 
 			q 		  : query for search
-			limit	  : count of pages
-			count	  : count of links
+			limit	  : Number of pages
+			count	  : Number of links
 		"""
 		self.framework = main.framework
 		self.q = self.framework.urlib(q).quote
@@ -42,14 +42,14 @@ class main:
 			try:
 				req = self.framework.request(url=urls[url], allow_redirects=True)
 			except:
-				self.framework.error('[YANDEX] ConnectionError')
+				self.framework.error('ConnectionError', 'util/yandex', 'run_crawl')
 				max_attempt -= 1
 				if max_attempt == 0:
-					self.framework.error('Yandex is missed!')
+					self.framework.error('Yandex is missed!', 'util/yandex', 'run_crawl')
 					break
 			else:
 				if '<title>Oops!</title>' in req.text:
-					self.framework.error("[YANDEX] Yandex CAPTCHA triggered.")
+					self.framework.error('Yandex CAPTCHA triggered.', 'util/yandex', 'run_crawl')
 					return
 
 				page = req.text

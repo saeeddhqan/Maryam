@@ -23,7 +23,7 @@ class main:
 		""" millionshort.com search engine
 
 			q 		  : query for search
-			limit	  : count of pages
+			limit	  : Number of pages
 		"""
 		self.framework = main.framework
 		self.q = q
@@ -40,20 +40,18 @@ class main:
 		set_page = lambda x: x*10
 		urls = [f'https://{self.millionshort}/api/search?keywords={self.q}&remove=0&offset={set_page(i)}'
 					for i in range(self.limit)]
-		self.framework.verbose('Opening the millionshort.com domain...', end='\r')
 		for url in range(len(urls)):
 			self.framework.verbose(f"[MILLIONSHORT] Searching in {url} page...")
 			try:
 				req = self.framework.request(url=urls[url])
 			except:
-				self.framework.error('[MILLIONSHORT] ConnectionError')
-				self.framework.error('Millionshort is missed!')
-				return
-			if 'captcha' in req.json():
-				self.framework.error('Captcha restriction!')
-				return
-			self._pages += req.text
-			self._json.append(req.json())
+				self.framework.error('ConnectionError')
+			else:
+				if 'captcha' in req.json():
+					self.framework.error('CaptchaError', 'util/millionshort', 'run_crawl')
+					return
+				self._pages += req.text
+				self._json.append(req.json())
 
 	@property
 	def pages(self):

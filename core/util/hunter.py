@@ -37,8 +37,8 @@ class main:
 		try:
 			req = self.framework.request(self.hunter_api)
 		except:
-			self.framework.debug('[HUNTER] ConnectionError')
-			self.framework.error('Hunter is missed!')
+			self.framework.debug('ConnectionError', 'util/hunter', 'run_crawl')
+			self.framework.error('Hunter is missed!', 'util/hunter', 'run_crawl')
 			return
 		self._pages = req.text
 		self._json_pages = req.json()
@@ -46,7 +46,7 @@ class main:
 		# Key validation
 		if 'errors' in self._json_pages:
 			code = self._json_pages.get('errors')[0]['details']
-			self.framework.error(f"[HUNTER] failed with error: {code}")
+			self.framework.error(f"failed with error: {code}", 'util/hunter', 'run_crawl')
 			self.acceptable = False
 			return
 
