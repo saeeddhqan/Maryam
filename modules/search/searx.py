@@ -31,7 +31,7 @@ meta = {
 def module_api(self):
 	query = self.options['query']
 	limit = self.options['limit']
-	run = self.dogpile(query, limit)
+	run = self.searx(query, limit)
 	run.run_crawl()
 	results = run.results
 	output = {'results': results}
