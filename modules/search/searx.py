@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 meta = {
-	'name': 'Searcx Search',
+	'name': 'Searx Search',
 	'author': 'Aman Singh',
 	'version': '0.1',
 	'description': 'Searx is a Privacy-respecting metasearch engine.',
@@ -25,27 +25,18 @@ meta = {
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
 	),
-	'examples': ('searcx -q <QUERY> -l 5 --output',)
+	'examples': ('searx -q <QUERY> -l 5 --output',)
 }
 
 def module_api(self):
 	query = self.options['query']
 	limit = self.options['limit']
-	run = self.searcx(query, limit)
+	run = self.dogpile(query, limit)
 	run.run_crawl()
-
-	output = {'results': []}
-	results = run.links_with_data
-
-	for result in results:
-		output['results'].append(result)
-
-	self.save_gather(output, 'search/searcx', query, output=self.options['output'])
+	results = run.results
+	output = {'results': results}
+	self.save_gather(output, 'search/searx', query, output=self.options['output'])
 	return output
 
 def module_run(self):
-	output = module_api(self)
-	for result in output['results']:
-		self.output(result['title'])
-		self.output(f"\t{result['link']}", 'G')
-		self.output(f"\t{result['desc']}\n", 'G')
+	self.search_engine_results(module_api(self))
