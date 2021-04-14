@@ -24,7 +24,10 @@ class main:
 			q     : Query for search
 			limit : Number of pages
 			count : Number of results
+			autoproxy: Use rotating proxies
 		"""
+		self.framework.autoproxy = True#self.framework_global_options_['autoproxy']
+		self.countip=0
 		self.framework = main.framework
 		self.q = q
 		self.agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:86.0) Gecko/20100101 Firefox/86.0'
@@ -54,18 +57,33 @@ class main:
 		payload = {'num': self.count, 'start': set_page(page), 'ie': 'utf-8', 'oe': 'utf-8', 'q': self.q, 'filter': '0'}
 		while True:
 			self.framework.verbose(f"[GOOGLE] Searching in {page} page...", end='\r')
+			if self.framework.autoproxy:
+				ob=self.framework.proxy()
+				ob.getproxy()
+				ob.readip()
+			proxy = ob.rotateip(k=self.countip) if self.framework.autoproxy else None
+
 			try:
 				req = self.framework.request(
 					url=self.url,
 					params=payload,
 					headers={'user-agent': self.agent},
-					allow_redirects=True)
+					allow_redirects=True,
+     				proxies=proxy)
 			except Exception as e:
 				self.framework.error(f"ConnectionError: {e}", 'util/google', 'run_crawl')
 			else:
 				if req.status_code in (503, 429):
 					self.framework.error('Google CAPTCHA triggered.', 'util/google', 'run_crawl')
-					break
+					if self.autoproxy == True:
+						self.countip += 1
+						if ob.rotateip(k=self.countip) == -1:
+							self.framework.output('[PROXY] End of proxy list. ')
+							break
+						else:
+							continue
+					else:
+						break
 
 				if req.status_code in (301, 302):
 					redirect = req.headers['location']
