@@ -30,7 +30,7 @@ class main:
 		self.limit = limit
 		self._links = []
 		self._json = {}
-		self.searx = ['https://searx.prvcy.eu/search', 'https://searx.xyz/search', 'https://searx.bar/search']
+		self.searx = ['https://searx.prvcy.eu/search', 'https://searx.xyz/search', 'https://searx.nevrlands.de/searx/search', 'https://searx.info/search']
 
 	def run_crawl(self):
 		self._json['results'] = [] 
@@ -54,10 +54,11 @@ class main:
 						return
 				else:
 					self._pages += req.text
-					try:
+					if req.status_code == 200 and 'results' in req.json():
 						self._json['results'] += req.json()['results']
-					except:
+					else:
 						self.framework.error(f"Searx {url} is missed!", 'util/searcx', 'run_crawl')
+						break
 					params['pageno'] += 1
 					if params['pageno'] >= self.limit:
 						break
@@ -76,12 +77,12 @@ class main:
 	def results(self):
 		results = []
 		for result in self._json['results']:
-			if 'content' in resunt:
+			if 'content' in result:
 				content = result['content']
 			else:
 				content = 'No description provided'
 			cite = self.framework.meta_search_util().make_cite(result['url'])
-			self._links_with_data.append({
+			results.append({
 				'title': result['title'],
 				'a': result['url'],
 				'cite': cite,
