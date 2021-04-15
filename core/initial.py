@@ -172,6 +172,8 @@ class initialize(core):
 		params = params.lower().split(' ')
 		if params[0] == 'api':
 			api_mode = self._global_options['api_mode']
+			_mode = self._mode
+			self._mode = 'api'
 			if not api_mode:
 				self._global_options['api_mode'] = True
 			if len(params) == 3:
@@ -182,7 +184,7 @@ class initialize(core):
 				port = 1313
 			api.run_app(self, host, port)
 			self._global_options['api_mode'] = api_mode
-
+			self._mode = _mode
 
 	def help_web(self):
 		print(getattr(self, 'do_web').__doc__)
@@ -324,7 +326,7 @@ class initialize(core):
 				name, val, req, desc, op, act, typ = option
 			except ValueError as e:
 				self.error(f"{tool_name.title()}CodeError: options is too short. need more than {len(option)} option")
-				return
+				return False
 			name = f"--{name}" if not name.startswith('-') else name
 			try:
 				if act == 'store':
@@ -353,13 +355,14 @@ class initialize(core):
 		# If args is nothing
 		if not args:
 			print(format_help)
+			return False
 		else:
 			# Initialite args
-			if self._mode != 'execute':
+			if self._mode == 'execute':
+				args = parser.parse_args(sys.argv[3:])
+			else:
 				lexer = shlex.split(args)
 				args = parser.parse_args(lexer)
-			else:
-				args = parser.parse_args(sys.argv[3:])
 			args = vars(args)
 			# Set options
 			self.options = args

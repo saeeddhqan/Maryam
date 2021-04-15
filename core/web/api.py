@@ -45,35 +45,50 @@ def api():
 
 @app.route('/api/framework', methods=['GET'])
 def api_framework():
-	page = {'meta': {'error': None, 'command': ''}}
+	error = None
+	command = None
+	page = {'meta': {'error': error, 'command': command}}
 	if 'command' in request.args:
-		framework.onecmd(request.args['command'])
-		page['meta']['command'] = request.args['command']
+		invalid_commands = ['workspaces', 'set', 'unset', 'history', 'report', 'update']
+		command = request.args['command']
+		if command != '':
+			if command.split(' ')[0] in invalid_commands:
+				framework.onecmd(command)
+				command = request.args['command']
+			else:
+				error = "Invalid command."
+		else:
+			error = "No command specified."
 	else:
-		page['meta']['error'] = 'no command specified.'
-		page['meta']['command'] = None
+		error = 'no command specified.'
+	page['meta']['command'] = command
+	page['meta']['error'] = error
 	return jsonify(page)
 
 @app.route('/api/modules', methods=['GET'])
 def api_modules():
 	page = {'meta': {'error': None, 'command': None}, 'output': {}}
 	# If no module specified
-	if '_module' not in request.args:
+	args_dict = request.args.to_dict()
+	if '_module' not in args_dict:
 		page['meta']['error'] = 'No module specified.'
 		return jsonify(page)
-	module_name = request.args['_module']
+	module_name = args_dict.pop('_module')
 	# If module doesn't exist
 	if module_name not in framework._loaded_modules:
-		page['meta']['error'] = f'Module name "{module_name}" not found.'
+		page['meta']['error'] = f"Module name '{module_name}' not found."
 		return jsonify(page)
-
+	if args_dict == {}:
+		page['meta']['error'] = f"No option specified."
+		return jsonify(page)
 	module = framework._loaded_modules[module_name]
 	options = module.meta['options']
 	args = ''
-	args_dict = request.args.to_dict()
 	# Setting options
 	for option in options:
 		option_name = option[0]
+		option_required = option[2]
+		option_type = option[6]
 		option_name_short = option[4][1:]
 		option_action = option[5]
 		prefix = '-'
@@ -84,23 +99,39 @@ def api_modules():
 			option_value = args_dict[option_name_short]
 			option_name = option_name_short
 		else:
+			if option_required:
+				page['meta']['error'] = f"{option_name} is required."
+				return jsonify(page)
 			continue
 		if option_action == 'store':
-			args += f"{prefix}{option_name} {option_value} "
+			if isinstance(option_value, option_type):
+				if option_type == str:
+					args += f'{prefix}{option_name} "{option_value}" '
+				else:
+					args += f"{prefix}{option_name} {option_value} "
+			else:
+				page['meta']['error'] = f"Need {option_type} got invalid type for {option_name}."
+				return jsonify(page)
 		else:
-			args += f"--{option_name} "
-	# If no command specified.
+			if args_dict[option_name].lower() in ('true', 'on', 'yes'):
+				args += f"--{option_name} "
+		args_dict.pop(option_name)
+	# If no option specified.
 	if args == '':
-		page['meta']['error'] = 'No command found.'
+		page['meta']['error'] = 'No option found.'
 		return jsonify(page)
 	# Remove last space
 	if args[-1:] == ' ':
 		args = args[:-1]
 
 	command = f"{module_name} {args}"
-	page['output'] = framework.opt_proc(module_name, args, 'web_api')
-	if page['output']['running_errors'] != []:
-		page['meta']['error'] = 'Runtime error.'
+	output = framework.opt_proc(module_name, args, 'web_api')
+	if output == False:
+		page['meta']['error'] = 'Option error.'
+	else:
+		page['output'] = output
+		if page['output']['running_errors'] != []:
+			page['meta']['error'] = 'Runtime error.'
 	page['meta']['command'] = command
 	return jsonify(page)
 
