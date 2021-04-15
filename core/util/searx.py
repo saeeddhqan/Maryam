@@ -33,12 +33,13 @@ class main:
 		self.searx = ['https://searx.prvcy.eu/search', 'https://searx.xyz/search', 'https://searx.nevrlands.de/searx/search', 'https://searx.info/search']
 
 	def run_crawl(self):
+		page = 1
 		self._json['results'] = [] 
+		params = {'category_general': 1, 'q': self.q, 
+			  'pageno': 1, 'time_range': None, 
+			  'format': 'json'}
+		max_attempts = 0
 		for url in self.searx:
-			params = {'category_general': 1, 'q': self.q, 
-				  'pageno': 1, 'time_range': None, 
-				  'format': 'json'}
-			max_attempts = 0
 			while True:
 				self.framework.verbose(f"[SEARX] Searching {url} page {params['pageno']}...", end='\r')
 				try:
@@ -53,15 +54,16 @@ class main:
 						self.framework.error(f"Searx {url} is missed!", 'util/searx', 'run_crawl')
 						return
 				else:
+					print(req.url)
 					self._pages += req.text
 					if req.status_code == 200 and 'results' in req.json():
 						self._json['results'] += req.json()['results']
 					else:
 						self.framework.error(f"Searx {url} is missed!", 'util/searcx', 'run_crawl')
 						break
-					params['pageno'] += 1
 					if params['pageno'] >= self.limit:
-						break
+						return
+					params['pageno'] += 1
 
 	@property
 	def pages(self):

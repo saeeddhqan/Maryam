@@ -52,6 +52,7 @@ class main:
 		page = 1
 		set_page = lambda x: (x - 1) * self.count
 		payload = {'num': self.count, 'start': set_page(page), 'ie': 'utf-8', 'oe': 'utf-8', 'q': self.q, 'filter': '0'}
+		max_attempt = 0
 		while True:
 			self.framework.verbose(f"[GOOGLE] Searching in {page} page...", end='\r')
 			try:
@@ -62,6 +63,10 @@ class main:
 					allow_redirects=True)
 			except Exception as e:
 				self.framework.error(f"ConnectionError: {e}", 'util/google', 'run_crawl')
+				max_attempt += 1
+				if max_attempt == self.limit:
+					self.framework.error('Google is missed!', 'util/goolge', 'run_crawl')
+					break
 			else:
 				if req.status_code in (503, 429):
 					self.framework.error('Google CAPTCHA triggered.', 'util/google', 'run_crawl')
