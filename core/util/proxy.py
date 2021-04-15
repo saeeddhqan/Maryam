@@ -30,7 +30,7 @@ class main:
         self.framework.output('[PROXY] Gathering proxies. It is quite time consuming, so do some pushups in the meantime :P')
         purls = [ 'https://premproxy.com/list/' ]
         i = 2
-        while i<=8:
+        while i <= 8:
             purl = f"https://premproxy.com/list/0{str(i)}.htm"
             purls.append(purl)
             i += 1    
@@ -53,23 +53,23 @@ class main:
             ips[j] = f"http://{ips[j]}"
             j += 1
         j = 0
-        #self.framework.output('[PROXY] Now checking for availability of the proxies...')
-        # while j<len(ips):
-        #     try:
-        #         if int(self.framework.request(url=ips[j],method="GET").status_code) == 200:
-        #             ips2.append(ips[j])
-        #     except:
-        #         pass
-        #     finally:
-        #         j += 1 
-        # ips = []                   
-        #self.framework.output(ips2)
-        #self.framework.output('[PROXY] Availability check completed! Writing to file...')
+        self.framework.output('[PROXY] Now checking for availability of the proxies...')
+        while j<len(ips):
+            try:
+                if int(self.framework.request(url=ips[j],method="GET").status_code) == 200:
+                    ips2.append(ips[j])
+            except:
+                pass
+            finally:
+                j += 1 
+        ips = []                   
+        self.framework.output(ips2)
+        self.framework.output('[PROXY] Availability check completed! Writing to file...')
         f = open('proxy_fetch.txt','w')
-        i = ips[0] if len(ips)>0 else None
-        for i in ips: 
+        i = ips2[0] if len(ips2)>0 else None
+        for i in ips2: 
             f.write(i)
-            if i != ips[-1]:
+            if i != ips2[-1]:
                 f.write('\n')
         f.close()
         self.framework.output('[PROXY] Write operation completed!');

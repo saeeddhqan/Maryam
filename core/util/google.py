@@ -57,11 +57,12 @@ class main:
 		page = 1
 		set_page = lambda x: (x - 1) * self.count
 		payload = {'num': self.count, 'start': set_page(page), 'ie': 'utf-8', 'oe': 'utf-8', 'q': self.q, 'filter': '0'}
+		if self.framework.autoproxy:
+			self.ob.getproxy()
+			self.ob.readip()
 		while True:
 			self.framework.verbose(f"[GOOGLE] Searching in {page} page...", end='\r')
-			if self.framework.autoproxy:
-				self.ob.getproxy()
-				self.ob.readip()
+			
 			proxy = self.ob.rotateip(k=self.countip) if self.framework.autoproxy else None
 
 			try:
@@ -76,7 +77,7 @@ class main:
 			else:
 				if req.status_code in (503, 429):
 					self.framework.error('Google CAPTCHA triggered.', 'util/google', 'run_crawl')
-					if self.autoproxy == True:
+					if self.framework.autoproxy == True:
 						self.countip += 1
 						if self.ob.rotateip(k=self.countip) == -1:
 							self.framework.output('[PROXY] End of proxy list. ')
