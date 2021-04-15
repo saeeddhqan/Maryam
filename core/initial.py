@@ -26,6 +26,7 @@ import shlex
 import textwrap
 import concurrent.futures
 import json
+from core.web import api
 from multiprocessing import Pool,Process
 
 class turn_off:
@@ -52,6 +53,8 @@ class initialize(core):
 				'module_directory_name': 'modules',
 				'workspaces_directory_name': '.maryam/workspaces'
 			}
+		# if mode == 'api':
+			# return
 		self._name = self._config['name']
 		self._prompt_template = '%s[%s] > '
 		self._base_prompt = self._prompt_template % ('', self._name)
@@ -70,7 +73,6 @@ class initialize(core):
 		self._init_framework_options()
 		self._init_home()
 		self._init_workspace('default')
-		self._init_var()
 		self._init_util_classes()
 		if mode != 'execute':
 			self._check_version()
@@ -157,7 +159,36 @@ class initialize(core):
 							self._loaded_modules[mod_disp_name] = sys.modules[mod_disp_name]
 							self._cat_module_names[category].append(mod_disp_name)
 							self._module_names.append(mod_disp_name)
-	
+
+	# ////////////////////////
+	#          API 		    //
+	# ////////////////////////
+
+	def do_web(self, params):
+		'''Manage web/api interface'''
+		if not params:
+			self.help_web()
+			return
+		params = params.lower().split(' ')
+		if params[0] == 'api':
+			api_mode = self._global_options['api_mode']
+			if not api_mode:
+				self._global_options['api_mode'] = True
+			if len(params) == 3:
+				host = params[1]
+				port = params[2]
+			else:
+				host = '127.0.0.1'
+				port = 1313
+			api.run_app(self, host, port)
+			self._global_options['api_mode'] = api_mode
+
+
+	def help_web(self):
+		print(getattr(self, 'do_web').__doc__)
+		print('\tweb api => running api on 127.0.0.1:1313')
+		print('\tweb api <HOST> <PORT> => running api')
+
 	# ////////////////////////////////
 	#           WORKSPACE 		    //
 	# ////////////////////////////////
@@ -323,17 +354,9 @@ class initialize(core):
 		if not args:
 			print(format_help)
 		else:
+			# Initialite args
 			if self._mode != 'execute':
-				# Initialite args
-				clean_args = []
-				for arg in args.split(' '):
-					if arg.startswith('$') and len(arg) > 1:
-						arg = self.get_var(arg[1:])
-						if arg == None:
-							return
-					clean_args.append(arg)
-				clean_args = ' '.join(clean_args)
-				lexer = shlex.split(clean_args)
+				lexer = shlex.split(args)
 				args = parser.parse_args(lexer)
 			else:
 				args = parser.parse_args(sys.argv[3:])
@@ -345,12 +368,14 @@ class initialize(core):
 					# Turn off framework prints till the executing of module
 					with turn_off():
 						results = mod.module_api(self)
-						results['errors'] = self._error_stack
-						self._reset_error_stack()
-					if self.options['format']:
+						results['running_errors'] = self._error_stack
+					if output == 'web_api':
+						return results
+					elif self.options['format']:
 						print(json.dumps(results, indent=4))
 					else:
 						print(results)
+					self._reset_error_stack()
 				else:
 					mod.module_run(self)
 			except KeyboardInterrupt:

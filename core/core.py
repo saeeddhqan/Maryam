@@ -51,7 +51,6 @@ class core(cmd.Cmd):
 	_error_stack = []
 	_history_file = ''
 	workspace = ''
-	variables = {}
 	Colors = Colors
 
 	def __init__(self):
@@ -557,9 +556,6 @@ class core(cmd.Cmd):
 		else:
 			print(f'{os.linesep}{self.spacer}No options available for this module.{os.linesep}')
 
-	def show_var(self):
-		self.do_var('list')
-
 	def _get_show_names(self):
 		prefix = 'show_'
 		return [x[len(prefix):]
@@ -630,8 +626,6 @@ class core(cmd.Cmd):
 			if self._global_options_[name][2] and (not value or value == 'None'):
 				print(f"{name} is a required option.")
 				return
-			if value[:1] == '$':
-				value = self.get_var(value[1:])
 			if isinstance(self._global_options[name], bool):
 				if value.lower() in ('true', 'yes', 'on'):
 					value = True
@@ -708,36 +702,6 @@ class core(cmd.Cmd):
 			print(f"{Colors.O}{self.to_str(stdout)}{Colors.N}", end='')
 		if stderr:
 			print(f"{Colors.R}{self.to_str(stderr)}{Colors.N}", end='')
-
-	def do_var(self, params):
-		'''Variable define'''
-		if not params:
-			self.help_var()
-			return
-		params = params.split()
-		arg = params[0].lower()
-		if arg[:1] == '$':
-
-			if self.add_var(arg[1:], ' '.join(params[1:])):
-				self.output(f"Variable '{arg[1:]}' added.")
-			else:
-				self.output(f"Invalid variable name '{arg[1:]}'.", 'r')
-		elif arg == 'list':
-			self._list_var()
-		elif arg == 'delete':
-			if len(params) == 2:
-				if params[1] in ['update_check', 'proxy', 'target',\
-				 'timeout', 'agent', 'rand_agent', 'verbosity', 'history']:
-					self.error(f"You cannot delete default variable '{params[1]}'.")
-				else:
-					if self.delete_var(params[1][1:]):
-						self.output(f"Var '{params[1]}' deleted.")
-					else:
-						self.error(f"No such var was found for deletion '{params[1]}'.")
-			else:
-				print(f"Usage: var delete <name>{os.linesep}")
-		else:
-			self.help_var()
 
 	def do_report(self, params):
 		'''Get report from the Gathers and save it to the other formats'''
@@ -856,66 +820,6 @@ class core(cmd.Cmd):
 					self.output(f"{module} is up to date.", prep='\t')
 
 	# ////////////////////////////////
-	#           VARIABLES           //
-	# ////////////////////////////////
-
-	def get_var(self, name):
-		self._init_var()
-		if name in self.variables:
-			return self.variables[name]
-		else:
-			self.output(f"Variable name '{name}' not found. Enter `var list`", 'O')
-
-	def add_var(self, name, value):
-		if re.search(r'[a-zA-Z_][a-zA-Z0-9_]*', name):
-			self.variables[name] = value
-			self._init_var(self.variables)
-			return True
-
-	def delete_var(self, name):
-		if name in self.variables:
-			self.variables.pop(name)
-			self._init_var(self.variables)
-			return True
-
-	def _list_var(self):
-		self._init_var()
-		variables = self.variables.items()
-		tdata = sorted(variables)
-		self.table(tdata, header=['Name', 'Value'])
-
-	def _init_var(self, vals=None):
-		vars_path = os.path.join(self.workspace, 'var.dat')
-		# create a var file if one doesn't exist
-		if os.path.exists(vars_path):
-			v = open(vars_path, 'a')
-			o = open(vars_path, 'r')
-			r = o.read() or '{}'
-			o.close()
-		else:
-			r = '{}'
-			v = open(vars_path, 'w')
-
-		try:
-			vars_data = json.loads(r)
-		except ValueError:
-			vars_data = {}
-
-		if vals:
-			vars_data = vals
-		else:
-			# add default variables if doesn't exist
-			if 'agent' not in vars_data:
-				for opt in self._global_options.keys():
-					if opt not in vars_data:
-						vars_data[opt] = self._global_options[opt]
-
-		self.variables = vars_data
-		open(vars_path, 'w').close()
-		# Update var.dat
-		json.dump(self.variables, v, indent=4)
-
-	# ////////////////////////////////
 	#             HELP              //
 	# ////////////////////////////////
 
@@ -930,10 +834,6 @@ class core(cmd.Cmd):
 		print('\thistory all\tShow all of commands')
 		print('\thistory clear\tClear the history')
 		print(f'Note: If \'from <num>\' is not set, only the last 50 commands will be shown.{os.linesep}')
-
-	def help_var(self):
-		print(getattr(self, 'do_var').__doc__)
-		print(f'{os.linesep}Usage: var <$name> <value> || var [delete] <name> || var [list]{os.linesep}')
 
 	def help_report(self):
 		print(getattr(self, 'do_report').__doc__)
@@ -986,9 +886,6 @@ class core(cmd.Cmd):
 
 	def complete_update(self, text, line, begidx, endidx):
 		return [x for x in ['check', 'module'] if x.startswith(text.lower())]
-
-	def complete_var(self, text, line, begidx, endidx):
-		return [x for x in ['delete', 'list'] if x.startswith(text.lower())]
 
 	def complete_workspace(self, text, line, begidx, endidx):
 		return [x for x in ['add', 'list', 'select'] if x.startswith(text.lower())]
