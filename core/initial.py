@@ -351,7 +351,8 @@ class initialize(core):
 			format_help += '\nSources:\n\t' + '\n\t'.join(meta['sources'])
 		if 'examples' in meta:
 			format_help += '\nExamples:\n\t' + '\n\t'.join(meta['examples'])
-
+		if 'contributors' in meta:
+			format_help += f"\nContributors:\n\t{meta['contributors']}"
 		# If args is nothing
 		if not args:
 			print(format_help)

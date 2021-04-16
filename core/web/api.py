@@ -21,13 +21,13 @@ from flask import request, jsonify
 framework = None
 app = flask.Flask('OWASP Maryam')
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['GET', 'POST'])
 def home():
 	page = '<pre>current pages:<br>/api/modules => running modules<br>/api/framework => framework commands</pre>'
 	return page
 
 
-@app.route('/api/', methods=['GET'])
+@app.route('/api/', methods=['GET', 'POST'])
 def api():
 	page = '<pre>current pages:<br>/api/modules => running modules<br>/api/framework => framework commands'\
 		   '<br><b>/api/modules?_module=<module-name>&options[short or long]...</b>'\
@@ -43,7 +43,7 @@ def api():
 		   '</pre>'
 	return page
 
-@app.route('/api/framework', methods=['GET'])
+@app.route('/api/framework')
 def api_framework():
 	error = None
 	command = None
@@ -65,7 +65,7 @@ def api_framework():
 	page['meta']['error'] = error
 	return jsonify(page)
 
-@app.route('/api/modules', methods=['GET'])
+@app.route('/api/modules')
 def api_modules():
 	page = {'meta': {'error': None, 'command': None}, 'output': {}}
 	# If no module specified
