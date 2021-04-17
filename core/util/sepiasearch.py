@@ -15,7 +15,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class main :
     def __init__(self, q, limit=15):
-        """ instagram.com search
+        """ sepiasearch.org search
         
             q 		  : The query for search
             limit	  : The number of details min 15 if exist
