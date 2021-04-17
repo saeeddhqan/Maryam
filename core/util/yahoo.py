@@ -99,7 +99,7 @@ class main:
 			a = urlib.unquote
 			cite = root[self.xpath_name['results_cite']][i].text_content()
 			if len(cite) < 3:
-				cite = urlib.netloc
+				cite = self.framework.meta_search_util().make_cite(a)
 			result = {
 				'title': root[self.xpath_name['results_title']][i].text_content(),
 				'a': a,

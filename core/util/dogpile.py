@@ -15,72 +15,59 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import re
 
 class main:
 	# framework = None
-	def __init__(self, q, limit=1, count=10):
-		""" google.com search engine
+	def __init__(self, q, limit=1):
+		""" dogpile.com search engine
 
 			q     : Query for search
 			limit : Number of pages
-			count : Number of results
 		"""
 		self.framework = main.framework
 		self.q = q
-		self.agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:86.0) Gecko/20100101 Firefox/86.0'
-		self.url = 'https://www.google.com/search'
+		self.url = 'https://www.dogpile.com/serp'
+		self.next_page_text = 'pagination__num pagination__num--next-prev pagination__num--next'
 		self._pages = ''
-		self.limit = limit + 1
-		self.count = count
+		self.limit = limit
 		self.xpath_name = {
-			'results': '//div[@class="g"]',
-			'results_content': './/div[@class="IsZvec"]',
-			'results_title': './/h3[1]',
-			'results_a': './/div[@class="yuRUbf"]/a',
-			'results_cite': './/div[@class="yuRUbf"]/a//cite'
+			'results': '//div[@class="web-bing__result"]',
+			'results_content': './/span[@class="web-bing__description"]',
+			'results_title_a': './/a[@class="web-bing__title"]',
 		}
 		self.xpath = {
 			self.xpath_name['results']: [
 				self.xpath_name['results_content'],
-				self.xpath_name['results_title'],
-				self.xpath_name['results_a'],
-				self.xpath_name['results_cite']
+				self.xpath_name['results_title_a'],
 			]
 		}
 
 	def run_crawl(self):
 		page = 1
-		set_page = lambda x: (x - 1) * self.count
-		payload = {'num': self.count, 'start': set_page(page), 'ie': 'utf-8', 'oe': 'utf-8', 'q': self.q, 'filter': '0'}
-		max_attempt = 0
+		payload = {'page': page, 'q': self.q, 'sc': ''}
 		while True:
-			self.framework.verbose(f"[GOOGLE] Searching in {page} page...", end='\r')
+			self.framework.verbose(f"[Dogpile] Searching in {page} page...", end='\r')
 			try:
 				req = self.framework.request(
 					url=self.url,
 					params=payload,
-					headers={'user-agent': self.agent},
 					allow_redirects=True)
 			except Exception as e:
-				self.framework.error(f"ConnectionError: {e}", 'util/google', 'run_crawl')
-				max_attempt += 1
-				if max_attempt == self.limit:
-					self.framework.error('Google is missed!', 'util/goolge', 'run_crawl')
-					break
+				self.framework.error(f"ConnectionError: {e}", 'util/dogpile', 'run_crawl')
 			else:
-				if req.status_code in (503, 429):
-					self.framework.error('Google CAPTCHA triggered.', 'util/google', 'run_crawl')
+				if req.status_code == 307:
+					self.framework.error('Dogpile CAPTCHA triggered.', 'util/dogpile', 'run_crawl')
 					break
-
-				if req.status_code in (301, 302):
-					redirect = req.headers['location']
-					req = self.framework.request(url=redirect, allow_redirects=False)
-
 				self._pages += req.text
-				page += 1
-				payload['start'] = set_page(page)
-				if page >= self.limit:
+				if page >= self.limit or self.next_page_text not in req.text:
 					break
+				page += 1
+				payload['page'] = page
+				sc = re.search(fr'page={page}&amp;sc=([\w]+)"', req.text)
+				if not sc:
+					break
+				payload['sc'] = sc.group(1)
 
 	@property
 	def results(self):
@@ -90,11 +77,13 @@ class main:
 		if not xpath_results:
 			return results
 		root = xpath_results[self.xpath_name['results']]
-		for i in range(len(root[self.xpath_name['results_a']])):
+		for i in range(len(root[self.xpath_name['results_title_a']])):
+			a = root[self.xpath_name['results_title_a']][i].get('href')
+			cite = self.framework.meta_search_util().make_cite(a)
 			result = {
-				'title': root[self.xpath_name['results_title']][i].text_content(),
-				'a': root[self.xpath_name['results_a']][i].get('href'),
-				'cite': root[self.xpath_name['results_cite']][i].text_content(),
+				'title': root[self.xpath_name['results_title_a']][i].text_content(),
+				'a': a,
+				'cite': cite,
 				'content': root[self.xpath_name['results_content']][i].text_content(),
 			}
 			results.append(result)
@@ -112,10 +101,6 @@ class main:
 	@property
 	def dns(self):
 		return self.framework.page_parse(self._pages).get_dns(self.q, self.links)
-
-	@property
-	def emails(self):
-		return self.framework.page_parse(self._pages).get_emails(self.q)
 
 	@property
 	def docs(self):
