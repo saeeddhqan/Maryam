@@ -51,11 +51,15 @@ class main :
                 self.extract_data(response['results'])
         
     def send_request(self, params):
-        response = self.framework.request(self.url, params=params)
-        if response.status_code != 200:
+        try:
+            response = self.framework.request(self.url, params=params)
+        except:
             self.framework.error('Request Fail', 'util/creativecommons', 'send_request')
-            return False, None
-        return True, response.json()
+        else:
+            if response.status_code != 200:
+                self.framework.error('Request Fail - Invalid request', 'util/creativecommons', 'send_request')
+                return False, None
+            return True, response.json()
 
     def extract_data(self, data):
         for result in data:
@@ -64,7 +68,7 @@ class main :
                 'Creator': result['creator'],
                 'Creator_url': result['creator_url'],
                 'Image-URL': result['url'],
-        })
+            })
 
     @property
     def collected_data(self):

@@ -16,7 +16,7 @@ meta = {
 	'name': 'creativecommons',
 	'author': 'Rishabh Jain',
 	'version': '0.1',
-	'description': "Creative Commons is an American non-profit organization and international network devoted to educational access and expanding the range of creative works available for others to build upon legally and to share.",
+	'description': 'Creative Commons is an American non-profit organization and international network devoted to educational access and expanding the range of creative works available for others to build upon legally and to share.',
 	'sources': ('creativecommons',),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
