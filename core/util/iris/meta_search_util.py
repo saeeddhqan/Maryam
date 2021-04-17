@@ -59,7 +59,7 @@ class main:
 	def make_cite(self, url: 'URL String') -> 'cite':
 		default_pages=['index']
 		details=self.framework.urlib(url)
-		qs=details[4]
+		qs=details.query
 		qs='&' + qs
 		l=len(qs)
 
@@ -104,39 +104,31 @@ class main:
 					
 			
 			query[query_key]=query_value
-		# tf=time.time()        
-		# print(f"Time taken for execution: {tf-ti}",end="\n\n")
-		# ti=tf            
-		# print("Queries=")
-		# print(query,end="\n\n")
-		# tf=time.time()
-		# print(f"Time taken for execution: {tf-ti}",end="\n\n")
-		# ti=tf
 
 		#Processing starts now
 
-		pt=f" {details[2]}" #+details[2]
+		pt=f" {details.path}" #+details[2]
 
 		pt=pt.replace("/"," > ")
-		if details[2]=="":
+		if details.path=="":
 			pt=""
 		qr=" : "
 		qk=query.keys()
 		for i in qk:
 			qr+=i + "=" + query[i]+" : "
 		qr=f" : q : {query['q']}" if 'q' in query.keys() else ""
-		params=" >>> "+details[3].replace("%20"," ").replace("+"," ")
-		if len(details[3])==0:
+		params=" >>> "+(details.params).replace("%20"," ").replace("+"," ")
+		if len(details.params)==0:
 			params=""
-		if details[4]=='':
+		if details.query=='':
 			qr=""    
-		frag=" #"+details[5].replace("%20"," ").replace("+"," ")
-		if len(details[5])==0:
+		frag=" #"+(details.fragment).replace("%20"," ").replace("+"," ")
+		if len(details.fragment)==0:
 			frag=""    
-		fs=f"{details[0]}://{details[1]}{pt}{params}{qr}{frag}" 
+		fs=f"{details.scheme}://{details.netloc}{pt}{params}{qr}{frag}" 
 
 		if len(fs) > 50:
 			cr=fs[fs.rfind(" > "):]
-			fs=f"{details[0]}://{details[1]} > ...{cr}"
+			fs=f"{details.scheme}://{details.netloc} > ...{cr}"
 		return fs
 
