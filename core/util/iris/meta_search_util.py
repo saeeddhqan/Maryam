@@ -25,27 +25,17 @@ class main:
 		path = urlib.path
 		host = f"{urlib.scheme}://{urlib.netloc}"
 		host_len = len(host)
-		if host_len >= 60 and host_len <= 110:
-			if path != '':
-				return f"{host} › ..."
-			else:
-				return host
-		elif host_len > 110:
-			host_split = urlib.netloc.split('.')
-			suffix = host_split[-1:]
-			if path != '':
-				return f"{urlib.scheme}://{'.'.join(host_split)[:100]} ... .{suffix[0]} › ..."
-			else:
-				return f"{urlib.scheme}://{'.'.join(host_split)[:90]} ... .{suffix[0]}"
 		if path in ('', '/'):
 			return host
+		else:
+			if host_len > 50:
+				return f"{host} › ..."
 		path_join = []
-
 		if '?' in path:
 			path = path[:path.rfind('?')]
 		counter = 0
 		path_split = path.split('/')
-		path_split = path_split[:3]+['...'] if len(path_split) > 3 else path_split 
+		path_split = path_split[:3] + ['...'] if len(path_split) > 3 else path_split 
 		for section in path_split:	
 			if not section or section == ' ':
 				continue
@@ -63,7 +53,7 @@ class main:
 			else:
 				path_join.append('...')
 				break
-		path = "/".join(path_join)
+		path = '/'.join(path_join)
 		path = path.replace('/', ' › ')
 		cite = f"{host} › {path}"
 		return cite
