@@ -15,6 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import re
+import json
 
 meta = {
 	'name': 'Duckduckgo d.js',
@@ -24,54 +25,65 @@ meta = {
 	'sources': ('Google Pagespeed API','DuckDuckGo'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
-		('retry', 5, False, 'Retries(default=5)', '-r', 'store', int),
 	),
 	'examples': ('d_js -q <QUERY> --output',)
 }
 
-def api_search(self, query):
-	self.verbose('[d_js] Searching in Google Pagespeed API...')
-	api_url = f"https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://www.duckduckgo.com/?q={query}"
+def search(self, query):
+	self.verbose('[d_js] Searching for d.js url...')
+	duck_url = f"https://duckduckgo.com/?q={query}"
 
 	try:
-		google_api_data = self.request(api_url, timeout=20).json()
+		page_data = self.request(duck_url).text
 	except Exception as e:
-		self.error('[d_js] Unable to reach Google Pagespeed API!', 'modules/search', 'source1')
+		self.error('Unable to reach DuckDuckGo!', 'modules/search', 'search')
 		return ''
-		
-	if 'error' in google_api_data.keys():
-		self.error(f"[d_js] {google_api_data['error']['message']}", 'modules/search', 'source1')
+
+	urls = re.findall(r"/d\.js\?q=[^']+", page_data)
+
+	if not urls:
+		self.error('Unable to find d.js link in request!', 'modules/search', 'search')
 		return ''
+
+	final_url = f"https://links.duckduckgo.com{urls[0]}"
+	return final_url
 	
-	for i in google_api_data['lighthouseResult']['audits']['bootup-time']['details']['items']:
-		if re.search(r"https://links.duckduckgo.com/d.js.*", i['url']):
-        		return i['url']
-	return ''
+def data_filter(data):
+	data = re.sub(r"<[^>]*>", '', data) # Remove all html tags
+	data = re.findall(r"\{\"[a-zA-Z]{1,2}[^\}]*\}", data) # Find all dict elements with alphabet as key
+	data = [ json.loads(i) for i in data if '"a"' in i ] # Convert to dict all elements containing key "a" 
+	return data
 	
 def module_api(self):
 	query = self.options['query']
-	retry = self.options['retry']
-	output = {'results': ''}
+	output = {'results': []}
 	d_js_url = ''
+	# These headers needed to avoid empty data in d.js request
+	header_data = {'Host': 'links.duckduckgo.com',
+		'Referer': 'https://duckduckgo.com/',
+		'DNT': '1',
+		'Connection': 'keep-alive',
+		'TE': 'Trailers'
+	}
 
-	for i in range(0, retry):
-		self.verbose(f"[d_js] Pagespeed API Try no: {i+1}...")
-		d_js_url = api_search(self, query)
-		if d_js_url:
-			break
-		elif i+1 == retry:
-			return output
+	d_js_url = search(self, query)
+	if not d_js_url:
+		return output
 
 	self.verbose('[d_js] Parameters for d.js file found, sending direct request...')
 	try:
-		d_js_data = self.request(d_js_url).text
+		# Redirects should be False to avoid error redirects after many tries.
+		d_js_data = self.request(url=d_js_url, allow_redirects=False, headers=header_data).text		
 	except Exception as e:
-		self.error('[d_js] Unable to reach duckduckgo', 'modules/search', 'module_api')
+		self.error('Unable to reach duckduckgo', 'modules/search', 'module_api')
 		return output
 
-	output['results'] = d_js_data
+	result = data_filter(d_js_data)
+
+	output['results'] = result
 	self.save_gather(output, 'search/d_js', query, output=self.options.get('output'))
 	return output
 
 def module_run(self):
 	self.alert_results(module_api(self))
+
