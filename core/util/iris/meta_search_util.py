@@ -9,6 +9,6 @@ class main:
 		p=details.path if len(details.path) > 1 else ""
 		p=p.replace("/"," › ")
 		s=f"{details.scheme}://{details.netloc}{p}"
-		if len(s) > 110:
-		    s=f"{s[:110]}..."
+		if len(s) > 85:
+		    s=f"{s[:85]}..."
 		return s
