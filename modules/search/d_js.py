@@ -48,18 +48,49 @@ def search(self, query):
 	final_url = f"https://links.duckduckgo.com{urls[0]}"
 	return final_url
 	
+# Custom filter instead of regex for nested JSON in some cases.
+def slow_filter(data):
+	json_list = []
+	temp = ''
+	counter = 0 
+	add_flag = False
+	for i in data:
+		if i == '{':
+			add_flag = True
+			counter += 1
+		if add_flag and counter!= 0:
+			temp += i
+		if i == '}':
+			counter -= 1
+		if counter == 0 and temp:
+			json_list.append(temp)
+			temp = ''
+			add_flag = False	
+	return json_list
+
+	
 def data_filter(data):
+	result = []
 	data = re.sub(r"<[^>]*>", '', data) # Remove all html tags
-	data = re.findall(r"\{\"[a-zA-Z]{1,2}[^\}]*\}", data) # Find all dict elements with alphabet as key
+	data = re.sub(r"\&[\w]*\;", ' ', data) # Remove all html entities
+	
+	if re.search(r"\"l\":", data): # This means data contains nested JSON so, regex filter won't work use slow one.
+		data = slow_filter(data)
+	else:
+		data = re.findall(r"\{\"[a-zA-Z]{1,2}[^\}]*\}", data) # Find all dict elements with alphabet as key
+
 	data = [ json.loads(i) for i in data if '"a"' in i ] # Convert to dict all elements containing key "a" 
-	return data
+	for i in data:
+		result.append( {'title': i['t'] , 'a': i['u'], 'cite': i['d'], 'content': i['a']} )
+	return result
 	
 def module_api(self):
 	query = self.options['query']
 	output = {'results': []}
 	d_js_url = ''
 	# These headers needed to avoid empty data in d.js request
-	header_data = {'Host': 'links.duckduckgo.com',
+	header_data = {
+		'Host': 'links.duckduckgo.com',
 		'Referer': 'https://duckduckgo.com/',
 		'DNT': '1',
 		'Connection': 'keep-alive',
@@ -75,15 +106,14 @@ def module_api(self):
 		# Redirects should be False to avoid error redirects after many tries.
 		d_js_data = self.request(url=d_js_url, allow_redirects=False, headers=header_data).text		
 	except Exception as e:
-		self.error('Unable to reach duckduckgo', 'modules/search', 'module_api')
+		self.error('Unable to reach duckduckgo', 'd_js', 'module_api')
 		return output
 
 	result = data_filter(d_js_data)
-
 	output['results'] = result
 	self.save_gather(output, 'search/d_js', query, output=self.options.get('output'))
 	return output
 
 def module_run(self):
-	self.alert_results(module_api(self))
+	self.search_engine_results(module_api(self))
 
