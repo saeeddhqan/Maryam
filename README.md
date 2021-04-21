@@ -44,7 +44,7 @@ python3 maryam -e help
 ./maryam -e set proxy ..
 ./maryam -e set agent ..
 ./maryam -e set timeout ..
-# Running web API
+# Run web API
 ./maryam -e web api 127.0.0.1 1313
 ```
 
