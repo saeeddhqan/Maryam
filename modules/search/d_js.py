@@ -1,16 +1,13 @@
 """
 OWASP Maryam!
-
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 any later version.
-
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
@@ -47,7 +44,7 @@ def search(self, query):
 
 	final_url = f"https://links.duckduckgo.com{urls[0]}"
 	return final_url
-	
+
 # Custom filter instead of regex for nested JSON in some cases.
 def slow_filter(data):
 	json_list = []
@@ -68,22 +65,26 @@ def slow_filter(data):
 			add_flag = False	
 	return json_list
 
-	
-def data_filter(data):
+
+def data_filter(self, data):
 	result = []
-	data = re.sub(r"<[^>]*>", '', data) # Remove all html tags
-	data = re.sub(r"\&[\w]*\;", ' ', data) # Remove all html entities
-	
-	if re.search(r"\"l\":", data): # This means data contains nested JSON so, regex filter won't work use slow one.
+	# Remove all html tags
+	data = re.sub(r"<[^>]*>", '', data)
+	# Remove all html entities
+	data = re.sub(r"\&[\w]*\;", ' ', data)
+
+	# This means data contains nested JSON so, regex filter won't work use slow one.
+	if re.search(r'l":', data):
 		data = slow_filter(data)
 	else:
-		data = re.findall(r"\{\"[a-zA-Z]{1,2}[^\}]*\}", data) # Find all dict elements with alphabet as key
-
-	data = [ json.loads(i) for i in data if '"a"' in i ] # Convert to dict all elements containing key "a" 
+		# Find all dict elements with alphabet as key
+		data = re.findall(r'\{"[a-zA-Z]{1,2}[^\}]*\}', data)
+	# Convert to dict all elements containing key "a" 
+	data = [json.loads(i) for i in data if '"a"' in i]
 	for i in data:
-		result.append( {'title': i['t'] , 'a': i['u'], 'cite': i['d'], 'content': i['a']} )
+		result.append({'title': i['t'] , 'a': i['u'], 'cite': self.meta_search_util().make_cite(i['u']), 'content': i['a']})
 	return result
-	
+
 def module_api(self):
 	query = self.options['query']
 	output = {'results': []}
@@ -109,11 +110,10 @@ def module_api(self):
 		self.error('Unable to reach duckduckgo', 'd_js', 'module_api')
 		return output
 
-	result = data_filter(d_js_data)
+	result = data_filter(self, d_js_data)
 	output['results'] = result
 	self.save_gather(output, 'search/d_js', query, output=self.options.get('output'))
 	return output
 
 def module_run(self):
 	self.search_engine_results(module_api(self))
-
