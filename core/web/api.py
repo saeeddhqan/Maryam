@@ -56,9 +56,9 @@ def api_framework():
 				framework.onecmd(command)
 				command = request.args['command']
 			else:
-				error = "Invalid command."
+				error = 'Invalid command.'
 		else:
-			error = "No command specified."
+			error = 'No command specified.'
 	else:
 		error = 'no command specified.'
 	page['meta']['command'] = command
@@ -79,7 +79,7 @@ def api_modules():
 		page['meta']['error'] = f"Module name '{module_name}' not found."
 		return jsonify(page)
 	if args_dict == {}:
-		page['meta']['error'] = f"No option specified."
+		page['meta']['error'] = 'No option specified.'
 		return jsonify(page)
 	module = framework._loaded_modules[module_name]
 	options = module.meta['options']
@@ -137,7 +137,7 @@ def api_modules():
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return "<pre>404</pre>", 404
+    return '<pre>404</pre>', 404
 
 def run_app(core_obj, host='127.0.0.1', port=1313):
 	global framework
