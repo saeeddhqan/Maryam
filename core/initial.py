@@ -53,8 +53,6 @@ class initialize(core):
 				'module_directory_name': 'modules',
 				'workspaces_directory_name': '.maryam/workspaces'
 			}
-		# if mode == 'api':
-			# return
 		self._name = self._config['name']
 		self._prompt_template = '%s[%s] > '
 		self._base_prompt = self._prompt_template % ('', self._name)
