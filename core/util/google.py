@@ -1,16 +1,13 @@
 """
 OWASP Maryam!
-
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 any later version.
-
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
@@ -20,7 +17,6 @@ class main:
 	# framework = None
 	def __init__(self, q, limit=1, count=10, mode='original'):
 		""" google.com search engine
-
 			q     : Query for search
 			limit : Number of pages
 			count : Number of results
@@ -136,10 +132,10 @@ class main:
 		root = xpath_results[self.xpath_name_original['results']]
 		for i in range(len(root[self.xpath_name_original['results_a']])):
 			result = {
-				'title': root[self.xpath_name_original['results_title']][i].text_content(),
+				't': root[self.xpath_name_original['results_title']][i].text_content(),
 				'a': root[self.xpath_name_original['results_a']][i].get('href'),
-				'cite': root[self.xpath_name_original['results_cite']][i].text_content(),
-				'content': root[self.xpath_name_original['results_content']][i].text_content(),
+				'c': root[self.xpath_name_original['results_cite']][i].text_content(),
+				'd': root[self.xpath_name_original['results_content']][i].text_content(),
 			}
 			results.append(result)
 		return results
@@ -167,7 +163,7 @@ class main:
 		return output
 
 	@property
-	def results_legacy(self):
+	def results(self):
 		parser = self.framework.page_parse(self._pages)
 		xpath_results = parser.html_fromstring(self.xpath_legacy)
 		results = []
@@ -178,10 +174,10 @@ class main:
 			a = root[self.xpath_name_legacy['results_a']][i].get('href')
 			a = a[7:a.find('&sa=U&ved=')]
 			result = {
-				'title': root[self.xpath_name_legacy['results_title']][i].text_content(),
+				't': root[self.xpath_name_legacy['results_title']][i].text_content(),
 				'a': a,
-				'cite': root[self.xpath_name_legacy['results_cite']][i].text_content(),
-				'content': root[self.xpath_name_legacy['results_content']][i].text_content().strip(),
+				'c': root[self.xpath_name_legacy['results_cite']][i].text_content(),
+				'd': root[self.xpath_name_legacy['results_content']][i].text_content().strip(),
 			}
 			results.append(result)
 		return results
