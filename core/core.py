@@ -567,10 +567,10 @@ class core(cmd.Cmd):
 
 	def do_package(self, params):
 		'''Install extensions and packages and manage them.'''
-		if not params or len(params) < 2:
+		params = params.split()
+		if not params or len(params) < 3:
 			self.help_package()
 			return
-		params = params.split()
 		mode = params.pop(0).lower()
 		if mode == 'extension':
 			next_plan = params.pop(0).lower()
@@ -578,18 +578,31 @@ class core(cmd.Cmd):
 				'https://raw.githubusercontent.com/mexts/init/main/EXTENSIONS.json').json()
 			if next_plan == 'list':
 				self.alert('List of extensions:')
-				for ext in pool:
-					self.output(f"\t{ext}")
+				self.alert_results(pool)
 			elif next_plan == 'install':
 				for name in params:
 					name = params.pop(0).lower()
 					if name not in pool:
 						self.error(f"There's no '{name}' extension name.", 'core', 'do_install')
 						continue
-					mext = self.request(f"https://raw.githubusercontent.com/mexts/init/main/exts/{name}/mext").text.split('\n')
-					mext[-1] = json.loads(mext[-1].replace("'", '"'))
+					exts = 'https://raw.githubusercontent.com/mexts/init/main/exts/'
+					mext = self.request(f"{exts}/{name}/mext").text
+					mext = mext.split('\n')
+					if '' in mext:
+						mext.pop(mext.index(''))
+					try:
+						mext[-1] = json.loads(mext[-1])
+					except Exception as e:
+						self.error(f"mext file is missed.", 'core', 'do_package')
+						self.print_exception()
+						return
+					print(f"{exts}/{name}/requirements")
 					if self._dev_running_mext(name, mext, 'install'):
-						self.output(f"{name} extension has been installed.")
+						reqs = self._dev_install_requirements(f"{exts}/{name}/requirements")
+						if reqs:
+							self.output(f"{name} extension has been installed.")
+						else:
+							self.error('Could not install the requirements', 'core', 'do_package')
 						continue
 					else:
 						self.error(f"{name} extension has not been installed.", 'core', 'do_install')
@@ -601,8 +614,7 @@ class core(cmd.Cmd):
 				'https://raw.githubusercontent.com/mexts/init/main/PACKAGES.json').json()
 			if next_plan == 'list':
 				self.alert('List of packages:')
-				for ext in pool:
-					self.output(f"\t{ext}")
+				self.alert_results(pool)
 			elif next_plan == 'install':
 				name = params.pop(0).lower()
 				if name not in pool:
@@ -632,7 +644,7 @@ class core(cmd.Cmd):
 						outcome[dirpath] = [file]
 		return outcome
 
-	def _dev_create_mext(self, path):
+	def _dev_create_mext(self, path, mode):
 		mext = []
 		all_files = []
 		ext_tree = self._dev_tree(path)
@@ -642,7 +654,10 @@ class core(cmd.Cmd):
 			for file in files:
 				filepath = os.path.join(dirpath, file)
 				full_path = os.path.join(path, filepath)
-				if dirpath != '':
+				if dirpath == '':
+					if mode == 'extension':
+						continue
+				else:
 					all_files.append(filepath)
 				if filepath.startswith('util/'):
 					project_file = f"core/{os.path.join(dirpath, file)}"
@@ -746,10 +761,11 @@ class core(cmd.Cmd):
 	def _dev_install_requirements(self, reqs):
 		'''Testing the extension before pull request'''
 		if '://' in reqs:
+			url = reqs
 			reqs = '/tmp/reqs'
 			file = self._is_readable(reqs, 'w')
 			if file:
-				download = self.request(reqs)
+				download = self.request(url)
 				if download.status_code != 200:
 					self.error('No such URL to download.', 'core', '_dev_install_requirements')
 					return False
@@ -775,7 +791,7 @@ class core(cmd.Cmd):
 				if not os.path.exists(path):
 					self.error(f"No such directory '{path}'.", 'core', 'do_dev')
 					return
-				mext_commands, all_files = self._dev_create_mext(path)
+				mext_commands, all_files = self._dev_create_mext(path, 'extension')
 				if not mext_commands:
 					self.error('Cannot initialize the extension.', 'core', 'do_dev')
 					return
@@ -785,7 +801,7 @@ class core(cmd.Cmd):
 				if not mext_file:
 					return
 				mext_file.write('\n'.join(mext_commands[:-1]))
-				mext_file.write(f"\n{str(mext_commands[-1])}")
+				mext_file.write(f"\n{json.dumps(mext_commands[-1])}")
 				self.verbose('Installing pipreqs...')
 				self.do_shell('pip install pipreqs')
 				self.verbose('Creating the requirements file with pipreqs...')
@@ -806,6 +822,8 @@ class core(cmd.Cmd):
 						return
 					self.verbose('the extension has been successfully tested.')
 				self.verbose('Finished. The package is ready for pull request.')
+		else:
+			self.help_dev()
 
 	# ////////////////////////////////
 	#           COMMANDS            //
