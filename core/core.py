@@ -377,14 +377,14 @@ class core(cmd.Cmd):
 		return False
 
 	# ////////////////////////////////
-	#           ERRORS 		//
+	#           ERRORS   			//
 	# ////////////////////////////////
 
 	def _reset_error_stack(self):
 		self._error_stack.clear()
 
 	# ////////////////////////////////
-	#           HISTORY 		//
+	#           HISTORY 			//
 	# ////////////////////////////////
 
 	def _init_history(self, reborn=False, write=True):
@@ -418,7 +418,7 @@ class core(cmd.Cmd):
 
 
 	# ////////////////////////////////
-	#           OPTIONS 		//
+	#           OPTIONS 			//
 	# ////////////////////////////////
 
 	def _load_config(self):
@@ -514,6 +514,54 @@ class core(cmd.Cmd):
 		return resp
 
 	# ////////////////////////////////
+	#           SHOW                //
+	# ////////////////////////////////
+
+	def show_history(self):
+		self.do_history('list')
+
+	def show_modules(self, param):
+		# if isinstance(param, list):
+			# modules = param
+		for section in core._cat_module_names:
+			self.heading(section)
+			for module in core._cat_module_names[section]:
+				print(f'{self.spacer * 2}{module}')
+		print('')
+
+	def show_options(self, options=None):
+		'''Lists options'''
+		if options is None:
+			options = self._global_options_
+		if options:
+			pattern = f'{self.spacer}%s  %s  %s  %s'
+			key_len = len(max(options, key=len))
+			if key_len < 4:
+				key_len = 4
+			val_len = len(max([self.to_str(self._global_options[x]) for x in options], key=len))
+			if val_len < 13:
+				val_len = 13
+			print('')
+			print(pattern % ('Name'.ljust(key_len), 'Current Value'.ljust(val_len), 'Required', 'Description'))
+			print(pattern % (self.ruler*key_len, (self.ruler*13).ljust(val_len), self.ruler*8, self.ruler*11))
+			for key in sorted(options):
+				option = options[key]
+				value = self._global_options[key] if self._global_options[key] != None else ''
+				reqd = 'no' if not option[2] else 'yes'
+				desc = option[3]
+				print(pattern % (key.ljust(key_len), \
+					self.to_str(value).ljust(val_len), \
+					self.to_str(reqd).ljust(8), desc.title()))
+			print('')
+		else:
+			print(f'{os.linesep}{self.spacer}No options available for this module.{os.linesep}')
+
+	def _get_show_names(self):
+		prefix = 'show_'
+		return [x[len(prefix):]
+				for x in self.get_names() if x.startswith(prefix)]
+
+	# ////////////////////////////////
 	#         INSTALL and DEV       //
 	# ////////////////////////////////
 
@@ -594,7 +642,8 @@ class core(cmd.Cmd):
 			for file in files:
 				filepath = os.path.join(dirpath, file)
 				full_path = os.path.join(path, filepath)
-				all_files.append(filepath)
+				if dirpath != '':
+					all_files.append(filepath)
 				if filepath.startswith('util/'):
 					project_file = f"core/{os.path.join(dirpath, file)}"
 				if dirpath == 'util':
@@ -731,17 +780,12 @@ class core(cmd.Cmd):
 					self.error('Cannot initialize the extension.', 'core', 'do_dev')
 					return
 				mext_path = os.path.join(path, 'mext')
-				if os.path.exists(mext_path):
-					self.verbose('mext file already exist.')
-					mext_commands = self._is_readable(mext_path).read().split('\n')
-					mext_commands[-1] = json.loads(mext_commands[-1].replace("'", '"'))
-				else:
-					self.verbose(f"Creating {mext_path} file...")
-					mext_file = self._is_readable(mext_path, 'w')
-					if not mext_file:
-						return
-					mext_file.write('\n'.join(mext_commands[:-1]))
-					mext_file.write(f"\n{str(mext_commands[-1])}")
+				self.verbose(f"Creating {mext_path} file...")
+				mext_file = self._is_readable(mext_path, 'w')
+				if not mext_file:
+					return
+				mext_file.write('\n'.join(mext_commands[:-1]))
+				mext_file.write(f"\n{str(mext_commands[-1])}")
 				self.verbose('Installing pipreqs...')
 				self.do_shell('pip install pipreqs')
 				self.verbose('Creating the requirements file with pipreqs...')
@@ -753,7 +797,7 @@ class core(cmd.Cmd):
 				perm = input('[!] The test stage will change the origin project and needs to install dependencies. Continue[Y/N]? ')
 				if perm.lower() in ('y', 'yes'):
 					self.verbose('Testing...')
-					if self._dev_install_requirements(reqs_path):
+					if not self._dev_install_requirements(reqs_path):
 						self.error('Failed', 'core', 'do_dev')
 						return False
 					result = self._dev_extension_test(path, mext_commands)
@@ -762,54 +806,6 @@ class core(cmd.Cmd):
 						return
 					self.verbose('the extension has been successfully tested.')
 				self.verbose('Finished. The package is ready for pull request.')
-
-	# ////////////////////////////////
-	#           SHOW                //
-	# ////////////////////////////////
-
-	def show_history(self):
-		self.do_history('list')
-
-	def show_modules(self, param):
-		# if isinstance(param, list):
-			# modules = param
-		for section in core._cat_module_names:
-			self.heading(section)
-			for module in core._cat_module_names[section]:
-				print(f'{self.spacer * 2}{module}')
-		print('')
-
-	def show_options(self, options=None):
-		'''Lists options'''
-		if options is None:
-			options = self._global_options_
-		if options:
-			pattern = f'{self.spacer}%s  %s  %s  %s'
-			key_len = len(max(options, key=len))
-			if key_len < 4:
-				key_len = 4
-			val_len = len(max([self.to_str(self._global_options[x]) for x in options], key=len))
-			if val_len < 13:
-				val_len = 13
-			print('')
-			print(pattern % ('Name'.ljust(key_len), 'Current Value'.ljust(val_len), 'Required', 'Description'))
-			print(pattern % (self.ruler*key_len, (self.ruler*13).ljust(val_len), self.ruler*8, self.ruler*11))
-			for key in sorted(options):
-				option = options[key]
-				value = self._global_options[key] if self._global_options[key] != None else ''
-				reqd = 'no' if not option[2] else 'yes'
-				desc = option[3]
-				print(pattern % (key.ljust(key_len), \
-					self.to_str(value).ljust(val_len), \
-					self.to_str(reqd).ljust(8), desc.title()))
-			print('')
-		else:
-			print(f'{os.linesep}{self.spacer}No options available for this module.{os.linesep}')
-
-	def _get_show_names(self):
-		prefix = 'show_'
-		return [x[len(prefix):]
-				for x in self.get_names() if x.startswith(prefix)]
 
 	# ////////////////////////////////
 	#           COMMANDS            //
@@ -938,6 +934,7 @@ class core(cmd.Cmd):
 				for mod in core._cat_module_names[section]:
 					if text in mod:
 						self.output(f"\tFound '{text}' under {section}: {mod}", prefix='')
+
 	def do_shell(self, params):
 		'''Executes shell commands'''
 		if not params:
@@ -1102,7 +1099,7 @@ class core(cmd.Cmd):
 		print('or       : report [saved] => for show queries')
 		print('Examples : report json pdf_docs(without suffix) osint/docs_search company.com')
 		print('           report xml pdf_docs(without suffix) osint/docs_search')
-		print(f"Formats : xml,json,csv,txt{os.linesep}")
+		print(f'Formats : xml,json,csv and txt{os.linesep}')
 
 	def help_search(self):
 		print(getattr(self, 'do_search').__doc__)
