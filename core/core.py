@@ -568,7 +568,7 @@ class core(cmd.Cmd):
 	def do_package(self, params):
 		'''Install extensions and packages and manage them.'''
 		params = params.split()
-		if not params or len(params) < 3:
+		if not params or len(params) < 2:
 			self.help_package()
 			return
 		mode = params.pop(0).lower()
