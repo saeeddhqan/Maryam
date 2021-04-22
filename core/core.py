@@ -597,13 +597,10 @@ class core(cmd.Cmd):
 						self.error(f"{name} extension has not been installed.", 'core', 'do_package')
 						self.print_exception()
 						continue
-					print(f"{exts}/{name}/requirements")
 					if self._dev_running_mext(name, mext, 'install'):
 						reqs = self._dev_install_requirements(f"{exts}/{name}/requirements")
 						if reqs:
 							self.output(f"{name} extension has been installed.")
-						else:
-							self.error('Could not install the requirements', 'core', 'do_package')
 						continue
 					else:
 						self.error(f"{name} extension has not been installed.", 'core', 'do_package')
