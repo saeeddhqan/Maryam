@@ -31,7 +31,7 @@ class FrameworkException(Exception):
 	def __init__(self, message):
 		Exception.__init__(self, message)
 
-class Colors(object):
+class Colors:
 	N = '\033[m'  # native
 	R = '\033[91m'  # red
 	G = '\033[92m'  # green
@@ -583,7 +583,7 @@ class core(cmd.Cmd):
 				for name in params:
 					name = params.pop(0).lower()
 					if name not in pool:
-						self.error(f"There's no '{name}' extension name.", 'core', 'do_install')
+						self.error(f"There's no '{name}' extension name.", 'core', 'do_package')
 						continue
 					exts = 'https://raw.githubusercontent.com/mexts/init/main/exts/'
 					mext = self.request(f"{exts}/{name}/mext").text
@@ -594,8 +594,9 @@ class core(cmd.Cmd):
 						mext[-1] = json.loads(mext[-1])
 					except Exception as e:
 						self.error(f"mext file is missed.", 'core', 'do_package')
+						self.error(f"{name} extension has not been installed.", 'core', 'do_package')
 						self.print_exception()
-						return
+						continue
 					print(f"{exts}/{name}/requirements")
 					if self._dev_running_mext(name, mext, 'install'):
 						reqs = self._dev_install_requirements(f"{exts}/{name}/requirements")
@@ -605,7 +606,7 @@ class core(cmd.Cmd):
 							self.error('Could not install the requirements', 'core', 'do_package')
 						continue
 					else:
-						self.error(f"{name} extension has not been installed.", 'core', 'do_install')
+						self.error(f"{name} extension has not been installed.", 'core', 'do_package')
 			else:
 				self.help_package()
 		elif mode == 'repo':
@@ -618,14 +619,14 @@ class core(cmd.Cmd):
 			elif next_plan == 'install':
 				name = params.pop(0).lower()
 				if name not in pool:
-					self.error(f"There's no '{name}' package name.", 'core', 'do_install')
+					self.error(f"There's no '{name}' package name.", 'core', 'do_package')
 					return
 				mext = self.request(f"https://raw.githubusercontent.com/mexts/init/main/{name}/main/mext").text.split('\n')
 				mext[-1] = json.loads(mext[-1].replace("'", '"'))
 				if self._dev_running_mext(name, mext, 'install'):
 					self.output(f"{name} repository has been installed.")
 				else:
-					self.error(f"{name} repository has not been installed.", 'core', 'do_install')
+					self.error(f"{name} repository has not been installed.", 'core', 'do_package')
 			else:
 				self.help_package()
 		else:
