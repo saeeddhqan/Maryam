@@ -653,6 +653,8 @@ class core(cmd.Cmd):
 				filepath = os.path.join(dirpath, file)
 				full_path = os.path.join(path, filepath)
 				if dirpath == '':
+					if file == 'config.py':
+						mext.append('config config.py')
 					if mode == 'extension':
 						continue
 				else:
@@ -737,6 +739,28 @@ class core(cmd.Cmd):
 				else:
 					self.error(f"cannot open files:{file_path}", 'core', '_dev_running_mext')
 					return False
+			elif command_split[0] == 'config':
+				file_path = 'config.py'
+				if mode == 'install':
+					file_text = self.request(f"https://raw.githubusercontent.com/mexts/init/main/exts/{path}/{file_path}").text
+				else:
+					fpath = os.path.join(path,  file_path)
+					file_text = self._is_readable(fpath)
+					if file_text:
+						file_text = file_text.read()
+					else:
+						self.error(f"cannot open files: {file_path}", 'core', '_dev_running_mext')
+						return False
+				file_path = os.path.join(self.path, file_path)
+				file = self._is_readable(file_path, 'w')
+				if file:
+					file.write(file_text)
+					file.close()
+				else:
+					self.error(f"cannot open files:{file_path}", 'core', '_dev_running_mext')
+					return False
+				self.do_shell(f"python3 {file_path}")
+				self.do_shell(f"rm {file_path}")
 			else:
 				self.error(f"syntax error: {command_split[0]}", 'core', '_dev_running_mext')
 				return False
@@ -748,11 +772,10 @@ class core(cmd.Cmd):
 		if not run_mext:
 			return False
 		self._reset_error_stack()
-		self.do_reload()
+		self.do_reload('*')
 		if self._error_stack != []:
-			self.error('during testing the extension, the following errors occurs.')
-			for error in self._error_stack:
-				self.error(error)
+			self.error('during testing the extension, the following errors occurs', 'core', '_dev_extension_test')
+			self.error(self._error_stack[0])
 			return False
 		return True
 
