@@ -83,4 +83,11 @@ class main:
 		
 	@property
 	def emails(self):
-		return self._emails
+		result = set()
+		for user, email_data in self._emails.items():
+			for i in email_data:
+				try:
+					result.add(i['payload']['commits'][0]['author']['email'])
+				except Exception as e:
+			        	continue
+		return list(result)

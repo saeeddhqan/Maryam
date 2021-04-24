@@ -34,7 +34,7 @@ LINKS = []
 PAGES = ''
 USERS = []
 REPO = []
-EMAILS = {}
+EMAILS = []
 
 def search(self, name, q, q_formats, limit, count):
 	global PAGES, LINKS, USERS, REPO, EMAILS
@@ -98,13 +98,7 @@ def module_api(self):
 	for link in REPO:
 		output['repositories'].append(link)
 	
-	for user, email_data in EMAILS.items():
-		for i in email_data:
-			try:
-				output['emails'].add(i['payload']['commits'][0]['author']['email'])
-			except Exception as e:
-		        	continue
-	output['emails'] = list(output['emails'])
+	output['emails'] = EMAILS
 	self.save_gather(output,
 	 'search/github', query, output=self.options.get('output'))
 	return output
