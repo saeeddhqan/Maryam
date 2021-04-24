@@ -104,7 +104,7 @@ def module_api(self):
 		for i in email_data:
 			try:
 				output['emails'].add(i['payload']['commits'][0]['author']['email'])
-			except KeyError:
+			except Exception as e:
 		        	continue
 	output['emails'] = list(output['emails'])
 	self.save_gather(output,
