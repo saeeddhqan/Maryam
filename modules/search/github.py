@@ -99,8 +99,6 @@ def module_api(self):
 		output['repositories'].append(link)
 	
 	for user, email_data in EMAILS.items():
-		if type(email_data) != list or email_data == []:
-			continue
 		for i in email_data:
 			try:
 				output['emails'].add(i['payload']['commits'][0]['author']['email'])

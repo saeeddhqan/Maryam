@@ -18,7 +18,7 @@ meta = {
 	'version': '1.0',
 	'description': 'Search in open-sources to find emails.',
 	'sources': ('bing', 'pastebin', 'google', 'yahoo', 'yandex', 'metacrawler',
-				'ask', 'baidu', 'startpage', 'yippy', 'qwant', 'duckduckgo', 'hunter', 'gigablast'),
+				'ask', 'baidu', 'startpage', 'yippy', 'qwant', 'duckduckgo', 'hunter', 'gigablast', 'github'),
 	'options': (
 		('query', None, True, 'Domain name or company name', '-q', 'store', str),
 		('limit', 3, False, 'Search limit(number of pages, default=3)', '-l', 'store', int),
@@ -32,9 +32,10 @@ meta = {
 }
 
 EMAILS = []
+GIT_RAW_EMAIL_DATA = {}
 
 def search(self, name, q, q_formats, limit, count):
-	global EMAILS
+	global EMAILS, GIT_RAW_EMAIL_DATA
 	engine = getattr(self, name)
 	eng = name
 	name = engine.__init__.__name__
@@ -54,6 +55,12 @@ def search(self, name, q, q_formats, limit, count):
 		attr = engine(q, limit)
 	else:
 		attr = engine(q)
+	
+	if eng == 'github':
+		run = self.github(q)
+		run.run_crawl()
+		GIT_RAW_EMAIL_DATA = run.emails
+	
 	attr.run_crawl()
 	EMAILS.extend(attr.emails)
 
@@ -73,6 +80,15 @@ def module_api(self):
 	}
 	self.thread(search, self.options['thread'], engines, query, q_formats, limit, count, meta['sources'])
 	output = {'emails': list(set(EMAILS))}
+	
+	temp_set = {}
+	for user, email_data in GIT_RAW_EMAIL_DATA.items():
+		for i in email_data:
+			try:
+				temp_set.add(i['payload']['commits'][0]['author']['email'])
+			except Exception as e:
+		        	continue
+	output['emails'].append(list(temp_set))
 
 	self.save_gather(output, 'osint/email_search', domain,\
 		output=self.options['output'])
