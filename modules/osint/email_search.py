@@ -82,7 +82,7 @@ def module_api(self):
 	self.thread(search, self.options['thread'], engines, query, q_formats, limit, count, meta['sources'])
 	output = {'emails': list(set(EMAILS))}
 	
-	temp_set = {}
+	temp_set = set()
 	for user, email_data in GIT_RAW_EMAIL_DATA.items():
 		for i in email_data:
 			try:
