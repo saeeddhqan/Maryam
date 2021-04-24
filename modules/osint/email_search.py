@@ -55,11 +55,6 @@ def search(self, name, q, q_formats, limit, count):
 	else:
 		attr = engine(q)
 	
-	if eng == 'github':
-		run = self.github(q)
-		run.run_crawl()
-		EMAILS.extend(run.emails)
-	
 	attr.run_crawl()
 	EMAILS.extend(attr.emails)
 
