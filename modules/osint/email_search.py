@@ -76,7 +76,8 @@ def module_api(self):
 	q_formats = {
 		'default': f'"%40{domain}"',
 		'ask': f"%40{domain}",
-		'hunter': f"{domain}&api_key={key}"
+		'hunter': f"{domain}&api_key={key}",
+		'github': domain
 	}
 	self.thread(search, self.options['thread'], engines, query, q_formats, limit, count, meta['sources'])
 	output = {'emails': list(set(EMAILS))}
