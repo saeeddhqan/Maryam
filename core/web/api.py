@@ -56,9 +56,9 @@ def api_framework():
 				framework.onecmd(command)
 				command = request.args['command']
 			else:
-				error = "Invalid command."
+				error = 'Invalid command.'
 		else:
-			error = "No command specified."
+			error = 'No command specified.'
 	else:
 		error = 'no command specified.'
 	page['meta']['command'] = command
@@ -112,7 +112,7 @@ def api_modules():
 			if isinstance(option_value, option_type):
 				framework.options[option_name] = option_value
 			else:
-				page['meta']['error'] = f"Need {option_type} got invalid type for {option_name}."
+				page['meta']['error'] = f"Need {option_type}. got invalid type for {option_name}."
 				return jsonify(page)
 		else:
 			if option_value in true_options:
