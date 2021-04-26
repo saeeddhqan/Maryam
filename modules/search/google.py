@@ -35,7 +35,7 @@ def module_api(self):
 	count = self.options['count']
 	run = self.google(query, limit, count, 'legacy')
 	run.run_crawl()
-	results = run.results_legacy
+	results = run.results
 	output = {'results': results}
 	self.save_gather(output, 'search/google', query, output=self.options['output'])
 	return output
