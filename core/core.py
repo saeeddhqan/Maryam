@@ -665,18 +665,6 @@ class core(cmd.Cmd):
 					dirpath = 'core/util'
 				else:
 					project_file = filepath
-					if filepath.startswith('modules/'):
-						fopen = self._is_readable(full_path)
-						if fopen:
-							mext.insert(0, 'module ' + '.'.join(file.split('.')[:-1]))
-							ver = re.search(r"'version': '([\d\.]+)',", fopen.read())
-							if ver:
-								mext.insert(1, 'version ' + ver.group(1))
-							else:
-								self.error('No version found in the module.', 'core', '_dev_create_mext')
-								return False
-						else:
-							return False
 				if dirpath in current_tree:
 					mext.append(f"move {filepath} to {dirpath}")
 				else:
@@ -690,9 +678,7 @@ class core(cmd.Cmd):
 			if isinstance(command, list):
 				continue
 			command_split = command.split(' ')
-			if command_split[0] in ('version', 'module'):
-				continue
-			elif command_split[0] == 'move':
+			if command_split[0] == 'move':
 				if len(command_split) != 4:
 					self.error(f"syntax error: {command_split}", 'core', '_dev_running_mext')
 					return False
