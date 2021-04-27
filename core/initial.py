@@ -119,7 +119,7 @@ class initialize(core):
 		if not self._global_options.get('update_check'):
 			return
 		self.debug('Checking version...')
-		pattern = r"__VERSION__ = '(\d+\.\d+\.\d+[^']*)'"
+		pattern = r"__VERSION__\s+=\s+'(\d+\.\d+\.\d+[^']*)'"
 		remote = 0
 		local = 0
 		try:
@@ -146,20 +146,20 @@ class initialize(core):
 					# Each File
 					for file in filter(lambda f: f.endswith(self.module_ext), files):
 						mod_path = os.path.join(section, file)
+						mod_load_name = f"__{file.split('.')[0]}"
 						mod_disp_name = file.split('.')[0]
-
 						try:
-							imp.load_source(mod_disp_name, mod_path, open(mod_path))
+							imp.load_source(mod_load_name, mod_path, open(mod_path))
 						except Exception as e:
 							if not self._global_options['api_mode']:
 								self.error(f"Module name '{mod_disp_name}' has been disabled due to this error: {e}", 'initial', '_load_modules')
 						else:
-							self._loaded_modules[mod_disp_name] = sys.modules[mod_disp_name]
+							self._loaded_modules[mod_disp_name] = sys.modules[mod_load_name]
 							self._cat_module_names[category].append(mod_disp_name)
 							self._module_names.append(mod_disp_name)
 
 	# ////////////////////////
-	#          API 		//
+	#          API 		    //
 	# ////////////////////////
 
 	def do_web(self, params):
@@ -190,7 +190,7 @@ class initialize(core):
 		print('\tweb api <HOST> <PORT> => running api')
 
 	# ////////////////////////////////
-	#           WORKSPACE 		//
+	#           WORKSPACE 		    //
 	# ////////////////////////////////
 
 	def _init_workspace(self, workspace):
@@ -271,7 +271,7 @@ class initialize(core):
 			self.help_workspaces()
 
 	# ////////////////////////////////
-	#           MODULES 		//
+	#           MODULES 			//
 	# ////////////////////////////////
 
 	def alert_results(self, output, prefix='\t', depth=0, color='N'):
@@ -388,8 +388,8 @@ class initialize(core):
 	def mod_api_run(self, module):
 		mod = self._loaded_modules[module]
 		try:
-			with turn_off():
-				results = mod.module_api(self)
+			# with turn_off():
+			results = mod.module_api(self)
 			results['running_errors'] = self._error_stack
 			self._reset_error_stack()
 			return results
