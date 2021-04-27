@@ -1064,13 +1064,14 @@ class core(cmd.Cmd):
 			self.heading(module)
 			if module not in self._loaded_modules:
 				self.output(f"Module name {module} does not exist.")
+				continue
 			mod = self._loaded_modules[module]
 			file = mod.__file__
 			mod_version = mod.meta['version']
 			url = f"https://raw.githubusercontent.com/saeeddhqan/Maryam/master/modules/{'/'.join(file.split('/')[-2:])}"
 			try:
 				text = self.request(url).text
-				mod_remote_version = re.search(r"'version': '([\d\.]+)',", text).group(1)
+				mod_remote_version = re.search(r"'version'\s+:\s+'([\d\.]+)'\s+,", text).group(1)
 			except Exception as e:
 				self.output(f"Update/check failed ({e}).", prep='\t')
 			else:
