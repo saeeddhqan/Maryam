@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/saeeddhqan/maryam.svg?branch=master)](https://travis-ci.com/saeeddhqan/maryam)
-![Version 2.0.5](https://img.shields.io/badge/Version-2.0.5-green.svg)
+![Version 2.1.0](https://img.shields.io/badge/Version-2.1.0-green.svg)
 ![GPLv3 License](https://img.shields.io/badge/License-GPLv3-green.svg)
 ![Python 3.8.x](https://img.shields.io/badge/Python-3.8.x-green.svg)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/40d81c48b3444ee78ffc6c5c8639134c)](https://www.codacy.com/manual/saeeddhqan/Maryam?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=saeeddhqan/Maryam&amp;utm_campaign=Badge_Grade)
@@ -44,18 +44,19 @@ python3 maryam -e help
 ./maryam -e set proxy ..
 ./maryam -e set agent ..
 ./maryam -e set timeout ..
+# Run web API
+./maryam -e web api 127.0.0.1 1313
 ```
 
 ## Updates
 **Last Updates**
 
+ - Web API: web command
  - Error stack and a better performance for dev
  - Update google and yahoo: new format
  - Add API interface
  - Combine 'waf' to 'wapps'
  - Add 'update' command to update modules
- - Remove 'record', 'spool', and 'use'
-
 
 
 ## Contribution
