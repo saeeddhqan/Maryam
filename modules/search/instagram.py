@@ -20,14 +20,14 @@ import re
 meta = {
 	'name': 'Instagram Search',
 	'author': 'Aman Singh',
-	'version': '0.5',
+	'version': '0.7',
 	'description': 'Search your query in the Instagram and show the results.',
 	'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo', 'instagram'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
 		('count', 50, False, 'Number of links per page(min=10, max=100, default=50)', '-c', 'store', int),
-		('engine', 'google,instagram', False, 'Engine names for search(default=google, instagram)', '-e', 'store', str),
+		('engine', 'google', False, 'Engine names for search(default=google, instagram)', '-e', 'store', str),
 		('session_id', None, False, 'Insta Account Session_id for more details results (default="")', '-s', 'store', str),
 		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
 	),
@@ -41,7 +41,7 @@ FOLLOWERS = []
 FOLLOWING = []
 POST = []
 
-def search(self, name, q, q_formats, limit, count,session_id):
+def search(self, name, q, q_formats, limit, count, session_id):
 	global PAGES,LINKS,USERDATA,FOLLOWERS,FOLLOWING,POST
 	eng = name
 	query = q
@@ -58,7 +58,7 @@ def search(self, name, q, q_formats, limit, count,session_id):
 		FOLLOWERS = attr.followers
 		FOLLOWING = attr.following
 		POST = attr.post
-
+		USERDATA = attr.userdata
 	# for others
 	else :
 		if 'limit' in varnames and 'count' in varnames:
@@ -71,7 +71,6 @@ def search(self, name, q, q_formats, limit, count,session_id):
 		attr.run_crawl()
 		LINKS += attr.links
 		PAGES += attr.pages
-		USERDATA = attr.userdata
 
 def module_api(self):
 	query = self.options['query']
@@ -80,7 +79,6 @@ def module_api(self):
 	session_id = self.options['session_id'] or ''
 	engine = self.options['engine'].split(',')
 	output = {
-		'error': None,
 		'people': [],
 		'posts': [],
 		'hashtags': [],
@@ -94,8 +92,8 @@ def module_api(self):
 		return
 
 	q_formats = {
-		'google_q': f"site:www.instagram.com inurl:{query}",
 		'default_q': f"site:www.instagram.com {query}",
+		'google_q': f"site:www.instagram.com inurl:{query}",
 		'yippy_q': f"www.instagram.com {query}",
 		'instagram': f"{query}"
 	}
@@ -132,6 +130,7 @@ def module_api(self):
 	output['posts'].extend(POST) 
 	output['followers'] = FOLLOWERS
 	output['following']= FOLLOWING
+	output['links'] = links
 
 	output = {key: val for key, val in output.items() if val} 
 

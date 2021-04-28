@@ -188,7 +188,10 @@ class main:
 
 	@property
 	def links(self):
-		links = [x['a'] for x in self.results]
+		if self.mode == 'legacy':
+			links = [x['a'] for x in self.results]
+		else:
+			links = [x['a'] for x in self.results_original]
 		return links
 
 	@property
