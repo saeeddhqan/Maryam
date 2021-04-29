@@ -19,6 +19,7 @@ meta = {
 	'author': 'Aman',
 	'version': '0.1',
 	'description': 'Iris is a built-in meta search engine.',
+	'comments': ('It should be note that this is a beta version and has lots of bugs!',),
 	'contributors': 'Saeed, Dimitris, Divya, Vikas, Kunal',
 	'sources': ('google', 'yahoo', 'bing', 'etools', 'metacrawler', 'searx', 'dogpile'),
 	'options': (
@@ -55,20 +56,6 @@ def search(self, name, q):
 		COUNT += len(results)
 		if results:
 			RESULTS.append(results)
-		rest()
-
-def rest(self):
-	less = COUNT-self.options['limit']
-	if less < 0:
-		less = abs(less)
-		if less <= 50:
-			limit = 1
-		else:
-			limit = 2
-			less = 50
-		attr = self.bing(q, less, limit)
-		attr.run_crawl()
-		RESULTS.append(attr.results)
 
 def module_api(self):
 	global COUNT_CONSENSUS, LIMIT_CONSENSUS, RESULTS
