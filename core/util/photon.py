@@ -31,18 +31,14 @@ class main:
 
 	def run_crawl(self):
 		urls = [f"{self.ph}api/?",f"{self.ph}reverse?"]
-#		print(f"{self.q} {self.lat} {self.lon}")
 		if self.q and self.lat and self.lon:
 			if self.q == 'q':
-#				print('reverse')
 				url = urls[1]
 				payloads = {'lat': self.lat, 'lon': self.lon}
 			else:
-#				print('lat lon q')
 				url = urls[0]
 				payloads = {'q': self.q, 'lat': self.lat, 'lon': self.lon}
 		else:
-#			print('q')
 			url = urls[0]
 			payloads = {'q': self.q}
 		self.framework.verbose("[PHOTON]Searching in photon.komoot.io...")
@@ -51,11 +47,8 @@ class main:
 				url = url,
 				params = payloads
 			)
-#			print(req.url)
 			result = req.text
-#			print(result)
 			result_json = req.json()
-#			print(result_json)
 		except:
 			self.framework.error('ConnectionError', 'util/photon', 'run_crawl')
 		else:
