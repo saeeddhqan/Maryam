@@ -593,7 +593,7 @@ class core(cmd.Cmd):
 					try:
 						mext[-1] = json.loads(mext[-1])
 					except Exception as e:
-						self.error(f"mext file is missed.", 'core', 'do_package')
+						self.error('mext file is missed.', 'core', 'do_package')
 						self.error(f"{name} extension has not been installed.", 'core', 'do_package')
 						self.print_exception()
 						continue
@@ -745,8 +745,7 @@ class core(cmd.Cmd):
 				else:
 					self.error(f"cannot open files:{file_path}", 'core', '_dev_running_mext')
 					return False
-				self.do_shell(f"python3 {file_path}")
-				self.do_shell(f"rm {file_path}")
+				self.do_shell(f"python3 {fpath}")
 			else:
 				self.error(f"syntax error: {command_split[0]}", 'core', '_dev_running_mext')
 				return False
@@ -760,13 +759,13 @@ class core(cmd.Cmd):
 		self._reset_error_stack()
 		self.do_reload('*')
 		if self._error_stack != []:
-			self.error('during testing the extension, the following errors occurs', 'core', '_dev_extension_test')
+			self.error('during testing the extension, the following error occurs', 'core', '_dev_extension_test')
 			self.error(self._error_stack[0])
 			return False
 		return True
 
 	def _dev_install_requirements(self, reqs):
-		'''Testing the extension before pull request'''
+		'''Install extension requirements. reqs could be a file or a url'''
 		if '://' in reqs:
 			url = reqs
 			reqs = '/tmp/reqs'
