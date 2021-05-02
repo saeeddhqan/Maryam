@@ -34,9 +34,10 @@ LINKS = []
 PAGES = ''
 USERS = []
 REPO = []
+EMAILS = []
 
 def search(self, name, q, q_formats, limit, count):
-	global PAGES,LINKS, USERS, REPO
+	global PAGES, LINKS, USERS, REPO, EMAILS
 	engine = getattr(self, name)
 	eng = name
 	q = q_formats[f"{name}"] if f"{name}" in q_formats else q_formats['default']
@@ -53,6 +54,7 @@ def search(self, name, q, q_formats, limit, count):
 		run.run_crawl()
 		USERS += run.users
 		REPO += run.repositories
+		EMAILS = run.emails
 	else:
 		attr.run_crawl()
 		LINKS += attr.links
@@ -63,7 +65,7 @@ def module_api(self):
 	limit = self.options['limit']
 	count = self.options['count']
 	engines = self.options['engine'].split(',')
-	output = {'repositories': [], 'blogs': [], 'usernames': []}
+	output = {'repositories': [], 'blogs': [], 'usernames': [], 'emails': set()}
 	q_formats = {
 		'default': f"site:github.com {query}",
 		'yippy': f'"github.com" {query}',
@@ -95,6 +97,8 @@ def module_api(self):
 				output['repositories'].append(repo)
 	for link in REPO:
 		output['repositories'].append(link)
+	
+	output['emails'] = EMAILS
 	self.save_gather(output,
 	 'search/github', query, output=self.options.get('output'))
 	return output

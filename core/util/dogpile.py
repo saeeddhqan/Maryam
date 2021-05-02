@@ -81,10 +81,10 @@ class main:
 			a = root[self.xpath_name['results_title_a']][i].get('href')
 			cite = self.framework.meta_search_util().make_cite(a)
 			result = {
-				'title': root[self.xpath_name['results_title_a']][i].text_content(),
+				't': root[self.xpath_name['results_title_a']][i].text_content(),
 				'a': a,
-				'cite': cite,
-				'content': root[self.xpath_name['results_content']][i].text_content(),
+				'c': cite,
+				'd': root[self.xpath_name['results_content']][i].text_content(),
 			}
 			results.append(result)
 		return results

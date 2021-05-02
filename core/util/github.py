@@ -19,7 +19,7 @@ class main:
 	def __init__(self, q, limit=10, cookie=''):
 		""" github.com search
 			
-			q 		  : The query for search
+			q	  : The query for search
 			cookie	  : Your GitHub cookie
 			limit	  : The number of pages
 			count	  : The number of links
@@ -31,6 +31,7 @@ class main:
 		self._pages = 10
 		self._page = []
 		self._links = ''
+		self._emails = {}
 		self.github_api = 'api.github.com'
 		self.types = ['users', 'repositories']
 		self.urls = [
@@ -57,6 +58,16 @@ class main:
 						repo['Github'].append(results['html_url'])
 				self._page = repo['Github']
 				self._links = users.split(' ')
+		
+
+		self.framework.verbose("[GITHUB] Searching for emails...")
+		for user in self._links:
+			user = user.replace('github.com/', '')
+			try:
+				req = self.framework.request(url=f"https://api.github.com/users/{user}/events/public", headers={'Cookie': self.cookie, 'Accept': 'application/vnd.github.v3.text-match+json'}, allow_redirects=True)
+				self._emails[user] = req.json()
+			except Exception as e:
+				self.framework.error(f"ConnectionError {e}.", 'util/github', 'run_crawl')
 
 	@property
 	def links(self):
@@ -69,3 +80,14 @@ class main:
 	@property
 	def repositories(self):
 		return self._page
+		
+	@property
+	def emails(self):
+		result = set()
+		for user, email_data in self._emails.items():
+			for i in email_data:
+				try:
+					result.add(i['payload']['commits'][0]['author']['email'])
+				except Exception as e:
+			        	continue
+		return list(result)

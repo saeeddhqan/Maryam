@@ -38,15 +38,13 @@ class main:
 			'results': "//div[contains(concat(' ', normalize-space(@class), ' '), ' Sr ')]",
 			'results_a': './/h3/a/@href',
 			'results_title': './/h3/a',
-			'results_cite': './/div/span',
 			'results_content': './/div[contains(@class, "compText")]'
 		}
 		self.xpath = {
 			self.xpath_name['results']: [
 				self.xpath_name['results_content'],
 				self.xpath_name['results_title'],
-				self.xpath_name['results_a'],
-				self.xpath_name['results_cite']
+				self.xpath_name['results_a']
 			]
 		}
 
@@ -97,14 +95,12 @@ class main:
 				a = root[self.xpath_name['results_a']][i]
 			urlib = self.framework.urlib(a)
 			a = urlib.unquote
-			cite = root[self.xpath_name['results_cite']][i].text_content()
-			if len(cite) < 3:
-				cite = self.framework.meta_search_util().make_cite(a)
+			cite = self.framework.meta_search_util().make_cite(a)
 			result = {
-				'title': root[self.xpath_name['results_title']][i].text_content(),
+				't': root[self.xpath_name['results_title']][i].text_content(),
 				'a': a,
-				'cite': cite,
-				'content': root[self.xpath_name['results_content']][i].text_content(),
+				'c': cite,
+				'd': root[self.xpath_name['results_content']][i].text_content(),
 			}
 			results.append(result)
 		return results

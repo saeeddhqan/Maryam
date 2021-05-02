@@ -40,14 +40,12 @@ def module_api(self):
 
 	run.run_crawl(method)
 	output = {'links': run.links_with_title}
-	print(run.links_with_title)
 	self.save_gather(output, 'search/qwant', query, output=self.options['output'])
 	return output
 
 def module_run(self):
 	output = module_api(self)
-	print(output['links'])
 	for item in output['links']:
-		title, link = item[1], item[0]
+		title, link = item[0], item[1]
 		self.output(title)
 		self.output(f"\t{link}", 'G')

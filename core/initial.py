@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = 'v2.0.5'
+__version__ = 'v2.1.0'
 import argparse
 import imp
 import os
@@ -26,6 +26,7 @@ import shlex
 import textwrap
 import concurrent.futures
 import json
+from core.web import api
 from multiprocessing import Pool,Process
 
 class turn_off:
@@ -70,7 +71,6 @@ class initialize(core):
 		self._init_framework_options()
 		self._init_home()
 		self._init_workspace('default')
-		self._init_var()
 		self._init_util_classes()
 		if mode != 'execute':
 			self._check_version()
@@ -112,7 +112,7 @@ class initialize(core):
 				try:
 					imp.load_source(mod_name, mod_path, open(mod_path)).main
 				except Exception as e:
-					self.output(f"Module name '{mod_name}' has been disabled due to this error: {e}", 'O')
+					self.error(f"Util class '{mod_name}' has been disabled due to this error: {e}", 'initial', '_init_util_classes')
 				else:
 					exec(f"self.{mod_name} = sys.modules['{mod_name}'].main")
 					exec(f"self.{mod_name}.framework = self")
@@ -121,7 +121,7 @@ class initialize(core):
 		if not self._global_options.get('update_check'):
 			return
 		self.debug('Checking version...')
-		pattern = r"__VERSION__ = '(\d+\.\d+\.\d+[^']*)'"
+		pattern = r"__VERSION__\s+=\s+'(\d+\.\d+\.\d+[^']*)'"
 		remote = 0
 		local = 0
 		try:
@@ -148,18 +148,49 @@ class initialize(core):
 					# Each File
 					for file in filter(lambda f: f.endswith(self.module_ext), files):
 						mod_path = os.path.join(section, file)
+						mod_load_name = f"__{file.split('.')[0]}"
 						mod_disp_name = file.split('.')[0]
-
 						try:
-							imp.load_source(mod_disp_name, mod_path, open(mod_path))
+							imp.load_source(mod_load_name, mod_path, open(mod_path))
 						except Exception as e:
 							if not self._global_options['api_mode']:
-								self.output(f"Module name '{mod_disp_name}' has been disabled due to this error: {e}", 'O')
+								self.error(f"Module name '{mod_disp_name}' has been disabled due to this error: {e}", 'initial', '_load_modules')
 						else:
-							self._loaded_modules[mod_disp_name] = sys.modules[mod_disp_name]
+							self._loaded_modules[mod_disp_name] = sys.modules[mod_load_name]
 							self._cat_module_names[category].append(mod_disp_name)
 							self._module_names.append(mod_disp_name)
-	
+
+	# ////////////////////////
+	#          API 		    //
+	# ////////////////////////
+
+	def do_web(self, params):
+		'''Manage web/api interface'''
+		if not params:
+			self.help_web()
+			return
+		params = params.lower().split(' ')
+		if params[0] == 'api':
+			api_mode = self._global_options['api_mode']
+			_mode = self._mode
+			self._mode = 'api'
+			if not api_mode:
+				self._global_options['api_mode'] = True
+			if len(params) == 3:
+				host = params[1]
+				port = params[2]
+			else:
+				host = '127.0.0.1'
+				port = 1313
+			api.run_app(self, host, port)
+			self._global_options['api_mode'] = api_mode
+			self._mode = _mode
+
+	def help_web(self):
+		print(getattr(self, 'do_web').__doc__)
+		print('\tweb api => running api on 127.0.0.1:1313')
+		print('\tweb api <HOST> <PORT> => running api')
+
 	# ////////////////////////////////
 	#           WORKSPACE 		    //
 	# ////////////////////////////////
@@ -268,10 +299,10 @@ class initialize(core):
 
 	def search_engine_results(self, output):
 		for i in output['results']:
-			self.output(i['title'])
+			self.output(i['t'])
 			self.output(i['a'])
-			self.output(i['cite'])
-			self.output(i['content'])
+			self.output(i['c'])
+			self.output(i['d'])
 			print()
 
 	def thread(self, *args):
@@ -295,7 +326,7 @@ class initialize(core):
 				name, val, req, desc, op, act, typ = option
 			except ValueError as e:
 				self.error(f"{tool_name.title()}CodeError: options is too short. need more than {len(option)} option")
-				return
+				return False
 			name = f"--{name}" if not name.startswith('-') else name
 			try:
 				if act == 'store':
@@ -320,25 +351,19 @@ class initialize(core):
 			format_help += '\nSources:\n\t' + '\n\t'.join(meta['sources'])
 		if 'examples' in meta:
 			format_help += '\nExamples:\n\t' + '\n\t'.join(meta['examples'])
-
+		if 'contributors' in meta:
+			format_help += f"\nContributors:\n\t{meta['contributors']}"
 		# If args is nothing
 		if not args:
 			print(format_help)
+			return False
 		else:
-			if self._mode != 'execute':
-				# Initialite args
-				clean_args = []
-				for arg in args.split(' '):
-					if arg.startswith('$') and len(arg) > 1:
-						arg = self.get_var(arg[1:])
-						if arg == None:
-							return
-					clean_args.append(arg)
-				clean_args = ' '.join(clean_args)
-				lexer = shlex.split(clean_args)
-				args = parser.parse_args(lexer)
-			else:
+			# Initialite args
+			if self._mode == 'execute':
 				args = parser.parse_args(sys.argv[3:])
+			else:
+				lexer = shlex.split(args)
+				args = parser.parse_args(lexer)
 			args = vars(args)
 			# Set options
 			self.options = args
@@ -347,18 +372,34 @@ class initialize(core):
 					# Turn off framework prints till the executing of module
 					with turn_off():
 						results = mod.module_api(self)
-						results['errors'] = self._error_stack
-						self._reset_error_stack()
-					if self.options['format']:
+						results['running_errors'] = self._error_stack
+					if output == 'web_api':
+						return results
+					elif self.options['format']:
 						print(json.dumps(results, indent=4))
 					else:
 						print(results)
+					self._reset_error_stack()
 				else:
 					mod.module_run(self)
 			except KeyboardInterrupt:
 				pass
 			except Exception as e:
-				self.print_exception(where=tool_name, which_func='running')
+				self.print_exception(where=tool_name, which_func='opt_proc')
+
+	def mod_api_run(self, module):
+		mod = self._loaded_modules[module]
+		try:
+			# with turn_off():
+			results = mod.module_api(self)
+			results['running_errors'] = self._error_stack
+			self._reset_error_stack()
+			return results
+		except KeyboardInterrupt:
+			pass
+		except Exception as e:
+			self.print_exception()
+		return False
 
 	def run_tool(self, func, tool_name, args, output=None):
 		try:
