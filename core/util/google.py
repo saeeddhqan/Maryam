@@ -14,6 +14,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+import random
 
 
 class main:
@@ -26,8 +27,17 @@ class main:
 			count : Number of results
 		"""
 		self.framework = main.framework
+		self.countip = 0
+		self.ob = self.framework.proxy()
+		self.framework.autoproxy = True  # self.framework._global_options_['autoproxy']
 		self.q = q
-		self.agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:86.0) Gecko/20100101 Firefox/86.0'
+		self.agent = [
+      		'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246',
+			'Mozilla/5.0 (X11; CrOS x86_64 8172.45.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.64 Safari/537.36',
+			'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko) Version/9.0.2 Safari/601.3.9',
+			'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36',
+			'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1'
+        ] # 'Mozilla/5.0 (X11; Linux x86_64; rv:86.0) Gecko/20100101 Firefox/86.0'
 		self.url = 'https://www.google.com/search'
 		self._pages = ''
 		self.limit = limit + 1
@@ -53,24 +63,37 @@ class main:
 		set_page = lambda x: (x - 1) * self.count
 		payload = {'num': self.count, 'start': set_page(page), 'ie': 'utf-8', 'oe': 'utf-8', 'q': self.q, 'filter': '0'}
 		max_attempt = 0
+		if self.framework.autoproxy:
+			self.ob.getproxy()
+			self.ob.readip()
 		while True:
 			self.framework.verbose(f"[GOOGLE] Searching in {page} page...", end='\r')
 			try:
 				req = self.framework.request(
 					url=self.url,
 					params=payload,
-					headers={'user-agent': self.agent},
-					allow_redirects=True)
+					headers={'user-agent': self.agent[random.randint(0,len(self.agent))]},
+					allow_redirects=True,
+     				proxies=self.ob.rotateip(k=self.countip))
 			except Exception as e:
 				self.framework.error(f"ConnectionError: {e}", 'util/google', 'run_crawl')
 				max_attempt += 1
 				if max_attempt == self.limit:
-					self.framework.error('Google is missed!', 'util/goolge', 'run_crawl')
+					self.framework.error('Google is missed!', 'util/google', 'run_crawl')
 					break
 			else:
 				if req.status_code in (503, 429):
 					self.framework.error('Google CAPTCHA triggered.', 'util/google', 'run_crawl')
-					break
+					if self.framework.autoproxy is True:
+						self.countip += 1
+						if self.ob.rotateip(k=self.countip) is None:
+							self.framework.output('[PROXY] End of proxy list. ')
+							break
+						else:
+							self.framework.output(f"Trying with IP {self.ob.rotateip(k=self.countip)}")
+							continue
+					else:
+						break
 
 				if req.status_code in (301, 302):
 					redirect = req.headers['location']
