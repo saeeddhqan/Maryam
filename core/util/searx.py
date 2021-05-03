@@ -84,10 +84,10 @@ class main:
 				content = 'No description provided'
 			cite = self.framework.meta_search_util().make_cite(result['url'])
 			results.append({
-				'title': result['title'],
+				't': result['title'],
 				'a': result['url'],
-				'cite': cite,
-				'content': content
+				'c': cite,
+				'd': content
 			})
 
 		return results
