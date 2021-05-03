@@ -62,7 +62,7 @@ def module_api(self):
 	query = self.options['query']
 	limit = self.options['limit']
 	count = self.options['count']
-	engines = ['google', 'duckduckgo']
+	engines = meta['sources']
 	COUNT_CONSENSUS = self.meta_search_util.compute_count_consensus(engines, count)
 	LIMIT_CONSENSUS = self.meta_search_util.compute_count_consensus(engines, limit)
 	thread(self, search, engines, query)
