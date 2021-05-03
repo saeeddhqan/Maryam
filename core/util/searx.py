@@ -54,7 +54,6 @@ class main:
 						self.framework.error(f"Searx {url} is missed!", 'util/searx', 'run_crawl')
 						return
 				else:
-					print(req.url)
 					self._pages += req.text
 					if req.status_code == 200 and 'results' in req.json():
 						self._json['results'] += req.json()['results']
