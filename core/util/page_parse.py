@@ -16,6 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import re
+from html import unescape
 from lxml import html
 
 class main:
@@ -87,8 +88,9 @@ class main:
 				flags=re.DOTALL)
 		styles = re.compile(r"<style[^>]*>.*?</style>",
 				flags=re.DOTALL)
-		tags = re.compile(r'<[^>]+>|&nbsp|&amp|&lt|&gt|&quot|&apos')
-		self.page = re.sub(tags, '', re.sub(styles, '', re.sub(scripts, '', self.page)))
+		tags = re.compile(r'<[^>]+>')
+		self.page = re.sub(tags, '', re.sub(styles, '',
+				re.sub(scripts, '', unescape(self.page))))
 
 	@property
 	def remove_comments(self):
