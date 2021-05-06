@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "maryam"
+version = "2.1.5"
+description = "OWASP Maryam is a modular/optional open source framework based on OSINT and data gathering."
+authors = ["Saeed Dehqan"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+requests = "^2.25.1"
+cloudscraper = "^1.2.58"
+bs4 = "^0.0.1"
+lxml = "^4.6.3"
+Flask = "^1.1.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+license = "GPL"
+readme = "README.md"
+homepage = "https://github.com/saeeddhqan/Maryam"
+repository ="https://github.com/saeeddhqan/Maryam.git"
