@@ -54,7 +54,6 @@ class main:
 						self.framework.error(f"Searx {url} is missed!", 'util/searx', 'run_crawl')
 						return
 				else:
-					print(req.url)
 					self._pages += req.text
 					if req.status_code == 200 and 'results' in req.json():
 						self._json['results'] += req.json()['results']
@@ -85,10 +84,10 @@ class main:
 				content = 'No description provided'
 			cite = self.framework.meta_search_util().make_cite(result['url'])
 			results.append({
-				'title': result['title'],
+				't': result['title'],
 				'a': result['url'],
-				'cite': cite,
-				'content': content
+				'c': cite,
+				'd': content
 			})
 
 		return results

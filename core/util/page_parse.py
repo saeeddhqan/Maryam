@@ -16,6 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import re
+from html import unescape
 from lxml import html
 
 class main:
@@ -31,7 +32,7 @@ class main:
 	def pclean(self):
 		subs = r'<em>|<b>|</b>|</em>|<strong>|</strong>|<wbr>|</wbr>|<span class="vivbold qt0">\
 				|%22|<span dir="[\w]+">|</span>|<h\d>|</h\d>|<q>|</q>'
-		self.page = self.remove_comments(self.page)
+		self.remove_comments
 		self.page = re.sub(subs, '', self.page)
 		self.page = re.sub(r"%3a", ' ', self.page)
 		self.page = re.sub(r"%2f", ' ', self.page)
@@ -79,10 +80,22 @@ class main:
 			resp.append(self.framework.urlib(itr).netroot)
 		return resp
 
-	def remove_comments(self, page):
-		page = re.sub(r'(?=<!--)([\s\S]*?)-->', '', self.page)
-		page = re.sub(r'(?=/\*)([\s\S]*?)\*/', '', page)
-		return page
+	@property
+	def remove_html_tags(self):
+		""" Remove html tags with regex"""
+		self.remove_comments
+		scripts = re.compile(r"<script[^>]*>.*?</script>", 
+				flags=re.DOTALL)
+		styles = re.compile(r"<style[^>]*>.*?</style>",
+				flags=re.DOTALL)
+		tags = re.compile(r'<[^>]+>')
+		self.page = re.sub(tags, '', re.sub(styles, '',
+				re.sub(scripts, '', unescape(self.page))))
+
+	@property
+	def remove_comments(self):
+		self.page = re.sub(r'(?=<!--)([\s\S]*?)-->', '', self.page)
+		self.page = re.sub(r'(?=/\*)([\s\S]*?)\*/', '', self.page)
 
 	@property
 	def get_networks(self):
@@ -185,11 +198,11 @@ class main:
 
 	@property
 	def get_metatags(self):
-		page = self.remove_comments(self.page)
+		self.remove_comments
 		reg = r"<(?i)meta[^>]+/?>"
 		reg = re.compile(reg)
 		resp = []
-		find = reg.findall(page)
+		find = reg.findall(self.page)
 		for tag in find:
 			tag_attrs = self.get_attrs(tag)
 			resp.append(tag_attrs)
@@ -197,11 +210,11 @@ class main:
 
 	@property
 	def get_jsfiles(self):
-		page = self.remove_comments(self.page)
+		self.remove_comments
 		reg = r"<(?i)script[^>]+>"
 		reg = re.compile(reg)
 		resp = []
-		find = reg.findall(page)
+		find = reg.findall(self.page)
 		for tag in find:
 			tag_attrs = self.get_attrs(tag, ['src'])
 			for attr in tag_attrs:
@@ -214,11 +227,11 @@ class main:
 
 	@property
 	def get_cssfiles(self):
-		page = self.remove_comments(self.page)
+		self.remove_comments
 		reg = r"<(?i)link[^>]+/>"
 		reg = re.compile(reg)
 		resp = []
-		find = reg.findall(page)
+		find = reg.findall(self.page)
 		for tag in find:
 			tag_attr = self.get_attrs(tag, ['href'])
 			for link in tag_attr:
@@ -231,7 +244,7 @@ class main:
 
 	@property
 	def get_links(self):
-		page = self.remove_comments(self.page)
+		self.remove_comments
 		reg = r'[\'"](/.*?)[\'"]|[\'"](http.*?)[\'"]'
 		reg = re.compile(reg)
 		find = reg.findall(self.page)
@@ -247,9 +260,9 @@ class main:
 
 	@property
 	def get_ahref(self):
-		page = self.remove_comments()
+		self.remove_comments
 		reg = re.compile(r'<[aA].*(href|HREF)=([^\s>]+)')
-		find = reg.findall(page)
+		find = reg.findall(self.page)
 		links = []
 		for link in find:
 			link = list(link)
@@ -275,9 +288,9 @@ class main:
 	@property
 	def get_forms(self):
 		resp = {}
-		page = self.remove_comments(self.page)
+		self.remove_comments
 		reg = re.compile(r'(?i)(?s)<form.*?</form.*?>')
-		forms = reg.findall(page)
+		forms = reg.findall(self.page)
 		form_attrs = ['action', 'method', 'name', 'autocomplete', 'novalidate', 'target', 'role']
 		input_attrs = ['accept', 'alt', 'disabled', 'form', 'formaction', 'formenctype', 'formmethod',
 					   'max', 'maxlength', 'min', 'minlength', 'name', 'pattern', 'readonly', 'required',

@@ -93,6 +93,7 @@ def module_api(self):
 def module_run(self):
 	output = module_api(self)
 	for i in range(len(output['links'])):
-		self.output(f"{output['links'][i][1]} \n\t{output['links'][i][0]}", 'G')
+		self.output(f"{output['links'][i][1]}")
+		self.output(f"\t{output['links'][i][0]}", 'G')
 	output.pop('links')
 	self.alert_results(output)

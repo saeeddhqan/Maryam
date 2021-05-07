@@ -97,7 +97,8 @@ def module_run(self):
 	self.alert('usernames')
 	for user in output['usernames']:
 		self.output(f"\t{user}", 'G')
+	self.alert('links')
 	for item in output['links']:
 		link,title = item[0],item[1]
-		self.output(title)
-		self.output(f"\t{link}", 'G')
+		self.output(f"\t{title}")
+		self.output(f"\t\t{link}", 'G')

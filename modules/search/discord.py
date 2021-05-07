@@ -24,13 +24,13 @@ meta = {
 	'description': 'Search the name of any user or server on discord [from disboard and discordhub]',
 	'sources': ('discord',),
 	'options': (
-		('user', None, False, 'User flag (search for a user)', '-u', 'store', str),
+		('user', None, False, 'User flag (search for a user based on the integer hash)', '-u', 'store', str),
 		('server', None, False, 'Server flag (search for a server)', '-s', 'store', str),
 		('limit', 3, False, 'Search limit(number of pages, default=3)', '-l', 'store', int),
 		('engine', 'discord', False, 'Engine used is discord', '-e', 'store', str),
 		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
 	),
-	'examples': ('discord -u <USERNAMES> --output', 'discord -s <SERVER-NAMES> -l 5')
+	'examples': ('discord -u <USER HASH> --output', 'discord -s <SERVER-NAME> -l 5')
 	}
 
 PAGES = ''
@@ -70,7 +70,7 @@ def module_api(self):
 	output['servers'] += [f"{i[1]}\n Join: \thttps://disboard.org/server/join/{i[0]}" for i in s_list]
 	output['users'] += [f"{i[1]}\n Check Full Profile: \thttps://discord.id/?prefill={i[0]}" for i in u_list]
 
-	self.save_gather(output, 'osint/discord_search', query, output=self.options.get('output'))
+	self.save_gather(output, 'search/discord', query, output=self.options.get('output'))
 	return output
 
 def module_run(self):

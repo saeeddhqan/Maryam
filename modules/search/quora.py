@@ -50,6 +50,8 @@ def search(self, name, q, q_formats, limit, count):
 		attr = engine(q)
 
 	attr.run_crawl()
+	if name == 'google':
+		LINKS += [(x['a'], x['t']) for x in attr.results_original]
 	LINKS += attr.links
 
 def module_api(self):
