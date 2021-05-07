@@ -28,6 +28,9 @@ class main:
 			count	  : Number of links
 		"""
 		self.framework = main.framework
+		self.countip = 0
+		self.ob = self.framework.proxy()
+		self.framework.autoproxy = True  # self.framework._global_options_['autoproxy']
 		self.q = self.framework.urlib(q).quote
 		self.count = count
 		self.limit = limit
@@ -37,6 +40,9 @@ class main:
 	def run_crawl(self):
 		urls = [f"https://{self.yandex}/search?text={self.q}&numdoc={self.count}&p={i}" for i in range(1, self.limit+1)]
 		max_attempt = len(urls)
+		if self.framework.autoproxy:
+			self.ob.getproxy()
+			self.ob.readip()
 		for url in range(len(urls)):
 			self.framework.debug(f"[YANDEX] Searching in {url} page...")
 			try:
@@ -50,7 +56,16 @@ class main:
 			else:
 				if '<title>Oops!</title>' in req.text:
 					self.framework.error('Yandex CAPTCHA triggered.', 'util/yandex', 'run_crawl')
-					return
+					if self.framework.autoproxy is True:
+						self.countip += 1
+						if self.ob.rotateip(k=self.countip) is None:
+							self.framework.output('[PROXY] End of proxy list. ')
+							break
+						else:
+							self.framework.output(f"Trying with IP {self.ob.rotateip(k=self.countip)}")
+							continue
+					else:
+						break
 
 				page = req.text
 				if ']">next</a>' not in page:
