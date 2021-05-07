@@ -27,7 +27,7 @@ meta = {
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
 		('count', 50, False, 'Number of results per page(min=10, max=100, default=50)', '-c', 'store', int),
 		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
-		('engine', 'bing', False, 'Engine names for search(default=google)', '-e', 'store', str),
+		('engine', '', False, 'Engine names for search(default=telegramchannels.me)', '-e', 'store', str),
 	),
     'examples': ('telegram -q <QUERY> -l 15 --output',)
 }

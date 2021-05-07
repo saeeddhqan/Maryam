@@ -58,13 +58,15 @@ class main:
 
 			while True:
 				self._pageno += 1
-				url = f'https://{self.active_search}/searchsubmit.php?pageno={self._pageno}'
+				source = f'https://{self.active_search}/searchsubmit.php'
 
 				try:
-					req = self.framework.request(url=url,
+					req = self.framework.request(
+						url=source,
 						method='POST',
 						data=payload,
-						headers=header
+						headers=header,
+						allow_redirects=False
 						)
 				except:
 					self.framework.error('ConnectionError', 'util/activesearch', 'run_crawl')
@@ -89,7 +91,7 @@ class main:
 
 				if self._pageno > max_pages or self._pageno*100>self._max:
 					break
-					    
+
 			self._soup = bs(self._rawhtml,'html.parser')
 			self._clubbedrows = self._soup.find_all('small')[5]
 			self._rows = self._clubbedrows.find_all('a')

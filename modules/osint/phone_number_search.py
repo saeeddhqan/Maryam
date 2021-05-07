@@ -16,15 +16,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 meta = {
-        'name': 'Phone Number Search',
-        'author': 'Kaushik',
-        'version': '0.1',
-        'description': 'A Search Engine for Phone Number Enumeration.',
-        'sources': ('numverify'),
-        'options': (
-                ('number', None, True, 'Phone number (Must include area code)', '-n', 'store', str),
-        ),
-        'examples': ('phone_number_search -q 911234567890')
+		'name': 'Phone Number Search',
+		'author': 'Kaushik',
+		'version': '0.1',
+		'description': 'A Search Engine for Phone Number Enumeration.',
+		'sources': ('numverify',),
+		'options':(
+				('number', None, True, 'Phone number (Must include area code)',
+				'-n', 'store', str,),
+		),
+		'examples': ('phone_number_search -n +911234567890',)
 }
 
 def module_api(self):

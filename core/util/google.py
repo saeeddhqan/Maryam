@@ -42,7 +42,7 @@ class main:
 			self.agent = 'Lynx/2.8.5rel.1 libwww-FM/2.15FC SSL-MM/1.4.1c OpenSSL/0.9.7e-dev'
 			self.xpath_name_legacy = {
 				'results': '//div[@class="ezO2md"]',
-				'results_content': './/div[@class="YgS6de"]',
+				'results_content': './/div[@class="YgS6de"]//span[@class="fYyStc"]',
 				'results_title': './/span[@class="CVA68e qXLe6d"]',
 				'results_a': './/a[@class="fuLhoc ZWRArf"]',
 				'results_cite': './/span[@class="qXLe6d dXDvrc"]/span[@class="fYyStc"]'

@@ -135,12 +135,15 @@ class main:
 		root = xpath_results[self.d_js_xpath_name['results']]
 		for i in range(len(root[self.d_js_xpath_name['results_a']])):
 			a = root[self.d_js_xpath_name['results_a']][i]
-			results.append({
-				't': root[self.d_js_xpath_name['results_title']][i].text_content(),
-				'a': a,
-				'c': self.framework.meta_search_util().make_cite(a),
-				'd': root[self.d_js_xpath_name['results_content']][i].text_content(),
-			})
+			try :
+				results.append({
+					't': root[self.d_js_xpath_name['results_title']][i].text_content(),
+					'a': a,
+					'c': self.framework.meta_search_util().make_cite(a),
+					'd': root[self.d_js_xpath_name['results_content']][i].text_content(),
+				})
+			except Exception as e:
+				pass
 
 		return results + [{'a': x['u'], 't': x['t'], 'd': x['a'], 'c': self.meta_search_util.make_cite(x['u'])}\
 			for x in self._d_js_results]
