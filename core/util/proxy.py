@@ -40,8 +40,8 @@ class main:
             for purl in purls:
                 r = self.framework.request(url=purl, method="GET")
                 sp = BeautifulSoup(r.content,'html.parser')
-                lst = list(sp.find_all('input',attrs = {"name" : "proxyIp[]"}))
-                ips = [str(l.get('value'))[0:-6] for l in lst]    
+                lst = list(sp.find_all('input',attrs = {"name": "proxyIp[]"}))
+                ips = [str(l.get('value'))[0:-6] for l in lst]
                 time.sleep(2)
             #self.framework.output(ips[0:5])
             self.framework.output('[PROXY] Proxies gathered.')
