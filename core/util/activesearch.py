@@ -58,7 +58,7 @@ class main:
 
 			while True:
 				self._pageno += 1
-				source = f'https://{self.active_search}/searchsubmit.php'
+				source = f'https://{self.active_search}/searchsubmit.php?pageno={self._pageno}'
 
 				try:
 					req = self.framework.request(
