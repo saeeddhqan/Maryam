@@ -16,12 +16,13 @@ import re
 
 class main:
 
-	def __init__(self, q):
+	def __init__(self, q, limit):
 		"""
 		photon uses osm data for locations and reverse geolocation
 		q       :   query
 		"""
 		self.q = q
+		self.limit = limit
 		self.framework = main.framework
 		self._pages = ''
 		self._json = {}
@@ -32,7 +33,7 @@ class main:
 		url = f"{self.ex}?q={self.q}"
 		max_page = 1
 		page_no = 0
-		while(int(max_page) > int(page_no)):
+		while(int(max_page) > page_no and page_no != int(self.limit)):
 			try:
 				req = self.framework.request(
 					url = url,
@@ -45,18 +46,12 @@ class main:
 					max_page = 0
 				else:
 					page_no += 1
-				print(req.url)
-				print(total)
-				print(max_page)
 			except:
 				self.framework.error('ConnectionError', 'util/exactseek', 'run_crawl')
 			else:
 				result = req.text.split('<!-- Begin Search Results -->')[1].split('<!-- End Search Results -->')[0]
-				self._pages = result
+				self._pages += result
 
 	@property
 	def pages(self):
 		return self._pages
-	@property
-	def json(self):
-		return self._json
