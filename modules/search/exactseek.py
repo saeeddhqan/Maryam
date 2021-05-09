@@ -29,7 +29,9 @@ meta = {
 		('engine', 'exactseek', False, 'Engine used is photon', '-e', 'store', str),
 		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
 	),
-	'examples': ('exactseek -q OSINT --output',)
+	'examples': ('exactseek -q OSINT --output',
+				'exactseek -q owasp -l 6',
+				)
 	}
 
 def module_api(self):
