@@ -22,7 +22,7 @@ meta = {
 	'author': 'Kunal Khandelwal',
 	'version': '1.0',
 	'description': 'Search your query in the Reddit and show the results.',
-	'sources': ('google', 'yahoo', 'bing', 'yippy', 'metacrawler', 'millionshort', 'carrot2', 'qwant', 'reddit_pushshift'),
+	'sources': ('google', 'yahoo', 'bing', 'metacrawler', 'millionshort', 'carrot2', 'qwant', 'reddit_pushshift'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
