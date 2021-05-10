@@ -30,14 +30,14 @@ class main:
 
 	def run_crawl(self):
 		self.framework.verbose("[EXACTSEEK]Searching in exactseek.com..")
-		url = f"{self.ex}?q={self.q}"
+		url = self.ex
 		max_page = 1
 		page_no = 0
 		while(int(max_page) > page_no and page_no != self.limit):
 			try:
 				req = self.framework.request(
 					url = url,
-					params = {'s':f'{page_no}1'}
+					params = {'q': self.q, 's':f'{page_no}1'}
 				)
 				total = re.findall(r';s=(\d*)1',req.text)
 				if total:
