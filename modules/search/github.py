@@ -19,7 +19,7 @@ meta = {
 	'author': 'Aman Singh',
 	'version': '1.0',
 	'description': 'Search your query in the GitHub and show the results.',
-	'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo', 'github'),
+	'sources': ('google', 'carrot2', 'bing', 'yahoo', 'millionshort', 'qwant', 'duckduckgo', 'github'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
@@ -68,7 +68,6 @@ def module_api(self):
 	output = {'repositories': [], 'blogs': [], 'usernames': [], 'emails': set()}
 	q_formats = {
 		'default': f"site:github.com {query}",
-		'yippy': f'"github.com" {query}',
 		'millionshort': f'site:github.com "{query}"',
 		'qwant': f'site:github.com {query}',
 		'github': f'{query}'

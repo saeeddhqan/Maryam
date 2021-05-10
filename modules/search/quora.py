@@ -23,7 +23,7 @@ meta = {
 	'author': 'Aman Rawat',
 	'version': '0.2',
 	'description': 'Search your query in the quora.com and show the results.',
-	'sources': ('google', 'yahoo', 'bing', 'yippy', 'metacrawler', 'millionshort', 'carrot2', 'qwant', 'duckduckgo'),
+	'sources': ('google', 'yahoo', 'bing', 'metacrawler', 'millionshort', 'carrot2', 'qwant', 'duckduckgo'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
@@ -62,7 +62,6 @@ def module_api(self):
 	output = {'links': [], 'usernames': []}
 	q_formats = {
 		'default_q': f"site:www.quora.com {query}",
-		'yippy_q': f'"www.quora.com" {query}',
 		'millionshort_q': f'site:www.quora.com "{query}"',
 		'qwant_q': f'site:www.quora.com {query}'
 	}

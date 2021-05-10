@@ -21,13 +21,13 @@ meta = {
 	'author': 'Aman Rawat',
 	'version': '0.5',
 	'description': 'Search your query in the youtube.com and show the results.',
-	'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo'),
+	'sources': ('google', 'carrot2', 'bing', 'yahoo', 'millionshort', 'qwant', 'duckduckgo'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
 		('count', 50, False, 'Number of results per page(min=10, max=100, default=50)', '-c', 'store', int),
 		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
-		('engine', 'google,yippy', False, 'Engine names for search(default=google)', '-e', 'store', str),
+		('engine', 'google', False, 'Engine names for search(default=google)', '-e', 'store', str),
 	),
 	'examples': ('youtube -q <QUERY> -l 15 --output',)
 }
@@ -65,7 +65,6 @@ def module_api(self):
 	q_formats = {
 		'ch_q': f"site:youtube.com inurl:/c/ OR inurl:/user/ {query}",
 		'default_q': f"site:youtube.com {query}",
-		'yippy_q': f"www.youtube.com {query}",
 		'qwant_q': f"site:www.youtube.com {query}",
 		'millionshort_q': f'site:www.youtube.com "{query}"',
 	}

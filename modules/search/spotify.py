@@ -20,7 +20,7 @@ meta = {
     'author': 'Kunal Khandelwal',
     'version': '0.1',
     'description': 'Search artists, albums, playlist and users on spotify',
-    'sources': ('google', 'yahoo', 'bing', 'yippy', 'metacrawler', 'millionshort', 'carrot2', 'qwant'),
+    'sources': ('google', 'yahoo', 'bing','duckduckgo', 'metacrawler', 'millionshort', 'carrot2', 'qwant'),
     'options': (
         ('query', None, True, 'Query string', '-q', 'store', str),
         ('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
@@ -58,7 +58,6 @@ def module_api(self):
     output = {'user': [], 'artist': [], 'playlist': [], 'album': []}
     q_formats = {
         'default_q': f"site:open.spotify.com {query}",
-        'yippy_q': f'"open.spotify.com" {query}',
         'millionshort_q': f'site:open.spotify.com "{query}"',
         'qwant_q': f'site:open.spotify.com {query}'
     }

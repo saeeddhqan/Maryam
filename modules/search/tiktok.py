@@ -23,7 +23,7 @@ meta = {
 	'author': 'Prakhar Jain',
 	'version': '0.1',
 	'description': 'Search your query on TikTok and show the results.',
-	'sources': ('google', 'yahoo', 'bing', 'yippy', 'metacrawler', 'millionshort', 'carrot2', 'qwant', 'duckduckgo'),
+	'sources': ('google', 'yahoo', 'bing', 'metacrawler', 'millionshort', 'carrot2', 'qwant', 'duckduckgo'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
@@ -60,7 +60,6 @@ def module_api(self):
 	output = {'videos': [], 'usernames': [], 'tags': [], 'music': []}
 	q_formats = {
 		'default_q': f"site:www.tiktok.com {query}",
-		'yippy_q': f'"www.tiktok.com" {query}',
 		'millionshort_q': f'site:www.tiktok.com "{query}"',
 		'qwant_q': f'site:www.tiktok.com {query}'
 	}

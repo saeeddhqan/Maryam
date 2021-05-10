@@ -21,7 +21,7 @@ meta = {
 	'version': '0.1',
 	'description': 'Search for the query in online storage services like GoogleDrive, OneDrive, Dropbox,\
 	 Amazon S3, Box and show the results.',
-	'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo'),
+	'sources': ('google', 'carrot2', 'bing', 'duckduckgo', 'yahoo', 'millionshort', 'qwant', 'duckduckgo'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
@@ -64,7 +64,6 @@ def module_api(self):
 	for site_url in sites:
 		q_formats = {
 			'default_q': f'site:{site_url} {query}',
-			'yippy_q': f'"{site_url}" {query}',
 			'millionshort_q': f'site:{site_url} "{query}"',
 			'qwant_q': f'site:{site_url} {query}'
 		}
