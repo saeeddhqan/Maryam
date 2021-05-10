@@ -40,8 +40,7 @@ PAGES = ''
 def search(self, name, q, q_formats, limit, count):
 	global PAGES,LINKS
 	engine = getattr(self, name)
-	name = engine.__init__.__name__
-	q = f"{name}_q" if f"{name}_q" in q_formats else q_formats['default_q']
+	q = q_formats[f"{name}_q"] if f"{name}_q" in q_formats else q_formats['default_q']
 	varnames = engine.__init__.__code__.co_varnames
 	if 'limit' in varnames and 'count' in varnames:
 		attr = engine(q, limit, count)

@@ -79,7 +79,6 @@ def search(self, name, q, q_formats, limit, count):
 	engine = getattr(self, name)
 	eng = name
 	q = q_formats[f"{name}"] if f"{name}" in q_formats else q_formats['default']
-	name = engine.__init__.__name__
 	varnames = engine.__init__.__code__.co_varnames
 	if 'limit' in varnames and 'count' in varnames:
 		attr = engine(q, limit, count)

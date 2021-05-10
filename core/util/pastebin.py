@@ -37,8 +37,7 @@ class main:
 
 	def search(self, self2, name, q, q_formats, limit, count):
 		engine = getattr(self.framework, name)
-		name = engine.__init__.__name__
-		q = f"{name}_q" if f"{name}_q" in self.q_formats else self.q_formats['default_q']
+		q = self.q_formats[f"{name}_q"] if f"{name}_q" in self.q_formats else self.q_formats['default_q']
 		varnames = engine.__init__.__code__.co_varnames
 		if 'limit' in varnames and 'count' in varnames:
 			attr = engine(q, limit, count)
