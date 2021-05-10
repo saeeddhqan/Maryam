@@ -25,7 +25,7 @@ meta = {
 	'sources': ('exactseek.com',),
 	'options': (
 		('query', '', False, 'Enter a location name', '-q', 'store', str),
-		('limit', '3', False, 'Search results upto how many pages', '-l', 'store', str),
+		('limit', '3', False, 'Search results upto how many pages', '-l', 'store', int),
 		('engine', 'exactseek', False, 'Engine used is photon', '-e', 'store', str),
 		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
 	),

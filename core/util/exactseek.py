@@ -29,23 +29,22 @@ class main:
 		self.ex = 'https://www.exactseek.com/cgi-bin/search.cgi'
 
 	def run_crawl(self):
-		self.framework.verbose("[EXACTSEEK]Searching in exactseek.com...")
+		self.framework.verbose("[EXACTSEEK]Searching in exactseek.com..")
 		url = f"{self.ex}?q={self.q}"
 		max_page = 1
 		page_no = 0
-		while(int(max_page) > page_no and page_no != int(self.limit)):
+		while(int(max_page) > page_no and page_no != self.limit):
 			try:
 				req = self.framework.request(
 					url = url,
 					params = {'s':f'{page_no}1'}
 				)
-				try:
-					total = re.findall(r';s=(\d*)1',req.text)
+				total = re.findall(r';s=(\d*)1',req.text)
+				if total:
 					max_page = total[-1]
-				except:
-					max_page = 0
 				else:
-					page_no += 1
+					max_page = 0
+				page_no +=1
 			except:
 				self.framework.error('ConnectionError', 'util/exactseek', 'run_crawl')
 			else:
