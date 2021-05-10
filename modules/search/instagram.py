@@ -22,7 +22,7 @@ meta = {
 	'author': 'Aman Singh',
 	'version': '0.7',
 	'description': 'Search your query in the Instagram and show the results.',
-	'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo', 'instagram'),
+	'sources': ('google', 'carrot2', 'bing', 'yahoo', 'millionshort', 'qwant', 'duckduckgo', 'instagram'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
@@ -94,7 +94,6 @@ def module_api(self):
 	q_formats = {
 		'default_q': f"site:www.instagram.com {query}",
 		'google_q': f"site:www.instagram.com inurl:{query}",
-		'yippy_q': f"www.instagram.com {query}",
 		'instagram': f"{query}"
 	}
 

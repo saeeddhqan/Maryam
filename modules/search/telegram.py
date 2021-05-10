@@ -21,7 +21,7 @@ meta = {
 	'author': 'Vikas Kundu',
 	'version': '0.1',
 	'description': 'Search the publicly listed telegram groups for juicy info like emails, phone numbers etc',
-	'sources': ('telegramchannels.me','google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo'),
+	'sources': ('telegramchannels.me','google', 'carrot2', 'bing', 'yahoo', 'millionshort', 'qwant', 'duckduckgo'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
@@ -88,7 +88,6 @@ def module_api(self):
 	output = {'group-links': [], 'handles': [], 'phone-numbers': []}
 	q_formats = {
 		'default_q': f"site:t.me/joinchat {query}",
-		'yippy_q': f'"t.me/joinchat" {query}',
 		'millionshort_q': f'site:t.me/joinchat "{query}"',
 		'qwant_q': f'site:t.me/joinchat {query}'
 	}

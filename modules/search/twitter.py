@@ -22,7 +22,7 @@ meta = {
 	'author': 'Saeed',
 	'version': '0.5',
 	'description': 'Search your query in the twitter.com and show the results.',
-	'sources': ('google', 'carrot2', 'bing', 'yippy', 'yahoo', 'millionshort', 'qwant', 'duckduckgo'),
+	'sources': ('google', 'carrot2', 'bing', 'yahoo', 'millionshort', 'qwant', 'duckduckgo'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
@@ -62,8 +62,7 @@ def module_api(self):
 	output = {'links': [], 'people': [], 'hashtags': []}
 	q_formats = {
 		'default_q': f"site:twitter.com {query}",
-		'millionshort_q': f'site:twitter.com "{query}"',
-		'yippy_q': f"twitter.com {query}"
+		'millionshort_q': f'site:twitter.com "{query}"'
 	}
 
 	self.thread(search, self.options['thread'], engines, query, q_formats, limit, count, meta['sources'])

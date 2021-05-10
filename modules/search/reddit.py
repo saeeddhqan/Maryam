@@ -22,7 +22,7 @@ meta = {
 	'author': 'Kunal Khandelwal',
 	'version': '0.5',
 	'description': 'Search your query in the Reddit and show the results.',
-	'sources': ('google', 'yahoo', 'bing', 'yippy', 'metacrawler', 'millionshort', 'carrot2', 'qwant'),
+	'sources': ('google', 'yahoo', 'bing', 'duckduckgo', 'metacrawler', 'millionshort', 'carrot2', 'qwant'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
@@ -39,8 +39,7 @@ PAGES = ''
 def search(self, name, q, q_formats, limit, count):
 	global PAGES,LINKS
 	engine = getattr(self, name)
-	name = engine.__init__.__name__
-	q = f"{name}_q" if f"{name}_q" in q_formats else q_formats['default_q']
+	q = q_formats[f"{name}_q"] if f"{name}_q" in q_formats else q_formats['default_q']
 	varnames = engine.__init__.__code__.co_varnames
 	if 'limit' in varnames and 'count' in varnames:
 		attr = engine(q, limit, count)
@@ -61,7 +60,6 @@ def module_api(self):
 	output = {'links': [], 'usernames': []}
 	q_formats = {
 		'default_q': f"site:www.reddit.com {query}",
-		'yippy_q': f'"www.reddit.com" {query}',
 		'millionshort_q': f'site:www.reddit.com "{query}"',
 		'qwant_q': f'site:www.reddit.com {query}'
 	}
