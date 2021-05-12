@@ -360,7 +360,7 @@ class initialize(core):
 			if self._mode == 'execute':
 				args = parser.parse_args(sys.argv[3:])
 			else:
-				lexer = shlex.split(args)
+				lexer = shlex.split(shlex.quote(args))
 				args = parser.parse_args(lexer)
 			args = vars(args)
 			# Set options
