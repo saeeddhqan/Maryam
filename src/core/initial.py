@@ -128,8 +128,9 @@ class initialize(core):
 			remote = re.search(pattern, self.request(\
 				'https://raw.githubusercontent.com/saeeddhqan/maryam/master/maryam').text).group(1)
 
-			if os.path.isfile('maryam'):
-				local = re.search(pattern, open('maryam').read()).group(1)
+			maryam_path = os.path.join(self.path,'maryam')
+			if os.path.isfile(maryam_path):
+				local = re.search(pattern, open(maryam_path).read()).group(1)
 			else:
 				local = re.search(pattern, open(shutil.which('maryam')).read()).group(1)
 
