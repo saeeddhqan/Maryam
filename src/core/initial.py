@@ -27,6 +27,7 @@ import textwrap
 import concurrent.futures
 import json
 from core.web import api
+from core import basedir
 from multiprocessing import Pool,Process
 
 class turn_off:
@@ -56,7 +57,7 @@ class initialize(core):
 		self._name = self._config['name']
 		self._prompt_template = '%s[%s] > '
 		self._base_prompt = self._prompt_template % ('', self._name)
-		self.path = sys.path[0]
+		self.path = basedir.BASEDIR
 		self.data_path = os.path.join(
 			self.path, self._config['data_directory_name'])
 		self.core_path = os.path.join(
@@ -67,7 +68,8 @@ class initialize(core):
 			'module_ext']
 		self.module_dirname = self._config[
 			'module_directory_name']
-		self.workspaces_dirname = self._config['workspaces_directory_name']
+		self.workspaces_dirname = self._config[
+			'workspaces_directory_name']
 		self._init_framework_options()
 		self._init_home()
 		self._init_workspace('default')
@@ -125,7 +127,12 @@ class initialize(core):
 		try:
 			remote = re.search(pattern, self.request(\
 				'https://raw.githubusercontent.com/saeeddhqan/maryam/master/maryam').text).group(1)
-			local = re.search(pattern, open('maryam').read()).group(1)
+
+			if os.path.isfile('maryam'):
+				local = re.search(pattern, open('maryam').read()).group(1)
+			else:
+				local = re.search(pattern, open(shutil.which('maryam')).read()).group(1)
+
 		except Exception as e:
 			self.error(f"Version check failed ({type(e).__name__}).")
 		if remote != local:
