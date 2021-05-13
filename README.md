@@ -25,7 +25,7 @@ to provide a powerful environment to harvest data from open sources and search e
 git clone https://github.com/saeeddhqan/maryam.git
 cd maryam
 pip install -r requirements
-python3 maryam -e help
+python3 src/maryam -e help
 ```
 
 ## Tips
