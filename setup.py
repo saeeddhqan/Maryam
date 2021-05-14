@@ -19,27 +19,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from setuptools import setup
 from setuptools import find_packages
 
+
+def parse_requirements():
+	with open('requirements') as fp:
+		return [line.strip() for line in fp if line.strip()]
+	return []
+
 setup(
 	name='maryam',
 	version='2.1.6',
 	url='https://github.com/saeeddhqan/Maryam',
 	author='Saeed Dehqan',
 	author_email='saeed.dehghan@owasp.org',
-	package_dir={'': "src"},
-	packages=find_packages(where="src"),
+	packages=find_packages(),
 	include_package_data=True,
 	license='GPL-V3',
 	description='OWASP Maryam is a modular/optional open source framework based on OSINT and data gathering.',
 	long_description=open('README.md').read(),
 	long_description_content_type='text/markdown',
 	keywords=['OWASP', 'OSINT', 'search-engine', 'social-networks', 'Maryam'],
-	install_requires=[ 
-		'requests',
-		'cloudscraper',
-		'bs4',
-		'lxml'
-		],
-	scripts=['src/maryam'],
+	install_requires=parse_requirements(),
+	scripts=['bin/maryam'],
 	classifiers=[
 		'Programming Language :: Python :: 3.8',
 		'Development Status :: 5 - Production/Stable',

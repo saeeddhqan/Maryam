@@ -19,7 +19,7 @@ import os
 import concurrent.futures
 from socket import gethostbyname
 
-from core.basedir import BASEDIR
+from maryam.core.basedir import BASEDIR
 
 meta = {
 	'name': 'DNS Brute Force',

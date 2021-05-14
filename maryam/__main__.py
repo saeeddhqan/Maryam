@@ -22,7 +22,7 @@ import sys
 import argparse
 
 # Import framework
-from core import initial
+from maryam.core import initial
 
 def cui(args, format_help):
 	core = initial.initialize

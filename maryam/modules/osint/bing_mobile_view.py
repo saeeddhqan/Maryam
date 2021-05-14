@@ -20,7 +20,7 @@ import urllib
 import json
 import datetime
 
-from core.basedir import BASEDIR
+from maryam.core.basedir import BASEDIR
 
 meta = {
 	'name': 'Bing Mobile View',

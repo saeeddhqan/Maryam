@@ -19,7 +19,7 @@ import os
 import json
 import concurrent.futures
 
-from core.basedir import BASEDIR
+from maryam.core.basedir import BASEDIR
 
 meta = {
 	'name': 'Username Search',

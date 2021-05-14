@@ -26,8 +26,8 @@ import shlex
 import textwrap
 import concurrent.futures
 import json
-from core.web import api
-from core import basedir
+from maryam.core.web import api
+from maryam.core import basedir
 from multiprocessing import Pool,Process
 
 class turn_off:
@@ -39,7 +39,7 @@ class turn_off:
 		sys.stdout.close()
 		sys.stdout = self._original_stdout
 
-from core.core import core
+from maryam.core.core import core
 
 class initialize(core):
 
@@ -128,7 +128,7 @@ class initialize(core):
 			remote = re.search(pattern, self.request(\
 				'https://raw.githubusercontent.com/saeeddhqan/maryam/master/maryam').text).group(1)
 
-			maryam_path = os.path.join(self.path,'maryam')
+			maryam_path = os.path.join(self.path,'__main__.py')
 			if os.path.isfile(maryam_path):
 				local = re.search(pattern, open(maryam_path).read()).group(1)
 			else:

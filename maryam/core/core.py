@@ -23,7 +23,7 @@ import subprocess
 import sys
 import traceback
 import requests
-from core.util import rand_uagent
+from maryam.core.util import rand_uagent
 from io import StringIO
 from textwrap import wrap
 
