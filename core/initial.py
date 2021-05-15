@@ -404,12 +404,11 @@ class initialize(core):
 			proc = Process(target=getattr(self, func), args=(tool_name, args, output))
 			proc.start()
 			proc.join()
+		except KeyboardInterrupt as e:
+			print(f"\nStopping {tool_name} module...")
+		except Exception as e:
+			self.print_exception()
+		finally:
 			if proc.is_alive():
 				proc.kill()
 			return
-		except KeyboardInterrupt as e:
-			print(f"\nStopping {tool_name} module...")
-			if proc.is_alive():
-				proc.kill()
-		except Exception as e:
-			self.print_exception()
