@@ -314,9 +314,9 @@ class initialize(core):
 		opts = meta['options']
 		self.options = {}
 		# Add default options
-		opts += (('output', False, False, 'Save the output to the workspace', '--output', 'store_true', bool),)
-		opts += (('api', False, False, 'Show results in the JSON format', '--api', 'store_true', bool),)
-		opts += (('format', False, False, 'Beautifying JSON output if --api is used', '--format', 'store_true', bool),)
+		opts += (('output', False, False, 'Save the output to the workspace', '--output', 'store_true', bool),
+				('api', False, False, 'Show results in the JSON format', '--api', 'store_true', bool),
+				('format', False, False, 'Beautifying JSON output if --api is used', '--format', 'store_true', bool))
 		description = f"{tool_name} {meta['version']}({meta['author']}) - \tdescription: {meta['description']}\n"
 		parser = argparse.ArgumentParser(prog=tool_name, description=description)
 		for option in opts:
