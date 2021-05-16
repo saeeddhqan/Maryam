@@ -24,7 +24,7 @@ import requests
 
 class main:
 
-	def __init__(self, response : requests.models.Response, type=[]):
+	def __init__(self, response: requests.models.Response, type=[]):
 		""" Downloader
 
 			response 	: Web request response
@@ -47,7 +47,7 @@ class main:
 		self.needToContinue and self.filename_from_headers()
 		
 		# sanitize the name and fix file overwrite
-		self._name = os.path.join(self.framework.workspace,\
+		self._name = os.path.join(self.framework.workspace, \
 			self._name.replace('/', '').replace('\\', ''))
 
 		# fix path if exist
@@ -64,7 +64,7 @@ class main:
 		"""return: Filename from the url if exist else random name"""
 		fname = requests.utils.unquote(os.path.basename(self._parsedUrl.path)\
 			.strip(" \n\t.")).replace(' ','-')
-		if '.' in fname:
+		if '.' in fname :
 			self._name,self._extention = os.path.splitext(fname)
 			if self._extention and self._name == '':
 				self._name = self._parsedUrl.netloc.split('.')[-2] + '-' + self.random_filename
@@ -83,7 +83,7 @@ class main:
 	@property
 	def random_filename(self):
 		"""return a random name of 8 char long"""
-		return "".join([random.choice(string.ascii_lowercase+string.digits) \
+		return "".join([random.choice(string.ascii_lowercase + string.digits) \
 			for _ in range(8)])
 
 	def filename_from_headers(self):
@@ -91,12 +91,12 @@ class main:
 		return the filename or random filename with filetype if exist else just filename
 		example - (image/jpeg) (application/pdf) (text/javascript (obsolete)) application/something+pdf ; charset=utf-8
 		"""
-		content_type = self.headers.get("Content-Type")
+		content_type = self.headers.get('Content-Type')
 		if not content_type : 
 			return 
 		elif '/' in content_type :
 			# extract the extention for the file
-			splited_content_type = content_type.split(';',1)
+			splited_content_type = content_type.split(';', 1)
 			if len(splited_content_type) > 1 :
 				parameters = { ele[0]: ele[1] \
 					for ele in [par.strip().split('=') \
@@ -125,19 +125,19 @@ class main:
 
 	def save_file(self):
 		"""save the content in the file """
-		open(self._filename,'wb').write(self.response.content)
+		open(self._filename, 'wb').write(self.response.content)
 		self.framework.output(f"[DOWNLOADER] File is saved as {os.path.basename(self._filename)} in workspace")
 
 	@staticmethod
 	def make_req(url):
 		try:
-			return main.framework.request(url = url)
+			return main.framework.request(url=url)
 		except :
 			main.framework.error(f"response issue with this url - {url}", 'util/downloader', 'make_req')
 			return None
 
 	@classmethod
-	def get(cls,**kwargs):
+	def get(cls, **kwargs):
 		""" takes only url or response(of request module) as input kwargs 
 		and make request if url finally call the __init__ function """
 		if 'url' in kwargs:
@@ -145,9 +145,9 @@ class main:
 				# make request to the module
 				res = cls.make_req(kwargs.get('url'))
 				if res :
-					cls.get(
-						response = res,
-						type = kwargs.get('type') or []
+					return cls.get(
+						response=res,
+						type=kwargs.get('type') or []
 					)
 			else :
 				main.framework.error('Not a valid url please check it again', 'util/downloader', 'get classmethod')
@@ -155,9 +155,10 @@ class main:
 			if isinstance(kwargs.get('response'), requests.models.Response):
 				a = cls(
 						response=kwargs['response'],
-						type = kwargs.get('type') or []
+						type=kwargs.get('type') or []
 					)
 				a.run_crawl()
+				return a
 			else :
 				# show error response should be of request type not anything else
 				main.framework.error('Response should be of request type not anything else', 'util/downloader', 'get classmethod')
@@ -169,4 +170,4 @@ class main:
 	def getAll(cls, urls : list , type : list ):
 		"""take list of urls and get the info"""
 		with ThreadPoolExecutor() as executor:
-			executor.map(lambda url_: cls.get(url = url_, type = type) , urls)
+			executor.map(lambda url_: cls.get(url=url_, type=type), urls)
