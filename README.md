@@ -25,7 +25,7 @@ to provide a powerful environment to harvest data from open sources and search e
 git clone https://github.com/saeeddhqan/maryam.git
 cd maryam
 pip install -r requirements
-python3 src/maryam -e help
+python3 maryam.py -e help
 ```
 
 ## Tips
@@ -33,19 +33,19 @@ python3 src/maryam -e help
 ```bash
 # Using dns_search. --max means all of resources. --api shows the results as json.
 # .. -t means use multi-threading.
-./maryam -e dns_search -d ibm.com -t 5 --max --api --form 
+./maryam.py -e dns_search -d ibm.com -t 5 --max --api --form 
 # Using youtube. -q means query
-./maryam -e youtube -q "<QUERY>"
-./maryam -e google -q "<QUERY>"
-./maryam -e dnsbrute -d domain.tld
+./maryam.py -e youtube -q "<QUERY>"
+./maryam.py -e google -q "<QUERY>"
+./maryam.py -e dnsbrute -d domain.tld
 # Show the framework modules
-./maryam -e show modules
+./maryam.py -e show modules
 # Set framework options. It'll save in the workspace.
-./maryam -e set proxy ..
-./maryam -e set agent ..
-./maryam -e set timeout ..
+./maryam.py -e set proxy ..
+./maryam.py -e set agent ..
+./maryam.py -e set timeout ..
 # Run web API
-./maryam -e web api 127.0.0.1 1313
+./maryam.py -e web api 127.0.0.1 1313
 ```
 
 ## Updates

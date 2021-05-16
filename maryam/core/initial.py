@@ -152,7 +152,8 @@ class initialize(core):
 				section = os.path.join(dirpath, section)
 				for _, _, files in os.walk(section):
 					# Each File
-					for file in filter(lambda f: f.endswith(self.module_ext), files):
+					for file in filter(lambda f: not f.startswith('__') \
+							and f.endswith(self.module_ext), files):
 						mod_path = os.path.join(section, file)
 						mod_load_name = f"__{file.split('.')[0]}"
 						mod_disp_name = file.split('.')[0]
