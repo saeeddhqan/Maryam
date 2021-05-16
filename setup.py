@@ -16,8 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from setuptools import setup
-from setuptools import find_packages
+from setuptools import setup, find_packages
 
 
 def parse_requirements():
@@ -27,12 +26,13 @@ def parse_requirements():
 
 setup(
 	name='maryam',
-	version='2.1.6',
+	version='2.2.0',
 	url='https://github.com/saeeddhqan/Maryam',
 	author='Saeed Dehqan',
 	author_email='saeed.dehghan@owasp.org',
 	packages=find_packages(),
 	include_package_data=True,
+    package_data={"maryam": ['data/*']},
 	license='GPL-V3',
 	description='OWASP Maryam is a modular/optional open source framework based on OSINT and data gathering.',
 	long_description=open('README.md').read(),
