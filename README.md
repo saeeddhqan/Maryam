@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/saeeddhqan/maryam.svg?branch=master)](https://travis-ci.com/saeeddhqan/maryam)
-![Version 2.1.0](https://img.shields.io/badge/Version-2.1.0-green.svg)
+![Version 2.2.0](https://img.shields.io/badge/Version-2.2.0-green.svg)
 ![GPLv3 License](https://img.shields.io/badge/License-GPLv3-green.svg)
 ![Python 3.8.x](https://img.shields.io/badge/Python-3.8.x-green.svg)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/40d81c48b3444ee78ffc6c5c8639134c)](https://www.codacy.com/manual/saeeddhqan/Maryam?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=saeeddhqan/Maryam&amp;utm_campaign=Badge_Grade)
@@ -17,15 +17,8 @@ to provide a powerful environment to harvest data from open sources and search e
  - FreeBSD
  - OSX
 
-### Prerequisites
- - Python 3.8.x or 3.9.x (NOT 3.7, ..)
- - requests module
-
 ```bash
-git clone https://github.com/saeeddhqan/maryam.git
-cd maryam
-pip install -r requirements
-python3 maryam.py -e help
+$ pip install maryam
 ```
 
 ## Tips
@@ -33,30 +26,30 @@ python3 maryam.py -e help
 ```bash
 # Using dns_search. --max means all of resources. --api shows the results as json.
 # .. -t means use multi-threading.
-./maryam.py -e dns_search -d ibm.com -t 5 --max --api --form 
+maryam -e dns_search -d ibm.com -t 5 --max --api --form 
 # Using youtube. -q means query
-./maryam.py -e youtube -q "<QUERY>"
-./maryam.py -e google -q "<QUERY>"
-./maryam.py -e dnsbrute -d domain.tld
+maryam -e youtube -q "<QUERY>"
+maryam -e google -q "<QUERY>"
+maryam -e dnsbrute -d domain.tld
 # Show the framework modules
-./maryam.py -e show modules
+maryam -e show modules
 # Set framework options. It'll save in the workspace.
-./maryam.py -e set proxy ..
-./maryam.py -e set agent ..
-./maryam.py -e set timeout ..
+maryam -e set proxy ..
+maryam -e set agent ..
+maryam -e set timeout ..
 # Run web API
-./maryam.py -e web api 127.0.0.1 1313
+maryam -e web api 127.0.0.1 1313
 ```
 
 ## Updates
 **Last Updates**
 
+ - Speed up the core
+ - Add setup.py and change arch
  - Web API: web command
  - Error stack and a better performance for dev
  - Update google and yahoo: new format
  - Add API interface
- - Combine 'waf' to 'wapps'
- - Add 'update' command to update modules
 
 
 ## Contribution
@@ -68,7 +61,7 @@ The best help to write a new module is by checking the current modules.
 ## Roadmap
 
  - Write a complete metacrawler engine based on OSINT by using the current search engines
- - Add new sources for dns_search module
+ - Add clustering algorithms
  - Web User Interface
 
 ## links
