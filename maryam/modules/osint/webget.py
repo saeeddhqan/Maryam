@@ -25,7 +25,7 @@ meta = {
 		('query', None, True, 'url to down load', '-q', 'store', str),
 		('getType', None, False, 'get-type of the file to download specified file endpoints (default ALL files types)', '-g', 'store', str),
 	),
-	'examples': ('webget -q <url> -g type')
+	'examples': ('webget -q <url> -g <type>',)
 }
 
 import os
