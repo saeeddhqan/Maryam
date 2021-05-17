@@ -405,4 +405,4 @@ class initialize(core):
 		finally:
 			if proc.is_alive():
 				proc.kill()
-			return
+				
