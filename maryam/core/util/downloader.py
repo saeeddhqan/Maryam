@@ -56,7 +56,7 @@ class main:
 				
 		# save the file 
 		self._save_file and self.get_file_name and self.save_file() 
-		if self._save_file:
+		if self._save_file :
 			return self._filename
 		return None
 	
@@ -157,8 +157,7 @@ class main:
 						response=kwargs['response'],
 						type=kwargs.get('type') or []
 					)
-				a.run_crawl()
-				return a
+				return a.run_crawl()
 			else :
 				# show error response should be of request type not anything else
 				main.framework.error('Response should be of request type not anything else', 'util/downloader', 'get classmethod')

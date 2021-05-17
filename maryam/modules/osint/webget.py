@@ -23,7 +23,7 @@ meta = {
 	),
 	'options': (
 		('query', None, True, 'url to down load', '-q', 'store', str),
-		('getType', None, False, 'get type of the file to download default ALL', '-g', 'store', str),
+		('getType', None, False, 'get-type of the file to download specified file endpoints (default ALL files types)', '-g', 'store', str),
 	),
 	'examples': ('webget -q <url> -g type')
 }
@@ -31,11 +31,12 @@ meta = {
 import os
 
 def module_api(self) :
-    query = self.options['query']
-    getType = self.options['getType'] or ''
-    run = self.downloader.get(url=query, type=[getType] if getType else [] )
-    name = os.path.basename(run._filename)
-    return name
+	query = self.options['query']
+	getType = self.options['getType'] or ''
+	run = self.downloader.get(url=query, type=[getType] if getType else [] )
+	return (os.path.basename(run) if run else None)
     
 def module_run(self):
-    self.alert_results(module_api(self))
+	results = module_api(self)
+	if results:
+		self.alert_results(results)
