@@ -140,8 +140,8 @@ class core(cmd.Cmd):
 		local = 0
 		try:
 			remote = re.search(pattern, self.request(\
-				'https://raw.githubusercontent.com/saeeddhqan/maryam/master/maryam').text).group(1)
-			local = re.search(pattern, open('maryam').read()).group(1)
+				'https://raw.githubusercontent.com/saeeddhqan/maryam/master/maryam/__main__.py').text).group(1)
+			local = self.__version__[1:]
 		except Exception as e:
 			self.error(f"Version check failed ({type(e).__name__}).")
 		if remote != local:

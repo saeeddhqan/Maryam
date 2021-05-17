@@ -73,6 +73,7 @@ class initialize(core):
 		self._init_workspace('default')
 		self._init_util_classes(self.section)
 		if mode != 'execute':
+			self.__version__ = __version__
 			self._check_version()
 			self.show_banner()
 
