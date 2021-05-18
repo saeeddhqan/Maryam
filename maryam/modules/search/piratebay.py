@@ -46,11 +46,14 @@ def module_run(self):
 	for item in output:
 		print()
 		self.output(item['title'])
-		self.output(item['link'])
+
+		if item['title'] == 'No results returned':
+			break
+
 		self.output(item['magnet'])
-		self.output(item['dateuploader'])
+		self.output(f"Uploader : {item['uploader']}")
 		self.output(f"Seeders  : {item['seeders']}")
 		self.output(f"Leechers : {item['leechers']}")
-
-	print()
-	self.output('Paste the magnet link into your torrent client to start downloading.')
+	else:
+		print()
+		self.output('Paste the magnet link into your torrent client to start downloading.')
