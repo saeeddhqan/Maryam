@@ -47,4 +47,5 @@ def module_run(self):
 		print()
 		self.output(item['title'])
 		self.output(item['authors'])
+		self.output(item['desc'])
 		self.output(item['link'])

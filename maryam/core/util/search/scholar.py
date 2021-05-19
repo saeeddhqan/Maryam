@@ -14,8 +14,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-
-import re
 import lxml
 
 class main:
@@ -44,8 +42,8 @@ class main:
 						url=url,
 						params=payload)
 			except:
-				self.framework.error('[SCHOLAR] ConnectionError', 'util/scholar', 'run_crawl')
-				self.framework.error('Google Scholar is missed!', 'util/scholar', 'run_crawl')
+				self.framework.error('[SCHOLAR] ConnectionError', 'util/search/scholar', 'run_crawl')
+				self.framework.error('Google Scholar is missed!', 'util/search/scholar', 'run_crawl')
 			else:
 				doc = lxml.html.document_fromstring(req.text)
 				self._articles.extend(doc.find_class('gs_ri'))
@@ -60,12 +58,14 @@ class main:
 		findlink = lambda x: x.xpath('h3/a')[0].attrib['href']
 		findauthors = lambda x: x.find_class('gs_a')[0].text_content()
 		findtitle = lambda x: x.xpath('h3/a')[0].text_content()
+		finddesc = lambda x: x.find_class('gs_rs')[0].text_content()
 
 		for article in self._articles:
 			self._links_with_data.append({
 				'authors': findauthors(article),
 				'title': findtitle(article),
-				'link' : findlink(article)
+				'link': findlink(article),
+				'desc': finddesc(article)
 				})
 
 		return self._links_with_data
