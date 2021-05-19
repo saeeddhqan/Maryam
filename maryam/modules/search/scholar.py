@@ -42,10 +42,4 @@ def module_api(self):
 	return output
 
 def module_run(self):
-	output = module_api(self)['results']
-	for item in output:
-		print()
-		self.output(item['title'])
-		self.output(item['authors'])
-		self.output(item['desc'])
-		self.output(item['link'])
+	self.search_engine_results(module_api(self))

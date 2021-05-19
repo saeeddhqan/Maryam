@@ -62,10 +62,10 @@ class main:
 
 		for article in self._articles:
 			self._links_with_data.append({
-				'authors': findauthors(article),
-				'title': findtitle(article),
-				'link': findlink(article),
-				'desc': finddesc(article)
+				't': findtitle(article),
+				'a': findlink(article),
+				'c': findauthors(article),
+				'd': finddesc(article)
 				})
 
 		return self._links_with_data
