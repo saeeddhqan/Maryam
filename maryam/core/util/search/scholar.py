@@ -54,7 +54,7 @@ class main:
 		return self._articles
 
 	@property
-	def links_with_data(self):
+	def results(self):
 		findlink = lambda x: x.xpath('h3/a')[0].attrib['href']
 		findauthors = lambda x: x.find_class('gs_a')[0].text_content()
 		findtitle = lambda x: x.xpath('h3/a')[0].text_content()
