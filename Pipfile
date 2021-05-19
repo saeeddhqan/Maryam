@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/project/maryam/"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
+deps =
+    lxml
+    flask
+    requests
+    bs4
+    cloudscraper
+commands =
+    python setup.py test

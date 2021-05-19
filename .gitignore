@@ -1,3 +1,6 @@
 venv/
 *.pyc
+*.tar.gz
 __pycache__/
+/dist
+/build
