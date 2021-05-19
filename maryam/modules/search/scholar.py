@@ -32,12 +32,7 @@ def module_api(self):
 	limit = self.options['limit']
 	run = self.scholar(query, limit)
 	run.run_crawl()
-	output = {'results': []}
-	links = run.links_with_data
-
-	for item in links:
-		output['results'].append(item)
-
+	output = {'results': run.results}
 	self.save_gather(output, 'search/scholar', query, output=self.options['output'])
 	return output
 
