@@ -15,9 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import html
-from bs4 import BeautifulSoup as bs
-
 class main:
 
 	def __init__(self, q, limit=15):
@@ -26,57 +23,62 @@ class main:
 			limit     : maximum result count
 		"""
 		self.framework = main.framework
-		self.q = self.framework.urlib(q).quote 
+		self.q = self.framework.urlib(q).quote_plus
 		self.max = limit
-		self._rawhtml = ''
-		self._torrents = []
-		self._magnets = []
-		self._rows = []
+		self._json = ''
 		self._links_with_data = []
 
 	def run_crawl(self):
-		url = f'https://tpb.party/search/{self.q}'
-		self.framework.verbose('Searching piratebay...')
+		url = 'https://apibay.org/q.php'
+		payload = {'q' : self.q, 'cat':''}
+		self.framework.verbose('[PIRATEBAY] Searching piratebay...')
 		try:
-			req = self.framework.request(url=url)
+			req = self.framework.request(
+					url=url,
+					params=payload,
+					allow_redirects=True)
 		except:
 			self.framework.error('ConnectionError.', 'util/piratebay', 'run_crawl')
 			self.framework.error('Piratebay is missed!', 'util/piratebay', 'run_crawl')
-			self.framework.error('Try again after a few seconds!', 'util/piratebay', 'run_crawl')
+
 		else:
-			soup = bs(req.text, 'html.parser')
-			self._torrents = soup.find_all('tr')[1:-1]
+			self._rawhtml = req.text
+			self._json = req.json()
+
+	def make_magnet(self, info_hash, name):
+		return (f"magnet:?xt=urn:btih:{info_hash}&dn={name}"
+			'&tr=udp://tracker.coppersurfer.tk:6969/announce'
+			'&tr=udp://open.demonii.com:1337'
+			'&tr=udp://tracker.openbittorrent.com:6969/announce'
+			'&tr=udp://tracker.opentrackr.org:1337'
+			'&tr=udp://tracker.leechers-paradise.org:6969/announce'
+			'&tr=udp://tracker.dler.org:6969/announce'
+			'&tr=udp://opentracker.i2p.rocks:6969/announce'
+			'&tr=udp://47.ip-51-68-199.eu:6969/announce')
 
 	@property
 	def raw(self):
 		return self._rawhtml
 
 	@property
-	def links_with_data(self):
-		findtitle = lambda x: x.find('a', {'class': 'detLink'}).text
-		findmagnet =  lambda x: x.find('a', {'title': 'Download this torrent using magnet'})['href']
-		finddateuploader = lambda x: x.find('font', {'class': 'detDesc'}).text
-		seedandleech = lambda x: list(map(lambda x: x.text, 
-		x.find_all('td', {'align': 'right'})))
-		findlink = lambda x: x.find('a', {'class': 'detLink'})['href']
+	def json(self):
+		return self._json
 
-		for count,torrent in enumerate(self._torrents):
+	@property
+	def links_with_data(self):
+		for count,torrent in enumerate(self.json):
 			if count == self.max:
 				break
 
-			title = findtitle(torrent)
-			magnet = findmagnet(torrent)
-			link = findlink(torrent)
-			dateuploader = finddateuploader(torrent)
-			seedleechcount = seedandleech(torrent)
-		
+			title = torrent['name']
+			info = torrent['info_hash']
+
 			self._links_with_data.append({
-				'title': html.unescape(title),
-				'dateuploader': html.unescape(dateuploader),
-				'magnet': magnet,
-				'link': link,
-				'seeders': seedleechcount[0],
-				'leechers': seedleechcount[1]
+				'title': title,
+				'uploader': torrent['username'],
+				'magnet': self.make_magnet(info, title),
+				'seeders': torrent['seeders'],
+				'leechers': torrent['leechers']
 				})
 
 		return self._links_with_data
