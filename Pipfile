@@ -15,5 +15,6 @@ deps =
     requests
     bs4
     cloudscraper
-commands =
-    python setup.py test
+commands =flake8
+commands =isort . --project maryam --check-only --diff
+commands =black . --check
