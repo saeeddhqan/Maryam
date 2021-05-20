@@ -1,10 +1,15 @@
+#https://pipenv-fork.readthedocs.io/en/latest/advanced.html
 [[source]]
 url = "https://pypi.org/project/maryam/"
 verify_ssl = true
 name = "pypi"
 
 [packages]
-
+requests
+cloudscraper
+bs4
+lxml
+flask
 [dev-packages]
 
 [requires]
@@ -15,6 +20,8 @@ deps =
     requests
     bs4
     cloudscraper
-commands =flake8
-commands =isort . --project maryam --check-only --diff
-commands =black . --check
+  
+commands = pipenv install --deploy
+#This will fail a build if the Pipfile.lock is out–of–date/ re-generating
+commands =pipenv check
+## sec/qa vulns list
