@@ -4,6 +4,7 @@
 #	find . -type f -name '*.py[co]' -delete
 #find . -type d -name __pycache__ -exec rm -rf {} +
 #	rm -rf *.egg-info
+#.tox tests folder/s
 
 venv/
 *.pyc
@@ -14,4 +15,5 @@ __pycache__/
 .eggs
 .wheel
 *.egg-info
+/.tox/*
  
