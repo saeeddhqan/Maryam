@@ -1,6 +1,17 @@
+### keep folder clean on git pull 
+#Makefile clean:  ## Clean build files
+#rm -rf build dist site .pytest_cache .eggs
+#	find . -type f -name '*.py[co]' -delete
+#find . -type d -name __pycache__ -exec rm -rf {} +
+#	rm -rf *.egg-info
+
 venv/
 *.pyc
 *.tar.gz
 __pycache__/
 /dist
 /build
+.eggs
+.wheel
+*.egg-info
+ 
