@@ -28,11 +28,10 @@ class main:
 		self.q = q
 		self.max = limit
 		self._articles = []
-		self._links_with_data = []
+		self._results = []
 
 	def run_crawl(self):
 		start = 0
-		self.q = self.framework.urlib(self.q).quote_plus
 		self.framework.verbose('Searching the scholar.google.com domain...')
 		for start in range(0, (self.max//10)+1):
 			url = f"https://scholar.google.com/scholar"
@@ -61,11 +60,11 @@ class main:
 		finddesc = lambda x: x.find_class('gs_rs')[0].text_content()
 
 		for article in self._articles:
-			self._links_with_data.append({
+			self._results.append({
 				't': findtitle(article),
 				'a': findlink(article),
 				'c': findauthors(article),
 				'd': finddesc(article)
 				})
 
-		return self._links_with_data
+		return self._results
