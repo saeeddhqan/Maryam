@@ -29,27 +29,32 @@ class main:
 			self.q = q
 			self._max = limit
 			self._json = ''
-			self._links_with_data = []
+			self._results = []
 
 		def run_crawl(self):
 			self.q = self.framework.urlib(self.q).quote
 			self.framework.verbose('Searching Gigablast...')
+			first_url = 'https://www.gigablast.com/search'
+			payload = {'q': self.q, 'format': 'json'}
 			try:
-				first_url = f'https://www.gigablast.com/search?q={self.q}&format=json'
-				req = self.framework.request(url=first_url)
-
-				soup = bs(req.text,'html.parser')
-				script = soup.find('body')['onload']
-				rand = re.findall(r'rand=(\d+[^&]+)&x', script)[0]
-				xkhh = re.findall(r"khh=(\d+[^']+)'", script)[0]
-				final_url =  ''.join([f'https://www.gigablast.com/search?',
-					f'q={self.q}&format=json&rand={rand}&xkhh={xkhh}'])
-
-				req = self.framework.request(url=final_url)
-				self._json = req.json()['results']
+				req = self.framework.request(url=first_url,
+						params=payload)
 			except:
 				self.framework.error('ConnectionError.', 'util/gigablast', 'run_crawl')
 				self.framework.error('Gigablast is missed!', 'util/gigablast', 'run_crawl')
+			else:
+				soup = bs(req.text,'html.parser')
+				script = soup.find('body')['onload']
+				params1 = re.findall(r"var uxrl='/search(.*?)'", script)[0]
+				params2 = re.findall(r"uxrl=uxrl\+'(.*?)'", script)[0]
+				final_url = first_url + params1 + params2
+				try:
+					req = self.framework.request(url=final_url)
+				except:
+					self.framework.error('ConnectionError.', 'util/gigablast', 'run_crawl')
+					self.framework.error('Gigablast is missed!', 'util/gigablast', 'run_crawl')
+				else:
+					self._json = req.json()['results']
 
 		@property
 		def json(self):
@@ -72,14 +77,14 @@ class main:
 			return self.framework.page_parse(self.raw).get_docs(self.q)
 
 		@property
-		def links_with_data(self):
+		def results(self):
 			for count, result in enumerate(self._json):
 				if count>=self._max:
 					break
-				self._links_with_data.append({
-					'title': result['title'],
-					'subtitle': result.get('subTitle'),
-					'summary': result['sum'],
-					'link': result['url']
+				self._results.append({
+					't': result['title'],
+					'a': result['url'],
+					'c': result.get('subTitle'),
+					'd': result['sum'],
 					})
-			return self._links_with_data
+			return self._results
