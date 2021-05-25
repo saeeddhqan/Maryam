@@ -32,19 +32,9 @@ def module_api(self):
 	limit = self.options['limit']
 	run = self.pubmed(query, limit)
 	run.run_crawl()
-	output = {'results': []}
-	links = run.links_with_data
-
-	for item in links:
-		output['results'].append(item)
-
+	output = {'results': run.results}
 	self.save_gather(output, 'search/pubmed', query, output=self.options['output'])
 	return output
 
 def module_run(self):
-	output = module_api(self)['results']
-	for item in output:
-		print()
-		self.output(item['title'])
-		self.output(item['authors'])
-		self.output(item['link'])
+	self.search_engine_results(module_api(self))
