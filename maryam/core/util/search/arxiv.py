@@ -15,66 +15,74 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import re
-import urllib.parse
-import html
+from lxml import etree
 
 class main:
 
-		def __init__(self, q, limit=15):
-			""" arxiv.org search engine
+	def __init__(self, q, limit=15):
+		""" arxiv.org search engine
 
-					q         : query for search
-					limit     : maximum result count
-			"""
-			self.framework = main.framework
-			self.q = q
-			self.max = limit
-			self._rawxml = ''
-			self._articles = []
-			self._links = []
-			self._links_with_data = []
+				q         : query for search
+				limit     : maximum result count
+		"""
+		self.framework = main.framework
+		self.q = q
+		self.max = limit
+		self._rawxml = ''
+		self._tree = ''
+		self._articles = []
+		self._links = []
+		self._results = []
+		self.url = 'https://export.arxiv.org/api/query'
+		self.NSMAP = {'w3':'http://www.w3.org/2005/Atom'}
 
-		def run_crawl(self):
-			self.q = urllib.parse.quote_plus(self.q)
-			url = f'https://export.arxiv.org/api/query?search_query=all:'\
-					   + f'{self.q}&start=0&max_results={self.max}'
-			self.framework.verbose('[ARXIV] Searching the arxiv.org domain...')
-			try:
-					req = self.framework.request(url=url)
-			except:
-					self.framework.error('ConnectionError', 'arxiv', 'run_crawl')
-					self.framework.error('ArXiv is missed!', 'arxiv', 'run_crawl')
-					return
-			self._rawxml = req.text
-			self._articles = list(re.findall(r'<entry>(.*?)</entry>', 
-					self._rawxml, 
-					flags=re.DOTALL))
+	def run_crawl(self):
+		payload = {'search_query': f"all:{self.q}", 'start': '0', 'max_results': self.max}
+		self.framework.verbose('[ARXIV] Searching the arxiv.org domain...')
+		try:
+			req = self.framework.request(
+					url=self.url,
+					params=payload)
+		except:
+			self.framework.error('ConnectionError', 'arxiv', 'run_crawl')
+			self.framework.error('ArXiv is missed!', 'arxiv', 'run_crawl')
+			return
+		self._rawxml = req.text
+		self._tree = etree.fromstring(req.text.encode('utf-8'))
+		self._articles = self.find(self._tree, './/w3:entry')
 
-		@property
-		def raw(self):
-			return self._rawxml
 
-		@property
-		def articles(self):
-			return self._articles
+	def find(self, x, tofind):
+		return x.findall(tofind, namespaces=self.NSMAP)
 
-		@property
-		def links(self):
-			self._links = re.findall(r'(http://arxiv.org/abs/.*)<',
-					self._rawxml)
-			return self._links
+	@property
+	def raw(self):
+		return self._rawxml
 
-		@property
-		def links_with_data(self):
-			findlink = lambda x: re.findall(r'(http://arxiv.org/abs/.*?)<', x)
-			findauthors = lambda x: re.findall(r'<name>(.*?)</name>', x)
-			findtitle = lambda x: re.findall(r'<title>(.*?)</title>', x, flags=re.DOTALL)
+	@property
+	def articles(self):
+		return self._articles
 
-			for article in self._articles:
-					self._links_with_data.append({'authors':findauthors(article),
-							'title': list(map(html.unescape,findtitle(article))),
-							'link' : findlink(article)
-							})
+	@property
+	def links(self):
+		self._links = list(map(lambda x: x.text, 
+			self.find(self._tree, './/w3:id')))
+		return self._links
 
-			return self._links_with_data
+	@property
+	def results(self):
+		findlink = lambda x: self.find(x, './/w3:id')[0].text
+		findauthors = lambda x: ', '.join(list(map(lambda x: x.text, 
+				self.find(x, './/w3:author/w3:name'))))
+		findtitle = lambda x: self.find(x, './/w3:title')[0].text
+		findsummary = lambda x: self.find(x, './/w3:summary')[0].text.strip()
+
+		for article in self._articles:
+			self._results.append({
+				't': findtitle(article),
+				'a': findlink(article),
+				'c': findauthors(article),
+				'd': findsummary(article)
+				})
+
+		return self._results

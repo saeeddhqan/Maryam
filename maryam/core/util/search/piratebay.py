@@ -26,7 +26,7 @@ class main:
 		self.q = self.framework.urlib(q).quote_plus
 		self.max = limit
 		self._json = ''
-		self._links_with_data = []
+		self._results = []
 
 	def run_crawl(self):
 		url = 'https://apibay.org/q.php'
@@ -65,20 +65,20 @@ class main:
 		return self._json
 
 	@property
-	def links_with_data(self):
+	def results(self):
 		for count,torrent in enumerate(self.json):
 			if count == self.max:
 				break
 
 			title = torrent['name']
 			info = torrent['info_hash']
+			seedleech = f"seeders: {torrent['seeders']} | leechers: {torrent['leechers']}"
 
-			self._links_with_data.append({
-				'title': title,
-				'uploader': torrent['username'],
-				'magnet': self.make_magnet(info, title),
-				'seeders': torrent['seeders'],
-				'leechers': torrent['leechers']
+			self._results.append({
+				't': title,
+				'a': self.make_magnet(info, title),
+				'c': torrent['username'],
+				'd': seedleech
 				})
 
-		return self._links_with_data
+		return self._results

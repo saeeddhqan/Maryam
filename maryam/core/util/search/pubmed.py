@@ -15,66 +15,65 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import re
-import urllib.parse
-import html
+import lxml
 
 class main:
 
-		def __init__(self, q, limit=15):
-			""" pubmed.ncbi.nlm.nih.gov search engine
+	def __init__(self, q, limit=15):
+		""" pubmed.ncbi.nlm.nih.gov search engine
 
-					q         : query for search
-					limit     : maximum result count
-			"""
-			self.framework = main.framework
-			self.q = q
-			self.max = limit
-			self._rawhtml = ''
-			self._articles = []
-			self._links = []
-			self._links_with_data = []
-			self.pubmed = 'https://pubmed.ncbi.nlm.nih.gov'
+				q         : query for search
+				limit     : maximum result count
+		"""
+		self.framework = main.framework
+		self.q = q
+		self.max = limit
+		self._rawhtml = ''
+		self._articles = []
+		self._links = []
+		self._results = []
+		self.pubmed = 'https://pubmed.ncbi.nlm.nih.gov'
 
-		def run_crawl(self):
-			self.q = urllib.parse.quote_plus(self.q)
-			self.framework.verbose('Searching the pubmed domain...')
+	def run_crawl(self):
+		self.framework.verbose('Searching the pubmed domain...')
 
-			url = f"https://pubmed.ncbi.nlm.nih.gov/?term={self.q}&size=200"
-			try:
-				req = self.framework.request(url=url)
-			except Exception as e:
-					self.framework.error(f"ConnectionError {e}.", 'util/pubmed', 'run_crawl')
-					self.framework.error('Pubmed is missed!', 'util/pubmed', 'run_crawl')
-					return
-			self._rawhtml += req.text
-			self._articles.extend(re.findall(r'<article .*?>(.*?)</article>', 
-						req.text, 
-						flags=re.DOTALL))
+		payload = {'term': self.q, 'size': 200}
+		try:
+			req = self.framework.request(
+					url=self.pubmed,
+					params=payload)
+		except Exception as e:
+			self.framework.error(f"ConnectionError {e}.", 'util/pubmed', 'run_crawl')
+			self.framework.error('Pubmed is missed!', 'util/pubmed', 'run_crawl')
+			return
+		self._rawhtml += req.text
+		doc = lxml.html.document_fromstring(req.text)
+		self._articles = doc.findall('.//article')
 
-		@property
-		def raw(self):
-			return self._rawhtml
+	@property
+	def raw(self):
+		return self._rawhtml
 
-		@property
-		def articles(self):
-			return self._articles
+	@property
+	def articles(self):
+		return self._articles
 
-		@property
-		def links_with_data(self):
-			findlink = lambda x: list(map(lambda x: self.pubmed+x, 
-					re.findall(r'<a.*?class="docsum-title".*?href="(.*?)".*?>', x, flags=re.DOTALL)))
-			findauthors = lambda x: re.findall(r'<span class="docsum-authors full-authors">(.*?)</span>', 
-					x, flags=re.DOTALL)
-			findtitle = lambda x: list(map(lambda x: html.unescape(re.sub('</?b>','',x)).strip(),
-					re.findall(r'<a.*?class="docsum-title".*?>(.*?)</a>', x, flags=re.DOTALL)))
+	@property
+	def results(self):
+		findlink = lambda x: self.pubmed + x.find_class('docsum-title')[0].attrib['href']
+		findauthors = lambda x: x.find('.//span[@class="docsum-authors full-authors"]').text_content()
+		findtitle = lambda x: x.find_class('docsum-title')[0].text_content().strip()
+		findsummary = lambda x: x.find_class('full-view-snippet')[0].text_content().strip()
 
-			for count,article in enumerate(self._articles):
-					if count==self.max:
-						break
-					self._links_with_data.append({'authors':findauthors(article)[0],
-							'title': findtitle(article)[0],
-							'link' : findlink(article)[0]
-							})
+		for count,article in enumerate(self._articles):
+			if count==self.max:
+				break
+			d = findsummary(article)
+			self._results.append({
+				't': findtitle(article),
+				'a': findlink(article),
+				'c': findauthors(article),
+				'd': d if len(d)>0 else 'No abstract available'
+				})
 
-			return self._links_with_data
+		return self._results
