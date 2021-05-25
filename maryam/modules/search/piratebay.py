@@ -33,7 +33,7 @@ def module_api(self):
 	run = self.piratebay(query, limit)
 	run.run_crawl()
 	output = {'results': []}
-	links = run.links_with_data
+	links = run.results
 
 	for item in links:
 		output['results'].append(item)
@@ -42,18 +42,4 @@ def module_api(self):
 	return output
 
 def module_run(self):
-	output = module_api(self)['results']
-	for item in output:
-		print()
-		self.output(item['title'])
-
-		if item['title'] == 'No results returned':
-			break
-
-		self.output(item['magnet'])
-		self.output(f"Uploader : {item['uploader']}")
-		self.output(f"Seeders  : {item['seeders']}")
-		self.output(f"Leechers : {item['leechers']}")
-	else:
-		print()
-		self.output('Paste the magnet link into your torrent client to start downloading.')
+	self.search_engine_results(module_api(self))
