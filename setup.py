@@ -21,7 +21,7 @@ from setuptools import setup, find_packages
 
 setup(
 	name='maryam',
-	version='2.2.6',
+	version='2.2.6-2',
 	url='https://github.com/saeeddhqan/Maryam',
 	author='Saeed Dehqan',
 	author_email='saeed.dehghan@owasp.org',
