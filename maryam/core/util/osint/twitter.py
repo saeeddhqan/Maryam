@@ -75,7 +75,8 @@ class main:
 				res = self.framework.request(
 						search_url, 
 						params=payload,
-						headers=self.header)
+						headers=self.header,
+						timeout=5)
 				break
 
 			except Timeout:
@@ -90,6 +91,11 @@ class main:
 		self._json = res.json()['globalObjects']['tweets']
 
 	def lookup_id(self, uid):
+		'''Can accept upto 100 uids
+		'''
+		if isinstance(uid, list):
+			uid = ','.join(uid)
+
 		user = self.framework.request(
 				'https://api.twitter.com/1.1/users/lookup.json',
 				params={'user_id': uid},
