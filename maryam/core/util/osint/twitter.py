@@ -24,6 +24,7 @@ class main:
 
 				q         : query for search
 				limit     : maximum result count
+				verbose   : print entire json 
 		"""
 		self.framework = main.framework
 		self.q = q
