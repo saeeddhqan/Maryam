@@ -50,6 +50,7 @@ clean:  ## Clean build files
 	find . -type f -name '*.py[co]' -delete
 	find . -type d -name __pycache__ -exec rm -rf {} +
 	rm -rf *.egg-info
+	rm -r docs/build
 
 help:  ## Show this help menu
 	@grep -E '^[0-9a-zA-Z_-]+:.*?##.*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?##"; OFS="\t\t"}; {printf "\033[36m%-30s\033[0m %s\n", $$1, ($$2==""?"":$$2)}'
