@@ -19,7 +19,7 @@ meta = {
 	'author': 'Kaushik',
 	'version': '0.5',
 	'description': 'Search tweets from twitter',
-	'sources': ('twitter',),
+	'sources': ('tweet_search',),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 15, False, 'Max result count (default=15)', '-l', 'store', int),
@@ -32,7 +32,7 @@ def module_api(self):
 	query = self.options['query']
 	limit = self.options['limit']
 	verbose = self.options['verbose']
-	run = self.twitter(query, limit, verbose)
+	run = self.tweet_search(query, limit, verbose)
 	run.run_crawl()
 	output = {'results': run.tweets}
 	self.save_gather(output, 'osint/twitter', query, output=self.options['output'])
