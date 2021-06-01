@@ -7,7 +7,7 @@
 
 # OWASP Maryam
 
-OWASP Maryam is a modular/optional open source framework based on OSINT and data gathering. Maryam is written in Python programming language and it’s designed
+OWASP Maryam is a modular open source framework based on OSINT and data gathering. Maryam is written in Python programming language and it is designed
 to provide a powerful environment to harvest data from open sources and search engines and collect data quickly and thoroughly.
 
 # Install
