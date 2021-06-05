@@ -10,7 +10,7 @@
 OWASP Maryam is a modular open source framework based on OSINT and data gathering. It is designed
 to provide a powerful environment to harvest data from open sources and search engines quickly and thoroughly.
 
-# Install
+# Installation
 
 ### Supported OS
  - Linux
@@ -21,7 +21,7 @@ to provide a powerful environment to harvest data from open sources and search e
 $ pip install maryam
 ```
 
-## Tips
+# Usage
 
 ```bash
 # Using dns_search. --max means all of resources. --api shows the results as json.
@@ -41,7 +41,7 @@ maryam -e set timeout ..
 maryam -e web api 127.0.0.1 1313
 ```
 
-## Updates
+# Updates
 **Last Updates**
 
  - Speed up the core
@@ -52,7 +52,7 @@ maryam -e web api 127.0.0.1 1313
  - Add API interface
 
 
-## Contribution
+# Contribution
 
 Contributes are welcome! Here is a start guide: [Development Guide](https://github.com/saeeddhqan/maryam/wiki/Development-Guide)
 You can add a new search engine to the util classes or use current search engines to write a new module.
@@ -64,7 +64,7 @@ The best help to write a new module is by checking the current modules.
  - Add clustering algorithms
  - Web User Interface
 
-## links
+# Links
 ### [OWASP](https://owasp.org/www-project-maryam/)
 ### [Wiki](https://github.com/saeeddhqan/maryam/wiki)
 ### [Install](https://github.com/saeeddhqan/maryam/wiki#install)
