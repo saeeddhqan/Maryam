@@ -43,8 +43,8 @@ class main:
 					data=data,
 					)
 		except Exception as e:
-			self.framework.error(f"ConnectionError {e}.", 'util/pubmed', 'run_crawl')
-			self.framework.error('CORE.AC.UK is missed!', 'util/pubmed', 'run_crawl')
+			self.framework.error(f"ConnectionError {e}.", 'util/search/core_ac', 'run_crawl')
+			self.framework.error('CORE.AC.UK is missed!', 'util/search/core_ac', 'run_crawl')
 			return
 		else:
 			self._json = req.json()
