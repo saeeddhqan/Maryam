@@ -14,7 +14,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 meta = {
-	'name': 'Core',
+	'name': 'Core.ac',
 	'author': 'Kaushik',
 	'version': '0.1',
 	'description': 'Core.ac.uk is world’s largest collection of open access \
@@ -24,7 +24,7 @@ meta = {
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 15, False, 'Max result count (default=15)', '-l', 'store', int),
 	),
-	'examples': ('articles_core -q <QUERY> -l 15 --output',)
+	'examples': ('core_ac -q <QUERY> -l 15 --output',)
 }
 
 def module_api(self):
