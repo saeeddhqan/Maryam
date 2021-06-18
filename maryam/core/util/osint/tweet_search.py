@@ -61,32 +61,37 @@ class main:
 				self.framework.error('Twitter is missed!', 'util/osint/twitter', 'run_crawl')
 				return
 
+		else:
+			return
+
 		self.header['x-guest-token'] = res.json()['guest_token']
 		search_url = f'https://twitter.com/i/api/2/search/adaptive.json'
 		payload = {
-			'simple_quoted_tweet': 'true',
-			'q': self.q, 
-			'count': self.max, 
-			'query_source': 'typed_query'
-			}
+		    'simple_quoted_tweet': 'true',
+		    'q': self.q, 
+		    'count': self.max, 
+		    'query_source': 'typed_query'
+		    }
 
 		for _ in range(5):
 			try:
 				res = self.framework.request(
-						search_url, 
-						params=payload,
-						headers=self.header,
-						timeout=5)
+					    search_url, 
+					    params=payload,
+					    headers=self.header,
+					    timeout=5)
 				break
 
 			except Timeout:
 				self.framework.error('Hit timeout on search endpoint, trying again', 
-						'util/osint/twitter', 'run_crawl')
+					    'util/osint/twitter', 'run_crawl')
 
 			except Exception as e:
 				self.framework.error(f"ConnectionError {e}.", 'util/osint/twitter', 'run_crawl')
 				self.framework.error('Twitter is missed!', 'util/osint/twitter', 'run_crawl')
 				return
+		else:
+			return
 
 		self._json = res.json()['globalObjects']['tweets']
 
