@@ -15,9 +15,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import pandas as pd
 import matplotlib.pyplot as plt
 import re
-
+import os
 from collections import Counter
-from nltk.corpus import stopwords
+BASEDIR = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
 
 class main:
 
@@ -35,9 +35,9 @@ class main:
 			self._punc()
 		self.words = self.docs.split()
 
-	def remove_stopwords(self):
-		stops = stopwords.words('english')
-		self.words = [x for x in self.words if x not in stops]
+	def remove_stopwords(self, rest):
+		stops = open(os.path.join(BASEDIR, '../../', 'data', 'stopwords.csv')).read().split(',')
+		self.words = [x for x in self.words if x not in stops and x not in rest]
 
 	def _punc(self):
 		self.words = re.findall(r"[\w\-_#]+", self.docs)

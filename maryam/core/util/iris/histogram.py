@@ -20,7 +20,7 @@ class main:
 		""" show histogram plot of web term frequency """
 		self.framework = main.framework
 
-	def line_chart(vectors, title, xlabel, ylabel, **args)
+	def line_chart(vectors, title, xlabel, ylabel, **args):
 		for vector in vectors:
 			x = [i for i in range(1, len(vector))]
 			plt.plot(x, vector, **args)
@@ -30,7 +30,7 @@ class main:
 		plt.legend()
 		plt.show()
 
-	def scatter_chart(vectors, title, xlabel, ylabel, **args)
+	def scatter_chart(vectors, title, xlabel, ylabel, **args):
 		for vector in vectors:
 			plt.scatter(vector[0], vector[1], **args)
 		plt.xlabel(xlabel)

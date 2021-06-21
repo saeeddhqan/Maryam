@@ -120,6 +120,7 @@ class initialize(core):
 	def _load_modules(self, require='*'):
 		self.loaded_category = {}
 		self._loaded_modules = core._loaded_modules
+		self._init_util_classes(require)
 		for dirpath, dirnames, _ in os.walk(self.module_path, followlinks=True):
 			# Each Section
 			for section in filter(lambda d: not d.startswith('__'), dirnames):
@@ -127,8 +128,6 @@ class initialize(core):
 				if require != category and require != '*': continue
 				self._cat_module_names[category] = []
 				section = os.path.join(dirpath, section)
-				if category == require:
-					self._init_util_classes(category)
 				for _, _, files in os.walk(section):
 					# Each File
 					for file in filter(lambda f: f.endswith(self.module_ext) and not f.startswith('__'), files):
@@ -344,6 +343,7 @@ class initialize(core):
 		if 'required' in meta:
 			format_help += '\nRequirements:\n\t' + '\n\t'.join(meta['required'])
 
+		loaded_sec = self._cat_module_names.keys()
 		# If args is nothing
 		if not args:
 			print(format_help)
@@ -362,6 +362,12 @@ class initialize(core):
 			# Set options
 			self.options = vars(argx)
 			try:
+				if 'required' in meta:
+					for x in meta['required']:
+						if x.startswith('$'):
+							if x[1:] not in loaded_sec:
+								print("XXX")
+								self._load_modules(x[1:])
 				if self.options['api'] or self._global_options['api_mode']:
 					# Turn off framework prints till the executing of module
 					with turn_off():
@@ -402,9 +408,9 @@ class initialize(core):
 							else:
 								self.output('Done.')
 						if section and self._mode == 'run':
-							loaded_sec = _cat_module_names.keys()
 							for x in section:
-								self._load_modules(x)
+								if x not in loaded_sec:
+									self._load_modules(x)
 			except Exception as e:
 				self.print_exception(where=tool_name, which_func='opt_proc')
 

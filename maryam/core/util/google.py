@@ -113,11 +113,52 @@ class main:
 				card_xpath_name['card_info']
 			]
 		}
+		card_xpath_second = {
+			'card': '//div[@class="SzZmKb"]',
+			'card_img': './/g-img/@data-lpage',
+			'card_name': './/h2[@class="qrShPb kno-ecr-pt PZPZlf mfMhoc"]',
+			'card_known_as': './/div[@data-attrid="subtitle"]'
+		}
+		xpath2 = {
+			card_xpath_second['card']: [
+				card_xpath_second['card_img'],
+				card_xpath_second['card_name'],
+				card_xpath_second['card_known_as']
+			]
+		}
+		open('xy.html','w').write(self._first_page)
 		parser = self.framework.page_parse(self._first_page)
 		xpath_results = parser.html_fromstring(xpath)
+		xpath_results2 = parser.html_fromstring(xpath2)
 		output = {'content': '', 'info': []}
 		root = xpath_results[card_xpath_name['card']]
-		output['content'] = root[card_xpath_name['card_content']][0].text_content()
+		root2 = xpath_results2[card_xpath_second['card']]
+		if root[card_xpath_name['card_content']]:
+			output['content'] = root[card_xpath_name['card_content']][0].text_content()
+		else:
+			card_xpath_name = {
+				'card': '//div[@class="LuVEUc B03h3d P6OZi V14nKc ptcLIOszQJu__wholepage-card wp-ms"]',
+				'card_content': './/div[@class="kno-rdesc"]',
+				'card_info': './/div[@class="rVusze"]'
+			}
+			xpath = {
+				card_xpath_name['card']: [
+					card_xpath_name['card_content'],
+					card_xpath_name['card_info']
+				]
+			}
+			xpath_results = parser.html_fromstring(xpath)
+			root = xpath_results[card_xpath_name['card']]
+			output['content'] = root[card_xpath_name['card_content']][0].text_content()
+		img = root2[card_xpath_second['card_img']]
+		name = root2[card_xpath_second['card_name']]
+		known_as = root2[card_xpath_second['card_known_as']]
+		if img:
+			output['img'] = img[0]
+		if name:
+			output['name'] = name[0].text_content()
+		if known_as:
+			output['known_as'] = known_as[0].text_content()
 		for piece in root[card_xpath_name['card_info']]:
 			output['info'].append(piece.text_content())
 		return output
@@ -157,7 +198,8 @@ class main:
 		xpath_results = parser.html_fromstring(xpath)
 		output = {'content': '', 'info': []}
 		root = xpath_results[card_xpath_name['card']]
-		output['content'] = root[card_xpath_name['card_content']][0].text_content().strip()
+		if root[card_xpath_name['card_content']]:
+			output['content'] = root[card_xpath_name['card_content']][0].text_content().strip()
 		for piece in root[card_xpath_name['card_info']]:
 			output['info'].append(piece.text_content().strip())
 		return output
