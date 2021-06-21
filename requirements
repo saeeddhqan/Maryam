@@ -3,3 +3,8 @@ cloudscraper
 bs4
 lxml
 flask
+SentimentIntensityAnalyzer
+plotly
+nltk
+matplotlib
+pandas

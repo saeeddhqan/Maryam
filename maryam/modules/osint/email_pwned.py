@@ -24,7 +24,7 @@ meta = {
 			'Using XmlHttp API of haveibeenpwned.com',
 			'to get JSON data'
 	),
-	'sources': (['https://www.haveibeenpwned.com']),
+	'sources': ('haveibeenpwned.com',),
 	'options': (
 		('email', None, True, 'Email to search for breach', '-e', 'store', str),
 	),
