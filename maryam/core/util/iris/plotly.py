@@ -12,7 +12,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import plotly.graph_objects as go
+import plotly
 
 class main:
 
@@ -31,7 +31,7 @@ class main:
 		for word, count in bow:
 			values.append(count)
 			labels.append(word)
-		fig = go.Figure(go.Pie(values=values,labels=labels,
-			texttemplate = "%{label}: %{value:$,s} <br>(%{percent})",
+		fig = plotly.graph_objects.Figure(plotly.graph_objects.Pie(values=values,labels=labels,
+			texttemplate = "%{label}: %{value:s} <br>(%{percent})",
 			textposition = "inside"))
 		fig.show()
