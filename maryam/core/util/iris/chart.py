@@ -22,7 +22,7 @@ class main:
 
 	def line_chart(vectors, title, xlabel, ylabel, **args):
 		for vector in vectors:
-			x = [i for i in range(1, len(vector))]
+			x = [i for i in range(len(vector))]
 			plt.plot(x, vector, **args)
 		plt.xlabel(xlabel)
 		plt.ylabel(ylabel)
