@@ -33,7 +33,7 @@ meta = {
 		'sentiment -j test.json -t 50')
 }
 	
-SHOW_MSG = {'neg': 'negative', 'neu': 'netural', 'pos': 'positive', 'compound': 'compound'}
+SHOW_MSG = {'neg': 'negative', 'neu': 'neutral', 'pos': 'positive', 'compound': 'compound'}
 
 def dothetask(i, j):
 	global OVERALL, SA, MAXES
