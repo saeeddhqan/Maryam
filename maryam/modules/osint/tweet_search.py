@@ -24,11 +24,11 @@ meta = {
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 15, False, 'Max result count (default=15)', '-l', 'store', int),
 		('sentiment', False, False, 'Do sentiment Analysis on tweets(default=False)', '-s', 'store_true', bool),
-		('verbose', False, False, 'Print all tweet details as json', '-v', 'store_true', bool)
+		('daterange', -1, False, 'Number of past days to fetch tweets for', '-d', 'store', int),
+		('verbose', False, False, 'Print all tweet details as json', '-v', 'store_true', bool),
 	),
 	'examples': ('tweet_search -q <QUERY> -l 15',
-		'tweet_search -q <QUERY> -l 15 --sentiment'
-		)
+		'tweet_search -q <QUERY> -l 15 --sentiment --daterange 2')
 }
 
 SHOW_MSG = {'neg': 'negative', 'neu': 'netural', 'pos': 'positive', 'compound': 'compound'}
@@ -37,34 +37,66 @@ def module_api(self):
 	query = self.options['query']
 	limit = self.options['limit']
 	sentiment = self.options['sentiment']
+	daterange = self.options['daterange']
 	if sentiment:
-		self.options['verbose'] = False
-	run = self.tweet_search(query, limit, self.options['verbose'])
+		verbose = False
+	else:
+		verbose = self.options['verbose']
+
+	run = self.tweet_search(query, limit, verbose, daterange)
 	run.run_crawl()
-	output = {'results': run.tweets}
+
+	output = {'results': run.tweets['all'] if daterange == -1 else run.tweets}
 	if sentiment:
 		if 'sentiment' not in self._loaded_modules:
 			self._load_modules('iris')
+		output['sentiment'] = {}
 		sent_mod = self._loaded_modules['sentiment']
-		sent_mod.DATA = output['results']
 		self.options['pipe'] = True
-		self.options['thread'] = 10
-		output['sentiment'] = sent_mod.module_api(self)
+		self.options['thread'] = 1
+		if daterange == -1:
+			sent_mod.DATA = output['results']
+			output['sentiment'] = sent_mod.module_api(self)
+		else:
+			for day in output['results']:
+				sent_mod.DATA = output['results'][day]
+				output['sentiment'][day] = sent_mod.module_api(self)
+
 	self.save_gather(output, 'osint/twitter', query, output=self.options['output'])
 	return output
 
+	
+
 def module_run(self):
+	sentiment = self.options['sentiment']
+	daterange = self.options['daterange']
 	output = module_api(self)
+
+	def print_sentiment(sent):
+		for i in sent['overall']:
+			self.alert(SHOW_MSG[i])
+			self.output(f"\t{sent['overall'][i]}")
+			if sent['maxes'][i]:
+				self.output(f"most {SHOW_MSG[i]} sentence:  {sent['maxes'][i][1]}")
+
 	if not self.options['verbose']:
-		for item in output['results']:
-			self.output(item)
-		if self.options['sentiment']:
-			print()
-			sent = output['sentiment']
-			for i in sent['overall']:
-				self.alert(SHOW_MSG[i])
-				self.output(f"\t{sent['overall'][i]}")
-				if sent['maxes'][i]:
-					self.output(f"most {i} sentence:\t{sent['maxes'][i][1]}")
+		if daterange != -1:
+			for day in output['results']:
+				print()
+				self.output(day)
+				for tweet in output['results'][day]:
+					self.output(tweet)
+				if sentiment:
+					print()
+					sent = output['sentiment'][day]
+					print_sentiment(sent)
+		else:
+			for tweet in output['results']:
+				self.output(tweet)
+
+			if sentiment:
+				print()
+				sent = output['sentiment']
+				print_sentiment(sent)
 	else:
-		self.output(dumps(output['results'], indent=4))
+		self.output(dumps(output, indent=4))

@@ -3,7 +3,7 @@ cloudscraper
 bs4
 lxml
 flask
-SentimentIntensityAnalyzer
+vaderSentiment
 plotly
 nltk
 matplotlib

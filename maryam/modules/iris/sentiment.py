@@ -13,6 +13,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import concurrent.futures as futures
+import copy
 from json import loads
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
@@ -32,13 +33,7 @@ meta = {
 		'sentiment -j test.json -t 50')
 }
 	
-OVERALL = {'neg': 0.0, 'neu': 0.0, 'pos': 0.0, 'compound': 0.0}
 SHOW_MSG = {'neg': 'negative', 'neu': 'netural', 'pos': 'positive', 'compound': 'compound'}
-SA = None
-DATA = []
-LEN = 0
-MAXES = {'neg': [], 'neu': [], 'pos': [], 'compound': []}
-SA = SentimentIntensityAnalyzer()
 
 def dothetask(i, j):
 	global OVERALL, SA, MAXES
@@ -63,7 +58,10 @@ def thread(nthread):
 			executor.submit(dothetask, 0, LEN)
 
 def module_api(self):
-	global DATA, LEN
+	global DATA, LEN, OVERALL, SA, MAXES
+	SA = SentimentIntensityAnalyzer()
+	OVERALL = {'neg': 0.0, 'neu': 0.0, 'pos': 0.0, 'compound': 0.0}
+	MAXES = {'neg': [], 'neu': [], 'pos': [], 'compound': []}
 	if not self.options['pipe']:
 		json = self.options['json']
 		key = self.options['key']
