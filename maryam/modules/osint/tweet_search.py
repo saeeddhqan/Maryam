@@ -34,7 +34,7 @@ def module_api(self):
 	verbose = self.options['verbose']
 	run = self.tweet_search(query, limit, verbose)
 	run.run_crawl()
-	output = {'results': run.tweets}
+	output = {'results': run.tweets}z
 	self.save_gather(output, 'osint/twitter', query, output=self.options['output'])
 	return output
 

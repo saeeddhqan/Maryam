@@ -38,7 +38,13 @@ setup(
 		'cloudscraper',
 		'bs4',
 		'lxml',
-		'flask'],
+		'flask',
+		'nltk',
+		'matplotlib',
+		'pandas',
+		'plotly',
+		'wordcloud'
+		],
 	classifiers=[
 		'Programming Language :: Python :: 3.8',
 		'Development Status :: 5 - Production/Stable',

@@ -3,3 +3,8 @@ cloudscraper
 bs4
 lxml
 flask
+nltk
+matplotlib
+pandas
+plotly
+wordcloud
