@@ -20,7 +20,7 @@ meta = {
 	'author': 'Kaushik',
 	'version': '0.7',
 	'description': 'Search tweets from twitter',
-	'required': ('$iris/sentiment',),
+	'required': ('$iris',),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 15, False, 'Max result count (default=15)', '-l', 'store', int),

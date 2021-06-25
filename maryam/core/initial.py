@@ -43,7 +43,7 @@ from .core import core
 
 class initialize(core):
 
-	def __init__(self, mode, section='*'):
+	def __init__(self, mode):
 		core.__init__(self)
 		self._mode = mode
 		self._config = {
@@ -53,7 +53,6 @@ class initialize(core):
 				'module_directory_name': 'modules',
 				'workspaces_directory_name': '.maryam/workspaces'
 			}
-		self.section = section
 		self._name = self._config['name']
 		self._prompt_template = '%s[%s] > '
 		self._base_prompt = self._prompt_template % ('', self._name)
@@ -72,7 +71,7 @@ class initialize(core):
 		self._init_framework_options()
 		self._init_home()
 		self._init_workspace('default')
-		self._load_modules(self.section)
+		self._load_modules()
 		if mode != 'execute':
 			self.__version__ = __version__
 			self._check_version()
@@ -227,7 +226,7 @@ class initialize(core):
 			params = params.split()
 			section = params[0]
 		else:
-			section = self.section
+			section = '*'
 		self._load_modules(section)
 
 	def do_workspaces(self, params):
@@ -362,12 +361,6 @@ class initialize(core):
 			# Set options
 			self.options = vars(argx)
 			try:
-				if 'required' in meta:
-					for x in meta['required']:
-						if x.startswith('$'):
-							if x[1:] not in loaded_sec:
-								print("XXX")
-								self._load_modules(x[1:])
 				if self.options['api'] or self._global_options['api_mode']:
 					# Turn off framework prints till the executing of module
 					with turn_off():
@@ -410,7 +403,7 @@ class initialize(core):
 						if section and self._mode == 'run':
 							for x in section:
 								if x not in loaded_sec:
-									self._load_modules(x)
+									self.do_reload(x)
 			except Exception as e:
 				self.print_exception(where=tool_name, which_func='opt_proc')
 

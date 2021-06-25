@@ -31,9 +31,9 @@ class main:
 			pp = self.framework.page_parse(self.docs)
 			pp.remove_html_tags
 			self.docs = pp.page
+		self.words = self.docs.split()
 		if self.without_punc:
 			self._punc()
-		self.words = self.docs.split()
 
 	def remove_stopwords(self, rest):
 		stops = open(os.path.join(BASEDIR, '../../', 'data', 'stopwords.csv')).read().split(',')

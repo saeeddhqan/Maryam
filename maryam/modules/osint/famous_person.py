@@ -15,6 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import json
+
 meta = {
 	'name': 'Famous Person Report',
 	'author': 'Kaushik',
@@ -47,9 +49,10 @@ def module_api(self):
 	else:
 		return output
 
-	run = self.google(fullname)
-	run.run_crawl()
-	card = run.google_card_original
+	google_run = self.google(fullname, count=10)
+	google_run.run_crawl()
+	google_results = google_run.results_original
+	card = google_run.google_card_original
 	wiki = self.wikipedia(fullname, 5)
 	wiki.run_crawl()
 	links_with_title = wiki.links_with_title
@@ -103,16 +106,52 @@ def module_api(self):
 		output['img'] = f"https://bing.com/th?q={fullname}"
 	if 'info' in card:
 		output['info'] = card['info']
-
+	output['social'] = card['social']
+	output['top_urls'] = []
 	keywords = self.keywords(fullname)
 	keywords.run_crawl()
-	output['relate_words'] = keywords.keys
-
+	output['top_searched_queries'] = keywords.keys
+	self.output('Getting some content term-frequency...')
 	if have_we_wiki:
-		data = wiki_extract.lower().replace(name, '').replace(family, '').replace(query, '') + ' '.join(output['relate_words']).lower()
-		plot_histogram = self.tf_histogram(wiki_extract, 'html')
-		plot_histogram.remove_stopwords([name.lower(), family.lower(), fullname.lower(), query.lower()])
-		plot_histogram.plot_histogram('Top 10 Most Common Words', 10)
+		data = wiki_extract
+	data += ' ' + ' '.join([x['t'] + x['d'] for x in google_results[3:]])
+	url_counter = 0
+	for i in google_results:
+		if url_counter == 3:
+			break
+		url = i['a']
+		if '.wikipedia.org' in url.lower():
+			if have_we_wiki:
+				continue
+		else:
+			output['top_urls'].append(url)
+		try:
+			data += ' ' + self.request(url).text
+		except:
+			continue
+		else:
+			url_counter += 1
+	self.options = {}
+	self.options['query'] = fullname
+	self.options['limit'] = 1
+	self.options['id'] = None
+	self.options['output'] = False
+	sanction = self._loaded_modules['sanctionsearch']
+	san_out = sanction.module_api(self)
+	if san_out['results']:
+		self.options['id'] = int(san_out['results'][0]['link'].split('?id=')[1])
+		self.options['query'] = None
+		sanction.NAMESEARCH = False
+		san_out = sanction.module_api(self)
+		output['is_in_blacklist'] = True
+		output['usa_blacklist'] = san_out
+	else:
+		output['is_in_blacklist'] = False
+		output['usa_blacklist'] = {}
+	data +=  ' ' + ' '.join(output['top_searched_queries'])
+	plot_histogram = self.tf_histogram(data, 'html')
+	plot_histogram.remove_stopwords([name.lower(), family.lower(), fullname.lower(), query.lower()]+query.lower().split(' '))
+	plot_histogram.plot_histogram(f"Top 10 Most Common Words for {fullname}", 15)
 
 	return output
 
