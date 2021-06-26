@@ -158,7 +158,10 @@ class main:
 			}
 			xpath_results = parser.html_fromstring(xpath)
 			root = xpath_results[card_xpath_name['card']]
-			output['content'] = root[card_xpath_name['card_content']][0].text_content()
+			if root[card_xpath_name['card_content']]:
+				output['content'] = root[card_xpath_name['card_content']][0].text_content()
+			else:
+				output['content'] = ''
 		img = root2[card_xpath_second['card_img']]
 		name = root2[card_xpath_second['card_name']]
 		known_as = root2[card_xpath_second['card_known_as']]

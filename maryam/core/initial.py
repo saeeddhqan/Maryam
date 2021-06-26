@@ -341,8 +341,6 @@ class initialize(core):
 			format_help += f"\nContributors:\n\t{meta['contributors']}"
 		if 'required' in meta:
 			format_help += '\nRequirements:\n\t' + '\n\t'.join(meta['required'])
-
-		loaded_sec = self._cat_module_names.keys()
 		# If args is nothing
 		if not args:
 			print(format_help)
@@ -350,10 +348,7 @@ class initialize(core):
 		else:
 			# Initialite args
 			if self._mode == 'execute':
-				if self.section != '*':
-					argv = sys.argv[4:]
-				else:
-					argv = sys.argv[3:]
+				argv = sys.argv[3:]
 				argx = parser.parse_args(argv)
 			else:
 				lexer = shlex.split(args)
@@ -386,10 +381,7 @@ class initialize(core):
 						section = []
 						reqs = []
 						for i in required:
-							if x.startswith('$'):
-								section.append(x[1:])
-							else:
-								reqs.append(i)
+							reqs.append(i)
 						if reqs:
 							self.output('required:')
 							for i in reqs:
@@ -400,10 +392,6 @@ class initialize(core):
 								return
 							else:
 								self.output('Done.')
-						if section and self._mode == 'run':
-							for x in section:
-								if x not in loaded_sec:
-									self.do_reload(x)
 			except Exception as e:
 				self.print_exception(where=tool_name, which_func='opt_proc')
 
