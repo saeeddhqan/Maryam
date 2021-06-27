@@ -59,7 +59,9 @@ class main:
 		findtitle = lambda x: x.xpath('h3/a')[0].text_content()
 		finddesc = lambda x: x.find_class('gs_rs')[0].text_content()
 
-		for article in self._articles:
+		for count,article in enumerate(self._articles):
+			if count==self.max:
+				break
 			self._results.append({
 				't': findtitle(article),
 				'a': findlink(article),
