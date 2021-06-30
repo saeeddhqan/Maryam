@@ -28,7 +28,7 @@ import traceback
 import concurrent.futures
 
 from maryam.core import basedir
-from multiprocessing import Pool,Process
+from multiprocessing import Process
 
 class turn_off:
 	def __enter__(self):
@@ -264,8 +264,8 @@ class initialize(core):
 	def alert_results(self, output, prefix='\t', depth=0, color='N'):
 		if output == [] or output == {}:
 			if depth != 0:
-				self.output('Without result')
-		if isinstance(output, dict):
+				self.alert_results('Without result', prefix='\t', depth=depth, color='R')
+		elif isinstance(output, dict):
 			for key, value in output.items():
 				if isinstance(value, list) or isinstance(value, dict):
 					self.alert(f"{prefix*depth}{key.upper()}")

@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 import re
 import os
 from collections import Counter
+import tempfile
 BASEDIR = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
 
 class main:
@@ -47,7 +48,7 @@ class main:
 		bow = Counter(self.words)
 		return bow.most_common(last)
 
-	def plot_histogram(self, title, last):
+	def plot_histogram(self, title, last, should_show=False):
 		most_common = self._counter(last)
 		clean_tweets_no_urls = pd.DataFrame(most_common,
 						columns=['words', 'count'])
@@ -57,4 +58,11 @@ class main:
 									ax=ax,
 									color="black")
 		ax.set_title(title)
-		plt.show()
+
+		filename = os.path.join(self.framework.workspace,title.replace(' ','_')+'.png')
+		plt.savefig(filename, format="png")
+
+		if should_show:
+			plt.show()
+
+		return filename

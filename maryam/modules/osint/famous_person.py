@@ -25,19 +25,39 @@ meta = {
 	'required': ('$search', '$iris'),
 	'sources': ('google', 'wikipedia', 'wikileaks', 'twitter', 'sanctionsearch'),
 	'options': (
-		('name', None, False, 'Name', '-n', 'store', str),
-		('family', None, False, 'Family', '-f', 'store', str),
-		('query', None, False, 'Query string. Name, Family, or nickname', '-q', 'store', str),
+		('name', '', False, 'Name', '-n', 'store', str),
+		('family', '', False, 'Family', '-f', 'store', str),
+		('query', '', False, 'Query string. Name, Family, or nickname', '-q', 'store', str),
 		('limit', 1, False, 'Search limit', '-l', 'store', int),
+		('depth', 0, False, 'Search depth (for searching connected people)', '-d', 'store', int),
+		('show_plot', False, False, 'show term frequency plot in separate window', '-s', 'store_true', bool)
 	),
 	'examples': ('famous_person -q <QUERY> -l 5 --output --api',)
 }
 
-def module_api(self):
+OUTPUT = {}
+VISITED = []
+
+def module_api(self, depth=0):
+	global OUPUT, VISITED
+
 	output = {}
-	query = self.options['query'] or ''
-	name = self.options['name'] or ''
-	family = self.options['family'] or ''
+	query = self.options['query']
+	name = self.options.get('name') or ''
+	family = self.options.get('family') or ''
+	target_depth = self.options.get('depth') or ''
+
+	VISITED.append(query)
+
+	if self.options['show_plot']:
+		show_plot = True
+	else:
+		show_plot = False
+
+	if depth != 0:
+		print()
+		self.output(f"Searching For: {query}")
+
 	if name and family:
 		fullname = f"{name} {family}"
 	elif query:
@@ -88,7 +108,8 @@ def module_api(self):
 		have_we_wiki = 1
 		wiki_page = self.wikipedia(selected_pid, 1)
 		wiki_extract = wiki_page.page()['extract']
-		output['wikipedia'] = (selected_link, selected_title)
+		output['wikipedia'] = f"{selected_link} {selected_title}"
+
 	if 'content' in card:
 		output['description'] = card['content'].replace('Description', 'Description: ')
 	else:
@@ -106,12 +127,14 @@ def module_api(self):
 		output['img'] = f"https://bing.com/th?q={fullname}"
 	if 'info' in card:
 		output['info'] = card['info']
+
+
 	output['social'] = card['social']
 	output['top_urls'] = []
 	keywords = self.keywords(fullname)
 	keywords.run_crawl()
 	output['top_searched_queries'] = keywords.keys
-	self.output('Getting some content term-frequency...')
+	self.output('Getting term-frequencies related to person...')
 	if have_we_wiki:
 		data = wiki_extract
 	data += ' ' + ' '.join([x['t'] + x['d'] for x in google_results[3:]])
@@ -131,7 +154,6 @@ def module_api(self):
 			continue
 		else:
 			url_counter += 1
-	self.options = {}
 	self.options['query'] = fullname
 	self.options['limit'] = 1
 	self.options['id'] = None
@@ -148,13 +170,31 @@ def module_api(self):
 	else:
 		output['is_in_blacklist'] = False
 		output['usa_blacklist'] = {}
+
 	data +=  ' ' + ' '.join(output['top_searched_queries'])
 	plot_histogram = self.tf_histogram(data, 'html')
 	plot_histogram.remove_stopwords([name.lower(), family.lower(), fullname.lower(), query.lower()]+query.lower().split(' '))
-	plot_histogram.plot_histogram(f"Top 10 Most Common Words for {fullname}", 15)
+	output['term_frequency'] = plot_histogram.plot_histogram(f"Top 10 Most Common Words for {fullname}", 15, should_show=show_plot)
 
-	return output
+	OUTPUT[query] = output
+
+	if depth < target_depth:
+		child_nodes = []
+		for item in output.get('info'):
+			if item.startswith('Spouse: '):
+				spouses = item[8:].split(',')
+				names = list(map(lambda x: x[:x.index("(")].strip(), spouses))
+				child_nodes.extend(names)
+			if item.startswith('Children: '):
+				child_nodes.extend(list(map(lambda x: x.strip(), item[10:].split(','))))
+
+			child_nodes = list(filter(lambda x: 'MORE' not in x, child_nodes))
+
+		for node in child_nodes:
+			if node not in VISITED:
+				self.options['query'] = node
+				module_api(self, depth+1)
 
 def module_run(self):
-	outcome = module_api(self)
-	self.alert_results(outcome)
+	module_api(self)
+	self.alert_results(OUTPUT)
