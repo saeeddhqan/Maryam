@@ -30,7 +30,8 @@ meta = {
 		('query', '', False, 'Query string. Name, Family, or nickname', '-q', 'store', str),
 		('limit', 1, False, 'Search limit', '-l', 'store', int),
 		('depth', 0, False, 'Search depth (for searching connected people)', '-d', 'store', int),
-		('show_plot', False, False, 'show term frequency plot in separate window', '-s', 'store_true', bool)
+		('show_plot', False, False, 'show term frequency plot in separate window', '-s', 'store_true', bool),
+		('include_tweets', False, False, 'Include recent tweets mentioning the person', '-i', 'store_true', bool),
 	),
 	'examples': ('famous_person -q <QUERY> -l 5 --output --api',)
 }
@@ -45,18 +46,9 @@ def module_api(self, depth=0):
 	query = self.options['query']
 	name = self.options.get('name') or ''
 	family = self.options.get('family') or ''
-	target_depth = self.options.get('depth') or ''
-
-	VISITED.append(query)
-
-	if self.options['show_plot']:
-		show_plot = True
-	else:
-		show_plot = False
-
-	if depth != 0:
-		print()
-		self.output(f"Searching For: {query}")
+	target_depth = self.options.get('depth') or 0
+	show_plot = self.options.get('show_plot')
+	include_tweets = self.options.get('include_tweets')
 
 	if name and family:
 		fullname = f"{name} {family}"
@@ -68,6 +60,11 @@ def module_api(self, depth=0):
 		fullname = family
 	else:
 		return output
+
+	VISITED.append(fullname)
+	if depth != 0:
+		print()
+		self.output(f"Searching For: {fullname}")
 
 	google_run = self.google(fullname, count=10)
 	google_run.run_crawl()
@@ -128,15 +125,21 @@ def module_api(self, depth=0):
 	if 'info' in card:
 		output['info'] = card['info']
 
+	if include_tweets:
+		tweets = self.tweet_search(fullname, limit=10)
+		tweets.run_crawl()
+		output['tweet_mentions'] = tweets.tweets['all']
 
 	output['social'] = card['social']
 	output['top_urls'] = []
 	keywords = self.keywords(fullname)
 	keywords.run_crawl()
-	output['top_searched_queries'] = keywords.keys
-	self.output('Getting term-frequencies related to person...')
+	output['top_searched_queries'] = keywords.keys[:15]
+
+	data = ''
 	if have_we_wiki:
 		data = wiki_extract
+
 	data += ' ' + ' '.join([x['t'] + x['d'] for x in google_results[3:]])
 	url_counter = 0
 	for i in google_results:
@@ -154,6 +157,7 @@ def module_api(self, depth=0):
 			continue
 		else:
 			url_counter += 1
+
 	self.options['query'] = fullname
 	self.options['limit'] = 1
 	self.options['id'] = None
@@ -171,12 +175,13 @@ def module_api(self, depth=0):
 		output['is_in_blacklist'] = False
 		output['usa_blacklist'] = {}
 
+	self.output('Getting term-frequencies related to person...')
 	data +=  ' ' + ' '.join(output['top_searched_queries'])
 	plot_histogram = self.tf_histogram(data, 'html')
 	plot_histogram.remove_stopwords([name.lower(), family.lower(), fullname.lower(), query.lower()]+query.lower().split(' '))
 	output['term_frequency'] = plot_histogram.plot_histogram(f"Top 10 Most Common Words for {fullname}", 15, should_show=show_plot)
 
-	OUTPUT[query] = output
+	OUTPUT[fullname] = output
 
 	if depth < target_depth:
 		child_nodes = []
@@ -197,4 +202,5 @@ def module_api(self, depth=0):
 
 def module_run(self):
 	module_api(self)
+	print()
 	self.alert_results(OUTPUT)

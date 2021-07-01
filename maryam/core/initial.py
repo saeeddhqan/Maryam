@@ -267,6 +267,7 @@ class initialize(core):
 				self.alert_results('Without result', prefix='\t', depth=depth, color='R')
 		elif isinstance(output, dict):
 			for key, value in output.items():
+				key = key.replace('_', ' ')
 				if isinstance(value, list) or isinstance(value, dict):
 					self.alert(f"{prefix*depth}{key.upper()}")
 					self.alert_results(value, prefix=prefix, depth=depth + 1, color='G')

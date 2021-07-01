@@ -67,7 +67,7 @@ class main:
 		else:
 			return
 
-		self.header['x-guest-token'] = res.json()['guest_token']
+		self.header['x-guest-token'] = str(res.json()['guest_token'])
 
 		if self._daterange == -1:
 			self._search()
@@ -120,7 +120,7 @@ class main:
 			self._search(date=x)
 
 	def lookup_id(self, uid):
-		'''Can accept upto 100 uids
+		'''Can accept upto 100 uids separated by ','
 		'''
 		if isinstance(uid, list):
 			uid = ','.join(uid)

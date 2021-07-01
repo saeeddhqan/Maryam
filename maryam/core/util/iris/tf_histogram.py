@@ -17,7 +17,6 @@ import matplotlib.pyplot as plt
 import re
 import os
 from collections import Counter
-import tempfile
 BASEDIR = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
 
 class main:
