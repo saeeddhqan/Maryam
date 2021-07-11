@@ -36,7 +36,8 @@ def module_api(self):
 	links = run.links_with_title
 	if abs(len(output) - len(links)) > 4:
 		output = links
-	self.save_gather({'links': output}, 'search/duckduckgo', query, output=self.options['output'])
+	output = {'results': output}
+	self.save_gather(output, 'search/duckduckgo', query, output=self.options['output'])
 	return output
 
 def module_run(self):
