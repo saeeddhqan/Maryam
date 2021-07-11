@@ -126,5 +126,4 @@ def module_run(self):
 		self.alert('common DNS wordlists')
 		self.table(LISTS.items(), header=('list', 'scale'))
 		return
-	self.alert('hostname')
 	self.alert_results(module_api(self))
