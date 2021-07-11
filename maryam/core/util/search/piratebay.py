@@ -64,6 +64,13 @@ class main:
 	def json(self):
 		return self._json
 
+	def format_size(self, num, suffix='B'):
+		for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
+			if abs(num) < 1024.0:
+				return f"{num:3.1f} {unit}{suffix}"
+			num /= 1024.0
+		return f"{num:.1f} Yi{suffix}"
+
 	@property
 	def results(self):
 		for count,torrent in enumerate(self.json):
@@ -73,11 +80,12 @@ class main:
 			title = torrent['name']
 			info = torrent['info_hash']
 			seedleech = f"seeders: {torrent['seeders']} | leechers: {torrent['leechers']}"
+			size = self.format_size(int(torrent['size']))
 
 			self._results.append({
 				't': title,
 				'a': self.make_magnet(info, title),
-				'c': torrent['username'],
+				'c': f"{torrent['username']} | {size}",
 				'd': seedleech
 				})
 

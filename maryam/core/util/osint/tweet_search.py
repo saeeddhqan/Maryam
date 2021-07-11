@@ -86,15 +86,15 @@ class main:
 		for _ in range(5):
 			try:
 				res = self.framework.request(
-						search_url, 
-						params=payload,
-						headers=self.header,
-						timeout=5)
+					    search_url, 
+					    params=payload,
+					    headers=self.header,
+					    timeout=5)
 				break
 
 			except Timeout:
 				self.framework.error('Hit timeout on search endpoint, trying again', 
-						'util/osint/twitter', 'run_crawl')
+					    'util/osint/twitter', 'run_crawl')
 
 			except Exception as e:
 				self.framework.error(f"ConnectionError {e}.", 'util/osint/twitter', 'run_crawl')
@@ -113,7 +113,7 @@ class main:
 		date_list = [(base - datetime.timedelta(days=x)).strftime('%Y-%m-%d') \
 				for x in range(self._daterange+1)]
 		suffix = lambda x,y: f" until:{x} since:{y}"
-		orig_q = self.q
+		orig_q = self.q\
 
 		for x,y in zip(date_list, date_list[1:]):
 			self.q = orig_q + suffix(x,y)
