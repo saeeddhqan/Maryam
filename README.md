@@ -2,7 +2,6 @@
 ![Version 2.2.6](https://img.shields.io/badge/Version-2.2.6-green.svg)
 ![GPLv3 License](https://img.shields.io/badge/License-GPLv3-green.svg)
 ![Python 3.8.x](https://img.shields.io/badge/Python-3.8.x-green.svg)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/40d81c48b3444ee78ffc6c5c8639134c)](https://www.codacy.com/manual/saeeddhqan/Maryam?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=saeeddhqan/Maryam&amp;utm_campaign=Badge_Grade)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/4577/badge)](https://bestpractices.coreinfrastructure.org/projects/4577)
 
 # OWASP Maryam
@@ -44,12 +43,12 @@ maryam -e web api 127.0.0.1 1313
 # Updates
 **Last Updates**
 
+ - Add famous_person
  - Speed up the core
  - Add setup.py and change arch
  - Web API: web command
  - Error stack and a better performance for dev
  - Update google and yahoo: new format
- - Add API interface
 
 
 # Contribution
