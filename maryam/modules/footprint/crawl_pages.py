@@ -37,7 +37,6 @@ meta = {
 def module_api(self):
 	domain = self.options['domain']
 	regex = self.options['regex']
-	print(regex)
 	try:
 		re.compile(regex)
 	except Exception as e:
