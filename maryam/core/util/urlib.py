@@ -37,7 +37,7 @@ class main:
 	def unparse(self, urparse):
 		return urlparse.urlunparse(urparse)
 
-	def sub_service(self, serv=None):
+	def sub_service(self, serv=None, ifany=False):
 		'''Add protocol to url or replace it or clean it'''
 		urparse = re.split(r'://', self.url)
 		if not serv:
@@ -47,6 +47,8 @@ class main:
 			# Add protocol
 			serv = re.sub(r'://', '', serv)
 			if len(urparse) == 2:
+				if ifany:
+					return self.url
 				del urparse[0]
 				url = f"{serv}://{''.join(urparse)}"
 			else:
