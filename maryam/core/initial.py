@@ -24,10 +24,11 @@ import shutil
 import sys
 import shlex
 import json
+import traceback
 import concurrent.futures
 
 from maryam.core import basedir
-from multiprocessing import Pool,Process
+from multiprocessing import Process
 
 class turn_off:
 	def __enter__(self):
@@ -42,7 +43,7 @@ from .core import core
 
 class initialize(core):
 
-	def __init__(self, mode, section='*'):
+	def __init__(self, mode):
 		core.__init__(self)
 		self._mode = mode
 		self._config = {
@@ -52,7 +53,6 @@ class initialize(core):
 				'module_directory_name': 'modules',
 				'workspaces_directory_name': '.maryam/workspaces'
 			}
-		self.section = section
 		self._name = self._config['name']
 		self._prompt_template = '%s[%s] > '
 		self._base_prompt = self._prompt_template % ('', self._name)
@@ -71,7 +71,7 @@ class initialize(core):
 		self._init_framework_options()
 		self._init_home()
 		self._init_workspace('default')
-		self._init_util_classes(self.section)
+		self._load_modules()
 		if mode != 'execute':
 			self.__version__ = __version__
 			self._check_version()
@@ -119,6 +119,7 @@ class initialize(core):
 	def _load_modules(self, require='*'):
 		self.loaded_category = {}
 		self._loaded_modules = core._loaded_modules
+		self._init_util_classes(require)
 		for dirpath, dirnames, _ in os.walk(self.module_path, followlinks=True):
 			# Each Section
 			for section in filter(lambda d: not d.startswith('__'), dirnames):
@@ -189,7 +190,6 @@ class initialize(core):
 		self.workspace = core.workspace = workspace
 		self.prompt = self._prompt_template % (self._base_prompt[:-3], self.workspace.split('/')[-1])
 		self._load_config()
-		self._load_modules(self.section)
 		return True
 
 	def remove_workspaces(self, workspace):
@@ -224,11 +224,9 @@ class initialize(core):
 		self.output(f"Reloading...")
 		if params:
 			params = params.split()
-			if params[0] == '*':
-				self._init_util_classes(params[0])
 			section = params[0]
 		else:
-			section = self.section
+			section = '*'
 		self._load_modules(section)
 
 	def do_workspaces(self, params):
@@ -266,9 +264,10 @@ class initialize(core):
 	def alert_results(self, output, prefix='\t', depth=0, color='N'):
 		if output == [] or output == {}:
 			if depth != 0:
-				self.output('Without result')
-		if isinstance(output, dict):
+				self.alert_results('Without result', prefix='\t', depth=depth, color='R')
+		elif isinstance(output, dict):
 			for key, value in output.items():
+				key = key.replace('_', ' ')
 				if isinstance(value, list) or isinstance(value, dict):
 					self.alert(f"{prefix*depth}{key.upper()}")
 					self.alert_results(value, prefix=prefix, depth=depth + 1, color='G')
@@ -341,6 +340,8 @@ class initialize(core):
 			format_help += '\nExamples:\n\t' + '\n\t'.join(meta['examples'])
 		if 'contributors' in meta:
 			format_help += f"\nContributors:\n\t{meta['contributors']}"
+		if 'required' in meta:
+			format_help += '\nRequirements:\n\t' + '\n\t'.join(meta['required'])
 		# If args is nothing
 		if not args:
 			print(format_help)
@@ -348,17 +349,13 @@ class initialize(core):
 		else:
 			# Initialite args
 			if self._mode == 'execute':
-				if self.section != '*':
-					argv = sys.argv[4:]
-				else:
-					argv = sys.argv[3:]
-				args = parser.parse_args(argv)
+				argv = sys.argv[3:]
+				argx = parser.parse_args(argv)
 			else:
 				lexer = shlex.split(args)
-				args = parser.parse_args(lexer)
-			args = vars(args)
+				argx = parser.parse_args(lexer)
 			# Set options
-			self.options = args
+			self.options = vars(argx)
 			try:
 				if self.options['api'] or self._global_options['api_mode']:
 					# Turn off framework prints till the executing of module
@@ -376,13 +373,32 @@ class initialize(core):
 					mod.module_run(self)
 			except KeyboardInterrupt:
 				pass
+			except ImportError as e:
+				self.output(f"To run the {tool_name}, we need to install the requirements.")
+				if 'required' in meta:
+					self.output('Installing...')
+					required = meta['required']
+					with turn_off():
+						section = []
+						reqs = []
+						for i in required:
+							reqs.append(i)
+						if reqs:
+							self.output('required:')
+							for i in reqs:
+								self.output(i)
+							error = self._dev_install_requirements(reqs)
+							if error:
+								self.output('Failed.')
+								return
+							else:
+								self.output('Done.')
 			except Exception as e:
 				self.print_exception(where=tool_name, which_func='opt_proc')
 
 	def mod_api_run(self, module):
 		mod = self._loaded_modules[module]
 		try:
-			# with turn_off():
 			results = mod.module_api(self)
 			results['running_errors'] = self._error_stack
 			self._reset_error_stack()

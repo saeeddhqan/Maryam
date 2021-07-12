@@ -46,9 +46,8 @@ def module_api(self):
 		_id = None
 	elif query is not None:
 		NAMESEARCH = True
-	
-	run = self.sanctionsearch(query=query, id=_id, limit=limit)
 
+	run = self.sanctionsearch(query=query, id=_id, limit=limit)
 	if NAMESEARCH:
 		output_param = query
 		run.name_crawl()
@@ -60,7 +59,6 @@ def module_api(self):
 		output_param = _id
 		run.id_crawl()
 		output = run.data
-
 	self.save_gather(output, 'search/sanctionsearch', output_param, output=self.options['output'])
 	return output
 

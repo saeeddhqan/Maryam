@@ -25,39 +25,28 @@ from maryam.core import initial
 
 def cui(args):
 	core = initial.initialize
-	help_menu = 'usage: maryam [-h] [-e execute] [-s start] [-c category] [-v]'\
+	help_menu = 'usage: maryam [-h] [-e execute] [-s start] [-v]'\
 				  '\nmaryam -h\n'\
 				  '\noptional arguments:'\
 				  '\n	  -h, --help   show this help message and exit'\
 				  '\n	  -e execute   execute a command and exit'\
 				  '\n	  -s start     run a command without exit'\
-				  '\n	  --footprint  select footprint category to speed up the framework'\
-				  '\n	  --iris       select iris category to speed up the framework'\
-				  '\n	  --osint      select osint category to speed up the framework'\
-				  '\n	  --search     select search category to speed up the framework'\
 				  '\n	  -v           show version and exit'
 	if args:
 		option = args.pop(0)
-		section = '*'
 		mode = 'run'
 		if option in ['-v', '--version']:
 			print(f"OWASP Maryam V.{__VERSION__}")
 			exit(0)
-		elif option in ['--iris', '--footprint', '--osint', '--search']:
-			section = option[2:]
-			if len(args) > 0:
-				option = args.pop(0)
-			else:
-				option = 'run'
 		if option == '-e':
-			core = core('execute', section)
+			core = core('execute')
 			core.onecmd(' '.join(args))
 			exit(0)
 		elif option == '-s':
-			core = core('run', section)
+			core = core('run')
 			core.onecmd(' '.join(args))
 		elif option == 'run':
-			core = core('run', section)
+			core = core('run')
 		else:
 			print(help_menu)
 			exit(0)

@@ -79,12 +79,15 @@ class main:
 		@property
 		def results(self):
 			for count, result in enumerate(self._json):
-				if count>=self._max:
+				if count >= self._max:
 					break
+				urlib = self.framework.urlib(result['url'])
+				a = urlib.unquote
+				cite = result.get('subTitle') or self.framework.meta_search_util().make_cite(a)
 				self._results.append({
 					't': result['title'],
-					'a': result['url'],
-					'c': result.get('subTitle'),
+					'a': a,
+					'c': cite,
 					'd': result['sum'],
 					})
 			return self._results

@@ -43,12 +43,12 @@ maryam -e web api 127.0.0.1 1313
 # Updates
 **Last Updates**
 
+ - Add famous_person
  - Speed up the core
  - Add setup.py and change arch
  - Web API: web command
  - Error stack and a better performance for dev
  - Update google and yahoo: new format
- - Add API interface
 
 
 # Contribution

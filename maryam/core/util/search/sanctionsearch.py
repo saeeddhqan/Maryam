@@ -36,7 +36,6 @@ class main:
 			self._data = [] if self._query is not None else {}
 
 		def name_crawl(self):
-			self._query = self.framework.urlib(self._query).quote
 			self.framework.verbose('Searching sanctionsearch...')
 			headers = {
 				'Content-Type': 'application/x-www-form-urlencoded',

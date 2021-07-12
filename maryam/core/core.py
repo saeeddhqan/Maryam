@@ -537,275 +537,16 @@ class core(cmd.Cmd):
 		return [x[len(prefix):]
 				for x in self.get_names() if x.startswith(prefix)]
 
-	# ////////////////////////////////
-	#         INSTALL and DEV       //
-	# ////////////////////////////////
-
-	def do_package(self, params):
-		'''Install extensions and packages and manage them.'''
-		params = params.split()
-		if not params or len(params) < 2:
-			self.help_package()
-			return
-		mode = params.pop(0).lower()
-		if mode == 'extension':
-			next_plan = params.pop(0).lower()
-			pool = self.request(
-				'https://raw.githubusercontent.com/mexts/init/main/EXTENSIONS.json').json()
-			if next_plan == 'list':
-				self.alert('List of extensions:')
-				self.alert_results(pool)
-			elif next_plan == 'install':
-				for name in params:
-					name = params.pop(0).lower()
-					if name not in pool:
-						self.error(f"There's no '{name}' extension name.", 'core', 'do_package')
-						continue
-					exts = 'https://raw.githubusercontent.com/mexts/init/main/exts/'
-					mext = self.request(f"{exts}/{name}/mext").text
-					mext = mext.split('\n')
-					if '' in mext:
-						mext.pop(mext.index(''))
-					try:
-						mext[-1] = json.loads(mext[-1])
-					except Exception as e:
-						self.error('mext file is missed.', 'core', 'do_package')
-						self.error(f"{name} extension has not been installed.", 'core', 'do_package')
-						self.print_exception()
-						continue
-					if self._dev_running_mext(name, mext, 'install'):
-						reqs = self._dev_install_requirements(f"{exts}/{name}/requirements")
-						if reqs:
-							self.output(f"{name} extension has been installed.")
-						continue
-					else:
-						self.error(f"{name} extension has not been installed.", 'core', 'do_package')
-			else:
-				self.help_package()
-		elif mode == 'repo':
-			next_plan = params.pop(0).lower()
-			pool = self.request(
-				'https://raw.githubusercontent.com/mexts/init/main/PACKAGES.json').json()
-			if next_plan == 'list':
-				self.alert('List of packages:')
-				self.alert_results(pool)
-			elif next_plan == 'install':
-				name = params.pop(0).lower()
-				if name not in pool:
-					self.error(f"There's no '{name}' package name.", 'core', 'do_package')
-					return
-				mext = self.request(f"https://raw.githubusercontent.com/mexts/init/main/{name}/main/mext").text.split('\n')
-				mext[-1] = json.loads(mext[-1].replace("'", '"'))
-				if self._dev_running_mext(name, mext, 'install'):
-					self.output(f"{name} repository has been installed.")
-				else:
-					self.error(f"{name} repository has not been installed.", 'core', 'do_package')
-			else:
-				self.help_package()
-		else:
-			self.help_package()
-
-	def _dev_tree(self, path):
-		path = f"{path}/" if path[-1] != '/' else path
-		outcome = {}
-		for dirpath, _, files in os.walk(path, followlinks=True):
-			if '/.' not in dirpath and re.search(r'^\.', dirpath) == None:
-				dirpath = dirpath.replace(path, '')
-				for file in files:
-					if dirpath in outcome:
-						outcome[dirpath].append(file)
-					else:
-						outcome[dirpath] = [file]
-		return outcome
-
-	def _dev_create_mext(self, path, mode):
-		mext = []
-		all_files = []
-		ext_tree = self._dev_tree(path)
-		current_tree = self._dev_tree(self.path)
-		for dirpath in ext_tree:
-			files = ext_tree[dirpath]
-			for file in files:
-				filepath = os.path.join(dirpath, file)
-				full_path = os.path.join(path, filepath)
-				if dirpath == '':
-					if file == 'config.py':
-						mext.append('config config.py')
-					if mode == 'extension':
-						continue
-				else:
-					all_files.append(filepath)
-				if filepath.startswith('util/'):
-					project_file = f"core/{os.path.join(dirpath, file)}"
-				if dirpath == 'util':
-					dirpath = 'core/util'
-				else:
-					project_file = filepath
-				if dirpath in current_tree:
-					mext.append(f"move {filepath} to {dirpath}")
-				else:
-					mext.append(f"makedir {dirpath} and add {filepath}")
-		mext.append(all_files)
-		return mext, all_files
-
-	def _dev_running_mext(self, path, mext, mode='test'):
-		'''Run mext commands'''
-		for command in mext:
-			if isinstance(command, list):
-				continue
-			command_split = command.split(' ')
-			if command_split[0] == 'move':
-				if len(command_split) != 4:
-					self.error(f"syntax error: {command_split}", 'core', '_dev_running_mext')
-					return False
-				file_path, direct = command_split[1], command_split[3]
-				if mode == 'install':
-					file_text = self.request(f"https://raw.githubusercontent.com/mexts/init/main/exts/{path}/{file_path}").text
-				else:
-					file_text = self._is_readable(os.path.join(path, file_path))
-					if file_text:
-						file_text = file_text.read()
-					else:
-						self.error(f"cannot open files: {file_path}", 'core', '_dev_running_mext')
-						return False
-				if file_path.startswith('util/'):
-					file_path = f"core/{file_path}"
-				file_path = os.path.join(self.path, file_path)
-				file = self._is_readable(file_path, 'w')
-				if file:
-					file.write(file_text)
-					file.close()
-				else:
-					self.error(f"cannot open files:{file_path}", 'core', '_dev_running_mext')
-					return False
-			elif command_split[0] == 'makedir':
-				if len(command_split) != 5:
-					self.error(f"syntax error. not enough argument: {command_split}", 'core', '_dev_running_mext')
-					return False
-				direct, file_path = os.path.join(self.path, command_split[1]), command_split[4]
-				if not os.path.exists(direct):
-					os.mkdir(direct)
-				if mode == 'install':
-					file_text = self.request(f"https://raw.githubusercontent.com/mexts/init/main/exts/{path}/{file_path}").text
-				else:
-					file_text = self._is_readable(os.path.join(path,  file_path))
-					if file_text:
-						file_text = file_text.read()
-					else:
-						self.error(f"cannot open files: {file_path}", 'core', '_dev_running_mext')
-						return False
-				file = self._is_readable(os.path.join(self.path, file_path), 'w')
-				if file:
-					file.write(file_text)
-					file.close()
-				else:
-					self.error(f"cannot open files:{file_path}", 'core', '_dev_running_mext')
-					return False
-			elif command_split[0] == 'config':
-				file_path = 'config.py'
-				if mode == 'install':
-					file_text = self.request(f"https://raw.githubusercontent.com/mexts/init/main/exts/{path}/{file_path}").text
-				else:
-					fpath = os.path.join(path,  file_path)
-					file_text = self._is_readable(fpath)
-					if file_text:
-						file_text = file_text.read()
-					else:
-						self.error(f"cannot open files: {file_path}", 'core', '_dev_running_mext')
-						return False
-				file_path = os.path.join(self.path, file_path)
-				file = self._is_readable(file_path, 'w')
-				if file:
-					file.write(file_text)
-					file.close()
-				else:
-					self.error(f"cannot open files:{file_path}", 'core', '_dev_running_mext')
-					return False
-				self.do_shell(f"python3 {fpath}")
-			else:
-				self.error(f"syntax error: {command_split[0]}", 'core', '_dev_running_mext')
-				return False
-		return True
-
-	def _dev_extension_test(self, path, mext):
-		'''Testing the extension before pull request'''
-		run_mext = self._dev_running_mext(path, mext)
-		if not run_mext:
-			return False
-		self._reset_error_stack()
-		self.do_reload('*')
-		if self._error_stack != []:
-			self.error('during testing the extension, the following error occurs', 'core', '_dev_extension_test')
-			self.error(self._error_stack[0])
-			return False
-		return True
+	# /////////////////////
+	#         DEV       //
+	# ////////////////////
 
 	def _dev_install_requirements(self, reqs):
-		'''Install extension requirements. reqs could be a file or a url'''
-		if '://' in reqs:
-			url = reqs
-			reqs = '/tmp/reqs'
-			file = self._is_readable(reqs, 'w')
-			if file:
-				download = self.request(url)
-				if download.status_code != 200:
-					self.error('No such URL to download.', 'core', '_dev_install_requirements')
-					return False
-				file.write(download.text)
-				file.close()
-			else:
-				self.error(f"Could not create a new file: {reqs}", 'core', '_dev_install_requirements')
-				return False
-		self.do_shell(f"pip install -r {reqs}")
-		return True
-
-	def do_dev(self, params):
-		'''Development kit'''
-		if not params or len(params) < 2:
-			self.help_dev()
-			return
-		params = params.split()
-		mode = params.pop(0).lower()
-		if mode == 'extension':
-			what = params.pop(0).lower()
-			if what == 'init':
-				path = params.pop(0).lower()
-				if not os.path.exists(path):
-					self.error(f"No such directory '{path}'.", 'core', 'do_dev')
-					return
-				mext_commands, all_files = self._dev_create_mext(path, 'extension')
-				if not mext_commands:
-					self.error('Cannot initialize the extension.', 'core', 'do_dev')
-					return
-				mext_path = os.path.join(path, 'mext')
-				self.verbose(f"Creating {mext_path} file...")
-				mext_file = self._is_readable(mext_path, 'w')
-				if not mext_file:
-					return
-				mext_file.write('\n'.join(mext_commands[:-1]))
-				mext_file.write(f"\n{json.dumps(mext_commands[-1])}")
-				self.verbose('Installing pipreqs...')
-				self.do_shell('pip install pipreqs')
-				self.verbose('Creating the requirements file with pipreqs...')
-				reqs_path = os.path.join(path, 'requirements')
-				reqs_file = self._is_readable(reqs_path, 'w')
-				if not reqs_file:
-					return
-				self.do_shell(f"pipreqs {path} --savepath {reqs_path}")
-				perm = input('[!] The test stage will change the origin project and needs to install dependencies. Continue[Y/N]? ')
-				if perm.lower() in ('y', 'yes'):
-					self.verbose('Testing...')
-					if not self._dev_install_requirements(reqs_path):
-						self.error('Failed', 'core', 'do_dev')
-						return False
-					result = self._dev_extension_test(path, mext_commands)
-					if result == False:
-						self.error("the extension couldn't pass the test.", 'core', 'do_dev')
-						return
-					self.verbose('the extension has been successfully tested.')
-				self.verbose('Finished. The package is ready for pull request.')
-		else:
-			self.help_dev()
+		'''Install requirements with pip.'''
+		well = []
+		for req in reqs:
+			well.append(not bool(self.do_shell(f"{sys.executable} -m pip install {req}")))
+		return all(well)
 
 	# ////////////////////////////////
 	#           COMMANDS            //
@@ -905,6 +646,7 @@ class core(cmd.Cmd):
 			print(f"{Colors.O}{self.to_str(stdout)}{Colors.N}", end='')
 		if stderr:
 			print(f"{Colors.R}{self.to_str(stderr)}{Colors.N}", end='')
+		return stderr
 
 	def do_report(self, params):
 		'''Get report from the Gathers and save it to the other formats'''
@@ -1026,17 +768,6 @@ class core(cmd.Cmd):
 	# ////////////////////////////////
 	#             HELP              //
 	# ////////////////////////////////
-
-	def help_package(self):
-		print(getattr(self, 'do_package').__doc__)
-		print(f"{os.linesep}Usage: package extension install name1,name2,..")
-		print(f"\tpackage extension list")
-		print(f"\tpackage repo list")
-		print(f"\tpackage repo install repo-name")
-
-	def help_dev(self):
-		print(getattr(self, 'do_dev').__doc__)
-		print(f"{os.linesep}Usage: dev extension init path/to/extension")
 
 	def help_report(self):
 		print(getattr(self, 'do_report').__doc__)
