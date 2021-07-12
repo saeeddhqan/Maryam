@@ -31,8 +31,7 @@ class main:
 			thread_count : Count of links for open at per lap
 		"""
 		self.framework = main.framework
-		# ADD http:// 
-		self.url = self.framework.urlib(url).sub_service(serv='http')
+		self.url = url
 		self.urlib = self.framework.urlib
 		self.debug = debug
 		self.limit = limit
@@ -184,12 +183,12 @@ class main:
 			return []
 		self.passed.append(url)
 		# Send Request
-		try:
-			req = self.framework.request(url)
-		except:
-			return False
-		else:
-			resp = req.text
+		# try:
+		req = self.framework.request(url)
+		# except:
+			# return False
+		# else:
+		resp = req.text
 
 		pp = self.framework.page_parse(resp)
 
@@ -253,7 +252,6 @@ class main:
 		print('')
 
 	def run_crawl(self):
-		parser = self.framework.urlib(self.url)
 		links = self.get_source(self.url)
 		if not links:
 			return

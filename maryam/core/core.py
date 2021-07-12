@@ -460,17 +460,13 @@ class core(cmd.Cmd):
 
 	def request(self, url, method='GET', **kwargs):
 		if '://' not in url:
-			url = f'https://{url}'
-		# process socket timeout
+			url = f"{self._global_options['protocol']}://{url}"
 		kwargs['timeout'] = kwargs.get('timeout') or self._global_options['timeout']
-		# process headers
 		headers = kwargs.get('headers') or {}
-		# set the User-Agent header
 		if self._global_options['rand_agent']:
 			headers['user-agent'] = rand_uagent.main().get
 		else:
 			headers['user-agent'] = headers.get('user-agent', False) or self._global_options['agent']
-		# normalize capitalization of the User-Agent header
 		headers = {k.title(): v for k, v in headers.items()}
 		kwargs['headers'] = headers
 		# process proxy
@@ -481,16 +477,13 @@ class core(cmd.Cmd):
 				'https': f"http://{proxy}",
 			}
 			kwargs['proxies'] = proxies
-		# disable TLS validation and warning
 		kwargs['verify'] = False
 		requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
-		# send the request
 		resp = getattr(requests, method.lower())(url, **kwargs)
+		resp = requests.get(url, **kwargs)
 		if self._global_options['verbosity'] < 2:
 			return resp
-		# display request data
 		self._print_prepared_request(resp.request)
-		# display response data
 		self._print_response(resp)
 		return resp
 

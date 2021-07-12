@@ -13,20 +13,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 meta = {
-	'name': 'Get Usernames in Social Networks',
+	'name': 'Find Social Networks',
 	'author': 'Saeed',
-	'version': '1.0',
+	'version': '1.5',
 	'description': 'Search to find Usernames in social networks.',
 	'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'startpage', 'urlscan'),
 	'options': (
 		('query', None, True, 'Company Name or Query', '-q', 'store', str),
 		('engines', 'google,bing', False, 'Search engine names. e.g `bing,google,..`', '-e', 'store', str),
+		('url', None, False, 'The second source to crawl for', '-u', 'store', str),
+		('depth', 1, False, 'Scraper depth level(default=1)(Only if the url is set)', '-d', 'store', int),
+		('cthread', 5, False, 'The number of links that open per round(default=5)(Only if the url is set)', '-T', 'store', int),
 		('limit', 5, False, 'Search limit(number of pages, default=5)', '-l', 'store', int),
 		('count', 100, False, 'number of results per page(min=10, max=100, default=100)', '-c', 'store', int),
 		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
 	),
 	'examples': ('social_nets -q microsoft -e google,bing,yahoo -c 50 -t 3 --output',
-		'social_nets -q microsoft -e google')
+		'social_nets -q microsoft -e google',
+		'social_nets -q microsoft -u microsoft.com -e google,bing,yahoo, -c 50 -t 5 -T 10 -d 2')
 }
 
 PAGES = ''
@@ -56,6 +60,9 @@ def module_api(self):
 	query = '@' + self.options['query']
 	limit = self.options['limit']
 	count = self.options['count']
+	url = self.options['url']
+	depth = self.options['depth']
+	crawl_thread = self.options['cthread']
 	engines = self.options['engines'].lower().split(',')
 	page = ''
 	try:
@@ -65,6 +72,10 @@ def module_api(self):
 		page = ''
 	PAGES += page
 	self.thread(search, self.options['thread'], engines, query, {}, limit, count, meta['sources'])
+	if url:
+		scrap = self.web_scrap(url, False, depth, crawl_thread)
+		scrap.run_crawl()
+		PAGES += scrap.pages
 	usernames = self.page_parse(PAGES).get_networks
 	self.save_gather(usernames, 'osint/social_nets', query, output=self.options['output'])
 	return usernames

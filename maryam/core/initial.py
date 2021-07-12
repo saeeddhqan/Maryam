@@ -89,6 +89,8 @@ class initialize(core):
 			'verbosity level (0 = minimal, 1 = verbose, 2 = debug)')
 		self._global_options_['update_check'] = ('update_check', True, True,\
 			'checking the framework version before running')
+		self._global_options_['protocol'] = ('protocol', 'https', True,\
+			'default protocol')
 		self._global_options_['api_mode'] = ('api_mode', False, True,\
 			'Activating API mode causes results will be shown in JSON format(warn: it doesnt show any other information)')
 		for key in self._global_options_:
