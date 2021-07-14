@@ -12,6 +12,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import re
+import os
 import json
 from time import time
 from html import unescape
@@ -22,14 +23,12 @@ import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-import nltk
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
-
 from mlxtend.frequent_patterns import fpgrowth
 from mlxtend.preprocessing import TransactionEncoder
 
 from kneed import KneeLocator
+
+BASEDIR = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
 
 class main:
 
@@ -38,22 +37,22 @@ class main:
 		self.framework = main.framework
 		self.json = input_json
 
+	def remove_stopwords(self, text):
+		stops = open(os.path.join(BASEDIR, '../../', 'data', 'stopwords.csv')).read().split(',')
+		return [x for x in text if x not in stops]
+
 	def tokenize_and_stem(self, text):
-		lemmatizer = WordNetLemmatizer()
-		tokens = [word for sent in nltk.sent_tokenize(text) for word in nltk.word_tokenize(sent)]
+		tokens = re.findall("[A-Z]{2,}(?![a-z])|[A-Z][a-z]+(?=[A-Z])|[\'\w\-]+",text)
 		filtered_tokens = []
 		for token in tokens:
 			if re.search('[a-zA-Z]', token):
 				filtered_tokens.append(token.lower())
-		stems = []
-		for t in filtered_tokens:
-			stems.append(lemmatizer.lemmatize(t))
-		return ' '.join(stems)
+		return ' '.join(filtered_tokens)
 
 	def punc(self, docs):
 		toreturn = []
-		for word in re.findall(r"[\w\-_#]+", docs):
-			if word not in stopwords.words('english') and not word.isnumeric():
+		for word in self.remove_stopwords(re.findall(r"[\w\-_#]+", docs)):
+			if not word.isnumeric():
 				toreturn.append(word)
 		return ' '.join(toreturn)
 	

@@ -12,17 +12,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import concurrent.futures as futures
-import copy
 from json import loads
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 meta = {
 	'name': 'Cluster',
 	'author': 'Kaushik',
 	'version': '0.1',
 	'description': 'Cluster your data using kmeans and fp-growth.',
-	'required': ('nltk','sklearn',),
+	'required': ('sklearn', 'kneed', 'mlxtend', 'numpy', 'pandas'),
 	'options': (
 		('json', None, False, 'Json file that contains the data', '-j', 'store', str),
 	),
@@ -37,7 +34,7 @@ def module_api(self):
 	data = loads(file.read())
 	clusterer = self.cluster(data)
 	output = {'json': clusterer.perform_clustering()}
-	self.save_gather(output, 'iris/cluster', json, output=self.options['output'])
+	# self.save_gather(output, 'iris/cluster', json, output=self.options['output'])
 	return output
 
 def module_run(self):
