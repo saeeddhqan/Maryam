@@ -77,14 +77,7 @@ def module_api(self):
 	COUNT_CONSENSUS = self.meta_search_util.compute_count_consensus(engines, count)
 	LIMIT_CONSENSUS = self.meta_search_util.compute_count_consensus(engines, limit)
 	thread(self, search, engines, query)
-	engines_len = len(RESULTS)
-	simple_merge = []
-	for i in range(len(min(RESULTS, key=len))):
-		for e in range(engines_len):
-			simple_merge.append(RESULTS[e%engines_len].pop(i))
-	for i in RESULTS:
-		for j in i:
-			simple_merge.append(j)
+	simple_merge = self.meta_search_util.simple_merge(RESULTS)
 	output = {'results': simple_merge}
 	self.save_gather(output, 'iris/iris', query, output=self.options['output'])
 	return output
