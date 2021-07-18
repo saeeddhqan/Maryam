@@ -46,6 +46,7 @@ class main:
 	def run_crawl(self):
 		page = 1
 		payload = {'page': page, 'q': self.q, 'sc': ''}
+		tries = 0
 		while True:
 			self.framework.verbose(f"[Dogpile] Searching in {page} page...", end='\r')
 			try:
@@ -55,6 +56,9 @@ class main:
 					allow_redirects=True)
 			except Exception as e:
 				self.framework.error(f"ConnectionError: {e}", 'util/dogpile', 'run_crawl')
+				tries += 1
+				if tries >= 2:
+					break
 			else:
 				if req.status_code == 307:
 					self.framework.error('Dogpile CAPTCHA triggered.', 'util/dogpile', 'run_crawl')
