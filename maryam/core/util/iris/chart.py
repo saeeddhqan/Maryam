@@ -12,7 +12,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import matplotlib.pyplot as plt
 
 class main:
 
@@ -21,6 +20,8 @@ class main:
 		self.framework = main.framework
 
 	def line_chart(vectors, title, xlabel, ylabel, **args):
+		import matplotlib.pyplot as plt
+
 		for vector in vectors:
 			x = [i for i in range(len(vector))]
 			plt.plot(x, vector, **args)
@@ -31,6 +32,8 @@ class main:
 		plt.show()
 
 	def scatter_chart(vectors, title, xlabel, ylabel, **args):
+		import matplotlib.pyplot as plt
+
 		for vector in vectors:
 			plt.scatter(vector[0], vector[1], **args)
 		plt.xlabel(xlabel)

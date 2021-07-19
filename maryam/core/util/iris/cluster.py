@@ -17,16 +17,6 @@ import json
 from time import time
 from html import unescape
 
-import numpy as np
-import pandas as pd
-
-from sklearn.cluster import KMeans
-from sklearn.feature_extraction.text import TfidfVectorizer
-
-from mlxtend.frequent_patterns import fpgrowth
-from mlxtend.preprocessing import TransactionEncoder
-
-from kneed import KneeLocator
 
 BASEDIR = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
 
@@ -57,6 +47,10 @@ class main:
 		return ' '.join(toreturn)
 	
 	def get_frequent_itemsets(self, dataset):
+		import pandas as pd
+		from mlxtend.frequent_patterns import fpgrowth
+		from mlxtend.preprocessing import TransactionEncoder
+
 		te = TransactionEncoder()
 		te_ary = te.fit_transform(dataset)
 		dataset = pd.DataFrame(te_ary, columns=te.columns_)
@@ -70,6 +64,13 @@ class main:
 		self.df['d'] = self.df['d'].apply(self.tokenize_and_stem).apply(self.punc)
 
 	def perform_clustering(self):
+		import pandas as pd
+
+		from sklearn.cluster import KMeans
+		from sklearn.feature_extraction.text import TfidfVectorizer
+
+		from kneed import KneeLocator
+
 		self.framework.verbose('Loading Data')
 		self.df = pd.DataFrame(self.json['results'])
 
