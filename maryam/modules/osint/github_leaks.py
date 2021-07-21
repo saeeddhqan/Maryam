@@ -14,7 +14,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
 import concurrent.futures
-from bs4 import BeautifulSoup
 import json
 
 meta = {
@@ -56,6 +55,8 @@ def checks(self, repo):
 	print('\n')
 
 def leaks(self, repo, term):
+	from bs4 import BeautifulSoup
+
 	url = f"{repo}/search?q={self.urlib(term).quote_plus.replace('.','%2E')}"
 	try:
 		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}

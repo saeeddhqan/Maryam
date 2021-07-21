@@ -42,7 +42,10 @@ class main:
 		urparse = re.split(r'://', self.url)
 		if not serv:
 			# Clean protocol
-			url = ''.join(urparse)
+			if len(urparse) == 2:
+				url = ''.join(urparse[1:])
+			else:
+				url = ''.join(urparse)
 		else:
 			# Add protocol
 			serv = re.sub(r'://', '', serv)

@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import math
-from bs4 import BeautifulSoup
 
 class main:
 
@@ -70,6 +69,8 @@ class main:
 		return scrap_result
 
 	def search(self):
+		from bs4 import BeautifulSoup
+
 		self.framework.verbose('[Zlibrary Search] Fetching location of servers...')
 		welcome_page_url = 'https://z-lib.org/'
 		

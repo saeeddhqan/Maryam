@@ -23,7 +23,7 @@ import subprocess
 import sys
 import traceback
 import requests
-from .util import rand_uagent
+from .util.helpers import rand_uagent
 from io import StringIO
 from textwrap import wrap
 

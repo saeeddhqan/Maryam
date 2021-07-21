@@ -16,7 +16,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import re
-from bs4 import BeautifulSoup as bs
 
 class main:
 
@@ -38,6 +37,8 @@ class main:
 		self._links_with_data = []
 
 	def run_crawl(self):
+		from bs4 import BeautifulSoup as bs
+
 		max_attempts = 0
 		url = 'https://search.wikileaks.org/advanced'
 		params = {'query': self.q, 'include_external_sources': True, 'page': 1}

@@ -15,16 +15,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from inspect import signature
 
 class main:
-	def __init__(self, engine=None, engine_q=None):
+	def __init__(self, engine_q=None):
 		self.framework = main.framework
 
 		if engine_q is None:
 			self._engine_q = [
 					self.framework.google,
-					self.framework.startpage,
 					self.framework.duckduckgo,
-					self.framework.bing,
+					self.framework.startpage,
 					self.framework.dogpile,
+					self.framework.bing,
 					self.framework.millionshort,
 					self.framework.qwant,
 					self.framework.yandex,
@@ -36,13 +36,6 @@ class main:
 		else:
 			self._engine_q = engine_q
 
-		if engine is None:
-			self._current_engine = self._engine_q.pop(0)
-		else:
-			self._current_engine = engine
-			if self._current_engine in self._engine_q:
-				self._engine_q.remove(self._current_engine)
-
 		self._error_record = self.framework._error_stack
 
 
@@ -52,7 +45,14 @@ class main:
 		self._error_record = self.framework._error_stack
 		return new_errors
 
-	def search(self, q, limit=1, count=15):
+	def search(self,  q, engine=None, limit=1, count=15):	
+		if engine is None:
+			self._current_engine = self._engine_q.pop(0)
+		else:
+			self._current_engine = engine
+			if self._current_engine in self._engine_q:
+				self._engine_q.remove(self._current_engine)
+
 		results = None
 
 		while results is None:
@@ -71,6 +71,11 @@ class main:
 				instance = self._current_engine(q, limit)
 			instance.run_crawl()
 
-			results = instance.results if len(instance.results) > 0 else None
+			if hasattr(instance,'results'):
+				results = instance.results
+			else:
+				results = instance.links_with_title
+
+			results = results if len(results)>0 else None
 
 		return results
