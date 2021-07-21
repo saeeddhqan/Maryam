@@ -68,7 +68,7 @@ class main:
 		return host
 
 	def findall(self, reg):
-		return re.compile(reg).findall(self.page)
+		return re.compile(reg, flags=re.DOTALL).findall(self.page)
 
 	@property
 	def sites(self):

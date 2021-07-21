@@ -83,13 +83,28 @@ class main:
 	def links_with_title(self):
 		parser = self.framework.page_parse(self._pages)
 		parser.pclean
-		links = parser.findall(r'<a target="_blank" href="([^"]+)" h="ID=SERP,[\d\.]+">([^<]+)</a>')
-		if len(links) <= 1:
-			links = parser.findall(r'<a href="([^"]+)" h="ID=SERP,[\d\.]+">([^<]+)</a>')
-		links = [x for x in links if x[0].startswith('http') and\
-			"http://www.microsofttranslator.com" not in x[0] and\
-			"Translate this page" not in x[1]]
-		return links
+		sections = parser.findall(r'<li .*?>(.*?)</li>')
+		results = []
+		for section in sections[6:]:
+			parser = self.framework.page_parse(section)
+			try:
+				link, title = parser.findall(r'<a (?:target="_blank")? href="([^"]+)" h="ID=SERP,[\d\.]+">([^<]+)</a>')[0]
+				description = parser.findall(r'<p>(.*?)</p>')[0]
+			except:
+				continue
+
+			parsed_description = self.framework.page_parse(description)
+			parsed_description.remove_html_tags
+			description = parsed_description.page
+			result = {
+					't': title,
+					'a': link,
+					'c': link,
+					'd': description
+					}
+			results.append(result)
+
+		return results
 
 	@property
 	def docs(self):

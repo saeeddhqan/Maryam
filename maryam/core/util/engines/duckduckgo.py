@@ -108,6 +108,7 @@ class main:
 			else:
 				if req.status_code != 200:
 					self.framework.error(f"{req.status_code} Forbidden", 'util/duckduckgo', 'run_crawl')
+					self.framework.error('DuckDuckGo is missed!', 'util/duckduckgo', 'run_crawl')
 					break
 				text = req.text
 				self._pages += text

@@ -23,8 +23,8 @@ class main:
 					self.framework.google,
 					self.framework.duckduckgo,
 					self.framework.startpage,
-					self.framework.dogpile,
 					self.framework.bing,
+					self.framework.dogpile,
 					self.framework.millionshort,
 					self.framework.qwant,
 					self.framework.yandex,
@@ -36,7 +36,7 @@ class main:
 		else:
 			self._engine_q = engine_q
 
-		self._error_record = self.framework._error_stack
+		self._error_record = []
 
 
 	@property
@@ -47,28 +47,20 @@ class main:
 
 	def search(self,  q, engine=None, limit=1, count=15):	
 		if engine is None:
-			self._current_engine = self._engine_q.pop(0)
+			engine = self._engine_q.pop(0)
 		else:
-			self._current_engine = engine
-			if self._current_engine in self._engine_q:
-				self._engine_q.remove(self._current_engine)
+			if engine in self._engine_q:
+				self._engine_q.remove(engine)
 
 		results = None
 
 		while results is None:
-			if 'CaptchaError' in self._get_new_errors or \
-					any('Missed' in x for x in self._get_new_errors):
-				if len(self._engine_q) != 0:
-					self._current_engine = self._engine_q.pop(0)
-				else:
-					self.framework.error('All Engines Exhausted')
-					return 
-
-			sig = signature(self._current_engine.__init__)
+			sig = signature(engine.__init__)
 			if 'limit' in sig.parameters and 'count' in sig.parameters:
-				instance = self._current_engine(q, limit=limit, count=count)
+				instance = engine(q, limit=limit, count=count)
 			else:
-				instance = self._current_engine(q, limit)
+				instance = engine(q, limit)
+
 			instance.run_crawl()
 
 			if hasattr(instance,'results'):
@@ -77,5 +69,13 @@ class main:
 				results = instance.links_with_title
 
 			results = results if len(results)>0 else None
+
+			if any('captcha' in x.lower() or 'missed' in x.lower() for x in self.framework._error_stack):
+				self.framework._reset_error_stack()
+				if len(self._engine_q) != 0:
+					engine = self._engine_q.pop(0)
+				else:
+					self.framework.error('All Engines Exhausted')
+					return 
 
 		return results
