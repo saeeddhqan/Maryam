@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import re
 import concurrent.futures
 
-# Web Scraper v5.1
+# Web Scrap v5.1
 
 class main:
 
@@ -28,11 +28,11 @@ class main:
 			url		  	 : First page address
 			debug	  	 : Show the result at moment
 			limit	  	 : Web scrap level(if it's 1 that's mean just search in first page)
-			thread_count : Count of links for open at per lap
+			thread_count : Number of links for each lap
 		"""
 		self.framework = main.framework
-		# ADD http:// 
-		self.url = self.framework.urlib(url).sub_service(serv='http')
+		self.parser = self.framework.urlib(url)
+		self.url = self.parser.sub_service(self.framework._global_options['protocol'], ifany=True)
 		self.urlib = self.framework.urlib
 		self.debug = debug
 		self.limit = limit
@@ -107,12 +107,10 @@ class main:
 			return True
 
 	def joiner(self, url):
-		url = str(url)
-		# ADD slash to end url
+		url = url
 		urparse = self.urlib(url)
 		urparse.url = urparse.quote if '%' not in url else url
-		urparse2 = self.urlib(str(self.url))
-		cond1 = url.lower() in ('%20', '', '/', '%23', '#', 'https:', 'http:')
+		cond1 = url.lower() in ('%20', '', '/', '%23', '#', 'https:', 'http:') or '.' not in url
 		cond12 = url.endswith(':')
 		cond2 = len(
 			urparse.url) > 1 and '%3a//' not in urparse.url and urparse.url[:2] != '//'
@@ -120,18 +118,17 @@ class main:
 		if cond1 or cond12:
 			return False
 		elif cond2:
-			urparse.url = urparse2.join(url)
+			urparse.url = self.parser.join(url)
 		elif cond3:
 			urparse.url = url
 		else:
-			urparse.url = urparse2.join(url)
-		return str(urparse.url)
+			urparse.url = self.parser.join(url)
+		return urparse.url
 
 	def link_category(self, urls):
 		links = []
 		for url in urls:
 			join = self.joiner(url)
-
 			##########################
 			# ADD CDN, PHONE and EMAIL
 			##########################
@@ -139,7 +136,6 @@ class main:
 			if cond1:
 				continue
 
-			ends = join.endswith
 			join = str(join).replace('\/', '/')
 			##########################
 			# ADD OUT SCOPE
@@ -155,9 +151,10 @@ class main:
 			if urparse.query != '':
 				self._QUERY_LINKS = self.rept(join, self._QUERY_LINKS)
 
+			# If the link is a media link(mp4,..) not a web page
 			broke = 0
 			for ext in self.media_exts:
-				if (f'.{ext}/' in join) or ends(f'.{ext}'):
+				if (f'.{ext}/' in join) or join.endswith(f'.{ext}'):
 					self._MEDIA = self.rept(join, self._MEDIA)
 					broke = 1
 					break
@@ -253,7 +250,6 @@ class main:
 		print('')
 
 	def run_crawl(self):
-		parser = self.framework.urlib(self.url)
 		links = self.get_source(self.url)
 		if not links:
 			return
