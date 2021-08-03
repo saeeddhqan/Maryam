@@ -480,7 +480,6 @@ class core(cmd.Cmd):
 		kwargs['verify'] = False
 		requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 		resp = getattr(requests, method.lower())(url, **kwargs)
-		resp = requests.get(url, **kwargs)
 		if self._global_options['verbosity'] < 2:
 			return resp
 		self._print_prepared_request(resp.request)
