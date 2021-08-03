@@ -26,28 +26,80 @@ class main:
 		self.framework = main.framework
 		self.q = self.framework.urlib(q).quote
 		self.limit = limit
+		self.xpath_name = {
+			'results': '/html/body/div[2]/div/div[2]/div[1]/div[2]/div[1]/div/section[2]/div',
+			'results_content': './/div[1]/p',
+			'results_links': './/div[1]/div[2]/a',
+			'results_title': './/div[1]/div[2]/a/h3'
+		}
+		self.xpath = {
+			self.xpath_name['results']: [
+				self.xpath_name['results_content'],
+				self.xpath_name['results_links'],
+				self.xpath_name['results_title']
+			]
+		}
 		self._pages = ''
 		self.startpage = 'startpage.com'
 
 	def run_crawl(self):
-		urls = [f"https://{self.startpage}/sp/search?query={self.q}&page={i}" for i in range(1, self.limit+1)]
-		max_attempt = len(urls)
-		for url in range(len(urls)):
-			self.framework.verbose(f"[STARTPAGE] Searching in {url} page...")
+		url = f"https://{self.startpage}/sp/search"
+
+		headers = {
+			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:90.0) Gecko/20100101 Firefox/90.0',
+			'Content-Type': 'application/x-www-form-urlencoded'
+		}
+
+		data = {
+				'query': self.q
+		}
+
+		self.framework.verbose(f"[STARTPAGE] Searching in {self.startpage}...")
+
+		for i in range(self.limit):
+			data['page'] = i
+
 			try:
-				req = self.framework.request(url=urls[url])
+				req = self.framework.request(
+						url=url,
+						method='POST',
+						headers=headers,
+						data=data
+				)
 			except Exception as e:
 				self.framework.error(f"ConnectionError {e}.", 'util/startpage', 'run_crawl')
-				max_attempt -= 1
-				if max_attempt == 0:
-					self.framework.error('Startpage is missed!', 'util/startpage', 'run_crawl')
-					break
+				self.framework.error('Startpage is missed!', 'util/startpage', 'run_crawl')
+				return
+
 			else:
 				page = req.text
-				if '> Next <' not in page:
-					self._pages += page
-					break
 				self._pages += page
+
+				if '> Next <' not in page:
+					break
+
+
+	@property
+	def results(self):
+		parser = self.framework.page_parse(self._pages)
+		xpath_results = parser.html_fromstring(self.xpath)
+		results = []
+		if not xpath_results:
+			return results
+		root = xpath_results[self.xpath_name['results']]
+		for i in range(len(root[self.xpath_name['results_links']])):
+			link = root[self.xpath_name['results_links']][i].get('href')
+			title = root[self.xpath_name['results_title']][i].text_content().strip()
+			desc = root[self.xpath_name['results_content']][i].text_content().strip()
+			cite = self.framework.meta_search_util().make_cite(link)
+			result = {
+				't': title,
+				'a': link,
+				'c': cite,
+				'd': desc,
+			}
+			results.append(result)
+		return results
 
 	@property
 	def pages(self):
