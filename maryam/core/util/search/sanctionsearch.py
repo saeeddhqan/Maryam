@@ -15,8 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from bs4 import BeautifulSoup as bs
-
 class main:
 
 		def __init__(self, query=None, id=None, limit=15):
@@ -36,6 +34,8 @@ class main:
 			self._data = [] if self._query is not None else {}
 
 		def name_crawl(self):
+			from bs4 import BeautifulSoup as bs
+
 			self.framework.verbose('Searching sanctionsearch...')
 			headers = {
 				'Content-Type': 'application/x-www-form-urlencoded',

@@ -16,7 +16,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import re
 import json
-from bs4 import BeautifulSoup as bs
 
 class main:
 
@@ -32,6 +31,8 @@ class main:
 			self._results = []
 
 		def run_crawl(self):
+			from bs4 import BeautifulSoup as bs
+
 			self.q = self.framework.urlib(self.q).quote
 			self.framework.verbose('Searching Gigablast...')
 			first_url = 'https://www.gigablast.com/search'

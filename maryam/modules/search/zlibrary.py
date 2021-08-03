@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import re
-from bs4 import BeautifulSoup
 
 # Using default empty strings for query, lang, ext to avoid &ext=None etc.
 meta = {
@@ -37,6 +36,8 @@ meta = {
 }
 
 def table_format(data):
+	from bs4 import BeautifulSoup
+
  	# Declaring output_table here in case no table found on page, return this one
 	output_table = []
 	raw_data = BeautifulSoup(data, 'lxml')

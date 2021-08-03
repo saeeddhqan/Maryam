@@ -13,7 +13,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import re
-import cloudscraper
 
 meta = {
 	'name': 'Pwned database search',
@@ -33,6 +32,7 @@ meta = {
 
 
 def scrap(email):
+	import cloudscraper
 	url = f"https://haveibeenpwned.com/unifiedsearch/{email}"
 	scraper = cloudscraper.create_scraper()
 	result = scraper.get(url)

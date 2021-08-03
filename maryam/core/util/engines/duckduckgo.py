@@ -45,7 +45,7 @@ class main:
 			]
 		}
 
-	def run_crawl(self):
+	def scrape_run_crawl(self):
 		url = 'https://lite.duckduckgo.com/lite/'
 		payload = {'q': self.q, 's': 0, 'o': 'json', 'dc': '', 'api': '/d.js', 'kl': 'wt-wt'}	
 		page = 1
@@ -62,6 +62,7 @@ class main:
 				return
 			if req.status_code == 403:
 				self.framework.error('403 Forbidden (Too many requests.)', 'util/duckduckgo', 'run_crawl')
+				self.framework.error('DuckDuckGo is missed!', 'util/duckduckgo', 'run_crawl')
 				break
 			self._pages += req.text
 			# setting next page offset
@@ -84,7 +85,7 @@ class main:
 			if cond1 and cond2 and cond3:
 				self._links.append(self.framework.urlib(link).unquote_plus)
 
-	def d_js_run_crawl(self):
+	def run_crawl(self):
 		page = 1
 		set_page = lambda x: x * 30
 		payload = {'s': set_page(page), 'q': self.q, 'dc': 30, 'v': 'l', 'o': 'json'}
@@ -98,7 +99,8 @@ class main:
 					url=duck_url,
 					params=payload)
 			except Exception as e:
-				self.framework.error(f"ConnectionError: {e}", 'util/duckduckgo', 'd_js_search')
+				self.framework.error(f"ConnectionError: {e}", 'util/duckduckgo', 'run_crawl')
+				self.framework.error('DuckDuckGo is missed!', 'util/duckduckgo', 'run_crawl')
 				max_attempt += 1
 				if max_attempt == self.limit:
 					self.framework.error('d_js is missed!', 'util/duckduckgo', 'd_js_search')
@@ -106,6 +108,7 @@ class main:
 			else:
 				if req.status_code != 200:
 					self.framework.error(f"{req.status_code} Forbidden", 'util/duckduckgo', 'run_crawl')
+					self.framework.error('DuckDuckGo is missed!', 'util/duckduckgo', 'run_crawl')
 					break
 				text = req.text
 				self._pages += text
@@ -128,12 +131,14 @@ class main:
 					break
 
 	@property
-	def d_js_results(self):
+	def results(self):
 		results = []
 		parser = self.framework.page_parse(self._pages)
 		xpath_results = parser.html_fromstring(self.d_js_xpath)
 		root = xpath_results[self.d_js_xpath_name['results']]
 		for i in range(len(root[self.d_js_xpath_name['results_a']])):
+			if i == self.num:
+				break
 			a = root[self.d_js_xpath_name['results_a']][i]
 			try :
 				results.append({
@@ -160,7 +165,9 @@ class main:
 	def links_with_title(self):
 		parser = self.framework.page_parse(self._pages)
 		parser.pclean
-		results = parser.findall(r'''rel="nofollow" href="([^"]+)" class='result-link'>([^<]+)</a''')
+		print("parser:", parser)
+		results = [{ 'link': a, 'title': b } for a,b in parser.findall(r'''rel="nofollow" href="([^"]+)" class='result-link'>([^<]+)</a''')]
+
 		return results
 
 	@property

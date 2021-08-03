@@ -15,7 +15,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class main:
 	# framework = None
-	def __init__(self, q, limit=1, count=10, mode='original'):
+	def __init__(self, q, limit=1, count=10, mode='legacy'):
 		""" google.com search engine
 			q     : Query for search
 			limit : Number of pages

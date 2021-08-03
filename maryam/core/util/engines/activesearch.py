@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import re
 import html
 import urllib.parse
-from bs4 import BeautifulSoup as bs
 
 class main:
 
@@ -43,6 +42,8 @@ class main:
 			
 
 		def run_crawl(self):
+			from bs4 import BeautifulSoup as bs
+
 			payload = { 
 				'wordsall': self.q,
 				'asrtech' : 'yes',

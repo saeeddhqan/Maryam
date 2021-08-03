@@ -32,17 +32,10 @@ def module_api(self):
 	count = self.options['count']
 	run = self.duckduckgo(query, limit, count)
 	run.run_crawl()
-	output = run.links_with_title
-	links = run.links_with_title
-	if abs(len(output) - len(links)) > 4:
-		output = links
-	output = {'results': output}
+	results = run.results
+	output = {'results': results}
 	self.save_gather(output, 'search/duckduckgo', query, output=self.options['output'])
 	return output
 
 def module_run(self):
-	output = module_api(self)
-	for item in output:
-		title, link = item[1], item[0]
-		self.output(title)
-		self.output(f"\t{link}", 'G')
+	self.search_engine_results(module_api(self))

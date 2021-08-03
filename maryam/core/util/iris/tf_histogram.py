@@ -12,8 +12,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import pandas as pd
-import matplotlib.pyplot as plt
 import re
 import os
 from collections import Counter
@@ -48,6 +46,9 @@ class main:
 		return bow.most_common(last)
 
 	def plot_histogram(self, title, last, should_show=False):
+		import pandas as pd
+		import matplotlib.pyplot as plt
+
 		most_common = self._counter(last)
 		clean_tweets_no_urls = pd.DataFrame(most_common,
 						columns=['words', 'count'])

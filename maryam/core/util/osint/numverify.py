@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import re
 import hashlib
 import html
-from bs4 import BeautifulSoup as bs
 
 class main:
 
@@ -38,6 +37,8 @@ class main:
 			return hashlib.md5((self.num+self._suffix).encode()).hexdigest()
 
 		def run_crawl(self):
+			from bs4 import BeautifulSoup as bs
+
 			self.framework.verbose('Searching...')
 			self.num = re.sub(r'\+|\s', '', self.num);
 			try:

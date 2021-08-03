@@ -40,6 +40,20 @@ class main:
 		cite = f"{host}{path}"
 		return cite
 
+	def simple_merge(results):
+		engines_len = len(results)
+		merged = []
+
+		for i in range(len(min(results, key=len))):
+			for e in range(engines_len):
+				merged.append(results[e%engines_len].pop(0))
+
+		for i in results:
+			for j in i:
+				merged.append(j)
+
+		return merged
+
 	def compute_count_consensus( 
 			e: dict(type=list, help='list of search engines sorted by quality'),
 			l: dict(type=int, help='number of results')) -> 'a list of numbers':
