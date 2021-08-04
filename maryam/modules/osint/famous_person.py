@@ -68,8 +68,8 @@ def module_api(self, depth=0):
 
 	google_run = self.google(fullname, count=10)
 	google_run.run_crawl()
-	google_results = google_run.results_original
-	card = google_run.google_card_original
+	google_results = google_run.results
+	card = google_run.google_card
 	wiki = self.wikipedia(fullname, 5)
 	wiki.run_crawl()
 	links_with_title = wiki.links_with_title

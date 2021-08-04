@@ -22,10 +22,10 @@ class main:
 			self._engine_q = [
 					self.framework.google,
 					self.framework.duckduckgo,
-					self.framework.startpage,
 					self.framework.bing,
-					self.framework.dogpile,
 					self.framework.millionshort,
+					self.framework.startpage,
+					self.framework.dogpile,
 					self.framework.qwant,
 					self.framework.yandex,
 					self.framework.yahoo,

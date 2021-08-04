@@ -33,7 +33,7 @@ def module_api(self):
 	query = self.options['query']
 	limit = self.options['limit']
 	count = self.options['count']
-	run = self.google(query, limit, count, 'legacy')
+	run = self.google(query, limit, count)
 	run.run_crawl()
 	results = run.results
 	output = {'results': results}
