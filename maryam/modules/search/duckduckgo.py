@@ -36,4 +36,5 @@ def module_api(self):
 	return output
 
 def module_run(self):
-	self.search_engine_results(module_api(self))
+	output = module_api(self)
+	self.search_engine_results(output)
