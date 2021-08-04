@@ -59,7 +59,7 @@ class main:
 			if 'limit' in sig.parameters and 'count' in sig.parameters:
 				instance = engine(q, limit=limit, count=count)
 			else:
-				instance = engine(q, limit)
+				instance = engine(q, count)
 
 			instance.run_crawl()
 
