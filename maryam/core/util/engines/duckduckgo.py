@@ -16,7 +16,7 @@ import re
 
 class main:
 
-	def __init__(self, q, limit=1, count=10):
+	def __init__(self, q, count=10):
 		""" duckduckgo.com search engine
 
 			q          : Query for search
@@ -26,7 +26,6 @@ class main:
 		self.framework = main.framework
 		self.q = q
 		self._pages = ''
-		self.limit = limit + 1
 		self.num = count
 		self._links = []
 		self._d_js_results = []
@@ -45,51 +44,10 @@ class main:
 			]
 		}
 
-	def scrape_run_crawl(self):
-		url = 'https://lite.duckduckgo.com/lite/'
-		payload = {'q': self.q, 's': 0, 'o': 'json', 'dc': '', 'api': '/d.js', 'kl': 'wt-wt'}	
-		page = 1
-		while True:
-			self.framework.verbose(f"[DUCKDUCKGO] Searching in {page} page...", end='\r')
-			try:
-				req = self.framework.request(
-						url=url,
-						method='POST',
-						params=payload,
-						allow_redirects=False)
-			except:
-				self.framework.error('ConnectionError', 'util/duckduckgo', 'run_crawl')
-				return
-			if req.status_code == 403:
-				self.framework.error('403 Forbidden (Too many requests.)', 'util/duckduckgo', 'run_crawl')
-				self.framework.error('DuckDuckGo is missed!', 'util/duckduckgo', 'run_crawl')
-				break
-			self._pages += req.text
-			# setting next page offset
-			if payload['s'] == 0:
-				# num of result per page
-				payload['s'] = self.num
-			else:
-				payload['s'] += self.num
-			# next page start
-			payload['dc'] = payload['s'] + 1 
-			
-			page += 1
-			if page > self.limit:
-				break
-		links = self.framework.page_parse(self._pages).findall(r'rel="nofollow" href="([^"]+)" class=\'result-link\'>')
-		for link in links:
-			cond1 = 'duckduckgo.com' not in link.lower()
-			cond2 = '/lite/?' not in link.lower()
-			cond3 = "://" in link
-			if cond1 and cond2 and cond3:
-				self._links.append(self.framework.urlib(link).unquote_plus)
-
 	def run_crawl(self):
 		page = 1
 		set_page = lambda x: x * 30
 		payload = {'s': set_page(page), 'q': self.q, 'dc': 30, 'v': 'l', 'o': 'json'}
-		max_attempt = 0
 		duck_url = 'https://duckduckgo.com/html'
 		self._pages = ''
 		while True:
@@ -101,17 +59,15 @@ class main:
 			except Exception as e:
 				self.framework.error(f"ConnectionError: {e}", 'util/duckduckgo', 'run_crawl')
 				self.framework.error('DuckDuckGo is missed!', 'util/duckduckgo', 'run_crawl')
-				max_attempt += 1
-				if max_attempt == self.limit:
-					self.framework.error('d_js is missed!', 'util/duckduckgo', 'd_js_search')
-					break
 			else:
 				if req.status_code != 200:
 					self.framework.error(f"{req.status_code} Forbidden", 'util/duckduckgo', 'run_crawl')
 					self.framework.error('DuckDuckGo is missed!', 'util/duckduckgo', 'run_crawl')
 					break
+
 				text = req.text
 				self._pages += text
+
 				if page == 1:
 					vqd = re.search(r'"vqd" value="([\d\-]+)">', text)
 					if vqd:
@@ -125,10 +81,12 @@ class main:
 						pass
 					else:
 						pass
+
+				if page*30 >= self.num:
+					break
+
 				page += 1
 				payload['o'] = set_page(page)
-				if page >= self.limit:
-					break
 
 	@property
 	def results(self):
@@ -165,7 +123,6 @@ class main:
 	def links_with_title(self):
 		parser = self.framework.page_parse(self._pages)
 		parser.pclean
-		print("parser:", parser)
 		results = [{ 'link': a, 'title': b } for a,b in parser.findall(r'''rel="nofollow" href="([^"]+)" class='result-link'>([^<]+)</a''')]
 
 		return results
