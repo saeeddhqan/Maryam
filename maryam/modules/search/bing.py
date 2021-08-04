@@ -35,15 +35,10 @@ def module_api(self):
 	count = self.options['count']
 	run = self.bing(query, limit, count)
 	run.run_crawl()
-	links_with_title = run.links_with_title
-	output = {'results': links_with_title}
+	results = run.results
+	output = {'results': results}
 	self.save_gather(output, 'search/bing', query, output=self.options['output'])
 	return output
 
 def module_run(self):
-	output = module_api(self)
-	self.search_engine_results(output)
-	# for item in output['links']:
-	# 	link,title = item
-	# 	self.output(title)
-	# 	self.output(f"\t{link}", 'G')
+	self.search_engine_results(module_api(self))
