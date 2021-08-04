@@ -30,8 +30,8 @@ def module_api(self):
 	query = self.options['query']
 	limit = self.options['limit']
 	run = self.duckduckgo(query, limit)
-	run.d_js_run_crawl()
-	results = run.d_js_results
+	run.run_crawl()
+	results = run.results
 	output = {'results': results}
 	self.save_gather(output, 'search/d_js', query, output=self.options['output'])
 	return output
