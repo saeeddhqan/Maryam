@@ -22,7 +22,6 @@ class main:
 		"""
 		self.framework = main.framework
 		self.q = q
-		self.mode = mode
 		self.agent = 'Lynx/2.8.5rel.1 libwww-FM/2.15FC SSL-MM/1.4.1c OpenSSL/0.9.7e-dev'
 		self.xpath_name = {
 			'results': '//li[@class="b_algo"]',
@@ -111,7 +110,7 @@ class main:
 		if not xpath_results:
 			return results
 		root = xpath_results[self.xpath_name['results']]
-		for i in range(len(root[self.xpath_name['results_links']])):
+		for i in range(len(root[self.xpath_name['results_content_and_cite']])):
 			link = root[self.xpath_name['results_links']][i]
 			title = link.text_content()
 			a = link.get('href')
