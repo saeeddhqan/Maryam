@@ -45,7 +45,7 @@ class main:
 				   'Connection': 'keep-alive', 'Cookie': 'JSESSIONID=6120E7C52197190DE5126DCBF47D38B0', 
 				   'Upgrade-Insecure-Requests': '1', 'Cache-Control': 'max-age=0'}
 		while True:
-			self.framework.verbose(f"[QWANT] Searching in {page} page...")
+			self.framework.verbose(f"[QWANT] Searching in {page+1} page...")
 			try:
 				# req = self.framework.request(url=self.qwant, headers=headers, params=payload)
 				req = self.framework.request(url=self.qwant, params=payload)
@@ -100,12 +100,13 @@ class main:
 			for item in items:
 				inside_items = item.get('items')
 				for i in inside_items:
-					a = item['url']
+					print(i)
+					a = i['url']
 					result = {
-						't': item['title'],
+						't': i['title'],
 						'a': a,
 						'c': self.framework.meta_search_util().make_cite(a),
-						'd': item['desc'],
+						'd': '' if 'desc' not in i else i.get('desc'),
 					}
 					results.append(result)
 		return results
