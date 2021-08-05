@@ -15,10 +15,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class main:
 	# framework = None
-	def __init__(self, q, limit=1, count=10):
+	def __init__(self, q, count=10):
 		""" google.com search engine
 			q     : Query for search
-			limit : Number of pages
 			count : Number of results
 		"""
 		self.framework = main.framework
@@ -42,16 +41,18 @@ class main:
 		self.url = 'https://www.google.com/search'
 		self._pages = ''
 		self._first_page = ''
-		self.limit = limit + 1
 		self.count = count
 
 	def run_crawl(self):
 		page = 1
+		num = 10
 		set_page = lambda x: (x - 1) * self.count
-		payload = {'num': self.count, 'start': set_page(page), 'ie': 'utf-8', 'oe': 'utf-8', 'q': self.q, 'filter': '0'}
+		payload = {'num': num, 'start': set_page(page), 'ie': 'utf-8', 'oe': 'utf-8', 'q': self.q, 'filter': '0'}
 		max_attempt = 0
-		while True:
-			self.framework.verbose(f"[GOOGLE] Searching in {page} page...", end='\r')
+
+		for _ in range(self.count//num+1):
+			self.framework.verbose(f"[GOOGLE] Searching in page {page}...", end='\r')
+
 			try:
 				req = self.framework.request(
 					url=self.url,
@@ -60,10 +61,7 @@ class main:
 					allow_redirects=True)
 			except Exception as e:
 				self.framework.error(f"ConnectionError: {e}", 'util/google', 'run_crawl')
-				max_attempt += 1
-				if max_attempt == self.limit:
-					self.framework.error('Google is missed!', 'util/goolge', 'run_crawl')
-					break
+
 			else:
 				if req.status_code in (503, 429):
 					self.framework.error('Google CAPTCHA triggered.', 'util/google', 'run_crawl')
@@ -74,12 +72,13 @@ class main:
 					req = self.framework.request(url=redirect, allow_redirects=False)
 
 				self._pages += req.text
+
 				if page == 1:
 					self._first_page += req.text
+
 				page += 1
 				payload['start'] = set_page(page)
-				if page >= self.limit:
-					break
+
 	@property
 	def google_card(self):
 		card_xpath_name = {
@@ -168,6 +167,8 @@ class main:
 		if xpath_results:
 			root = xpath_results[self.xpath_name_original['results']]
 			for i in range(len(root[self.xpath_name_original['results_a']])):
+				if i > self.count:
+					break
 				result = {
 					't': root[self.xpath_name_original['results_title']][i].text_content(),
 					'a': root[self.xpath_name_original['results_a']][i].get('href'),
