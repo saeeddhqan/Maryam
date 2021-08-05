@@ -26,7 +26,7 @@ class main:
 		self.framework = main.framework
 		self.q = q
 		self._pages = ''
-		self.num = count
+		self.count = count
 		self._links = []
 		self._d_js_results = []
 		self._d_js_xpath_name = {}
@@ -45,12 +45,13 @@ class main:
 		}
 
 	def run_crawl(self):
+		num = 30
 		page = 1
-		set_page = lambda x: x * 30
-		payload = {'s': set_page(page), 'q': self.q, 'dc': 30, 'v': 'l', 'o': 'json'}
+		set_page = lambda x: x * num
+		payload = {'s': set_page(page), 'q': self.q, 'dc': num, 'v': 'l', 'o': 'json'}
 		duck_url = 'https://duckduckgo.com/html'
 		self._pages = ''
-		while True:
+		for _ in range(self.count//num):
 			self.framework.verbose(f"[DuckDuckGo] Searching in {page} page...", end='\r')
 			try:
 				req = self.framework.request(
@@ -82,9 +83,6 @@ class main:
 					else:
 						pass
 
-				if page*30 >= self.num:
-					break
-
 				page += 1
 				payload['o'] = set_page(page)
 
@@ -95,7 +93,7 @@ class main:
 		xpath_results = parser.html_fromstring(self.d_js_xpath)
 		root = xpath_results[self.d_js_xpath_name['results']]
 		for i in range(len(root[self.d_js_xpath_name['results_a']])):
-			if i == self.num:
+			if i > self.count:
 				break
 			a = root[self.d_js_xpath_name['results_a']][i]
 			try :
