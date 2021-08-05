@@ -40,17 +40,23 @@ class main:
 		}
 		self.limit = limit
 		self._pages = ''
-		self.metacrawler = 'https://metacrawler.com/serp'
+		self.metacrawler = 'https://www.metacrawler.com/serp'
 
 	def run_crawl(self):
 		page = 1
 		payload = {'q': self.q, 'page': 1}
+		headers = {
+			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) \
+					AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.1 Safari/605.1.15',
+			'Accept-Language': 'en-US,en;q=0.5'
+		}
 
 		while True:
 			self.framework.verbose(f"[METACRAWLER] Searching in {page} page...")
 			try:
-				req = self.framework.request(url=self.metacrawler, params=payload)
-			except:
+				req = self.framework.request(url=self.metacrawler, params=payload, headers=headers)
+			except Exception as err:
+				print(err)
 				self.framework.error('ConnectionError', 'util/engines/metacrawler', 'run_crawl')
 				self.framework.error('Metacrawler is missed!', 'util/engines/metacrawler', 'run_crawl')
 				break
@@ -84,14 +90,14 @@ class main:
 		if xpath_results:
 			root = xpath_results[self.xpath_name['results']]
 			for i in range(len(root[self.xpath_name['results_title_and_a']])):
-				t_and_a = root[self.xpath_name_original['results_title_and_a']][i]
+				t_and_a = root[self.xpath_name['results_title_and_a']][i]
 				a = t_and_a.get('href')
 				t = t_and_a.text_content()
 				result = {
 					't': t,
 					'a': a,
-					'c': root[self.xpath_name_original['results_cite']][i].text_content(),
-					'd': root[self.xpath_name_original['results_content']][i].text_content(),
+					'c': root[self.xpath_name['results_cite']][i].text_content(),
+					'd': root[self.xpath_name['results_content']][i].text_content(),
 				}
 				results.append(result)
 		return results
