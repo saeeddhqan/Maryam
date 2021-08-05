@@ -51,7 +51,7 @@ class main:
 		payload = {'s': set_page(page), 'q': self.q, 'dc': num, 'v': 'l', 'o': 'json'}
 		duck_url = 'https://duckduckgo.com/html'
 		self._pages = ''
-		for _ in range(self.count//num):
+		for _ in range(self.count//num+1):
 			self.framework.verbose(f"[DuckDuckGo] Searching in {page} page...", end='\r')
 			try:
 				req = self.framework.request(
