@@ -24,16 +24,15 @@ meta = {
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
-		('count', 50, False, 'Number of results per page(min=10, max=100, default=50)', '-c', 'store', int),
+		('count', 50, False, 'Number of results(min=10, max=100, default=50)', '-c', 'store', int),
 	),
 	'examples': ('bing -q <QUERY> -l 15 --output --api',)
 }
 
 def module_api(self):
 	query = self.options['query']
-	limit = self.options['limit']
 	count = self.options['count']
-	run = self.bing(query, limit, count)
+	run = self.bing(query, count)
 	run.run_crawl()
 	results = run.results
 	output = {'results': results}

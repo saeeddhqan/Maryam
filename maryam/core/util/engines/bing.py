@@ -14,10 +14,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 class main:
-	def __init__(self, q, limit=1, count=10):
+	def __init__(self, q, count=10):
 		""" bing.com search engine
 			q     : Query for search
-			limit : Number of pages
 			count : Number of results
 		"""
 		self.framework = main.framework
@@ -37,16 +36,15 @@ class main:
 		self.url = 'https://www.bing.com/search'
 		self._pages = ''
 		self._first_page = ''
-		self.limit = limit + 1
 		self.count = count
 
 	def run_crawl(self):
 		page = 1
-		set_page = lambda x: x*11
-		payload = {'count': self.count, 'first': set_page(page), 'form': 'QBLH', 'pq': self.q.lower(), 'q': self.q}
-		max_attempt = 0
-		while True:
-			self.framework.verbose(f"[BING] Searching in {page} page...", end='\r')
+		num = 11
+		set_page = lambda x: x*num
+		payload = {'count': num, 'first': set_page(page), 'form': 'QBLH', 'pq': self.q.lower(), 'q': self.q}
+		for _ in range(self.count//num+1):
+			self.framework.verbose(f"[BING] Searching in page {page}...", end='\r')
 			try:
 				req = self.framework.request(
 					url=self.url,
@@ -55,18 +53,16 @@ class main:
 					allow_redirects=True)
 			except Exception as e:
 				self.framework.error(f"ConnectionError: {e}", 'util/engines/bing', 'run_crawl')
-				max_attempt += 1
-				if max_attempt == self.limit:
-					self.framework.error('Bing is missed!', 'util/engines/bing', 'run_crawl')
-					break
+				self.framework.error('Bing is missed!', 'util/engines/bing', 'run_crawl')
 			else:
 				self._pages += req.text
 				if page == 1:
 					self._first_page += req.text
 				page += 1
 				payload['first'] = set_page(page)
-				if page >= self.limit or 'title="Next page"' not in req.text:
+				if 'title="Next page"' not in req.text:
 					break
+
 	# TODO: Finish it
 	@property
 	def bing_card(self):
@@ -111,6 +107,8 @@ class main:
 			return results
 		root = xpath_results[self.xpath_name['results']]
 		for i in range(len(root[self.xpath_name['results_content_and_cite']])):
+			if i > self.count:
+				break
 			link = root[self.xpath_name['results_links']][i]
 			title = link.text_content()
 			a = link.get('href')

@@ -70,6 +70,7 @@ def module_api(self):
 	searcher = self.safe_searcher()
 
 	COUNT_CONSENSUS = self.meta_search_util.compute_count_consensus(searcher._engine_q[:workers], count)
+	print("COUNT_CONSENSUS:", COUNT_CONSENSUS)
 	LIMIT_CONSENSUS = self.meta_search_util.compute_count_consensus(searcher._engine_q[:workers], limit)
 
 	thread(self, search, searcher, query, workers)
