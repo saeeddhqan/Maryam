@@ -45,7 +45,7 @@ class main:
 		}
 
 	def run_crawl(self):
-		num = 30
+		num = 50
 		page = 1
 		set_page = lambda x: x * num
 		payload = {'s': set_page(page), 'q': self.q, 'dc': num, 'v': 'l', 'o': 'json'}

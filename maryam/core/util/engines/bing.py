@@ -40,7 +40,7 @@ class main:
 
 	def run_crawl(self):
 		page = 1
-		num = 11
+		num = 50
 		set_page = lambda x: x*num
 		payload = {'count': num, 'first': set_page(page), 'form': 'QBLH', 'pq': self.q.lower(), 'q': self.q}
 		for _ in range(self.count//num+1):

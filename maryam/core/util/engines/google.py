@@ -45,7 +45,7 @@ class main:
 
 	def run_crawl(self):
 		page = 1
-		num = 10
+		num = 50
 		set_page = lambda x: (x - 1) * num
 		payload = {'num': num, 'start': set_page(page), 'ie': 'utf-8', 'oe': 'utf-8', 'q': self.q, 'filter': '0'}
 		max_attempt = 0
