@@ -17,26 +17,23 @@ import concurrent.futures
 meta = {
 	'name': 'Iris Meta Search Engine(experiment version)',
 	'author': 'Saeed, Kaushik',
-	'version': '0.2',
-	'description': 'Iris is a meta search engine.',
+	'version': '0.3',
+	'description': 'Iris is a built-in meta search engine.',
 	'comments': ('It should be note that this is a beta version and has lots of bugs!',),
 	'contributors': 'Aman, Dimitris, Divya, Vikas, Kunal',
-	'sources': ('google', 'yahoo', 'bing', 'etools', 'metacrawler', 'searx', 'dogpile'),
+	'sources': ('google', 'bing', 'duckduckgo', 'millionshort', 'etools'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
-		('engine_count', 3, False, 'Number of engines to use', '-e', 'store', int),
-		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
-		('count', 20, False, 'Number of results per page (default=20)', '-c', 'store', int),
 	),
-	'examples': ('iris -q <QUERY> -l 15 --output --api',)
+	'examples': ('iris -q <QUERY>',)
 }
-RESULTS = []
-COUNT_CONSENSUS = None
-LIMIT_CONSENSUS = None
 
-def thread(self, function, searcher, query, workers):
-	threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=workers)
-	futures = (threadpool.submit(function, self, searcher, query) for _ in range(workers))
+RESULTS = {}
+MAPPED = {'google': 100, 'bing': 100, 'duckduckgo': 30, 'millionshort': 10, 'yahoo': 100, 'carrot2': 100, 'searx': 100}
+
+def thread(self, function, query, limit, workers):
+	threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=len(workers))
+	futures = (threadpool.submit(function, self, x, query, limit) for x in workers)
 	for _ in concurrent.futures.as_completed(futures):
 		pass
 
@@ -50,32 +47,32 @@ def remove_dups(self, res):
 			new.append(i)
 	return new
 
-def search(self, searcher, q):
+def search(self, name, q, limit):
 	global RESULTS
-	engine = searcher._engine_q.pop(0)
-	result = searcher.search(
-		q,
-		engine=engine,
-		limit=LIMIT_CONSENSUS[engine] or 1,
-		count=COUNT_CONSENSUS[engine]
-	)
-	RESULTS.append(result)
+	count = MAPPED[name]
+	try:
+		engine = getattr(self, name)
+		q = q
+		varnames = engine.__init__.__code__.co_varnames
+		if 'limit' in varnames and 'count' in varnames:
+			attr = engine(q, limit, count)
+		elif 'limit' in varnames:
+			attr = engine(q, limit)
+		else:
+			attr = engine(q)
+		attr.run_crawl()
+		RESULTS[name] = attr.results
+	except Exception as e:
+		print(e)
 
 def module_api(self):
-	global COUNT_CONSENSUS, LIMIT_CONSENSUS, RESULTS
+	global RESULTS
 	query = self.options['query']
-	limit = self.options['limit']
-	count = self.options['count']
-	workers = self.options['engine_count']
-	searcher = self.safe_searcher()
-
-	COUNT_CONSENSUS = self.meta_search_util.compute_count_consensus(searcher._engine_q[:workers], count)
-	LIMIT_CONSENSUS = self.meta_search_util.compute_count_consensus(searcher._engine_q[:workers], limit)
-
-	thread(self, search, searcher, query, workers)
-
-	simple_merge = remove_dups(self, self.meta_search_util.simple_merge(RESULTS))
-	output = {'results': simple_merge}
+	engines = MAPPED.keys()
+	thread(self, search, query, 3, engines)
+	simple_merge = self.meta_search_util.simple_merge([RESULTS[x] for x in engines])
+	final_results = remove_dups(self, simple_merge)
+	output = {'results': final_results}
 	self.save_gather(output, 'iris/iris', query, output=self.options['output'])
 	return output
 

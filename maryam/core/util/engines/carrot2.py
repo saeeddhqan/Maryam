@@ -65,7 +65,6 @@ class main:
 		if resp:
 			merged_records = resp.get('mergedRecords')
 			for result in merged_records:
-				print(result)
 				results.append({
 					't': result['title'], 
 					'a': result['url'], 
