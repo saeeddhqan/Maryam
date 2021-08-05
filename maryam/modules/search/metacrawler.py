@@ -33,10 +33,10 @@ def module_api(self):
 	limit = self.options['limit']
 	run = self.metacrawler(query, limit)
 	run.run_crawl()
-	links = run.links
-	output = {'links': links}
+	results = run.results
+	output = {'results': results}
 	self.save_gather(output, 'search/metacrawler', query, output=self.options['output'])
 	return output
 
 def module_run(self):
-	self.alert_results(module_api(self))
+	self.search_engine_results(module_api(self))

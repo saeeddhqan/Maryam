@@ -32,18 +32,10 @@ def module_api(self):
 	limit = self.options['limit']
 	run = self.millionshort(query, limit)
 	run.run_crawl()
-	output = {'links': []}
-	links = run.links_with_title
-	for item in links:
-		output['links'].append([links[item], item.replace('<b>','').replace('</b>', '')])
-
+	results = run.results
+	output = {'results': results}
 	self.save_gather(output, 'search/millionshort', query, output=self.options['output'])
 	return output
 
 def module_run(self):
-	output = module_api(self)
-	for item in output['links']:
-		title, link = item[1], item[0]
-		self.output(title)
-		self.output(f"\t{link}", 'G')
-		print('')
+	self.search_engine_results(module_api(self))

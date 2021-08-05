@@ -32,35 +32,27 @@ class main:
 		self._json = []
 		self._links = []
 		self._links_with_title = []
-		self.qwant = 'qwant.com'
+		self.qwant = 'https://api.qwant.com/v3/search/web'
 
-	def run_crawl(self, method='webpages'):
-		policies = {'webpages': 'web',
-					'images': 'images',
-					'news': 'news',
-					'videos': 'videos'}
-
-		method = method.lower()
-		if method not in policies:
-			search_type = policies.get('webpages')
-		else:
-			search_type = policies[method]
+	def run_crawl(self):
+		page = 0
 		set_page = lambda x: x*10
-		urls = [f'https://api.{self.qwant}/api/search/{search_type}?q={self.q}&t=web&device=desktop&safesearch=1&uiv=4&count=10&offset={set_page(i)}' 
-					for i in range(self.limit)]
+		payload = {'q': self.q, 'offset': set_page(page), 'count': '10', 'safesearch': '0', 'device': 'desktop', 'locale': 'en_us'}
 		headers = {'Host': 'api.qwant.com', 
 				   'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0',
 				   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 
 				   'Accept-Language': 'en-US,en;q=0.5en-US,en;q=0.5', 'Accept-Encoding': 'gzip, deflate, br', 
 				   'Connection': 'keep-alive', 'Cookie': 'JSESSIONID=6120E7C52197190DE5126DCBF47D38B0', 
 				   'Upgrade-Insecure-Requests': '1', 'Cache-Control': 'max-age=0'}
-		for url in range(len(urls)):
-			self.framework.verbose(f"[QWANT] Searching in {url} page...")
+		while True:
+			self.framework.verbose(f"[QWANT] Searching in {page} page...")
 			try:
-				req = self.framework.request(url=urls[url], headers=headers)
+				# req = self.framework.request(url=self.qwant, headers=headers, params=payload)
+				req = self.framework.request(url=self.qwant, params=payload)
 			except Exception as e:
-				self.framework.error(f"ConnectionError {e}.", 'util/qwant', 'name_crawl')
-				self.framework.error('Qwant is missed!', 'util/qwant', 'name_crawl')
+				self.framework.error(f"ConnectionError {e}.", 'util/engines/qwant', 'name_crawl')
+				self.framework.error('Qwant is missed!', 'util/engines/qwant', 'name_crawl')
+				break
 			else:
 				if req.status_code == 429 and "I can't let you do that..." in req.text and '<div class="error-code">' in req.text:
 					self.framework.error('429 Too Many Requests')
@@ -72,8 +64,14 @@ class main:
 					self.framework.error('429 Too Many Requests')
 					return
 				else:
-					if req.json() == {"status": "error", "error": 22}:
+					if req.json() == {'status': 'error', 'data': {'error_code': 22}}:
 						self.framework.error('429 Too Many Requests')
+						return
+					else:
+						page += 1
+						if page == self.limit:
+							break
+						payload['offset'] = set_page(page)
 
 	@property
 	def pages(self):
@@ -85,20 +83,32 @@ class main:
 
 	@property
 	def links(self):
-		for page in self.json:
+		for page in self._json:
 			results = page.get('data', {}).get('result', {}).get('items', {})
 			self._links.extend([x.get('url') for x in results])
 		return self._links
 
 	@property
-	def links_with_title(self):
-		for page in self.json:
-			items = page.get('data', {}).get('result', {}).get('items', {})
-			if not items:
-				return []
+	def results(self):
+		results = []
+		for page in self._json:
+			items = page.get('data', {}).get('result', {})
+			if items:
+				items = items.get('items', {})
+				if items:
+					items = items.get('mainline', {})
 			for item in items:
-				self._links_with_title.append([item['title'].replace('<b>','').replace('</b>', ''), item['url']])
-		return self._links_with_title
+				inside_items = item.get('items')
+				for i in inside_items:
+					a = item['url']
+					result = {
+						't': item['title'],
+						'a': a,
+						'c': self.framework.meta_search_util().make_cite(a),
+						'd': item['desc'],
+					}
+					results.append(result)
+		return results
 
 	@property
 	def dns(self):

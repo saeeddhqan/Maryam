@@ -32,26 +32,43 @@ class main:
 		self._json = []
 		self._links = []
 		self._links_with_title = {}
-		self.millionshort = 'millionshort.com'
+		self.millionshort = 'https://millionshort.com/api/search'
 
 	def run_crawl(self):
-		payloads = {'keywords': self.q, 'remove': '0', 'offset': '0'}
-		baseurl = f"https://{self.millionshort}/api/search"
+		page = 1
 		set_page = lambda x: x*10
-		urls = [f'https://{self.millionshort}/api/search?keywords={self.q}&remove=0&offset={set_page(i)}'
-					for i in range(self.limit)]
-		for url in range(len(urls)):
-			self.framework.verbose(f"[MILLIONSHORT] Searching in {url} page...")
+		payload = {'keywords': self.q, 'remove': '0', 'offset': '0'}
+		headers = {
+			"Host": 'millionshort.com',
+			"User-Agent": 'Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0',
+			"Accept": 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+			"Accept-Language": 'en-US,en;q=0.5',
+			"Accept-Encoding": 'gzip, deflate, br',
+			"Connection": 'keep-alive',
+			"Cookie": 'connect.sid=s%3AVZd6oWjMPfegJTrCK6iVYs8p1S4q3Q-h.OC7iYFkDE5A2u6%2BsJkCa96q6ituwLnNDh0EjzEJhvNk',
+			"Upgrade-Insecure-Requests": '1',
+			"If-None-Match": 'W/"9fc-Kb1JjxDz/K4kA1S7nkbpkibKV94"',
+			"Cache-Control": 'max-age=0'
+		}
+		while True:
+			self.framework.verbose(f"[MILLIONSHORT] Searching in {page} page...")
 			try:
-				req = self.framework.request(url=urls[url])
-			except:
-				self.framework.error('ConnectionError')
+				req = self.framework.request(url=self.millionshort, params=payload, headers=headers)
+			except Exception as e:
+				self.framework.error(f"ConnectionError {e}.", 'util/engines/millionshort', 'name_crawl')
+				self.framework.error('millionshort is missed!', 'util/engines/millionshort', 'name_crawl')
+				break
 			else:
 				if 'captcha' in req.json():
-					self.framework.error('CaptchaError', 'util/millionshort', 'run_crawl')
+					self.framework.error('CaptchaError', 'util/engines/millionshort', 'run_crawl')
+					self.framework.error('millionshort is missed!', 'util/engines/millionshort', 'name_crawl')
 					return
-				self._pages += req.text
 				self._json.append(req.json())
+				self._pages += req.text
+				if page == self.limit:
+					break
+				page += 1
+				payload['offset'] = set_page(page)
 
 	@property
 	def pages(self):
@@ -63,20 +80,26 @@ class main:
 
 	@property
 	def links(self):
-		for page in self.json:
+		for page in self._json:
 			results = page.get('content', {}).get('webPages', {})
 			self._links.extend([x.get('displayUrl') for x in results])
 		return self._links
 
 	@property
-	def links_with_title(self):
-		json = self.json
-		if not json:
-			return {}
-		for page in self.json:
-			results = page.get('content', {}).get('webPages', {})
-			self._links_with_title.update({x.get('name'): x.get('displayUrl') for x in results})
-		return self._links_with_title
+	def results(self):
+		results = []
+		for page in self._json:
+			items = page.get('content', {}).get('webPages', {})
+			for item in items:
+				a = item['displayUrl']
+				result = {
+					't': item['name'],
+					'a': a,
+					'c': self.framework.meta_search_util().make_cite(a),
+					'd': item['snippet'],
+				}
+				results.append(result)
+		return results
 
 	@property
 	def dns(self):

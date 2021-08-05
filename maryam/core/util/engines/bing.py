@@ -111,20 +111,23 @@ class main:
 			return results
 		root = xpath_results[self.xpath_name['results']]
 		for i in range(len(root[self.xpath_name['results_content_and_cite']])):
-			link = root[self.xpath_name['results_links']][i]
-			title = link.text_content()
-			a = link.get('href')
-			c_and_c = root[self.xpath_name['results_content_and_cite']][i]
-			desc = c_and_c.xpath('.//p')[0].text_content()
-			cite = c_and_c.xpath('.//div[@class="b_attribution"]/cite')[0].text_content().strip()
-			cite = self.framework.meta_search_util().make_cite(cite)
-			result = {
-				't': title,
-				'a': a,
-				'c': cite,
-				'd': desc,
-			}
-			results.append(result)
+			try:
+				link = root[self.xpath_name['results_links']][i]
+				title = link.text_content()
+				a = link.get('href')
+				c_and_c = root[self.xpath_name['results_content_and_cite']][i]
+				desc = c_and_c.xpath('.//p')[0].text_content()
+				cite = c_and_c.xpath('.//div[@class="b_attribution"]/cite')[0].text_content().strip()
+				cite = self.framework.meta_search_util().make_cite(cite)
+				result = {
+					't': title,
+					'a': a,
+					'c': cite,
+					'd': desc,
+				}
+				results.append(result)
+			except:
+				pass
 		return results
 
 	@property
