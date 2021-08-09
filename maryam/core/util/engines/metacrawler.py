@@ -56,7 +56,6 @@ class main:
 			try:
 				req = self.framework.request(url=self.metacrawler, params=payload, headers=headers)
 			except Exception as err:
-				print(err)
 				self.framework.error('ConnectionError', 'util/engines/metacrawler', 'run_crawl')
 				self.framework.error('Metacrawler is missed!', 'util/engines/metacrawler', 'run_crawl')
 				break

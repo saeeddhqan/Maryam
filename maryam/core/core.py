@@ -191,7 +191,7 @@ class core(cmd.Cmd):
 		line = f'{prep}{Colors.B}{prefix}{getattr(Colors, color.upper())} {line}\033[m'
 		if not line.endswith(os.linesep) and linesep:
 			line += os.linesep
-		print(line, end=end)
+		print(line, end=end, flush=True)
 
 	def alert(self, line):
 		'''Formats and presents important output.'''

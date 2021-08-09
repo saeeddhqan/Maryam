@@ -100,7 +100,6 @@ class main:
 			for item in items:
 				inside_items = item.get('items')
 				for i in inside_items:
-					print(i)
 					a = i['url']
 					result = {
 						't': i['title'],
