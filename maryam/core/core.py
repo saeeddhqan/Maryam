@@ -733,29 +733,28 @@ class core(cmd.Cmd):
 			mod = self._loaded_modules[module]
 			file = mod.__file__
 			mod_version = mod.meta['version']
-			url = f"https://raw.githubusercontent.com/saeeddhqan/Maryam/master/modules/{'/'.join(file.split('/')[-2:])}"
-			try:
-				text = self.request(url).text
-				mod_remote_version = re.search(r"'version'\s+:\s+'([\d\.]+)'\s+,", text).group(1)
-			except Exception as e:
+			url = f"https://raw.githubusercontent.com/saeeddhqan/Maryam/master/maryam/modules/{'/'.join(file.split('/')[-2:])}"
+			text = self.request(url).text
+			mod_remote_version = re.search(r"'version'\s*:\s*'([\d\.]+)'\s*,", text)
+			if not mod_remote_version:
 				self.output(f"Update/check failed ({e}).", prep='\t')
 			else:
+				mod_remote_version = mod_remote_version.group(1)
 				if max(mod_version, mod_remote_version) == mod_remote_version\
 					and mod_version != mod_remote_version:
 					self.output(f"Remote version: {mod_remote_version}", prep='\t')
 					self.output(f"Local version: {mod_version}", prep='\t')
 					if not check:
-						try:
-							fopen = open(file, 'w')
+						fopen = self._is_readable(file, 'w')
+						if fopen:
 							fopen.write(text)
 							fopen.close()
-						except Exception as e:
-							self.output(f"Update/check failed ({e}).", prep='\t')
-							return
-						self.output(f"{module} has been updated to {mod_remote_version}.", prep='\t')
-						self.do_reload()
+							self.output(f"{module} has been updated to {mod_remote_version}.", prep='\t')
+						else:
+							self.output(f"Update/check failed.", prep='\t')
 				else:
 					self.output(f"{module} is up to date.", prep='\t')
+		self.do_reload()
 
 	# ////////////////////////////////
 	#             HELP              //
