@@ -22,9 +22,9 @@ meta = {
 	'sources': ('arxiv',),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
-		('limit', 15, False, 'Max result count (default=15)', '-l', 'store', int),
+		('limit', 1, False, 'Max page count (default=1)', '-l', 'store', int),
 	),
-	'examples': ('arxiv -q <QUERY> -l 15 --output',)
+	'examples': ('arxiv -q <QUERY> -l 2 --output',)
 }
 
 def module_api(self):

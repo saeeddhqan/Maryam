@@ -16,7 +16,7 @@ import re
 
 class main:
 
-	def __init__(self, q, count=10):
+	def __init__(self, q, limit=1):
 		""" duckduckgo.com search engine
 
 			q          : Query for search
@@ -26,7 +26,7 @@ class main:
 		self.framework = main.framework
 		self.q = q
 		self._pages = ''
-		self.num = count
+		self.limit = 1
 		self._links = []
 		self._d_js_results = []
 		self._d_js_xpath_name = {}
@@ -46,8 +46,8 @@ class main:
 
 	def run_crawl(self):
 		page = 1
-		set_page = lambda x: x * 30
-		payload = {'s': set_page(page), 'q': self.q, 'dc': 30, 'v': 'l', 'o': 'json'}
+		set_page = lambda x: (x - 1) * 10 + 1
+		payload = {'s': set_page(page), 'q': self.q, 'dc': 10, 'v': 'l', 'o': 'json'}
 		duck_url = 'https://duckduckgo.com/html'
 		self._pages = ''
 		while True:
@@ -69,11 +69,12 @@ class main:
 				self._pages += text
 
 				if page == 1:
-					vqd = re.search(r'"vqd" value="([\d\-]+)">', text)
+					vqd = re.search(r'"vqd" value="([\d\-]+)" />', text)
 					if vqd:
 						duck_url = f"https://links.duckduckgo.com/d.js"
 						payload['vqd'] = vqd.group(1)
 						payload['api'] = '/d.js'
+						payload['s'] = set_page(page)
 				else:
 					try:
 						self._d_js_results.extend(req.json()['results'])
@@ -82,11 +83,9 @@ class main:
 					else:
 						pass
 
-				if page*30 >= self.num:
-					break
-
 				page += 1
-				payload['o'] = set_page(page)
+				if page >= self.limit:
+					break
 
 	@property
 	def results(self):
@@ -95,8 +94,6 @@ class main:
 		xpath_results = parser.html_fromstring(self.d_js_xpath)
 		root = xpath_results[self.d_js_xpath_name['results']]
 		for i in range(len(root[self.d_js_xpath_name['results_a']])):
-			if i == self.num:
-				break
 			a = root[self.d_js_xpath_name['results_a']][i]
 			try :
 				results.append({
