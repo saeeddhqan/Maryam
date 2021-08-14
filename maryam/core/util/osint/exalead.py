@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class main:
 
-	def __init__(self, q, limit):
+	def __init__(self, q, limit=1):
 		""" exalead.com search engine
 
 			q         : Query for search
@@ -30,9 +30,9 @@ class main:
 		self.limit = limit
 
 	def run_crawl(self):
-		set_page = lambda x:x*10
+		set_page = lambda x: (x - 1) * 10 + 1
 		urls = [f"https://{self.exalead}/search/web/results/?q={self.q.replace(' ', '%20')}&elements_per_page=50&start_index={set_page(i)}" 
-					for i in range(self.limit+1)]
+					for i in range(1, self.limit+1)]
 		max_attempt = len(urls)
 		for url in range(max_attempt):
 			self.framework.debug(f"[EXALEAD] Searching in {url} page...")

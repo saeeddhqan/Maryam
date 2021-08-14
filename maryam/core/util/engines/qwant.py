@@ -35,8 +35,8 @@ class main:
 		self.qwant = 'https://api.qwant.com/v3/search/web'
 
 	def run_crawl(self):
-		page = 0
-		set_page = lambda x: x*10
+		page = 1
+		set_page = lambda x: (x - 1) * 10 + 1
 		payload = {'q': self.q, 'offset': set_page(page), 'count': '10', 'safesearch': '0', 'device': 'desktop', 'locale': 'en_us'}
 		headers = {'Host': 'api.qwant.com', 
 				   'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0',
@@ -68,9 +68,9 @@ class main:
 						self.framework.error('429 Too Many Requests')
 						return
 					else:
-						page += 1
 						if page == self.limit:
 							break
+						page += 1
 						payload['offset'] = set_page(page)
 
 	@property

@@ -42,7 +42,7 @@ class main:
 
 	def run_crawl(self):
 		page = 1
-		set_page = lambda x: x*11
+		set_page = lambda x: (x - 1) * 10 + 1
 		payload = {'count': self.count, 'first': set_page(page), 'form': 'QBLH', 'pq': self.q.lower(), 'q': self.q}
 		max_attempt = 0
 		while True:

@@ -36,7 +36,7 @@ class main:
 
 	def run_crawl(self):
 		page = 1
-		set_page = lambda x: x*10
+		set_page = lambda x: (x - 1) * 10 + 1
 		payload = {'keywords': self.q, 'remove': '0', 'offset': '0'}
 		headers = {
 			"Host": 'millionshort.com',
