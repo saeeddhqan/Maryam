@@ -17,8 +17,7 @@ import json
 from time import time
 from html import unescape
 
-
-BASEDIR = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
+from maryam.core.basedir import BASEDIR
 
 class main:
 
@@ -28,7 +27,7 @@ class main:
 		self.json = input_json
 
 	def remove_stopwords(self, text):
-		stops = open(os.path.join(BASEDIR, '../../', 'data', 'stopwords.csv')).read().split(',')
+		stops = open(os.path.join(BASEDIR, 'data', 'stopwords.csv')).read().split(',')
 		return [x for x in text if x not in stops]
 
 	def tokenize_and_stem(self, text):
@@ -83,6 +82,7 @@ class main:
 		self.framework.verbose('Clustering with KMeans')
 		inertias = []
 		fitted = []
+
 		for cluster_count in range(1,20):
 			km = KMeans(n_clusters=cluster_count)
 			km.fit(X)
