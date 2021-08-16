@@ -62,6 +62,26 @@ class main:
 				self.framework.error(f"invalid xpath: {xpath} or {parent}", 'util/page_parse', 'html_fromstring')
 		return results
 
+	def get_engine_results(self, xpaths, xpath_names):
+		xpath_results = self.html_fromstring(xpaths)
+		results = []
+		if xpath_results:
+			root = xpath_results[xpath_names['results']]
+			for i in range(len(root[xpath_names['results_a']])):
+				try:
+					result = {
+						't': root[xpath_names['results_title']][i].text_content().strip(),
+						'a': root[xpath_names['results_a']][i].get('href').strip(),
+						'c': root[xpath_names['results_cite']][i].text_content().strip(),
+						'd': root[xpath_names['results_content']][i].text_content().strip(),
+					}
+					results.append(result)
+				except:
+					pass
+			return results
+		else:
+			return {}
+
 	def dork_clean(self, host):
 		# Clear dork's fingerprints
 		host = re.sub(r"(['\"]+)|(%40|@)", '', host)

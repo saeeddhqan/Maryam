@@ -19,16 +19,16 @@ import datetime
 
 class main:
 
-	def __init__(self, q, limit=20, sortby='relevance', verbose=False):
+	def __init__(self, q, count=20, sortby='relevance', verbose=False):
 		""" Reddit search engine
 
 				q         : query for search
-				limit     : maximum result count
+				count     : maximum result count
 				verbose   : print entire json 
 		"""
 		self.framework = main.framework
 		self.q = q
-		self.limit = limit
+		self.count = count
 		self.sortby = sortby
 		self._json = {}
 		self._posts = []
@@ -43,7 +43,7 @@ class main:
 			't': 'all'
 		}
 
-		for _ in range(self.limit//25+1):
+		for _ in range(self.count//25+1):
 			try:
 				res = self.framework.request(
 						url, 
@@ -70,7 +70,7 @@ class main:
 	def results(self):
 		results = []
 		for count, post in enumerate(self._posts, 1):
-			if count > self.limit:
+			if count > self.count:
 				break
 
 			date = datetime.datetime.fromtimestamp(int(post['created'])//1000).strftime("%m/%d/%Y, %H:%M:%S")

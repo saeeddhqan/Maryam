@@ -21,7 +21,7 @@ meta = {
 	'description': 'Search tweets from twitter',
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
-		('limit', 15, False, 'Max result count (default=15)', '-l', 'store', int),
+		('count', 15, False, 'Max result count (default=15)', '-l', 'store', int),
 		('sortby', 'relevance', False, 'Sort resuts by (relevance|hot|top|new|comments)', '-s', 'store', str),
 		('verbose', False, False, 'Print all post details as json', '-v', 'store_true', bool),
 	),
@@ -32,11 +32,11 @@ meta = {
 
 def module_api(self):
 	query = self.options['query']
-	limit = self.options['limit']
+	count = self.options['count']
 	sortby = self.options['sortby']
 	verbose = self.options['verbose']
 
-	run = self.reddit(query, limit, sortby, verbose)
+	run = self.reddit(query, count, sortby, verbose)
 	run.run_crawl()
 
 	output = {'results': run.results}

@@ -19,20 +19,32 @@ import lxml
 
 class main:
 
-	def __init__(self, q, limit=15):
+	def __init__(self, q, count=15):
 		""" pubmed.ncbi.nlm.nih.gov search engine
 
 				q         : query for search
-				limit     : maximum result count
+				count     : maximum result count
 		"""
 		self.framework = main.framework
 		self.q = q
-		self.max = limit
+		self.max = count
 		self._rawhtml = ''
-		self._articles = []
-		self._links = []
-		self._results = []
 		self.pubmed = 'https://pubmed.ncbi.nlm.nih.gov'
+		self.xpath_names = {
+			'results': './/article',
+			'results_content':'.//div[@class="full-view-snippet"]',
+			'results_title':'.//a[@class="docsum-title"]',
+			'results_a': './/a[@class="docsum-title"]',
+			'results_cite': './/span[@class="docsum-authors full-authors"]'
+		}
+		self.xpaths = {
+			self.xpath_names['results']: [
+				self.xpath_names['results_content'],
+				self.xpath_names['results_title'],
+				self.xpath_names['results_a'],
+				self.xpath_names['results_cite']
+			]
+		}
 
 	def run_crawl(self):
 		self.framework.verbose('Searching the pubmed domain...')
@@ -46,34 +58,26 @@ class main:
 			self.framework.error(f"ConnectionError {e}.", 'util/pubmed', 'run_crawl')
 			self.framework.error('Pubmed is missed!', 'util/pubmed', 'run_crawl')
 			return
+
 		self._rawhtml += req.text
-		doc = lxml.html.document_fromstring(req.text)
-		self._articles = doc.findall('.//article')
 
 	@property
 	def raw(self):
 		return self._rawhtml
 
 	@property
-	def articles(self):
-		return self._articles
-
-	@property
 	def results(self):
-		findlink = lambda x: self.pubmed + x.find_class('docsum-title')[0].attrib['href']
-		findauthors = lambda x: x.find('.//span[@class="docsum-authors full-authors"]').text_content()
-		findtitle = lambda x: x.find_class('docsum-title')[0].text_content().strip()
-		findsummary = lambda x: x.find_class('full-view-snippet')[0].text_content().strip()
+		parser = self.framework.page_parse(self._rawhtml)
+		results = parser.get_engine_results(self.xpaths, self.xpath_names)
 
-		for count,article in enumerate(self._articles):
-			if count==self.max:
+		for count,article in enumerate(results):
+			if count == self.max:
 				break
-			d = findsummary(article)
 			self._results.append({
-				't': findtitle(article),
-				'a': findlink(article),
-				'c': findauthors(article),
-				'd': d if len(d)>0 else 'No abstract available'
+				't': article['t'],
+				'a': self.pubmed + article['a'],
+				'c': article['c'],
+				'd': article['d'] if len(article['d']) > 0 else 'No abstract available'
 				})
 
 		return self._results

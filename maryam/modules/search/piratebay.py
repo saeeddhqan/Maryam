@@ -22,15 +22,15 @@ meta = {
 	'sources': ('piratebay',),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
-		('limit', 15, False, 'Max result count (default=15)', '-l', 'store', int),
+		('count', 15, False, 'Max result count (default=15)', '-c', 'store', int),
 	),
 	'examples': ('piratebay -q <QUERY> -l 15 --output',)
 }
 
 def module_api(self):
 	query = self.options['query']
-	limit = self.options['limit']
-	run = self.piratebay(query, limit)
+	count = self.options['count']
+	run = self.piratebay(query, count)
 	run.run_crawl()
 	output = {'results': []}
 	links = run.results

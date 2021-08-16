@@ -58,8 +58,12 @@ class main:
 			sig = signature(engine.__init__)
 			if 'limit' in sig.parameters and 'count' in sig.parameters:
 				instance = engine(q, limit=limit, count=count)
+			elif 'limit' in sig.parameters:
+				instance = engine(q, limit=limit)
+			elif 'count' in sig.parameters:
+				instance = engine(q, count=count)
 			else:
-				instance = engine(q, count)
+				instance = engine(q)
 
 			instance.run_crawl()
 

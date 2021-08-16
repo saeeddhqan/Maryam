@@ -163,18 +163,7 @@ class main:
 	@property
 	def results(self):
 		parser = self.framework.page_parse(self._pages)
-		xpath_results = parser.html_fromstring(self.xpath_original)
-		results = []
-		if xpath_results:
-			root = xpath_results[self.xpath_name_original['results']]
-			for i in range(len(root[self.xpath_name_original['results_a']])):
-				result = {
-					't': root[self.xpath_name_original['results_title']][i].text_content(),
-					'a': root[self.xpath_name_original['results_a']][i].get('href'),
-					'c': root[self.xpath_name_original['results_cite']][i].text_content(),
-					'd': root[self.xpath_name_original['results_content']][i].text_content(),
-				}
-				results.append(result)
+		results = parser.get_engine_results(self.xpath_original, self.xpath_name_original)
 		return results
 
 	@property
