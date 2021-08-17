@@ -38,7 +38,7 @@ class main:
 		self.words = [x for x in self.words if x not in stops and x not in rest]
 
 	def _punc(self):
-		self.words = re.findall(r"[\w\-_#]+", self.docs)
+		self.words = re.findall(r"[\w\-_#]{2,}", self.docs)
 
 	def _counter(self, last):
 		""" last: number of terms to show in plot """

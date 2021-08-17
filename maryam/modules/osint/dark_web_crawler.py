@@ -23,7 +23,6 @@ import json
 import shutil
 import socket
 import threading
-import pandas as pd
 from requests import get
 from time import sleep, time
 from base64 import b64decode
@@ -55,6 +54,8 @@ def _search(self, query, df):
 
 def calculate_rank(self, query, data):
 	"""Sort data by similarity to query"""
+	import pandas as pd
+
 	pages = list(data.values())
 	df = pd.DataFrame(pages, columns=['pages'])
 	df['pages'] = df['pages'].apply(lambda x:[x])

@@ -22,15 +22,15 @@ meta = {
 	'description': 'Search your query in the bing.com and show the results.',
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
-		('count', 50, False, 'Number of results per page(min=10, max=100, default=50)', '-c', 'store', int),
+		('limit', 50, False, 'Number of results per page(min=10, max=100, default=50)', '-l', 'store', int),
 	),
 	'examples': ('startpage -q <QUERY> -l 15 --output --api',)
 }
 
 def module_api(self):
 	query = self.options['query']
-	count = self.options['count']
-	run = self.startpage(query, count)
+	limit = self.options['limit']
+	run = self.startpage(query, limit)
 	run.run_crawl()
 	results = run.results
 	output = {'results': results}

@@ -29,6 +29,7 @@ class main:
 		self.q = q
 		self.max = count
 		self._rawhtml = ''
+		self._results = []
 		self.pubmed = 'https://pubmed.ncbi.nlm.nih.gov'
 		self.xpath_names = {
 			'results': './/article',
