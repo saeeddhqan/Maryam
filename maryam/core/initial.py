@@ -28,7 +28,7 @@ import traceback
 import concurrent.futures
 
 from maryam.core import basedir
-from multiprocessing import Process
+import multiprocessing as mp
 
 class turn_off:
 	def __enter__(self):
@@ -413,7 +413,10 @@ class initialize(core):
 
 	def run_tool(self, func, tool_name, args, output=None):
 		try:
-			proc = Process(target=getattr(self, func), args=(tool_name, args, output))
+			if sys.platform == 'darwin':
+				mp.set_start_method('fork')
+
+			proc = mp.Process(target=getattr(self, func), args=(tool_name, args, output))
 			proc.start()
 			proc.join()
 			if proc.is_alive():
