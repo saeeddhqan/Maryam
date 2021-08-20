@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/saeeddhqan/maryam.svg?branch=master)](https://travis-ci.com/saeeddhqan/maryam)
-![Version 2.2.6](https://img.shields.io/badge/Version-2.2.6-green.svg)
+![Version 2.2.6](https://img.shields.io/badge/Version-2.5.0-green.svg)
 ![GPLv3 License](https://img.shields.io/badge/License-GPLv3-green.svg)
 ![Python 3.8.x](https://img.shields.io/badge/Python-3.8.x-green.svg)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/4577/badge)](https://bestpractices.coreinfrastructure.org/projects/4577)
@@ -42,12 +42,13 @@ maryam -e web api 127.0.0.1 1313
 # Updates
 **Last Updates**
 
+ - clustering, meta search engine, dark web search
+ - Iris: the first beta version
  - Add famous_person
  - Speed up the core
  - Add setup.py and change arch
  - Web API: web command
- - Error stack and a better performance for dev
- - Update google and yahoo: new format
+
 
 
 # Contribution
@@ -59,7 +60,7 @@ The best help to write a new module is by checking the current modules.
 ## Roadmap
 
  - Write a complete metacrawler engine based on OSINT by using the current search engines
- - Add clustering algorithms
+ - Add clustering algorithms: Done
  - Web User Interface
 
 # Links
