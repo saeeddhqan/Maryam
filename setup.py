@@ -22,7 +22,7 @@ reqs_list = [x for x in open('requirements').read().split('\n') if x and not x.s
 
 setup(
 	name='maryam',
-	version='2.2.6-4',
+	version='2.5.0',
 	url='https://github.com/saeeddhqan/Maryam',
 	author='Saeed Dehqan',
 	author_email='saeed.dehghan@owasp.org',
