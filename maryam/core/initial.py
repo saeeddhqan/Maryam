@@ -413,7 +413,7 @@ class initialize(core):
 
 	def run_tool(self, func, tool_name, args, output=None):
 		try:
-			if sys.platform == 'darwin':
+			if sys.platform == 'darwin' and mp.get_start_method() != 'fork':
 				mp.set_start_method('fork')
 
 			proc = mp.Process(target=getattr(self, func), args=(tool_name, args, output))
