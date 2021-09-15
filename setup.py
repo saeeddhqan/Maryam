@@ -18,11 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from setuptools import setup, find_packages
 
-reqs_list = [x for x in open('requirements').read().split('\n') if x and not x.startswith('#')]
-
 setup(
 	name='maryam',
-	version='2.5.0',
+	version='2.5.0-1',
 	url='https://github.com/saeeddhqan/Maryam',
 	author='Saeed Dehqan',
 	author_email='saeed.dehghan@owasp.org',
@@ -35,7 +33,7 @@ setup(
 	long_description_content_type='text/markdown',
 	keywords=['OWASP', 'OSINT', 'search-engine', 'social-networks', 'Maryam'],
 	scripts=['bin/maryam'],
-	install_requires=reqs_list,
+	install_requires=['requests', 'cloudscraper', 'bs4', 'lxml', 'flask', 'vaderSentiment', 'plotly', 'nltk', 'matplotlib', 'pandas'],
 	classifiers=[
 		'Programming Language :: Python :: 3.8',
 		'Development Status :: 5 - Production/Stable',
