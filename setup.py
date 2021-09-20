@@ -33,7 +33,7 @@ setup(
 	long_description_content_type='text/markdown',
 	keywords=['OWASP', 'OSINT', 'search-engine', 'social-networks', 'Maryam'],
 	scripts=['bin/maryam'],
-	install_requires=['requests', 'cloudscraper', 'bs4', 'lxml', 'flask', 'vaderSentiment', 'plotly', 'nltk', 'matplotlib', 'pandas'],
+	install_requires=['requests', 'cloudscraper', 'bs4', 'lxml', 'flask', 'vaderSentiment', 'plotly', 'nltk', 'matplotlib', 'pandas', 'wordcloud'],
 	classifiers=[
 		'Programming Language :: Python :: 3.8',
 		'Development Status :: 5 - Production/Stable',
