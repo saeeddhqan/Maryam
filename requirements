@@ -8,3 +8,4 @@ plotly
 nltk
 matplotlib
 pandas
+wordcloud
