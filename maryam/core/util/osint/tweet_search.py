@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from requests.exceptions import Timeout
 import datetime
-import json
 
 class main:
 
@@ -85,12 +84,12 @@ class main:
 			}
 
 		# Giving every page 3 max attempts 
-		maxattempts = (self.max//20)*3
+		maxattempts = (self.max // 20) * 3
 		attempts = 0
 
 		page = 0
 
-		while 20*page <= self.max and attempts <= maxattempts:
+		while 20 * page <= self.max and attempts <= maxattempts:
 			try:
 				res = self.framework.request(
 					    search_url, 
@@ -110,10 +109,11 @@ class main:
 				return
 
 			instructions = res.json()['timeline']['instructions']
+			getCursorValue = lambda x: x['content']['operation']['cursor']['value'] 
 			if page == 1:
-				payload['cursor'] = instructions[0]['addEntries']['entries'][-1]['content']['operation']['cursor']['value']
+				payload['cursor'] = getCursorValue(instructions[0]['addEntries']['entries'][-1])
 			else:
-				payload['cursor'] = instructions[-1]['replaceEntry']['entry']['content']['operation']['cursor']['value']
+				payload['cursor'] = getCursorValue(instructions[-1]['replaceEntry']['entry'])
 
 			if date is None:
 				self._json.update(res.json()['globalObjects']['tweets'])
