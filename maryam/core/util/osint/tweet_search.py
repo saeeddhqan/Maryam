@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from requests.exceptions import Timeout
 import datetime
+import json
 
 class main:
 
@@ -79,20 +80,27 @@ class main:
 		payload = {
 			'simple_quoted_tweet': 'true',
 			'q': self.q,
-			'count': self.max, 
+			'count': 20,
 			'query_source': 'typed_query'
 			}
 
-		for _ in range(5):
+		# Giving every page 3 max attempts 
+		maxattempts = (self.max//20)*3
+		attempts = 0
+
+		page = 0
+
+		while 20*page <= self.max and attempts <= maxattempts:
 			try:
 				res = self.framework.request(
 					    search_url, 
 					    params=payload,
 					    headers=self.header,
 					    timeout=5)
-				break
+				page += 1
 
 			except Timeout:
+				attemps += 1
 				self.framework.error('Hit timeout on search endpoint, trying again', 
 					    'util/osint/twitter', 'run_crawl')
 
@@ -100,13 +108,21 @@ class main:
 				self.framework.error(f"ConnectionError {e}.", 'util/osint/twitter', 'run_crawl')
 				self.framework.error('Twitter is missed!', 'util/osint/twitter', 'run_crawl')
 				return
-		else:
-			return
 
-		if date is None:
-			self._json.update(res.json()['globalObjects']['tweets'])
-		else:
-			self._json[date] = res.json()['globalObjects']['tweets']
+			instructions = res.json()['timeline']['instructions']
+			if page == 1:
+				payload['cursor'] = instructions[0]['addEntries']['entries'][-1]['content']['operation']['cursor']['value']
+			else:
+				payload['cursor'] = instructions[-1]['replaceEntry']['entry']['content']['operation']['cursor']['value']
+
+			if date is None:
+				self._json.update(res.json()['globalObjects']['tweets'])
+			else:
+				if self._json.get(date) is None:
+					self._json[date] = res.json()['globalObjects']['tweets']
+				else:
+					self._json[date].update(res.json()['globalObjects']['tweets'])
+
 
 	def _datewise(self):
 		base = datetime.datetime.today()
