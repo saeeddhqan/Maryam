@@ -54,8 +54,8 @@ maryam -e web api 127.0.0.1 1313
 # Contribution
 
 Contributes are welcome! Here is a start guide: [Development Guide](https://github.com/saeeddhqan/maryam/wiki/Development-Guide)
-You can add a new search engine to the util classes or use current search engines to write a new module.
-The best help to write a new module is by checking the current modules.
+You can add a new search engine to the util classes or use the current search engines to write a new module.
+The best help to write a new module is checking the current modules.
 
 ## Roadmap
 
