@@ -24,7 +24,7 @@ meta = {
 		('param', None, False, 'Parameter to search for(e.g, www.google.com)', '-p', 'store', str),
 		('count', 50, False, 'Number of links per page(min=10, max=100, default=50)', '-c', 'store', int),
 	),
-	'examples': ('spyse -s whois-lookup -p www.google.com -t domain-name',),
+	'examples': ('spyse -s whois-lookup -p www.google.com',),
 }
 
 def module_api(self):
