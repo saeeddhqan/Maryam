@@ -18,29 +18,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from setuptools import setup, find_packages
 
-setup(
-	name='maryam',
-	version='2.5.0-1',
-	url='https://github.com/saeeddhqan/Maryam',
-	author='Saeed Dehqan',
-	author_email='saeed.dehghan@owasp.org',
-	packages=find_packages(),
-	include_package_data=True,
-	package_data={"maryam": ['data/*']},
-	license='GPL-V3',
-	description='OWASP Maryam is a modular/optional open-source framework based on OSINT and data gathering.',
-	long_description=open('README.md').read(),
-	long_description_content_type='text/markdown',
-	keywords=['OWASP', 'OSINT', 'search-engine', 'social-networks', 'Maryam'],
-	scripts=['bin/maryam'],
-	install_requires=['requests', 'cloudscraper', 'bs4', 'lxml', 'flask', 'vaderSentiment', 'plotly', 'nltk', 'matplotlib', 'pandas', 'wordcloud'],
-	classifiers=[
-		'Programming Language :: Python :: 3.8',
-		'Development Status :: 5 - Production/Stable',
-		'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
-		'Natural Language :: English',
-		'Operating System :: POSIX :: Linux',
-		'Environment :: Console',
-	]
-)
+requirements_file = open('requirements', 'r')
+requirements = requirements_file.readlines()
+for i, line in enumerate(requirements):
+    requirements[i] = line.strip()
 
+setup(
+    name='maryam',
+    version='2.5.0-1',
+    url='https://github.com/saeeddhqan/Maryam',
+    author='Saeed Dehqan',
+    author_email='saeed.dehghan@owasp.org',
+    packages=find_packages(),
+    include_package_data=True,
+    package_data={"maryam": ['data/*']},
+    license='GPL-V3',
+    description='OWASP Maryam is a modular/optional open-source framework based on OSINT and data gathering.',
+    long_description=open('README.md').read(),
+    long_description_content_type='text/markdown',
+    keywords=['OWASP', 'OSINT', 'search-engine', 'social-networks', 'Maryam'],
+    scripts=['bin/maryam'],
+    install_requires=requirements,
+    classifiers=[
+        'Programming Language :: Python :: 3.8',
+        'Development Status :: 5 - Production/Stable',
+        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+        'Natural Language :: English',
+        'Operating System :: POSIX :: Linux',
+        'Environment :: Console',
+    ]
+)
