@@ -1,4 +1,5 @@
 #!/bin/bash
+
 echo "Please run this as sudo"
 
 rm -rv /usr/local/lib/python3.8/dist-packages/maryam*
@@ -10,7 +11,8 @@ if [ "$user_choice" == 'y' ] || [ "$user_choice" == 'Y' ]; then
 
   curr_folder=$(pwd)
   echo "Removing $curr_folder"
-  rm -r "$curr_folder"
+  rm -rfv "$curr_folder"
+  exit 1
 
 else
     echo "Maryam Files and Directory kept intact"
