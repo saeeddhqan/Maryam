@@ -19,7 +19,7 @@ build-default:  ## Build package by build (recommended)
 
 uninstall:  ## Uninstall package
 	pip uninstall maryam
-
+	bash uninstall.sh
 
 upload-pypi:  ## Upload package to PyPI
 	python3 -m twine upload dist/*.tar.gz
