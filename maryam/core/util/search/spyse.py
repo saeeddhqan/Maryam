@@ -57,7 +57,7 @@ class main:
 			return
 
 		prefix = str(self.search_type).split('-')
-		self._data = getattr(self, f"{prefix[0]}_parse")(res)	# Calling parse method for each search type
+		getattr(self, f"{prefix[0]}_parse")(res)	# Calling parse method for each search type
 
 
 	def scrap(self):
@@ -66,7 +66,7 @@ class main:
 			"whois-lookup": f"{self.url}/api/data-v4/domain/{self.search_param}",
 		}
 
-		# JSON Dumps needed to keep double quotes from company-lookup data
+		# JSON Dumps needed to keep double quotes to scrap website for company-lookup data
 		param_data = {
 			"company-lookup" : json.dumps({"limit":20,"offset":0,"search_params":[
 					{
@@ -82,8 +82,7 @@ class main:
 			"whois-lookup": "get"
 		}
 		
-
-		if param_url[self.search_type] is None:
+		if self.search_type not in param_url:
 			self.framework.error(f"[SPYSE] No valid search method found! Only these methods are available at present {list(param_url.keys())}", 'util/search/spyse', 'scrap')
 			return 
 			
@@ -100,10 +99,10 @@ class main:
 
 
 	def whois_parse(self, api_data):
-		return api_data["data"]
+		self._data = api_data["data"]["items"]
 
 	def company_parse(self, api_data):
-		return api_data
+		self._data = api_data["data"]["items"]
 
 	@property
 	def data(self):

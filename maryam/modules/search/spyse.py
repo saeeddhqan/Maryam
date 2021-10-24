@@ -34,12 +34,12 @@ def module_api(self):
 
 	spyse = self.spyse(search_type, param, count)
 	spyse.search()
-	output = {"results": ""}
+	output = {"results": []}
 	if spyse.data:
 		output["results"] = spyse.data 
-
+	
 	self.save_gather(output, 'search/spyse', param, output=self.options.get('output'))	
 	return output
 
 def module_run(self):
-	self.search_engine_results(module_api(self))
+	self.alert_results(module_api(self))
