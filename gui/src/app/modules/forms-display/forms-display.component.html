@@ -1,0 +1,72 @@
+<table class="styled-table">
+  <thead>
+      <tr>
+          <th>Option Name</th>
+          <th>Default Value</th>
+          <th>Required</th>
+          <th>Description</th>
+          <th>Argument Type</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr *ngFor="let arr of params">
+        <td>{{arr[0]}}</td>
+        <td>{{arr[1]}}</td>
+        <td>{{arr[2]}}</td>
+        <td>{{arr[3]}}</td>
+        <td>{{arr[6]}}</td>
+      </tr>
+      <!--
+      <tr class="active-row">
+          <td>Melissa</td>
+          <td>5150</td>
+      </tr>
+      -->
+      
+  </tbody>
+</table>
+
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
+      <form [formGroup]="module_input_form" (ngSubmit)="onSubmit()">
+        <div class="container" *ngFor="let el of args_html_list">
+          <div class="form-group" *ngIf="el[0] < params_length&& params[el[0]][6] != 'boolean'">
+            <label for="username"> {{ params[el[0]][0] }} </label>
+            <input
+              type="text"
+              id="username"
+              [formControlName]="el[1]"
+              class="form-control">
+          </div>
+          <div class="radio" *ngIf="el[0] < params_length&& params[el[0]][6] === 'boolean'">
+            <label for="username"> {{ params[el[0]][0] }} </label>
+            <input
+              type="radio"
+              [formControlName]="el[2]"
+              class="form-control"
+              value = true> Use Argument
+            <input
+              type="radio"
+              [formControlName]="el[2]"
+              class="form-control"
+              value = false> Do Not Use Argument
+          </div>          
+        </div>
+        <button class="btn btn-primary" type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>
+<p *ngIf="flag==true"> The form was submitted. <br>
+  {{ args_list }}
+</p>
+
+<!--
+<p *ngFor="let arr of form_data">
+  {{ arr }}
+</p>
+
+<app-output-display [form_input_data]="form_data"></app-output-display>
+-->
+

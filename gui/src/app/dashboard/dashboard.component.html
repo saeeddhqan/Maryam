@@ -1,0 +1,3 @@
+<a
+*ngFor="let item of meta | keyvalue" 
+[routerLink]="['/modules/'] + item.key"> ModuleName: {{ item.key }}, Value: {{ item.value.name }} </a>
