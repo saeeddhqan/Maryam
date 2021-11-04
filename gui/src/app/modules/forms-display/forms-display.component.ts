@@ -72,7 +72,7 @@ export class FormsDisplayComponent implements OnInit {
     this.args_list = []
     this.command_string = ''
     this.display_string = []
-    this.test = ''
+    this.test = 'doom\tboom\ngoom'
     for (let index = 0; index < this.args_html_list.length; index++) {
       if (this.module_input_form.value[this.args_html_list[index][1]] != this.module_input_form.value[this.args_html_list[index][2]]){
         if (this.module_input_form.value[this.args_html_list[index][1]] != this.params[index][2] ) {

@@ -70,8 +70,12 @@
 </p>
 {{ args_list }}
 <app-output-display [final_arg_list]="args_list"  [flag]="flag"></app-output-display>
+<div [innerText]="test"></div>
 
 -->
 
+<div [innerText]="test"></div>
+
 <p>Results will be displayed below.</p>
-<p> {{ display_string }} </p>
+
+<div *ngIf="flag==true" class="display-styling" [innerText]="display_string"></div>

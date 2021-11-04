@@ -116,3 +116,17 @@ input[type=radio] {
   margin: 4px 2px;
   cursor: pointer;
 }
+
+.show-white-space {
+  white-space: pre-wrap;
+}
+
+.display-styling {
+  background-color: #ffffff;
+  border: 4px solid green;
+  color: black;
+  font-size: 20px;
+  text-decoration: none;
+  margin: 4px 2px;
+  width: 100%
+}
