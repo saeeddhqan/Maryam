@@ -34,3 +34,85 @@
   font-weight: bold;
   color: #009879;
 }
+
+label {
+  background-color: lightblue;
+  text-align: center;
+  font-family: verdana;
+  font-size: 20px;
+  padding: 10px 50px;
+  border: #001798;
+
+}
+
+input {
+  width: 100%;
+}
+
+input[type=text] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+}
+
+input[type=text] {
+  border: 4px solid purple;
+  border-radius: 4px;
+}
+
+input[type=text] {
+  background-color: #8dc7b2;
+  color: black;
+  font-size: 16px;
+}
+
+
+input[type=text]:focus {
+  border: 3px solid #555;
+  background-color: lightblue;
+} 
+
+textarea {
+  width: 100%;
+  height: 150px;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  resize: none;
+}
+
+
+input[type=button], input[type=submit], input[type=reset] {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-decoration: none;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+
+button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-decoration: none;
+  margin: 4px 2px;
+  cursor: pointer;
+  width: 100%
+}
+
+input[type=radio] {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-decoration: none;
+  margin: 4px 2px;
+  cursor: pointer;
+}

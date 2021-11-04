@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { module_meta } from 'src/app/common-resources/modules-meta';
+import { ApiRequestService } from '../api-request.service';
 
 @Component({
   selector: 'app-output-display',
@@ -8,19 +9,31 @@ import { module_meta } from 'src/app/common-resources/modules-meta';
 })
 export class OutputDisplayComponent implements OnInit {
   
-  @Input() form_input_data: [any, any, String][];
-  final_arg_list: string[];
-
-  constructor() { }
+  @Input() final_arg_list: string[];
+  @Input() flag: boolean;
+  display_string: any[];
+  command_string: string = ""
+  test: string
+  constructor(private service:ApiRequestService) { }
 
   ngOnInit(): void {
-    for (let element in this.form_input_data) {
-      if (typeof(element)=='boolean') {
-
+    /*
+    this.command_string = ''
+    this.test = 'test'
+    if (this.flag == true) {
+      this.test = 'Nani the fuck?'
+    }
+    if (this.flag == true) {
+      for (let index = 0; index < this.final_arg_list.length; index++) {
+        this.command_string = this.command_string + this.final_arg_list[index];
         
       }
-      
+      this.service.runCmd(this.command_string).subscribe(data=>{
+        this.display_string = data
+        this.test = 'inside runCMD'
+      })      
     }
+    */
   }
 
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Form, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { module_meta } from 'src/app/common-resources/modules-meta';
+import { ApiRequestService } from './api-request.service';
 
 @Component({
   selector: 'app-forms-display',
@@ -17,7 +18,7 @@ export class FormsDisplayComponent implements OnInit {
 
   params: any[] = module_meta[this.loaded_module]['options']
   params_length: number = this.params.length
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute, private service:ApiRequestService) { }
 
   module_input_form: FormGroup;
   form_data: [any, any, String][] ;
@@ -61,48 +62,44 @@ export class FormsDisplayComponent implements OnInit {
 
   temp: any;
   args_list: string[];
+  command_string: string;
+  display_string: any[];
+  test: string;
+  command_set: { [meta: string]: string }
   onSubmit() {
     this.flag = true
     this.form_data = []
     this.args_list = []
+    this.command_string = ''
+    this.display_string = []
+    this.test = ''
     for (let index = 0; index < this.args_html_list.length; index++) {
-      if (this.module_input_form.value[this.args_html_list[index][1]] != this.params[index][2] ) {
-        this.args_list.push(this.params[index][4])
-        if (
-          this.module_input_form.value[this.args_html_list[index][2]] != 'true' && 
-          this.module_input_form.value[this.args_html_list[index][2]] != 'false') {
-          this.args_list.push(this.module_input_form.value[this.args_html_list[index][1]])
+      if (this.module_input_form.value[this.args_html_list[index][1]] != this.module_input_form.value[this.args_html_list[index][2]]){
+        if (this.module_input_form.value[this.args_html_list[index][1]] != this.params[index][2] ) {
+          this.args_list.push(this.params[index][4])
+          if (
+            this.module_input_form.value[this.args_html_list[index][2]] != 'true' && 
+            this.module_input_form.value[this.args_html_list[index][2]] != 'false') {
+            this.args_list.push(this.module_input_form.value[this.args_html_list[index][1]])
+          }
         }
-        else {
-          this.args_list.push('')
+        if (this.module_input_form.value[this.args_html_list[index][2]] != this.params[index][2].toString()) {
+          if (this.args_list.indexOf(this.params[index][4]) == -1) {
+            this.args_list.push(this.params[index][4])
+          }
         }
-      }
-      else if (this.module_input_form.value[this.args_html_list[index][2]] != this.params[index][2] ) {
-        this.args_list.push(this.params[index][4])
-        if (
-          this.module_input_form.value[this.args_html_list[index][2]] != 'true' && 
-          this.module_input_form.value[this.args_html_list[index][2]] != 'false') {
-          this.args_list.push(this.module_input_form.value[this.args_html_list[index][2]])
-        }
-        else {
-          this.args_list.push('')
-        }
-      }
-
-
-
-
-
-
-
-
-      this.form_data.push([
-        this.module_input_form.value[this.args_html_list[index][1]],
-        this.module_input_form.value[this.args_html_list[index][2]],
-        this.params[index][4]
-      ])
+      } 
     }
-    
-  }
 
+    for (let index = 0; index < this.args_list.length; index++) {
+      this.command_string = this.command_string + " " + this.args_list[index];
+    }
+    this.command_set = {
+      "modulename": this.loaded_module,
+      "command": this.command_string
+    }
+    this.service.runCmd(this.command_set).subscribe(data=>{
+      this.display_string = data
+    }) 
+  }
 }

@@ -26,7 +26,7 @@
   </tbody>
 </table>
 
-<div class="container">
+<div class="container" *ngIf="flag==false">
   <div class="row">
     <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
       <form [formGroup]="module_input_form" (ngSubmit)="onSubmit()">
@@ -38,6 +38,7 @@
               id="username"
               [formControlName]="el[1]"
               class="form-control">
+              <br> <hr> 
           </div>
           <div class="radio" *ngIf="el[0] < params_length&& params[el[0]][6] === 'boolean'">
             <label for="username"> {{ params[el[0]][0] }} </label>
@@ -51,22 +52,26 @@
               [formControlName]="el[2]"
               class="form-control"
               value = false> Do Not Use Argument
-          </div>          
+              <br> <hr> 
+          </div> 
         </div>
-        <button class="btn btn-primary" type="submit">Submit</button>
+        <button class="button" type="submit">Submit</button>
       </form>
     </div>
   </div>
 </div>
-<p *ngIf="flag==true"> The form was submitted. <br>
-  {{ args_list }}
+<p *ngIf="flag==true"> The form has been submitted.
+  Please wait for results to come in.
 </p>
 
 <!--
 <p *ngFor="let arr of form_data">
   {{ arr }}
 </p>
+{{ args_list }}
+<app-output-display [final_arg_list]="args_list"  [flag]="flag"></app-output-display>
 
-<app-output-display [form_input_data]="form_data"></app-output-display>
 -->
 
+<p>Results will be displayed below.</p>
+<p> {{ display_string }} </p>
