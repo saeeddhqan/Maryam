@@ -122,10 +122,11 @@ input[type=radio] {
 }
 
 .display-styling {
-  background-color: #ffffff;
+  background-color: white;
   border: 4px solid green;
   color: black;
   font-size: 20px;
+  font-family: 'Courier New', Courier, monospace;
   text-decoration: none;
   margin: 4px 2px;
   width: 100%
