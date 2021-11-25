@@ -13,6 +13,7 @@ OWASP Maryam is a modular open-source framework based on OSINT and data gatherin
 ### Supported OS
  - Linux
  - FreeBSD
+ - Darwin
  - OSX
 
 ```bash
