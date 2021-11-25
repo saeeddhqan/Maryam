@@ -42,11 +42,11 @@ maryam -e web api 127.0.0.1 1313
 
 # Latest Updates
 
- - clustering, meta search engine, dark web search
+ - Clustering, Meta Search Engine, Dark-Web Search
  - Iris: the first beta version
- - Add famous_person
- - Speed up the core
- - Add setup.py and change arch
+ - Added famous_person
+ - Core speedup optimizations
+ - Added setup.py
  - Web API: web command
 
 
