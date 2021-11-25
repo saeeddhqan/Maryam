@@ -39,8 +39,7 @@ maryam -e set timeout ..
 maryam -e web api 127.0.0.1 1313
 ```
 
-# Updates
-**Last Updates**
+# Latest Updates
 
  - clustering, meta search engine, dark web search
  - Iris: the first beta version
