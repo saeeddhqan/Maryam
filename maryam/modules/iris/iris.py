@@ -17,7 +17,7 @@ import concurrent.futures
 meta = {
 	'name': 'Iris Meta Search Engine(experiment version)',
 	'author': 'Saeed, Kaushik',
-	'version': '0.3',
+	'version': '0.4',
 	'description': 'Iris is a built-in meta search engine.',
 	'comments': ('It should be note that this is a beta version and has lots of bugs!',),
 	'contributors': 'Aman, Dimitris, Divya, Vikas, Kunal',
@@ -70,7 +70,7 @@ def module_api(self):
 	query = self.options['query']
 	engines = MAPPED.keys()
 	thread(self, search, query, 3, engines)
-	simple_merge = self.meta_search_util.simple_merge([RESULTS[x] for x in engines])
+	simple_merge = self.meta_search_util.simple_merge([RESULTS[x] for x in engines if x in RESULTS])
 	final_results = remove_dups(self, simple_merge)
 	output = {'results': final_results}
 	self.save_gather(output, 'iris/iris', query, output=self.options['output'])
