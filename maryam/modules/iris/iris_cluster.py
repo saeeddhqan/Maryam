@@ -12,7 +12,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from json import dumps
 meta = {
     'name': 'Iris_Cluster',
     'author': 'Shaad',
@@ -29,24 +28,17 @@ meta = {
 def module_api(self):
     query = self.options['query']
     output = {}
+    
     # Executing Iris Module
     module_name = 'iris'
     iris_search_result = self.run_module_api(module_name)
-    if('error' in iris_search_result.keys()):
+    if 'error' in iris_search_result.keys():
         raise Exception(iris_search_result['error'])
-    output['iris_search_result'] = iris_search_result
+    output['iris_search_result'] = iris_search_result['output']
 
-    # Executing Cluster module
-    module_name = 'cluster'
-    cluster_user_options = {
-        'data': dumps(iris_search_result.get('output', None)),
-        'json': None
-    }
-    self.set_framework_options(module_name, cluster_user_options)
-    cluster_result = self.run_module_api(module_name, command_label='cluster -d <IRIS_SEARCH_RESULT>')
-    if('error' in cluster_result.keys()):
-        raise Exception(cluster_result['error'])
-    output['cluster_result'] = cluster_result
+    # Computing cluster results
+    clusterer = self.cluster(iris_search_result['output'])
+    output['cluster_result'] = {'json': clusterer.perform_clustering()}
 
     # Reset options in accordance with iris_cluster module
     self.options = {}

@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import flask
 from flask import request, jsonify
-from json import dumps
 
 framework = None
 app = flask.Flask('OWASP Maryam')
@@ -84,7 +83,7 @@ def api_modules():
 	
 	# Validating and Setting framework options	
 	framework_option_error= framework.set_framework_options(module_name, args_dict) 
-	if(framework_option_error):
+	if framework_option_error:
 		page['meta']['error'] = framework_option_error
 		return jsonify(page)
 

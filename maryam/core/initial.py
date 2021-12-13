@@ -176,7 +176,7 @@ class initialize(core):
 	
 	def set_framework_options(self, module_name, user_options):
 		if user_options == {}:
-			return f"No option specified."
+			return 'No option specified.'
 		
 		module = self._loaded_modules[module_name]
 		options = module.meta['options']
@@ -216,7 +216,7 @@ class initialize(core):
 				if option_value in true_options:
 					self.options[option_name] = True
 	
-	def run_module_api(self, module_name, command_label = None):
+	def run_module_api(self, module_name):
 		result = {}
 		try:
 			output = self.mod_api_run(module_name)
@@ -229,7 +229,7 @@ class initialize(core):
 			result['output'] = output
 			if result['output']['running_errors'] != []:
 				result['error'] = 'Runting error'
-		result['command'] = command_label or self.options
+		result['command'] = self.options
 		return result
 
 	def help_web(self):
