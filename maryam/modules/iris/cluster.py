@@ -31,9 +31,9 @@ def module_api(self):
 	input_data = self.options['data']
 	json_filepath = self.options['json']
 
-	if(not input_data and not json_filepath):
+	if not input_data and not json_filepath:
 		return 
-	elif((input_data and json_filepath) or input_data):
+	elif (input_data and json_filepath) or input_data:
 		data = loads(input_data)
 	else:
 		file_data = self._is_readable(json_filepath)
