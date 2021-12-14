@@ -174,64 +174,6 @@ class initialize(core):
 			self._global_options['api_mode'] = api_mode
 			self._mode = _mode
 	
-	def set_framework_options(self, module_name, user_options):
-		if user_options == {}:
-			return 'No option specified.'
-		
-		module = self._loaded_modules[module_name]
-		options = module.meta['options']
-		true_options = ('true', 'on', 'yes', '1', True)
-		self.options = {}
-
-		# Add options
-		if 'output' in user_options:
-			if user_options['output'] in true_options:
-				self.options['output'] = True
-			else:
-				self.options['output'] = False
-		else:
-			self.options['output'] = False
-
-		# Setting options
-		for option in options:
-			option_name = option[0]
-			default_option_value = option[1]
-			option_required = option[2] 
-			option_type = option[6]
-			option_name_short = option[4][1:]
-			option_action = option[5]
-			if option_name in user_options:
-				option_value = user_options[option_name]
-			elif option_name_short in user_options:
-				option_value = user_options[option_name_short]
-			else:
-				option_value = default_option_value
-
-			if option_action == 'store':
-				if option_value == default_option_value or isinstance(option_value, option_type):
-					self.options[option_name] = option_value
-				else:
-					return f"Need {option_type}. got invalid type for {option_name}."
-			else:
-				if option_value in true_options:
-					self.options[option_name] = True
-	
-	def run_module_api(self, module_name):
-		result = {}
-		try:
-			output = self.mod_api_run(module_name)
-		except Exception as e:
-			self.print_exception()
-			output = False
-		if output == False:
-			result['error'] = 'Something went wrong'
-		else:
-			result['output'] = output
-			if result['output']['running_errors'] != []:
-				result['error'] = 'Runting error'
-		result['command'] = self.options
-		return result
-
 	def help_web(self):
 		print(getattr(self, 'do_web').__doc__)
 		print('\tweb api => running api on 127.0.0.1:1313')

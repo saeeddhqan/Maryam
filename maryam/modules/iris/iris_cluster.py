@@ -29,28 +29,22 @@ def module_api(self):
     query = self.options['query']
     output = {}
     
-    # Executing Iris Module
-    module_name = 'iris'
-    iris_search_result = self.run_module_api(module_name)
-    if 'error' in iris_search_result.keys():
-        raise Exception(iris_search_result['error'])
-    output['iris_search_result'] = iris_search_result['output']
+    # Computing iris search result
+    self._mode = 'api_mode'
+    iris_search_result = self.opt_proc('iris', args=f'-q "{query}" --api', output='web_api')
+    output['iris_search_result'] = iris_search_result
 
     # Computing cluster results
-    clusterer = self.cluster(iris_search_result['output'])
+    clusterer = self.cluster(iris_search_result)
     output['cluster_result'] = {'json': clusterer.perform_clustering()}
-
-    # Reset options in accordance with iris_cluster module
-    self.options = {}
-    self.options['query'] = query
-
+   
     return output
 
 
 def module_run(self):
     output = module_api(self)
-    iris_search_result = output['iris_search_result']['output']
-    cluster_result = output['cluster_result']['output']['json']
+    iris_search_result = output['iris_search_result']
+    cluster_result = output['cluster_result']['json']
 
     print('IRIS SEARCH RESULT: ')
     self.search_engine_results(iris_search_result)

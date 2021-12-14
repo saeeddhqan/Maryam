@@ -82,17 +82,75 @@ def api_modules():
 		return jsonify(page)
 	
 	# Validating and Setting framework options	
-	framework_option_error= framework.set_framework_options(module_name, args_dict) 
+	framework_option_error = set_framework_options(module_name, args_dict) 
 	if framework_option_error:
 		page['meta']['error'] = framework_option_error
 		return jsonify(page)
 
 	# Executing Module
-	result = framework.run_module_api(module_name)
+	result = run_module_api(module_name)
 	page['meta']['error'] = result.get('error', None)
 	page['output'] = result.get('output', None)
 	page['meta']['command'] = result.get('command', None)
 	return jsonify(page)
+
+def set_framework_options(module_name, user_options):
+	if user_options == {}:
+		return 'No option specified.'
+	
+	module = framework._loaded_modules[module_name]
+	options = module.meta['options']
+	true_options = ('true', 'on', 'yes', '1', True)
+	framework.options = {}
+
+	# Add options
+	if 'output' in user_options:
+		if user_options['output'] in true_options:
+			framework.options['output'] = True
+		else:
+			framework.options['output'] = False
+	else:
+		framework.options['output'] = False
+
+	# Setting options
+	for option in options:
+		option_name = option[0]
+		default_option_value = option[1]
+		option_required = option[2] 
+		option_type = option[6]
+		option_name_short = option[4][1:]
+		option_action = option[5]
+		if option_name in user_options:
+			option_value = user_options[option_name]
+		elif option_name_short in user_options:
+			option_value = user_options[option_name_short]
+		else:
+			option_value = default_option_value
+
+		if option_action == 'store':
+			if option_value == default_option_value or isinstance(option_value, option_type):
+				framework.options[option_name] = option_value
+			else:
+				return f"Need {option_type}. got invalid type for {option_name}."
+		else:
+			if option_value in true_options:
+				framework.options[option_name] = True
+
+def run_module_api(module_name):
+	result = {}
+	try:
+		output = framework.mod_api_run(module_name)
+	except Exception as e:
+		framework.print_exception()
+		output = False
+	if output == False:
+		result['error'] = 'Something went wrong'
+	else:
+		result['output'] = output
+		if result['output']['running_errors'] != []:
+			result['error'] = 'Runting error'
+	result['command'] = framework.options
+	return result
 
 @app.errorhandler(404)
 def page_not_found(e):
