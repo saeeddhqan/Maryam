@@ -173,7 +173,7 @@ class initialize(core):
 			api.run_app(self, host, port)
 			self._global_options['api_mode'] = api_mode
 			self._mode = _mode
-	
+
 	def help_web(self):
 		print(getattr(self, 'do_web').__doc__)
 		print('\tweb api => running api on 127.0.0.1:1313')

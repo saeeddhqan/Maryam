@@ -38,6 +38,7 @@ def module_api(self):
     clusterer = self.cluster(iris_search_result)
     output['cluster_result'] = {'json': clusterer.perform_clustering()}
    
+    self.save_gather(output, 'iris/iris_cluster', query, output=self.options['output'])
     return output
 
 

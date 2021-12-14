@@ -22,23 +22,16 @@ meta = {
 	'required': ('sklearn', 'kneed', 'mlxtend', 'numpy', 'pandas'),
 	'options': (
 		('json', None, False, 'Json file that contains the data', '-j', 'store', str),
-		('data', None, False, 'Json object that contains the data', '-d', 'store', str),
 	),
 	'examples': ('cluster -j test.json')
 }
 	
 def module_api(self):
-	input_data = self.options['data']
-	json_filepath = self.options['json']
-
-	if not input_data and not json_filepath:
-		return 
-	elif (input_data and json_filepath) or input_data:
-		data = loads(input_data)
-	else:
-		file_data = self._is_readable(json_filepath)
-		data = loads(file_data.read())
-	
+	json = self.options['json']
+	file = self._is_readable(json)
+	if not file:
+		return
+	data = loads(file.read())
 	clusterer = self.cluster(data)
 	output = {'json': clusterer.perform_clustering()}
 	# self.save_gather(output, 'iris/cluster', json, output=self.options['output'])
