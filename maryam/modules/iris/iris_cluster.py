@@ -39,7 +39,7 @@ def module_api(self):
     clusterer = self.cluster(iris_search_result)
     output['cluster_result'] = {'json': clusterer.perform_clustering()}
 
-    # Resetting options for iris_search_module
+    # Resetting options for iris_cluster_module
     self.options = {}
     self.options['query'] = query
     self.options['output'] = output_option_value
