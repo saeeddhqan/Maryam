@@ -16,14 +16,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import flask
-from flask import request, jsonify
+from flask import request, jsonify, render_template
 
 framework = None
-app = flask.Flask('OWASP Maryam')
+app = flask.Flask('OWASP Maryam', template_folder='gui/templates', static_folder='gui/static')
+
+@app.route('/iris_cluster')
+def iris_cluster():
+	return render_template('index.html')
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
-	page = '<pre>current pages:<br>/api/modules => running modules<br>/api/framework => framework commands</pre>'
+	page = '<pre>current pages:<br>/api/modules => running modules<br>/api/framework => framework commands<br>/iris_cluster => search your query and get iris and cluster results</pre>'
 	return page
 
 
@@ -139,3 +143,4 @@ def run_app(core_obj, host='127.0.0.1', port=1313):
 	global framework
 	framework = core_obj
 	app.run(host=host, port=port)
+
