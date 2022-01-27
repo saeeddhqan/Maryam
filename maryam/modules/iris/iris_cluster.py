@@ -17,7 +17,7 @@ meta = {
 	'author': 'Shaad',
 	'version': '0.1',
 	'description': 'Get Iris Search result and clustered results for your query',
-	'required': ('kneed', 'mlxtend'),
+	'required': ('kneed', 'mlxtend, numpy, sklearn'),
 	'options': (
 			('query', None, True, 'Query string', '-q', 'store', str),
 		),
