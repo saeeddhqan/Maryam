@@ -95,7 +95,7 @@ class main:
 		best_fit_index = optimal_k-1
 		km = fitted[best_fit_index]
 
-		terms = vectorizer.get_feature_names()
+		terms = vectorizer.get_feature_names_out()
 		order_centroids = km.cluster_centers_.argsort()[:, ::-1]
 
 		summaries = [[] for _ in range(optimal_k)]
