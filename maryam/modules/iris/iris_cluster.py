@@ -38,16 +38,20 @@ def module_api(self):
 	output = {'results': clusterer.perform_clustering()}
 
 	self._mode = mode
-	self.save_gather(output, 'iris/iris_cluster', query, output=self.options['output'])
+	# Resetting options for iris_search_module
+	self.options = {}
+	self.options['query'] = query 
+	self.options['output'] = output_option_value
 
+	self.save_gather(output, 'iris/iris_cluster', query, output=self.options['output'])
 	return output
 
 def module_run(self):
-	output = module_api(self)
+	output = module_api(self)['results']
 
 	print('\n\nCLUSTER RESULT: ')
-	for index, title in enumerate(cluster_result):
+	for index, title in enumerate(output):
 	    print('\n')
 	    print(f"CLUSTER {index+1}")
 	    print(f"TITLE: {title}")
-	    print('  '+'\n  '.join(cluster_result[title]))
+	    print('  '+'\n  '.join(output[title]))
