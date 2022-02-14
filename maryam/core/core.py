@@ -24,7 +24,6 @@ import sys
 import traceback
 import requests
 from .util.helpers import rand_uagent
-from io import StringIO
 from textwrap import wrap
 
 class FrameworkException(Exception):

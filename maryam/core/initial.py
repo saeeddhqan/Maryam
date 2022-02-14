@@ -24,7 +24,6 @@ import shutil
 import sys
 import shlex
 import json
-import traceback
 import concurrent.futures
 
 from maryam.core import basedir
