@@ -39,9 +39,9 @@ def module_api(self):
 	scholar.run_crawl()
 	results = scholar.results
 
-	core_ac = self.core_ac(q, limit)
-	core_ac.run_crawl()
-	results.extend(core_ac.results)
+	# core_ac = self.core_ac(q, limit)
+	# core_ac.run_crawl()
+	# results.extend(core_ac.results)
 
 	arxiv = self.arxiv(q, limit)
 	arxiv.run_crawl()
