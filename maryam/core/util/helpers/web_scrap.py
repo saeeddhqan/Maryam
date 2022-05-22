@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import re
 import concurrent.futures
 
-# Web Scrap v5.1
+# Web Scraper v5.2
 
 class main:
 
@@ -27,7 +27,7 @@ class main:
 
 			url		  	 : First page address
 			debug	  	 : Show the result at moment
-			limit	  	 : Web scrap level(if it's 1 that's mean just search in first page)
+			limit	  	 : Web scraper level(if it's 1 that means just search in first page)
 			thread_count : Number of links for each lap
 		"""
 		self.framework = main.framework
@@ -320,7 +320,7 @@ class main:
 
 	@property
 	def emails(self):
-		return self._EMAILS
+		return self._EMAILS + self.framework.page_parse(self._PAGES.lower()).get_emails(self.parser.netroot.lower())
 
 	@property
 	def networks(self):
