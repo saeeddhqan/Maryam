@@ -33,7 +33,7 @@ class main:
 
 	def run_crawl(self):
 		set_page = lambda x: (x - 1) * 10 + 1
-		urls = [f"http://{self.baidu}/s?wd={self.q}&oq={self.q}&pn={set_page(i)}&ie=utf-8" for i in range(1, self.limit+1)]
+		urls = [f"https://{self.baidu}/s?wd={self.q}&oq={self.q}&pn={set_page(i)}&ie=utf-8" for i in range(1, self.limit+1)]
 		max_attempt = len(urls)
 		for url in range(len(urls)):
 			self.framework.verbose(f"[BAIDU] Searching in {url} page...")

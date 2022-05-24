@@ -17,7 +17,7 @@ meta = {
 	'author': 'Saeed',
 	'version': '1.5',
 	'description': 'Search to find Usernames in social networks.',
-	'sources': ('bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'startpage', 'urlscan'),
+	'sources': ('bing', 'google', 'yahoo', 'metacrawler', 'ask', 'startpage', 'urlscan'),
 	'options': (
 		('query', None, True, 'Company Name or Query', '-q', 'store', str),
 		('engines', 'google,bing', False, 'Search engine names. e.g `bing,google,..`', '-e', 'store', str),

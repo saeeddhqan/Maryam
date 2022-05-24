@@ -21,7 +21,7 @@ meta = {
 	'author': 'Saeed',
 	'version': '2.5',
 	'description': 'Search in the open-sources to find subdomans.',
-	'sources': ('securitytrails', 'bing', 'google', 'yahoo', 'yandex', 'metacrawler', 'ask', 'baidu', 'startpage',
+	'sources': ('securitytrails', 'bing', 'google', 'yahoo', 'metacrawler', 'ask', 'baidu', 'startpage',
 				'netcraft', 'threatcrowd', 'virustotal', 'otx', 'carrot2', 'crt',
 				'qwant', 'millionshort', 'threatminer', 'jldc', 'bufferover', 'rapiddns', 'certspotter',
 				'sublist3r', 'riddler', 'sitedossier', 'duckduckgo', 'dnsdumpster', 'yougetsignal', 'pastebin',

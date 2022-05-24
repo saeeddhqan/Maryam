@@ -22,7 +22,7 @@ class main:
 		"""
 		self.framework = main.framework
 		self.q = q
-		self.agent = 'Lynx/2.8.5rel.1 libwww-FM/2.15FC SSL-MM/1.4.1c OpenSSL/0.9.7e-dev'
+		self.agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:100.0) Gecko/20100101 Firefox/100.0'
 		self.xpath_name = {
 			'results': '//li[@class="b_algo"]',
 			'results_content_and_cite': './/div[@class="b_caption"]',

@@ -36,18 +36,11 @@ class main:
 
 	def run_crawl(self):
 		page = 1
-		set_page = lambda x: (x - 1) * 10 + 1
+		set_page = lambda x: (x-1)*10
 		payload = {'q': self.q, 'offset': set_page(page), 'count': '10', 'safesearch': '0', 'device': 'desktop', 'locale': 'en_us'}
-		headers = {'Host': 'api.qwant.com', 
-				   'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0',
-				   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 
-				   'Accept-Language': 'en-US,en;q=0.5en-US,en;q=0.5', 'Accept-Encoding': 'gzip, deflate, br', 
-				   'Connection': 'keep-alive', 'Cookie': 'JSESSIONID=6120E7C52197190DE5126DCBF47D38B0', 
-				   'Upgrade-Insecure-Requests': '1', 'Cache-Control': 'max-age=0'}
 		while True:
 			self.framework.verbose(f"[QWANT] Searching in {page+1} page...")
 			try:
-				# req = self.framework.request(url=self.qwant, headers=headers, params=payload)
 				req = self.framework.request(url=self.qwant, params=payload)
 			except Exception as e:
 				self.framework.error(f"ConnectionError {e}.", 'util/engines/qwant', 'name_crawl')

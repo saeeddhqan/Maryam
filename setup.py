@@ -25,7 +25,7 @@ for i, line in enumerate(requirements):
 
 setup(
 	name='maryam',
-	version='2.5.0-1',
+	version='2.5.1',
 	url='https://github.com/saeeddhqan/Maryam',
 	author='Saeed Dehqan',
 	author_email='saeed.dehghan@owasp.org',
@@ -40,7 +40,7 @@ setup(
 	scripts=['bin/maryam'],
 	install_requires=requirements,
 	classifiers=[
-		'Programming Language :: Python :: 3.8',
+		'Programming Language :: Python :: 3.10',
 		'Development Status :: 5 - Production/Stable',
 		'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
 		'Natural Language :: English',

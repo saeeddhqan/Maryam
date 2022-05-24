@@ -62,7 +62,7 @@ class main:
 			else:
 				text = self.framework.to_str(req.text)
 				if 'To continue, please respond below:' in text:
-					self.framework.error('CaptchaError', 'util/enginesmetacrawler', 'run_crawl')
+					self.framework.error('CaptchaError', 'util/engines/metacrawler', 'run_crawl')
 					self.framework.error('Metacrawler is missed!', 'util/engines/metacrawler', 'run_crawl')
 					break
 				self._pages += text
