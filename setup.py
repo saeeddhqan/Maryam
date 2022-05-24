@@ -25,7 +25,7 @@ for i, line in enumerate(requirements):
 
 setup(
 	name='maryam',
-	version='2.5.1',
+	version='2.5.1-0',
 	url='https://github.com/saeeddhqan/Maryam',
 	author='Saeed Dehqan',
 	author_email='saeed.dehghan@owasp.org',

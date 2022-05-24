@@ -284,9 +284,8 @@ class core(cmd.Cmd):
 			try:
 				data = json.loads(file.read())
 			except ValueError:
-				# file is empty or corrupt, nothing to load
 				data = {}
-		# update data
+
 		if module in data:
 			if target in data[module]:
 				if method == []:

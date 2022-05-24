@@ -30,7 +30,7 @@ maryam -e dns_search -d ibm.com -t 5 --max --api --form
 maryam -e youtube -q "<QUERY>"
 maryam -e google -q "<QUERY>"
 maryam -e dnsbrute -d domain.tld
-# Show the framework modules
+# Show framework modules
 maryam -e show modules
 # Set framework options. It'll save in the workspace.
 maryam -e set proxy ..
