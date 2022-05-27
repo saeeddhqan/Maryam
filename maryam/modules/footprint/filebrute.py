@@ -27,7 +27,7 @@ meta = {
 	'description': 'File/Directory brute force attack, supports cocurrency.',
 	'comments': ('The wordlist option can be an url.',),
 	'options': (
-		('domain', None, False, 'Domain name without https?://', '-d', 'store', str),
+		('domain', None, True, 'Domain name without https?://', '-d', 'store', str),
 		('count', None, False, 'Number of payloads len(max=count of payloads). default is max',
 							 '-c', 'store', int),
 		('wordlist', 'https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/RobotsDisallowed-Top500.txt', False, 
