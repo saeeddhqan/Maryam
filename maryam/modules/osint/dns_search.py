@@ -28,7 +28,7 @@ meta = {
 				'urlscan', 'gigablast', 'dogpile'),
 	'options': (
 		('domain', None,
-		 False, 'Domain name without https?://', '-d', 'store', str),
+		 True, 'Domain name without https?://', '-d', 'store', str),
 		('limit', 3, False, 'Search limit(number of pages, default=3)', '-l', 'store', int),
 		('count', 30, False, 'number of results per page(min=10, max=100, default=30)', '-c', 'store', int),
 		('engines', 'otx,securitytrails', False, 'Search engine names. e.g bing,google,...[otx by default]', '-e', 'store', str),

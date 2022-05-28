@@ -24,7 +24,7 @@ meta = {
 	'description': 'Running sentiment analysis on your data.',
 	'required': ('vaderSentiment',),
 	'options': (
-		('json', None, False, 'Json file that contains the data', '-j', 'store', str),
+		('json', None, True, 'Json file that contains the data', '-j', 'store', str),
 		('key', '', False, 'Data key. the value should be a list. None means the json file contains a list: ["..", ..]', '-k', 'store', str),
 		('thread', 5, False, 'The number of thread per each sell(default=10)', '-t', 'store', int),
 		('pipe', False, False, 'Dev only! pipe data from other modules(default=False)', '-p', 'store_true', bool),
