@@ -21,7 +21,7 @@ meta = {
 	'description': 'Cluster your data using kmeans and fp-growth.',
 	'required': ('sklearn', 'kneed', 'mlxtend', 'numpy', 'pandas'),
 	'options': (
-		('json', None, False, 'Json file that contains the data', '-j', 'store', str),
+		('json', None, True, 'Json file that contains the data', '-j', 'store', str),
 	),
 	'examples': ('cluster -j test.json')
 }
