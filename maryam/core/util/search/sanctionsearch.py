@@ -90,6 +90,8 @@ class main:
 						})
 
 		def id_crawl(self):
+			from bs4 import BeautifulSoup as bs
+
 			self.framework.verbose('Searching sanctionsearch...')
 			url = f"{self.sanctionsearch}Details.aspx?id={self._id}"
 			req = self.framework.request(url=url)
