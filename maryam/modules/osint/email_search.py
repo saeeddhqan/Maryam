@@ -18,7 +18,7 @@ meta = {
 	'version': '1.0',
 	'description': 'Search in open-sources to find emails.',
 	'sources': ('bing', 'pastebin', 'google', 'yahoo', 'metacrawler',
-				'baidu', 'startpage', 'qwant', 'duckduckgo', 'hunter', 'gigablast', 'github'),
+				'baidu', 'startpage', 'qwant', 'duckduckgo', 'hunter', 'gigablast', 'github', 'keyserver',),
 	'options': (
 		('query', None, True, 'Domain name or company name', '-q', 'store', str),
 		('limit', 3, False, 'Search limit(number of pages, default=3)', '-l', 'store', int),
@@ -70,11 +70,11 @@ def module_api(self):
 		'default': f'"%40{domain}"',
 		'ask': f"%40{domain}",
 		'hunter': f"{domain}&api_key={key}",
-		'github': domain
+		'github': domain,
+		'keyserver': domain
 	}
 	self.thread(search, self.options['thread'], engines, query, q_formats, limit, count, meta['sources'])
 	output = {'emails': list(set(EMAILS))}
-	
 	self.save_gather(output, 'osint/email_search', domain,\
 		output=self.options['output'])
 	return output

@@ -21,7 +21,7 @@ meta = {
 	'version': '0.4',
 	'description': 'onion_search is used to create the premier \
 	search engine for services residing on the Tor anonymity network.',
-	'sources': ('ahmia', 'onionland', 'darksearch'),
+	'sources': ('ahmia', 'onionland'),
 	'options': (
 		('query', None, True, 'Domain Name,\
 			Company Name, keyword, etc', '-q', 'store', str),
@@ -38,10 +38,6 @@ def module_api(self):
 	onionland = self.onionland(q, limit=5)
 	onionland.run_crawl()
 	links.extend(onionland.links)
-
-	darksearch = self.darksearch(q, limit=1)
-	darksearch.run_crawl()
-	links.extend(darksearch.links)
 
 	output['links'] = list(set(links))
 	self.save_gather(output, 'osint/onion_search', q, output=self.options['output'])

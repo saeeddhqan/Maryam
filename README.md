@@ -32,7 +32,7 @@ maryam -e google -q "<QUERY>"
 maryam -e dnsbrute -d domain.tld
 # Show framework modules
 maryam -e show modules
-# Set framework options. It'll save in the workspace.
+# Set framework options.
 maryam -e set proxy ..
 maryam -e set agent ..
 maryam -e set timeout ..
