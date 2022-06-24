@@ -1,11 +1,2 @@
-requests
-cloudscraper
-bs4
-lxml
-flask
-vaderSentiment
-plotly
-nltk
-matplotlib
-pandas
-wordcloud
+# Use trick from https://stackoverflow.com/questions/43658870/requirements-txt-vs-setup-py
+-e .

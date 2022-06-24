@@ -18,11 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from setuptools import setup, find_packages
 
-requirements_file = open('requirements', 'r')
-requirements = requirements_file.readlines()
-for i, line in enumerate(requirements):
-	requirements[i] = line.strip()
-
 setup(
 	name='maryam',
 	version='2.5.1-0',
@@ -38,7 +33,19 @@ setup(
 	long_description_content_type='text/markdown',
 	keywords=['OWASP', 'OSINT', 'search-engine', 'social-networks', 'Maryam'],
 	scripts=['bin/maryam'],
-	install_requires=requirements,
+	install_requires=[
+        'requests',
+        'cloudscraper',
+        'bs4',
+        'lxml',
+        'flask',
+        'vaderSentiment',
+        'plotly',
+        'nltk',
+        'matplotlib',
+        'pandas',
+        'wordcloud'
+    ],
 	classifiers=[
 		'Programming Language :: Python :: 3.10',
 		'Development Status :: 5 - Production/Stable',
