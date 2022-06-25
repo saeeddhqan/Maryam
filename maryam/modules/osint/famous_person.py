@@ -20,7 +20,7 @@ import json
 meta = {
 	'name': 'Famous Person Report',
 	'author': 'Kaushik',
-	'version': '0.1',
+	'version': '0.2',
 	'description': 'Finding information about celebrities.',
 	'sources': ('google', 'wikipedia', 'wikileaks', 'twitter', 'sanctionsearch'),
 	'options': (
