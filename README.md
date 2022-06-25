@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/saeeddhqan/maryam.svg?branch=master)](https://travis-ci.com/saeeddhqan/maryam)
+[![Build Status](https://app.travis-ci.com/saeeddhqan/Maryam.svg?branch=master)](https://app.travis-ci.com/github/saeeddhqan/Maryam)
 ![Version 2.5.1](https://img.shields.io/badge/Version-2.5.1-green.svg)
 ![GPLv3 License](https://img.shields.io/badge/License-GPLv3-green.svg)
 ![Python 3.10.x](https://img.shields.io/badge/Python-3.10.x-green.svg)
