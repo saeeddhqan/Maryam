@@ -21,8 +21,7 @@ meta = {
 	'name': 'Famous Person Report',
 	'author': 'Kaushik',
 	'version': '0.1',
-	'description': 'later',
-	'required': ('$search', '$iris'),
+	'description': 'Finding information about celebrities.',
 	'sources': ('google', 'wikipedia', 'wikileaks', 'twitter', 'sanctionsearch'),
 	'options': (
 		('name', '', False, 'Name', '-n', 'store', str),
@@ -66,10 +65,12 @@ def module_api(self, depth=0):
 		print()
 		self.output(f"Searching For: {fullname}")
 
+	# Receives information from the first page of google search
 	google_run = self.google(fullname, count=10)
 	google_run.run_crawl()
 	google_results = google_run.results
 	card = google_run.google_card
+
 	wiki = self.wikipedia(fullname, 5)
 	wiki.run_crawl()
 	links_with_title = wiki.links_with_title
@@ -106,12 +107,11 @@ def module_api(self, depth=0):
 		wiki_page = self.wikipedia(selected_pid, 1)
 		wiki_extract = wiki_page.page()['extract']
 		output['wikipedia'] = f"{selected_link} {selected_title}"
+		output['description_wiki'] = wiki_extract[:500] + '...'
 
-	if 'content' in card:
-		output['description'] = card['content'].replace('Description', 'Description: ')
-	else:
-		if have_we_wiki:
-			output['description'] = wiki_extract[:500] 
+	if 'content' in card and card['content']:
+		output['description'] = card['content']
+
 	if 'name' in card:
 		output['name'] = card['name']
 	else:

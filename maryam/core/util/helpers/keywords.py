@@ -40,7 +40,7 @@ class main:
 		self._zapmeta = 'https://www.zapmeta.com/suggest?q=<Q>'
 		self._searx = 'https://searx.be/autocompleter?q=<Q>'
 		self._peekier = {'url': 'https://search.peekier.com/suggestions', 'payload': {'q': '<Q>', 'region': ''}, 'method': 'POST'}
-		self._gigablast = 'http://gigablast.com/qs?rwp=0&lang=en&q=<Q>'
+		self._gigablast = 'https://gigablast.com/qs?rwp=0&lang=en&q=<Q>'
 
 	def run_crawl(self):
 		keys = {}
