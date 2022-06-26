@@ -115,12 +115,14 @@ class main:
 				card_xpath_social['card_href']
 			]
 		}
+		output = {'content': '', 'info': []}
+		if self._first_page == '':
+			return outputs
 		parser = self.framework.page_parse(self._first_page)
 		xpath_results = parser.html_fromstring(xpath)
 		xpath_results2 = parser.html_fromstring(xpath2)
 		xpath_results3 = parser.html_fromstring(xpath3)
 
-		output = {'content': '', 'info': []}
 
 		content = parser.html_fromstring('.//div[@class="kno-rdesc"]')
 		if content:
