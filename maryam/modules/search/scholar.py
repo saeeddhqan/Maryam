@@ -19,7 +19,7 @@ meta = {
 	'version': '0.1',
 	'description': 'Google Scholar is a freely accessible web search engine that \
 		indexes scholarly literature across an array of publishing formats and disciplines.',
-	'sources': ('scholar'),
+	'sources': ('scholar',),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 15, False, 'Max result count (default=15)', '-l', 'store', int),
