@@ -25,7 +25,7 @@ meta = {
 	'required': ('vaderSentiment',),
 	'options': (
 		('json', None, True, 'Json file that contains the data', '-j', 'store', str),
-		('key', '', False, 'Data key. the value should be a list. None means the json file contains a list: ["..", ..]', '-k', 'store', str),
+		('key', None, False, 'Data key. the value should be a list. None means the json file contains a list: ["..", ..]', '-k', 'store', str),
 		('thread', 5, False, 'The number of thread per each sell(default=10)', '-t', 'store', int),
 		('pipe', False, False, 'Dev only! pipe data from other modules(default=False)', '-p', 'store_true', bool),
 	),
@@ -69,10 +69,10 @@ def module_api(self):
 		if not file:
 			return
 		DATA = loads(file.read())
-		if key not in DATA:
+		if key not in DATA and key != None:
 			self.error("The key doesn't exists", 'module_api', 'iris/sentiment')
 			return
-		if key != '':
+		if key != None:
 			DATA = DATA[key]
 	LEN = len(DATA)
 	thread(self.options['thread'])
