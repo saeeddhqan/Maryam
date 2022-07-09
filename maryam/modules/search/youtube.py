@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 meta = {
 	'name': 'Youtube Search',
 	'author': 'Aman Rawat',
-	'version': '0.5',
+	'version': '0.6',
 	'description': 'Search your query in the youtube.com and show the results.',
 	'sources': ('google', 'carrot2', 'bing', 'yahoo', 'millionshort', 'qwant', 'duckduckgo'),
 	'options': (
@@ -50,10 +50,6 @@ def search(self, name, q, q_formats, limit, count):
 	attr.run_crawl()
 	LINKS += attr.links
 	PAGES += attr.pages
-	if name == 'google':
-		attr.q = q_formats['ch_q']
-		attr.run_crawl()
-		PAGES += attr.pages
 
 def module_api(self):
 	query = self.options['query']
@@ -62,14 +58,11 @@ def module_api(self):
 	engines = self.options['engine'].split(',')
 	output = {'videos': [], 'channels': [], 'usernames': []}
 	q_formats = {
-		'ch_q': f"site:youtube.com inurl:/c/ OR inurl:/user/ {query}",
 		'default_q': f"site:youtube.com {query}",
 		'qwant_q': f"site:www.youtube.com {query}",
 		'millionshort_q': f'site:www.youtube.com "{query}"',
 	}
-	# self.thread(search, self.options['thread'], engines, query, q_formats, limit, count, meta['sources'])
-	search(self, 'google', query, q_formats, limit, count)
-	# self.options['thread'], engines, query, q_formats, limit, count, meta['sources'])
+	self.thread(search, self.options['thread'], engines, query, q_formats, limit, count, meta['sources'])
 	
 	links = filter(lambda x: '/feed/' not in\
 		x and 'www.youtube.com' in x and ('/watch?' in x.lower() or '/playlist?' in x.lower()), list(set(LINKS)))

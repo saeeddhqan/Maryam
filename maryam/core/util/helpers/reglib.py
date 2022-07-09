@@ -37,22 +37,22 @@ class main:
 	ip_s = r"^\d+\.[\d]+\.[\d]+\.[\d]+$"
 	ip_m = r"\d+\.[\d]+\.[\d]+\.[\d]+"
 	social_network_ulinks = {
-		'Instagram': r"instagram\.com/[A-z_0-9.\-]{1,30}",
-		'Facebook': [r"facebook\.com/[A-z_0-9\-]{2,50}", r"fb\.com/[A-z_0-9\-]{2,50}"],
-		'Twitter': r"twitter\.com/[A-z_0-9\-.]{2,40}",
-		'Github': r"github\.com/[A-z0-9_-]{1,39}",
-		'Github site': [r"[A-z0-9_-]{1,39}\.github\.io", r"[A-z0-9_-]{1,39}\.github\.com"],
-		'Telegram': r"telegram\.me/[A-z_0-9]{5,32}",
-		'Youtube user': r"youtube\.com/user/[A-z_0-9\-\.]{2,100}",
-		'Youtube channel': [r"youtube\.com/c/[A-z_0-9\-\.]{2,100}", \
-				r"youtube\.com/channel/[A-z_0-9\-\.]{2,100}"],
-		'Linkedin company': r"linkedin\.com/company/[A-z_0-9\.\-]{3,50}",
-		'Linkedin individual': r"linkedin\.com/in/[A-z_0-9\.\-]{3,50}",
-		'Googleplus': r"\.?plus\.google\.com/[A-z0-9_\-.+]{3,255}",
-		'WordPress': r"[A-z0-9\-]+\.wordpress\.com",
+		'Instagram': r"instagram\.com/[\w.\-]{1,30}",
+		'Facebook': [r"facebook\.com/[\w\-]{2,50}", r"fb\.com/[\w\-]{2,50}"],
+		'Twitter': r"twitter\.com/[\w\-.]{2,40}",
+		'Github': r"github\.com/[\w\-]{1,39}",
+		'Github site': [r"[\w\-]{1,39}\.github\.io", r"[\w\-]{1,39}\.github\.com"],
+		'Telegram': r"telegram\.me/[\w]{5,32}",
+		'Youtube user': r"youtube\.com/user/[\w\-\.]{2,100}",
+		'Youtube channel': [r"youtube\.com/c/[\w\-.]{2,100}", \
+				r"youtube\.com/channel/[\w\-.]{2,100}"],
+		'Linkedin company': r"linkedin\.com/company/[\w\.\-]{3,50}",
+		'Linkedin individual': r"linkedin\.com/in/[\w\.\-]{3,50}",
+		'Googleplus': r"\.?plus\.google\.com/[\w\-.+]{3,255}",
+		'WordPress': r"[\w\-]+\.wordpress\.com",
 		'Reddit': r"reddit\.com/user/[A-z0-9_\-]{3,20}",
-		'Tumblr': r"[A-z0-9\-]{3,32}\.tumblr\.com",
-		'Blogger': r"[A-z0-9\-]{3,50}\.blogspot\.com"
+		'Tumblr': r"[\w\-]{3,32}\.tumblr\.com",
+		'Blogger': r"[\w\-]{3,50}\.blogspot\.com"
 		}
 
 	def search(self, regex, _type=list):
