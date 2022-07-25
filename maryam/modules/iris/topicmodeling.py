@@ -15,6 +15,7 @@ meta = {
 	'author': 'Hatma Suryotrisongko',
 	'version': '0.1.0',
 	'description': 'Topic Modeling Algorithms.',
+	'required': ('dask', 'scikit-learn', 'umap', 'bertopic', 'gensim'),
 	'options': (
 		('inputfile', None, True, 'Input file that contains the data', '-i', 'store', str),
 		('filetype', None, True, 'File type: csv/json', '-t', 'store', str),
@@ -30,7 +31,19 @@ def module_api(self):
 
 	run = self.topic(self.options['inputfile'], self.options['filetype'], self.options['showcharts'], self.options['verbose'])
 	run.run_sklearn_cluster_kmeans(self.options['pretrained_model'], self.options['showcharts'], self.options['verbose'])
-	run.run_topic_modeling_bertopic(self.options['pretrained_model'], self.options['verbose'])
+
+	results = run.run_topic_modeling_bertopic(self.options['pretrained_model'], self.options['verbose'])
+	print("\n\nResults = \n")
+	print( results )
+
+	output = {'results': results.to_json(orient="records") }
+	print("\n\nOutput = \n")
+	print( output )
+
+	inputfile = self.options['inputfile']
+	self.save_gather(output, 'iris/topicmodeling', inputfile, output=self.options['output'])
+
+	return output
 
 
 def module_run(self):

@@ -157,6 +157,7 @@ class main:
 
         topics, _ = topic_model.fit_transform(self.corpus)
         print(topic_model.get_topic_info()[:6])
+        output = topic_model.get_topic_info()
 
         corpus_labeled = pd.DataFrame({'ClusterLabel': topics, 'Sentence': self.corpus})
         if verbose == True:
@@ -170,4 +171,6 @@ class main:
             print("Cluster #" + str(i) + " = ")
             print(topic_model.get_topic(i))
             i += 1
+
+        return output
 
