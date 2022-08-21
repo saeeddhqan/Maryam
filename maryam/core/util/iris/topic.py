@@ -1,5 +1,5 @@
-# core/util/iris/topicmodeling.py
-# Based on Hatma Suryotrisongko's prototype = https://github.com/keamanansiber/Maryam/blob/master/notebooks/Prototype_4_TopicModeling_0_1_0_CsvFile_Options_StopwordsRemoval_27062022.ipynb
+# core/util/iris/topic.py
+# Hatma Suryotrisongko
 
 import pandas as pd
 import numpy as np
@@ -17,13 +17,15 @@ from sentence_transformers import SentenceTransformer
 
 from gensim.parsing.preprocessing import remove_stopwords, STOPWORDS
 
+from top2vec import Top2Vec
 
 class main:
 
-    def __init__(self, inputfile, filetype, showcharts, verbose):
+    def __init__(self, inputfile, filetype, keyword, showcharts, verbose):
 
         if verbose == True:
             print("\n\n DATASET = reading file : " + inputfile)
+            print("\n\n Search keyword = " + keyword)
 
         if filetype == "csv":
             # tmp = pd.read_csv(inputfile, header=None, low_memory=False)
@@ -174,3 +176,50 @@ class main:
 
         return output
 
+
+    def run_search_topics_top2vec(self, keyword, showcharts, verbose):
+
+        print("\n\n Search Topics Using Top2Vec (caution: might not work well for a small dataset)")
+        print("\n the Search Keyword = " + keyword)
+
+        pretrained_embedding_model = "universal-sentence-encoder-multilingual"
+        if verbose == True:
+            print("\n\n Pretrained Embedding Model")
+            # https://tfhub.dev/google/universal-sentence-encoder-multilingual/
+            # 16 languages (Arabic, Chinese-simplified, Chinese-traditional, English, French, German, Italian, Japanese, Korean, Dutch, Polish, Portuguese, Spanish, Thai, Turkish, Russian) text encoder.
+            print(pretrained_embedding_model)
+
+        model = Top2Vec(documents=self.corpus.tolist(), speed="learn", workers=8)
+        if verbose == True:
+            print("\n Model = ")
+            print(model)
+
+        if model.get_num_topics() < 5:
+            ntopics = model.get_num_topics()
+        else:
+            ntopics = 5
+
+        topic_words, word_scores, topic_nums = model.get_topics(ntopics)
+        print(topic_words)
+        print(word_scores)
+        print(topic_nums)
+
+        print("\n Semantic Search Documents by Keywords = ")
+        documents, document_scores, document_ids = model.search_documents_by_keywords(keywords=[keyword], num_docs=5)
+        for doc, score, doc_id in zip(documents, document_scores, document_ids):
+            print(f"Document: {doc_id}, Score: {score}")
+            print("-----------")
+            print(doc)
+            print("-----------")
+            print()
+
+        if showcharts == True:
+            print("\n\n Generate Word Clouds = ")
+            topic_words, word_scores, topic_scores, topic_nums = model.search_topics(keywords=[keyword], num_topics=ntopics)
+            for topic in topic_nums:
+                model.generate_topic_wordcloud(topic)
+
+        print("\n Similar Keywords = ")
+        words, word_scores = model.similar_words(keywords=[keyword], keywords_neg=[], num_words=20)
+        for word, score in zip(words, word_scores):
+            print(f"{word} {score}")
