@@ -42,22 +42,22 @@ def module_api(self):
 	run.run_sklearn_cluster_kmeans(self.options['pretrained_model'], self.options['showcharts'], self.options['verbose'])
 
 	results = run.run_topic_modeling_bertopic(self.options['pretrained_model'], self.options['verbose'])
-	print("\n\nResults = \n")
-	print( results )
+	self.output("\n\nResults = \n")
+	self.output( results )
 
 	output = {'results': results.to_json(orient="records") }
-	print("\n\nOutput = \n")
-	print( output )
 
 	inputfile = self.options['inputfile']
 	self.save_gather(output, 'iris/topicmodeling', inputfile, output=self.options['output'])
 
 	if self.options['keyword'] is not None:
-		print(" keyword = " + self.options['keyword'])
+		self.output(" keyword = " + self.options['keyword'])
 		run.run_search_topics_top2vec(self.options['keyword'], self.options['showcharts'], self.options['verbose'])
 
 	return output
 
 
 def module_run(self):
-	module_api(self)
+	output = module_api(self)
+	self.output("\n\nOutput = \n")
+	self.output( output )
