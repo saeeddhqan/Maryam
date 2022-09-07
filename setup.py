@@ -44,7 +44,16 @@ setup(
         'nltk',
         'matplotlib',
         'pandas',
-        'wordcloud'
+        'wordcloud',
+        'numpy',
+        'dask',
+        'scikit-learn',
+        'scipy',
+        'umap',
+        'bertopic',
+        'sentence_transformers',
+        'gensim',
+        'top2vec'
     ],
 	classifiers=[
 		'Programming Language :: Python :: 3.10',

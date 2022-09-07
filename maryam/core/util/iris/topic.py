@@ -3,25 +3,16 @@
 
 import pandas as pd
 import numpy as np
-import json
-import csv
-from dask import dataframe as dd
-
-from sklearn.cluster import KMeans
-import scipy
 import matplotlib.pyplot as plt
-import umap
-
-from bertopic import BERTopic
 from sentence_transformers import SentenceTransformer
-
-from gensim.parsing.preprocessing import remove_stopwords, STOPWORDS
-
-from top2vec import Top2Vec
 
 class main:
 
     def __init__(self, inputfile, filetype, keyword, showcharts, verbose):
+
+        from dask import dataframe as dd
+        import json
+        from gensim.parsing.preprocessing import remove_stopwords
 
         if verbose == True:
             print("\n\n DATASET = reading file : " + inputfile)
@@ -70,6 +61,10 @@ class main:
             plt.show()
 
     def run_sklearn_cluster_kmeans(self, selected_pretrained_model, showcharts, verbose):
+
+        from sklearn.cluster import KMeans
+        import scipy
+        import umap
 
         pretrained_model = selected_pretrained_model
         if verbose == True:
@@ -131,6 +126,8 @@ class main:
 
     def run_topic_modeling_bertopic(self, selected_pretrained_model, verbose):
 
+        from bertopic import BERTopic
+
         pretrained_model = selected_pretrained_model
         if verbose == True:
             print("\n\n Model selection")
@@ -178,6 +175,8 @@ class main:
 
 
     def run_search_topics_top2vec(self, keyword, showcharts, verbose):
+
+        from top2vec import Top2Vec
 
         print("\n\n Search Topics Using Top2Vec (caution: might not work well for a small dataset)")
         print("\n the Search Keyword = " + keyword)
