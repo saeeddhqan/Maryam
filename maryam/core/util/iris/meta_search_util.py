@@ -40,13 +40,24 @@ class main:
 		cite = f"{host}{path}"
 		return cite
 
-	def simple_merge(results):
+	def remove_dups(self, res):
+		urls = []
+		new = []
+		for i in res:
+			a = self.urlib(i['a'].lower()).sub_service()
+			if a not in urls:
+				urls.append(a)
+				new.append(i)
+		return new
+
+	def simple_merge(results) -> 'merging results based on quality of engines':
 		engines_len = len(results)
 		merged = []
 
 		for i in range(len(min(results, key=len))):
 			for e in range(engines_len):
 				merged.append(results[e%engines_len].pop(0))
+
 
 		for i in results:
 			for j in i:
@@ -57,13 +68,13 @@ class main:
 	def compute_count_consensus( 
 			e: dict(type=list, help='list of search engines sorted by quality'),
 			l: dict(type=int, help='number of results')) -> 'a list of numbers':
-		x=len(e)
-		o={}
+		x = len(e)
+		o = {}
 		for i in e:
-			o[i]=trunc(l/x)
-		l-=l-(l%x)
-		if l!=0:
-			if l<x:
+			o[i] = trunc(l/x)
+		l -= l - (l%x)
+		if l != 0:
+			if l < x:
 				for i in range(l):
-					o[e[i]]+=1
+					o[e[i]] += 1
 		return o

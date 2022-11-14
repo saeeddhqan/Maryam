@@ -19,7 +19,7 @@ meta = {
 	'author': 'Saeed, Kaushik',
 	'version': '0.4',
 	'description': 'Iris is a built-in meta search engine.',
-	'comments': ('It should be note that this is a beta version and has lots of bugs!',),
+	'comments': ('It should be note that this is a beta version and has many bugs!',),
 	'contributors': 'Aman, Dimitris, Divya, Vikas, Kunal',
 	'sources': ('google', 'bing', 'duckduckgo', 'millionshort', 'etools'),
 	'options': (
@@ -36,16 +36,6 @@ def thread(self, function, query, limit, workers):
 	futures = (threadpool.submit(function, self, x, query, limit) for x in workers)
 	for _ in concurrent.futures.as_completed(futures):
 		pass
-
-def remove_dups(self, res):
-	urls = []
-	new = []
-	for i in res:
-		a = self.urlib(i['a'].lower()).sub_service()
-		if a not in urls:
-			urls.append(a)
-			new.append(i)
-	return new
 
 def search(self, name, q, limit):
 	global RESULTS
@@ -71,7 +61,8 @@ def module_api(self):
 	engines = MAPPED.keys()
 	thread(self, search, query, 3, engines)
 	simple_merge = self.meta_search_util.simple_merge([RESULTS[x] for x in engines if x in RESULTS])
-	final_results = remove_dups(self, simple_merge)
+	# TODO: Removing duplicates should be done during merging
+	final_results = self.meta_search_util.remove_dups(self, simple_merge)
 	output = {'results': final_results}
 	self.save_gather(output, 'iris/iris', query, output=self.options['output'])
 	return output

@@ -18,46 +18,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class main:
 
-	def __init__(self, q, limit=2):
-		""" qwant.com search engine
+	def __init__(self, q, limit=1, count=50):
+		""" qwant.com image search engine
 
-			q 		  : Query for search
+			q 	  : Query for search
 			limit	  : Number of pages
+			count	  : Number of results
 		"""
 		self.framework = main.framework
 		self.q = q
-		self.limit = limit
+		self.limit = 10 if limit > 10 else limit
+		self.count = 50 if count > 50 else count
 		self._pages = ''
 		self._json = []
-		self._links = []
-		self._links_with_title = []
-		self.qwant = 'https://api.qwant.com/v3/search/web'
+		self.qwant = 'https://api.qwant.com/v3/search/images'
 
 	def run_crawl(self):
 		page = 1
 		set_page = lambda x: (x-1)*10
-		payload = {'q': self.q, 'offset': set_page(page), 'count': '10', 'safesearch': '0', 'device': 'desktop', 'locale': 'en_us'}
+		payload = {'t': 'images', 'q': self.q, 'offset': set_page(page), 'count': '10', \
+			'safesearch': '0', 'device': 'desktop', 'locale': 'en_GB', 'device': 'desktop'}
 		while True:
 			self.framework.verbose(f"[QWANT] Searching in {page+1} page...")
 			try:
 				req = self.framework.request(url=self.qwant, params=payload)
 			except Exception as e:
-				self.framework.error(f"ConnectionError {e}.", 'util/engines/qwant', 'util/engines/qwant', 'run_crawl')
-				self.framework.error('Qwant is missed!', 'util/engines/qwant', 'util/engines/qwant', 'run_crawl')
+				self.framework.error(f"ConnectionError {e}.", 'util/engines/qwant_images', 'run_crawl')
+				self.framework.error('Qwant is missed!', 'util/engines/qwant_images', 'run_crawl')
 				break
 			else:
 				if req.status_code == 429 and "I can't let you do that..." in req.text and '<div class="error-code">' in req.text:
-					self.framework.error('429 Too Many Requests', 'util/engines/qwant', 'run_crawl')
+					self.framework.error('429 Too Many Requests', 'util/engines/qwant_images', 'run_crawl')
 					return
 				self._pages += req.text
 				try:
 					self._json.append(req.json())
 				except Exception as e:
-					self.framework.error('429 Too Many Requests', 'util/engines/qwant', 'run_crawl')
+					self.framework.error('429 Too Many Requests', 'util/engines/qwant_images', 'run_crawl')
 					return
 				else:
 					if req.json() == {'status': 'error', 'data': {'error_code': 22}}:
-						self.framework.error('429 Too Many Requests', 'util/engines/qwant', 'run_crawl')
+						self.framework.error('429 Too Many Requests', 'util/engines/qwant_images', 'run_crawl')
 						return
 					else:
 						if page == self.limit:
@@ -74,32 +75,20 @@ class main:
 		return self._json
 
 	@property
-	def links(self):
-		for page in self._json:
-			results = page.get('data', {}).get('result', {}).get('items', {})
-			self._links.extend([x.get('url') for x in results])
-		return self._links
-
-	@property
 	def results(self):
 		results = []
 		for page in self._json:
 			items = page.get('data', {}).get('result', {})
 			if items:
-				items = items.get('items', {})
-				if items:
-					items = items.get('mainline', {})
+				items = items.get('items', [])
 			for item in items:
-				inside_items = item.get('items')
-				for i in inside_items:
-					a = i['url']
-					result = {
-						't': i['title'],
-						'a': a,
-						'c': self.framework.meta_search_util().make_cite(a),
-						'd': '' if 'desc' not in i else i.get('desc'),
-					}
-					results.append(result)
+				results.append({
+					"a": item.get("url"),
+					"i": item.get("media"),
+					"t": item.get("title"),
+					"d": f"{item.get('width')}*{item.get('height')} {item.get('size')}B"}
+				)
+
 		return results
 
 	@property
@@ -113,3 +102,4 @@ class main:
 	@property
 	def docs(self):
 		return self.framework.page_parse(self._pages).get_docs(self.q, self.links)
+

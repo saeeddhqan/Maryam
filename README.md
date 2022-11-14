@@ -42,12 +42,13 @@ maryam -e web api 127.0.0.1 1313
 
 # Latest Updates
 
+ - Added image_search module
  - Clustering, Meta Search Engine, Dark-Web Search
  - Iris: the first beta version
  - Added famous_person
  - Core speedup optimizations
  - Added setup.py
- - Web API: web command
+
 
 
 

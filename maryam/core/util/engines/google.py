@@ -25,7 +25,7 @@ class main:
 		self.q = q
 		self.agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:86.0) Gecko/20100101 Firefox/86.0'
 		self.xpath_name_original = {
-			'results': '//div[@class="g"]|//div[@class="g tF2Cxc"]|//div[@class="g Ww4FFb tF2Cxc"]',
+			'results': '//div[@class="MjjYud"]|//div[@class="g"]|//div[@class="g tF2Cxc"]|//div[@class="g Ww4FFb tF2Cxc"]',
 			'results_content': './/div[@data-content-feature="1"]|.//div[@class="VwiC3b yXK7lf MUxGbd yDYNvb lyLwlc lEBKkf"]',
 			'results_title': './/h3[1]',
 			'results_a': './/div[@class="yuRUbf"]/a',
