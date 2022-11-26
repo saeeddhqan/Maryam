@@ -16,14 +16,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import flask
-from flask import request, jsonify
+from flask import request, jsonify, Response
+from flask_cors import CORS
 
 framework = None
 app = flask.Flask('OWASP Maryam')
+CORS(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
-	page = '<pre>current pages:<br>/api/modules => running modules<br>/api/framework => framework commands</pre>'
+	page = Response('<pre>current pages:<br>/api/modules => running modules<br>/api/framework => framework commands</pre>', headers={'X-Content-Type-Options': '*'}) 
 	return page
 
 
@@ -67,6 +69,7 @@ def api_framework():
 
 @app.route('/api/modules')
 def api_modules():
+
 	page = {'meta': {'error': None, 'command': None}, 'output': {}}
 	# If no module specified
 	args_dict = request.args.to_dict()
@@ -79,7 +82,7 @@ def api_modules():
 		page['meta']['error'] = f"Module name '{module_name}' not found."
 		return jsonify(page)
 	if args_dict == {}:
-		page['meta']['error'] = f"No option specified."
+		page['meta']['error'] = 'No option specified.'
 		return jsonify(page)
 	module = framework._loaded_modules[module_name]
 	options = module.meta['options']
@@ -112,11 +115,18 @@ def api_modules():
 			if isinstance(option_value, option_type):
 				framework.options[option_name] = option_value
 			else:
-				page['meta']['error'] = f"Need {option_type}. got invalid type for {option_name}."
-				return jsonify(page)
+				try:
+					option_value = option_type(option_value)
+				except:
+					page['meta']['error'] = f"Need {option_type}. got invalid type for {option_name}."
+					return jsonify(page)
+				else:
+					framework.options[option_name] = option_value
 		else:
 			if option_value in true_options:
 				framework.options[option_name] = True
+			else:
+				framework.options[option_name] = option_value
 	try:
 		output = framework.mod_api_run(module_name)
 	except Exception as e:
@@ -138,4 +148,15 @@ def page_not_found(e):
 def run_app(core_obj, host='127.0.0.1', port=1313):
 	global framework
 	framework = core_obj
-	app.run(host=host, port=port)
+	app.run(host=host, port=port, debug=True)
+
+@app.after_request
+def add_header(response):
+	response.headers['Origin'] = 'https://cors-anywhere.herokuapp.com'
+	response.headers['X-Content-Type-Options'] = '*'
+	response.headers['Access-Control-Allow-Origin'] = '*'
+	response.headers['Access-Control-Allow-Origin'] = '*'
+	response.headers['Access-Control-Allow-Methods'] = "HEAD, GET, POST, PUT, DELETE, OPTIONS, PATCH"
+	response.headers['Access-Control-Allow-Headers'] = "*"
+	response.headers['Access-Control-Allow-Credentials'] = "true"
+	return response
