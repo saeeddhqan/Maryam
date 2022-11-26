@@ -21,9 +21,11 @@ meta = {
 	'version': '0.5',
 	'description': 'Crawl web pages to find links, JS Files, CSS files, Comments\
 	 and everything else interesting, supports concurrency.',
+	'comments': ("Try to use --output in order to save results thoroughly. Your terminal may not show all the results",),
 	'options': (
 		('domain', None, True, 'Domain string', '-d', 'store', str),
-		('debug', False, False, 'debug the scraper', '--debug', 'store_true', bool),
+		('debug', False, False, 'Debug the scraper', '--debug', 'store_true', bool),
+		('wapps', False, False, 'Using wapps module for identifying web apps', '--wapps', 'store_true', bool),
 		('limit', 1, False, 'Scraper depth level', '-l', 'store', int),
 		('thread', 1, False, 'The number of links that open per round', '-t', 'store', int),
 	),
@@ -40,11 +42,16 @@ def module_api(self):
 		 'links': run.links, 'css': run.css, 'comments': run.comments, 
 		 'emails': run.emails, 'phones': run.phones, 'media': run.media}
 	output['usernames'] = run.networks
+	if self.options['wapps']:
+		output['wapps'] = self._loaded_modules['wapps'].module_api(self)
 	self.save_gather(output, 'osint/crawler', domain, output=self.options['output'])
 	return output
 
 def module_run(self):
 	output = module_api(self)
+	if 'wapps' in output:
+		self.alert_results(output.pop('wapps'))
+
 	for obj in output:
 		self.alert(f"{obj}({len(output[obj])})")
 		if output[obj] == []:
