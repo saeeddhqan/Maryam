@@ -1,0 +1,204 @@
+.searchPage {
+  background-color: rgb(32, 33, 36);
+  width: 114em;
+}
+
+.searchPage_header {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid lightgrey;
+  background-color: rgb(32, 33, 36);
+  width: 112em;
+}
+
+.title {
+  font-size: 50px;
+  color: white;
+  margin-bottom: 50px;
+  text-decoration: none;
+}
+
+.searchPage_headerBody {
+  display: flex;
+  position: sticky;
+  top: 0;
+  margin-left: 50px;
+  z-index: 100;
+  align-items: flex-start;
+  border-bottom: 0px solid lightgrey;
+  flex-direction: column;
+}
+
+.searchPage_headerBody > .search > .search_input {
+  margin-top: 0px;
+  width: 500px;
+  margin: unset;
+  max-width: unset;
+}
+
+.searchPage_option {
+  display: flex;
+  align-items: center;
+  color: gray;
+  margin-top: 10px;
+  margin-right: 20px;
+}
+
+.searchPage_option a,
+.searchPage_optionRight a {
+  text-decoration: none;
+  color: gray;
+}
+
+.searchPage_optionLeft,
+.searchPage_optionRight {
+  display: flex;
+}
+
+.searchPage_optionRightSetting,
+.searchPage_optionRightSetting {
+  padding-right: 15px;
+}
+.searchPage_optionRight {
+  display: flex;
+  position: absolute;
+  left: 90em;
+  margin-top: 10px;
+}
+
+.searchPage_option a {
+  margin-left: 4px;
+}
+
+.searchPage_option:first-child:hover{
+    transition: color 0.7s ease;
+    color: lightblue;
+    transition: transform 0.7s ease;
+    transform: scale(1.2);
+}
+
+.searchPage_option:nth-child(2):hover{
+    transition: color 0.7s ease;
+    color: lightcoral;
+    transition: transform 0.7s ease;
+    transform: scale(1.2);
+}
+
+.searchPage_option:nth-child(3):hover{
+    transition: color 0.7s ease;
+    color: pink;
+    transition: transform 0.7s ease;
+    transform: scale(1.2);
+}
+
+.searchPage_option:nth-child(4):hover{
+    transition: color 0.7s ease;
+    color: lightcyan;
+    transition: transform 0.7s ease;
+    transform: scale(1.2);
+}
+
+.searchPage_option:nth-child(5):hover{
+    transition: color 0.7s ease;
+    color: yellowgreen;
+    transition: transform 0.7s ease;
+    transform: scale(1.2);
+}
+
+.searchPage_option:nth-child(6):hover{
+    transition: color 0.7s ease;
+    color: lightgreen;
+    transition: transform 0.7s ease;
+    transform: scale(1.2);
+}
+
+
+.searchPage_option:first-child a:hover{
+    
+    color: white;
+}
+
+.searchPage_option:nth-child(2) a:hover{
+    
+    color: white;
+}
+
+.searchPage_option:nth-child(3) a:hover{
+    
+    color: white;
+}
+
+.searchPage_option:nth-child(4) a:hover{
+    
+    color: white;
+}
+
+.searchPage_option:nth-child(5) a:hover{
+    
+    color: white;
+}
+
+.searchPage_option:nth-child(6) a:hover{
+
+    color: white;
+}
+
+
+.searchPage_result {
+  margin: 40px 0;
+}
+
+.searchPage_results {
+  max-width: 850px;
+  margin-top: 20px;
+  margin-left: 150px;
+  margin-bottom: 100px;
+}
+
+.searchPage_resultTitle {
+  text-decoration: none;
+}
+
+.searchPage_resultTitle:hover {
+  text-decoration: underline;
+  color: lightblue;
+}
+
+.searchPage_resultTitle > h2 {
+  font-weight: 500;
+  color: lightblue;
+}
+
+.searchPage_resultSnippet {
+  margin-top: 10px;
+  color: rgba(255, 255, 255, 0.363);
+}
+
+.searchPage_resultLink {
+  text-decoration: none;
+  color: white;
+}
+
+.footer {
+  border-top: 1px solid lightgrey;
+  display: flex;
+  padding: 20px;
+  /* margin-left: 50px; */
+  z-index: 100;
+  color: gray;
+}
+
+.footerAbout {
+  margin-left: 20px;
+}
+
+.footerAbout:hover {
+  transition: color 1s ease;
+  color: white;
+}
+
+.footerServices:hover {
+  transition: color 1s ease;
+  color: white;
+}
