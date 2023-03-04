@@ -20,7 +20,7 @@ from setuptools import setup, find_packages
 
 setup(
 	name='maryam',
-	version='2.5.1-1',
+	version='2.5.1-3',
 	url='https://github.com/saeeddhqan/Maryam',
 	author='Saeed Dehqan',
 	author_email='saeed.dehghan@owasp.org',
