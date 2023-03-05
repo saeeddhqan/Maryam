@@ -1,0 +1,30 @@
+.home {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: rgb(32, 33, 36);
+  
+}
+.home_header{
+    align-items: center;
+    
+}
+.homeApps {
+  float: right;
+  margin-top: 20px;
+  margin-right: 25px;
+}
+.homeSetting {
+  float: right;
+  margin-top: 20px;
+  margin-right: 20px;
+}
+.home_body{
+    margin-top: 8%;
+    text-align: center;
+}
+.webName{
+    font-size: 90px;
+    color: white;
+    /* flex-direction: column; */
+}
