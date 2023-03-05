@@ -1,0 +1,212 @@
+:root {
+  background-color: white;
+}
+
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    background-color: #1f2124;
+  }
+  .link {
+    font-size: large;
+  }
+  .info {
+    font-size: medium;
+    font-weight: 500;
+    color: #ffffffb2;
+  }
+
+  .results {
+    margin-bottom: 50px;
+  }
+  .logo {
+    filter: invert(100%);
+  }
+  .small-logo {
+    filter: invert(100%);
+  }
+  .page-number-text {
+    filter: invert(100%);
+  }
+  .Navbarsearch input {
+  }
+} */
+/*                 LOADER              */
+.loader-container {
+  height: 100px;
+  width: 100px;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  top: 50%;
+  left: 47%;
+}
+.loading-text-container {
+  position: fixed;
+  top: 58%;
+  left: 48.5%;
+}
+.loading-text {
+  background-color: #fff;
+  font-style: italic;
+  color: #676464;
+}
+/*               HOME SCREEN CSS                */
+
+.homesearch {
+  display: flex;
+  flex-direction: row;
+  /* background-color: rgba(255, 255, 255, 0.704); */
+  align-items: center;
+  justify-content: center;
+  margin: 200px auto;
+  max-width: 600px;
+  padding: 0 20px;
+}
+
+.input-wrap {
+  border-radius: 24px;
+  display: flex;
+  background-color: #f6f5f5d6;
+  box-shadow: 0 2px 5px 1px rgb(64 60 67 / 16%);
+}
+
+.homesearch input {
+  background-color: #f6f5f5d6;
+  width: 100%;
+  height: 50px;
+  border: 0;
+  border-radius: 5px;
+  padding: 0 20px;
+  font-size: 18px;
+}
+.homesearch input:focus {
+  outline: none;
+}
+
+.home-search-button {
+  margin-right: 10px;
+  padding: 0px;
+  /* margin-right: 10px; */
+  border-radius: 100px;
+  background-color: #f6f5f5d6;
+  border: none !important;
+}
+
+.logo {
+  height: 7em;
+  padding: 1.5em;
+  display: block;
+  margin: 0 auto;
+  width: 450px;
+  background-image: url("/owasp.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  text-indent: -9999px;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #c1c4c3aa);
+}
+
+/*                 NAV BAR WITH SEARCH CSS                */
+a {
+  text-decoration: none;
+  color: rgb(25, 95, 246);
+}
+a:hover {
+  text-decoration: underline;
+}
+.small-logo {
+  position: relative;
+  padding: 10px;
+}
+.small-logo img {
+  position: relative;
+  width: auto;
+  height: 50px;
+  margin-left: 50px;
+  margin-top: 20px;
+}
+.Navbarsearch-parent {
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  /* background-color: #ffffff; */
+}
+.Navbarsearch {
+  background-color: #ffffff;
+  margin-left: 100px;
+  border-radius: 24px;
+  height: 2.5em;
+  position: relative;
+  top: 22px;
+  right: 70px;
+  justify-content: center;
+  padding-top: 10px;
+  border: 1px #ccc;
+  box-shadow: 0 2px 5px 1px rgb(64 60 67 / 16%);
+}
+.Navbarsearch:hover {
+  background-color: #fff;
+  box-shadow: 0 2px 8px 1px rgb(64 60 67 / 24%);
+  border-color: rgba(223, 225, 229, 0);
+}
+.Navbarsearch input {
+  background-color: rgb(255, 255, 255);
+  margin-left: 10px;
+  width: 87%;
+  outline: none;
+  border: 1px white;
+  padding: 3px 8px;
+}
+.form-small {
+  display: flex;
+}
+.nav-button {
+  background-color: rgb(255, 255, 255);
+  border: none !important;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+/* BOSS PAGE CSS */
+.result-container {
+  font-family: Helvetica, sans-serif;
+  margin-top: 30px;
+  margin-left: 90px;
+  max-width: 1000px;
+}
+.link {
+  font-size: large;
+}
+.info {
+  font-size: medium;
+  font-weight: 500;
+}
+.route {
+  color: #676464;
+  font-size: small;
+}
+.results {
+  margin-bottom: 50px;
+}
+
+/* BOTTOM COMPONENT  */
+.page-number-text {
+  color: #676464;
+  font-weight: 200;
+  font-size: small;
+  font-style: italic;
+}
+.back-button {
+  height: 40px;
+  width: 50px;
+  background-color: rgb(255, 255, 255);
+  border: none !important;
+}
+.next-button {
+  height: 40px;
+  width: 50px;
+  background-color: rgb(255, 255, 255);
+  border: none !important;
+}
