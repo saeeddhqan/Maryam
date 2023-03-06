@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('assets', filename='css/styles.css')}}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <title>Maryam</title>
+</head>
+
+<body>
+    <div class="root">
+        <header>
+            <a id="title" href="#">Maryam</a>
+            <form id="searchBar">
+                    <input id="searchInput" type="text" name="searchInput" placeholder="Search" value="" />
+                    <button id="searchBtn" type="submit" name="searchBtn">
+                        <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                            <path fill="#666666"
+                                d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" />
+                        </svg>
+                    </button>
+            </form>
+
+            <div>
+                <img src="" alt="">
+                <img src="" alt="">
+            </div>
+        </header>
+
+        <div id="main-wrapper">
+            <div id="navbar">
+                <!--creates the category on the basis of search results-->
+            </div>
+
+            <main>
+                <div id="filter">
+                    <div class="country toggle"> France </div>
+                    <div class="country toggle"> France </div>
+                </div>
+                <div id="results">
+                    <button id="moreResults" class="rounded-btn" type='button'>
+                        Display More Results
+                    </button>
+                </div>
+
+            </main>
+        </div>
+
+        <footer>
+
+        </footer>
+
+    </div>
+    <script src="{{url_for('assets', filename='js/main.js')}}" type="module"></script>
+</body>
+
+</html>

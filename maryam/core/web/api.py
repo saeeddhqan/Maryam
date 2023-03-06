@@ -69,7 +69,6 @@ def api_framework():
 
 @app.route('/api/modules')
 def api_modules():
-
 	page = {'meta': {'error': None, 'command': None}, 'output': {}}
 	# If no module specified
 	args_dict = request.args.to_dict()
@@ -152,7 +151,7 @@ def run_app(core_obj, host='127.0.0.1', port=1313):
 
 @app.after_request
 def add_header(response):
-	response.headers['Origin'] = 'https://cors-anywhere.herokuapp.com'
+	response.headers['Origin'] = '*'
 	response.headers['X-Content-Type-Options'] = '*'
 	response.headers['Access-Control-Allow-Origin'] = '*'
 	response.headers['Access-Control-Allow-Origin'] = '*'
