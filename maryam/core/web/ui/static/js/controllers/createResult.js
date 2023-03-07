@@ -2,11 +2,11 @@ function addResults(pageWiseResults) {
     pageWiseResults.forEach(res => {
         let { a, c, d, t } = res;
         let result = ` <div class="result">
-                        <a href=${c} target="_blank" rel="noopener noreferrer">
-                            <div class="link">${c}</div>
+                        <a href=${a} target="_blank" rel="noopener noreferrer">
+                            <div class="breadcrumb">${c}</div>
                         </a>
-                        <a href=${c} target="_blank" rel="noopener noreferrer">
-                            <h2 class="result-heading">${t}</h2>
+                        <a href=${a} target="_blank" rel="noopener noreferrer">
+                            <div class="result-heading">${t}</div>
                         </a>
                         <div class="result-desc">${d}</div>
                     </div>`;
@@ -37,7 +37,7 @@ export function createResult(data) {
         pageWiseResults = results.slice(rangeStart, rangeEnd);
         let pageDivider = `<div class="flex">
                                 <div class="number">${currPage}</div>
-                                <hr></hr>
+                                <hr class='divider'></hr>
                             </div>`;
         $('#pagedResults').append(pageDivider);
         addResults(pageWiseResults);
