@@ -3,8 +3,9 @@ from flask import Flask, render_template
 app = Flask(__name__)
 
 # a route where we will display a welcome message via an HTML template
-@app.route("/")
-def home():
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
     return render_template('index.html')
 
 # run the application
