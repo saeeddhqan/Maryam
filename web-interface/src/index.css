@@ -154,7 +154,8 @@ a:hover {
 }
 .Navbarsearch input {
   background-color: rgb(255, 255, 255);
-  margin-left: 10px;
+  margin-top: 0.3em;
+  margin-left: 1em;
   width: 87%;
   outline: none;
   border: 1px white;
