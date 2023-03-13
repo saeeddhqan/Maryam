@@ -1,6 +1,6 @@
 export function results(params) {
     let query = params.get("q");
-    let results = `<header>
+    let results = `<header class='results-header'>
             <a id="title" href="#">Iris</a>
             <form id="searchBar">
                 <input id="searchInput" type="text" name="searchInput" placeholder="Search" value="${query}" />

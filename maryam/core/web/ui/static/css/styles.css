@@ -23,7 +23,25 @@ body {
     width: 100%;
 }
 
-header {
+.home-header{
+    height: 80px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    background-color: var(--tertiary);
+    justify-content: space-between;
+}
+
+.home-main{
+    height: 70%;
+    width: 100%;
+    background-color: var(--tertiary);
+    font-family: 'Tilt Warp', cursive;
+    font-size: 3rem;
+    display: inline-block;
+}
+
+.results-header {
     height: 80px;
     width: 100%;
     display: flex;
@@ -98,7 +116,6 @@ header {
     padding-top: 80px;
 }
 
-
 #navbar {
     height: fit-content;
     padding-top: 10px;
@@ -115,8 +132,6 @@ header {
     display: flex;
     align-items: center;
 }
-
-main {}
 
 
 #filter {
@@ -137,7 +152,6 @@ main {}
     width: 40%;
     margin-left: 10%;
 }
-
 
 .result {
     margin-top: 5%;
@@ -194,7 +208,7 @@ main {}
 footer {
     margin-top: 5%;
     height: 5%;
-    background-color: #5c97ff;
+    border-top: 1px solid var(--border);   
 }
 
 
