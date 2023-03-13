@@ -1,8 +1,9 @@
-export function results (query){
-    let results =  `<header>
+export function results(params) {
+    let query = params.get("q");
+    let results = `<header>
             <a id="title" href="#">Iris</a>
             <form id="searchBar">
-                <input id="searchInput" type="text" name="searchInput" placeholder="Search" value=${query} />
+                <input id="searchInput" type="text" name="searchInput" placeholder="Search" value="${query}" />
                     <button id="searchBtn" type="submit" name="searchBtn">
                         <svg style="width:24px;height:24px;" viewBox="0 0 24 24">
                             <path fill=" #5c97ff"

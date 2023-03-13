@@ -1,3 +1,8 @@
+import { navbarItems } from "../components/navbarItems.js";
+import { results } from "../../views/results.js";
+import { getInput } from '../controllers/takeInput.js'
+
+
 function addResults(pageWiseResults) {
     pageWiseResults.forEach(res => {
         let { a, c, d, t } = res;
@@ -14,16 +19,20 @@ function addResults(pageWiseResults) {
     });
 }
 
-export function createResult(data) {
+export function createResult(params, data) {
+    $('#root').html(results(params));
+    navbarItems();
+    getInput();
+
     $('#pagedResults').empty();
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    let results = data['output']['results'];
-    let totalResults = results.length;
+    let res = data['output']['results'];
+    let totalResults = res.length;
 
     let currPage = 1;
     let rangeStart = (currPage - 1) * 10;
     let rangeEnd = rangeStart + 10;
-    let pageWiseResults = results.slice(rangeStart, rangeEnd);
+    let pageWiseResults = res.slice(rangeStart, rangeEnd);
     addResults(pageWiseResults);
 
     if (rangeEnd <= totalResults) {
@@ -34,7 +43,7 @@ export function createResult(data) {
         currPage = currPage + 1;
         rangeStart = (currPage - 1) * 10;
         rangeEnd = rangeStart + 10;
-        pageWiseResults = results.slice(rangeStart, rangeEnd);
+        pageWiseResults = res.slice(rangeStart, rangeEnd);
         let pageDivider = `<div class="flex">
                                 <div class="number">${currPage}</div>
                                 <hr class='divider'></hr>

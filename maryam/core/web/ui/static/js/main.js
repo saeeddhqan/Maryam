@@ -1,11 +1,11 @@
 "use strict";
 
 import { home } from './../views/home.js';
-import { results } from './../views/results.js'
 import { error }  from './../views/error.js';
 
 import { getInput } from './controllers/takeInput.js';
-import { navbarItems } from './components/navbarItems.js'
+
+import { searchInIris } from './controllers/apicalls.js';
 
 const router = async () => {
 
@@ -13,6 +13,7 @@ const router = async () => {
    
    if(pathName === '/'){
       const params = new URLSearchParams(window.location.search);
+      console.log(window.location.search);
       const paramsLength = Array.from(params).length;
       
       // no results
@@ -25,9 +26,8 @@ const router = async () => {
       // show results
       else{
          // load as per params
-         $('#root').html(results(params));
-         getInput();
-         navbarItems();
+         console.log('there are params');
+         searchInIris(params);
       }
    }
 
