@@ -26,7 +26,6 @@ const router = async () => {
       // show results
       else{
          // load as per params
-         console.log('there are params');
          searchInIris(params);
       }
    }
