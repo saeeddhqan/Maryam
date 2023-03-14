@@ -1,15 +1,37 @@
-export function home() {
+import { getInput } from "../js/controllers/takeInput.js";
+import { settings } from "../js/controllers/settings.js";
+import { themeHandler } from "../js/controllers/themeHandler.js";
 
+export function home(params) {
+    themeHandler(params);
     let home = `<header class="home-header">
     <div id="header_icons">
         <button>
-            <img src="./../static/icons/circle-grid-3x3.svg" alt="">
+            <img src="./../static/icons/circle-grid-3x3.svg" id='grid' alt="">
         </button>
         <button>
-            <img src="./../static/icons/gear.svg" alt="">
+            <img src="./../static/icons/gear.svg" id='gear' alt="">
         </button>
     </div>
 </header>
+<div class="settings hidden">
+    <header>
+        <span>Settings</span>
+        <button>
+            <img src="./../static/icons/cross.svg" id='cross' alt="">
+        </button>
+    </header>
+    <div class="theme-selector">
+        <p>Theme</p>
+        <button>
+            <img src="./../static/icons/sun.svg" alt="" id="light">
+        </button>
+
+        <button>
+            <img src="./../static/icons/moon.svg" alt="" id="dark">
+        </button>
+    </div>
+</div>
 <div class='home-main'>
     <h1 style="text-align:center">
         Iris
@@ -23,9 +45,12 @@ export function home() {
             </svg>
         </button>
     </form>
+
 </div>
 <footer>
 
 </footer>`;
-    return home;
+        $('#root').html(home);
+        getInput();
+        settings();
 }

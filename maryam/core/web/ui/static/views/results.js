@@ -1,3 +1,4 @@
+
 export function results(params) {
     let query = params.get("q");
     let results = `<header class='results-header'>
@@ -22,17 +23,29 @@ export function results(params) {
 
             </div>
         </header>
-
+        <div class="settings hidden">
+            <header>
+                <span>Settings</span>
+                <button>
+                    <img src="./../static/icons/cross.svg" id='cross' alt="">
+                </button>
+            </header>
+            <div class="theme-selector">
+                <p>Theme</p>
+                        <button>
+                            <img src="./../static/icons/sun.svg" alt="" id="light">
+                        </button>
+                <button>
+                    <img src="./../static/icons/moon.svg" alt="" id="dark">
+                </button>
+            </div>
+        </div>
         <div id="main-wrapper">
             <div id="navbar">
                 <!--creates the category on the basis of search results-->
             </div>
 
             <main>
-                <div id="filter">
-                    <div class="country toggle"> France </div>
-                    <div class="country toggle"> France </div>
-                </div>
                 <div id="results">
                     <div id="pagedResults">
 

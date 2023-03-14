@@ -1,0 +1,13 @@
+:root {
+    --primary: white;
+    --secondary: #a7acb4;
+    --tertiary: #5c97ff;
+    --serpLink: #5c97ff;
+    --visited: #6d00a3;
+    --border: #0505061f;
+    --bg : #212327;
+    --header: #212327;
+    --inputBg : #2f3237;
+    --buttonTxt : #5c97ff;
+    /* --bg: #2f3237; */
+}

@@ -1,6 +1,7 @@
 import { navbarItems } from "../components/navbarItems.js";
 import { results } from "../../views/results.js";
 import { getInput } from '../controllers/takeInput.js'
+import { settings } from "./settings.js";
 
 
 function addResults(pageWiseResults) {
@@ -23,6 +24,7 @@ export function createResult(params, data) {
     $('#root').html(results(params));
     navbarItems();
     getInput();
+    settings();
 
     $('#pagedResults').empty();
     window.scrollTo({ top: 0, behavior: 'smooth' });

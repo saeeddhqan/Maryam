@@ -1,11 +1,8 @@
 "use strict";
 
 import { home } from './../views/home.js';
-import { error }  from './../views/error.js';
-
-import { getInput } from './controllers/takeInput.js';
-
 import { searchInIris } from './controllers/apicalls.js';
+import { error }  from './../views/error.js';
 
 const router = async () => {
 
@@ -13,14 +10,12 @@ const router = async () => {
    
    if(pathName === '/'){
       const params = new URLSearchParams(window.location.search);
-      console.log(window.location.search);
       const paramsLength = Array.from(params).length;
       
       // no results
-      if(paramsLength === 0){
+      if(!params.has("q")){
          // load the page with no results
-         $('#root').html(home);
-         getInput();
+         home(params);
       }
 
       // show results
@@ -32,8 +27,7 @@ const router = async () => {
 
    // 404
    else{
-      // render the 404 page;
-      $('#root').html(error());
+      error(params);
    }
 }
 
