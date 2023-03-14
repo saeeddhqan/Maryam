@@ -17,11 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import flask
 from flask import request, jsonify, Response
-# from flask_cors import CORS
-
 framework = None
 app = flask.Flask('OWASP Maryam')
-# CORS(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
