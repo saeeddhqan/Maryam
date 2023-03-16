@@ -203,7 +203,7 @@ body {
     float: right;
     position: absolute;
     top: 2.5%;
-    right: 0px;
+    right: -30%;
     box-shadow: 0px 0px 4px 0px var(--primary);
     font-size: 1.5rem;
 }
@@ -318,11 +318,11 @@ h3 {
     margin: 0;
 }
 
-.hidden{
+.slideOut{
     animation: slideOut 0.3s 1 forwards;
 }
 
-.show{
+.slideIn{
     animation: slideIn 0.3s 1 forwards;
 }
 

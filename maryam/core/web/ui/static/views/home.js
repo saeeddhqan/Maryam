@@ -14,7 +14,7 @@ export function home(params) {
         </button>
     </div>
 </header>
-<div class="settings hidden">
+<div class="settings">
     <header>
         <span>Settings</span>
         <button>

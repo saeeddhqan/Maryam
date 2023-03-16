@@ -18,12 +18,12 @@ export function results(params) {
                     <img src="./../static/icons/circle-grid-3x3.svg" alt="">
                 </button>
                 <button>
-                    <img src="./../static/icons/gear.svg" alt="">
+                    <img src="./../static/icons/gear.svg" alt="" id="gear">
                 </button>
 
             </div>
         </header>
-        <div class="settings hidden">
+        <div class="settings">
             <header>
                 <span>Settings</span>
                 <button>

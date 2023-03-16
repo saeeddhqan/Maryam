@@ -3,9 +3,9 @@ import { themeHandler } from "./themeHandler.js";
 
 export function settings(){
     $('#gear').click((e)=>{
-        // slide in
-        $(".settings").toggleClass("hidden");
-        $(".settings").toggleClass("show");
+        if($('.settings').hasClass('slideOut'))
+            $('.settings').removeClass("slideOut");
+        $('.settings').addClass('slideIn');
     })
     $("#dark").click((e)=>{
         addURLParams("theme","1");
@@ -20,8 +20,10 @@ export function settings(){
     })
 
     $('#cross').click((e)=>{
-        //slide out 
-        $(".settings").toggleClass("hidden");
-        $(".settings").toggleClass("show");
+        if($('.settings').hasClass('slideIn'))
+            $('.settings').removeClass("slideIn");
+        $('.settings').addClass('slideOut');
     })
+
+
 }
