@@ -96,8 +96,9 @@
   height: 7em;
   padding: 0.5em;
   display: block;
-  margin: 0 auto;
-  width: 450px;
+  margin-bottom: 1em;
+  width: 24em;
+  /* width: 450px; */
   background-image: url("/owasp.png");
   background-size: cover;
   background-repeat: no-repeat;
