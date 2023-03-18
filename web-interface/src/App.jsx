@@ -7,8 +7,9 @@ import Resultspage from "../Components/resultsnsearch/resultspage";
 function App() {
   const [showHome, setshowHome] = useState(true); //home screen with big owasp logo and search
   const [showRes, setshowRes] = useState(false); // screen with search results
-  const [SearchResults, setResults] = useState([]);
-  const [Loading, setLoading] = useState(false);
+  const [SearchResults, setResults] = useState([]); //setter for the search results
+  const [Loading, setLoading] = useState(false); //loader
+
   useEffect(() => {
     console.log(showHome);
   }, [SearchResults]);

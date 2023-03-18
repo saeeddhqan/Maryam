@@ -14,6 +14,7 @@ export default function NavbarSearch({
       </div>
       <div className="Navbarsearch">
         <form
+          autoComplete="off"
           className="form-small"
           onSubmit={async function handleSubmit(e) {
             e.preventDefault();
@@ -36,7 +37,11 @@ export default function NavbarSearch({
           }}
           input
         >
-          <input type="text" name="search" placeholder="iris search" />
+          <input
+            type="text"
+            name="search"
+            placeholder="iris search &#128373;&#65039;"
+          />
           <button className="nav-button" wo>
             <svg
               xmlns="http://www.w3.org/2000/svg"

@@ -7,7 +7,9 @@ run command
 `maryam -e web api 127.0.0.1 1313`
 then
 clone this repository
-`cd irissearch`
+
+`cd maryam/irissearch`
+
 then `npm install`
 
 and finally

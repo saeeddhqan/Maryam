@@ -15,6 +15,7 @@ export function Homesearch({
         <Loader Loading={Loading} />
         <div className="homesearch">
           <form
+            autoComplete="off"
             className="form"
             onSubmit={async function handleSubmit(e) {
               e.preventDefault();

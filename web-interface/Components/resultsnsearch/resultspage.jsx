@@ -10,9 +10,11 @@ export default function Resultspage({
   Loading,
   setLoading,
 }) {
+  //calculting number of pages
   const totalitems = SearchResults.length;
   console.log("Total items=", totalitems);
   const totalPages = Math.ceil(totalitems / 10);
+  //settings limits
   const [UpperLimit, setUpperLimit] = useState(10);
   const [LowerLimit, setLowerLimit] = useState(0);
   const [Currentpage, setCurrentPage] = useState(0);

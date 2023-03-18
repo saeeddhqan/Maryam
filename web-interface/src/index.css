@@ -6,17 +6,18 @@
   :root {
     background-color: #1f2124;
   }
-  .link {
-    font-size: large;
+  a {
+    color: rgb(72 183 237);
+  }
+  .Navbarsearch {
+    border: #676464;
+    background-color: #1f2124;
+  }
+  .route {
+    color: rgb(170, 168, 168);
   }
   .info {
-    font-size: medium;
-    font-weight: 500;
     color: #ffffffb2;
-  }
-
-  .results {
-    margin-bottom: 50px;
   }
   .logo {
     filter: invert(100%);
@@ -27,13 +28,11 @@
   .page-number-text {
     filter: invert(100%);
   }
-  .Navbarsearch input {
-  }
 } */
 /*                 LOADER              */
 .loader-container {
-  height: 100px;
-  width: 100px;
+  height: 6.25em;
+  width: 6.25em;
   position: fixed;
   display: flex;
   justify-content: center;
@@ -111,6 +110,7 @@
 
 /*                 NAV BAR WITH SEARCH CSS                */
 a {
+  /* text-underline: none; */
   text-decoration: none;
   color: rgb(25, 95, 246);
 }

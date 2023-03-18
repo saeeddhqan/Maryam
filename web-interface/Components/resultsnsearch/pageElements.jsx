@@ -8,6 +8,7 @@ export default function BottomElement({
   Currentpage,
   totalitems,
 }) {
+  //page navigation functions
   function ScrollToTop() {
     //  scroll to top on page load
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
