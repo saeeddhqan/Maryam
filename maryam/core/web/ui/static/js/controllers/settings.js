@@ -1,22 +1,17 @@
-import addURLParams from "./addURLParams.js"
 import { themeHandler } from "./themeHandler.js";
 
-export function settings(){
+export function settings(params){
     $('#gear').click((e)=>{
         if($('.settings').hasClass('slideOut'))
             $('.settings').removeClass("slideOut");
         $('.settings').addClass('slideIn');
     })
     $("#dark").click((e)=>{
-        addURLParams("theme","1");
-        const params = new URLSearchParams(window.location.search);
-        themeHandler(params);
+        themeHandler(1);
     })
 
     $("#light").click((e)=>{
-        addURLParams("theme","0");
-        const params = new URLSearchParams(window.location.search);
-        themeHandler(params);
+        themeHandler(0);
     })
 
     $('#cross').click((e)=>{

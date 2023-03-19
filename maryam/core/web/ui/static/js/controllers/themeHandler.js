@@ -1,13 +1,14 @@
-export function themeHandler(params){
-    const dark = `<link rel="stylesheet" href="/static/css/dark.css">`;
-    const light = `<link rel="stylesheet" href="/static/css/light.css">`;
-    if(!params.has('theme') || params.get("theme")=="0"){
-        // theme not specified or theme specified is white
-        $('head').append(light);
-    }
-    else{
-        // dark theme specified
-        $('head').append(dark);
-    }
-    
+const dark = `<link id='darkcss' rel="stylesheet" href="/static/css/dark.css">`;
+const light = `<link id='lightcss' rel="stylesheet" href="/static/css/light.css">`;
+
+function addLight(){    
+    $('#darkcss').remove();
+}
+
+function addDark(){
+    $('head').append(dark);
+}
+
+export function themeHandler(type){
+    type == 0 ? addLight() : addDark();
 }

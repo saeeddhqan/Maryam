@@ -1,9 +1,7 @@
 import { getInput } from "../js/controllers/takeInput.js";
 import { settings } from "../js/controllers/settings.js";
-import { themeHandler } from "../js/controllers/themeHandler.js";
 
 export function home(params) {
-    themeHandler(params);
     let home = `<header class="home-header">
     <div id="header_icons">
         <button>

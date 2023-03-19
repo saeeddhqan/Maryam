@@ -10,7 +10,6 @@ const router = async () => {
    
    if(pathName === '/'){
       const params = new URLSearchParams(window.location.search);
-      const paramsLength = Array.from(params).length;
       
       // no results
       if(!params.has("q")){
@@ -27,7 +26,7 @@ const router = async () => {
 
    // 404
    else{
-      error(params);
+      error();
    }
 }
 
