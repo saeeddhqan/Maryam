@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import "./App.css";
 import { Homesearch } from "../Components/Homesearch";
 import Resultspage from "../Components/resultsnsearch/resultspage";

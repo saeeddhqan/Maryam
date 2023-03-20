@@ -7,6 +7,7 @@
     background-color: #1f2124;
   }
   a {
+    text-decoration: none;
     color: rgb(72 183 237);
   }
   .Navbarsearch {
@@ -72,11 +73,11 @@
 .homesearch input {
   background-color: #f6f5f5d6;
   width: 100%;
-  height: 50px;
+  height: 3em;
   border: 0;
-  border-radius: 5px;
+  border-radius: 50px;
   padding: 0 20px;
-  font-size: 18px;
+  font-size: 0.9em;
 }
 .homesearch input:focus {
   outline: none;
@@ -109,14 +110,7 @@
 }
 
 /*                 NAV BAR WITH SEARCH CSS                */
-a {
-  /* text-underline: none; */
-  text-decoration: none;
-  color: rgb(25, 95, 246);
-}
-a:hover {
-  text-decoration: underline;
-}
+
 .small-logo {
   position: relative;
   padding: 10px;
@@ -137,7 +131,7 @@ a:hover {
 }
 .Navbarsearch {
   background-color: #ffffff;
-  margin-left: 100px;
+  margin-left: 5.9em;
   border-radius: 24px;
   height: 2.5em;
   position: relative;
@@ -177,6 +171,14 @@ a:hover {
   margin-top: 30px;
   margin-left: 90px;
   max-width: 1000px;
+}
+a {
+  /* text-underline: none; */
+  text-decoration: none;
+  color: rgb(5, 55, 204);
+}
+a:hover {
+  text-decoration: underline;
 }
 .link {
   font-size: large;
