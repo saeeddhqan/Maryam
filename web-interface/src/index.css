@@ -1,5 +1,6 @@
 :root {
   background-color: white;
+  font-family: Helvetica, sans-serif;
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -135,10 +136,10 @@
   border-radius: 24px;
   height: 2.5em;
   position: relative;
-  top: 22px;
-  right: 70px;
+  top: 1.3em;
+  right: 4.375em;
   justify-content: center;
-  padding-top: 10px;
+  padding-top: 0.4em;
   border: 1px #ccc;
   box-shadow: 0 2px 5px 1px rgb(64 60 67 / 16%);
 }
@@ -148,13 +149,15 @@
   border-color: rgba(223, 225, 229, 0);
 }
 .Navbarsearch input {
+  font-size: small;
+  font-style: italic;
   background-color: rgb(255, 255, 255);
   margin-top: 0.3em;
   margin-left: 1em;
   width: 87%;
   outline: none;
   border: 1px white;
-  padding: 3px 8px;
+  padding: 0.1875em 0.5em;
 }
 .form-small {
   display: flex;
@@ -163,7 +166,8 @@
   background-color: rgb(255, 255, 255);
   border: none !important;
   border-radius: 50%;
-  margin-right: 10px;
+  margin-right: 0.625em;
+  margin-top: 0.1em;
 }
 /* BOSS PAGE CSS */
 .result-container {
