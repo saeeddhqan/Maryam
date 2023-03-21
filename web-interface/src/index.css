@@ -119,9 +119,9 @@
 .small-logo img {
   position: relative;
   width: auto;
-  height: 50px;
-  margin-left: 50px;
-  margin-top: 20px;
+  height: 55px;
+  margin-left: 3.125em;
+  margin-top: 1em;
 }
 .Navbarsearch-parent {
   border-bottom: 1px solid #ccc;
