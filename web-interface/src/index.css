@@ -42,8 +42,9 @@
   left: 47%;
 }
 .loading-text-container {
+  margin-top: 4em;
   position: fixed;
-  top: 58%;
+  /* top: 58%; */
   left: 48.5%;
 }
 .loading-text {
@@ -152,7 +153,7 @@
   font-size: small;
   font-style: italic;
   background-color: rgb(255, 255, 255);
-  margin-top: 0.3em;
+  /* margin-top: 0.3em; */
   margin-left: 1em;
   width: 87%;
   outline: none;
