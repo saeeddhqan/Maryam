@@ -1,0 +1,32 @@
+@keyframes slideIn {
+    0%{
+        right: -30%;
+    }
+    
+    100%{
+        right : 0%;
+    }
+}
+
+
+@keyframes slideOut {
+    0%{
+        right: 0;
+    }
+    
+    100%{
+        right : -30%;
+    }
+}
+
+/** KEY FRAMES **/
+
+
+@keyframes anim {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}

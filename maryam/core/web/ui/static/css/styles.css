@@ -28,6 +28,8 @@ body {
     --buttonTxt : #0051e0;
 }
 
+/** HOME **/
+
 .home-header{
     height: 80px;
     width: 100%;
@@ -298,20 +300,29 @@ footer {
 }
 
 
-/** KEY FRAMES **/
 
 
-@keyframes anim {
-	0% {
-		transform: rotate(0deg);
-	}
-	100% {
-		transform: rotate(360deg);
-	}
+/* SETTINGS */
+
+.slideOut{
+    animation: slideOut 0.3s 1 forwards;
 }
 
+.slideIn{
+    animation: slideIn 0.3s 1 forwards;
+}
 
+/* #gear{
+    filter: ;
+}
 
+#light{
+    filter: ;
+}
+
+#dark{
+    filter: ;
+} */
 
 /* UTILITY CLASSES */
 
@@ -329,33 +340,4 @@ a {
 
 h3 {
     margin: 0;
-}
-
-.slideOut{
-    animation: slideOut 0.3s 1 forwards;
-}
-
-.slideIn{
-    animation: slideIn 0.3s 1 forwards;
-}
-
-@keyframes slideIn {
-    0%{
-        right: -30%;
-    }
-    
-    100%{
-        right : 0%;
-    }
-}
-
-
-@keyframes slideOut {
-    0%{
-        right: 0;
-    }
-    
-    100%{
-        right : -30%;
-    }
 }
