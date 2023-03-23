@@ -1,4 +1,6 @@
 import axios from "axios";
+import { useContext } from "react";
+import { themeContext } from "../src/App";
 
 import Loader from "./loader";
 export function Homesearch({
@@ -11,9 +13,9 @@ export function Homesearch({
 }) {
   if (show == true) {
     return (
-      <div className="homesearch-parent">
+      <div className="homesearch" id={useContext(themeContext)}>
         <Loader Loading={Loading} />
-        <div className="homesearch">
+        <div className="">
           <form
             autoComplete="off"
             className="form"
@@ -34,9 +36,9 @@ export function Homesearch({
                 console.log(err);
               }
             }}
-            input
+            
           >
-            <a href="#" class="logo">
+            <a href="#" className="logo">
               Iris Search
             </a>
             <div className="input-wrap">

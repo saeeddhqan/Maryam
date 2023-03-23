@@ -1,5 +1,6 @@
 import axios from "axios";
-
+import { useContext } from "react";
+import { themeContext } from "../../src/App";
 export default function NavbarSearch({
   setResults,
   setLowerLimit,
@@ -8,7 +9,7 @@ export default function NavbarSearch({
   setLoading,
 }) {
   return (
-    <div className="Navbarsearch-parent">
+    <div className="Navbarsearch-parent" id={useContext(themeContext)}>
       <div className="small-logo">
         <img src="/owasp.png"></img>
       </div>

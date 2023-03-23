@@ -3,6 +3,8 @@ import NavbarSearch from "./Navbarsearch";
 import Results from "./results";
 import BottomElement from "./pageElements";
 import Loader from "../loader";
+import { useContext } from "react";
+import { themeContext } from "../../src/App";
 export default function Resultspage({
   setResults,
   show,
@@ -23,7 +25,7 @@ export default function Resultspage({
 
   if (show == true) {
     return (
-      <div className="boss">
+      <div className="boss" id={useContext(themeContext)}>
         <Loader Loading={Loading} />
         <NavbarSearch
           setResults={setResults}
