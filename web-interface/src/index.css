@@ -6,7 +6,7 @@
   caret-color: #000;
 }
 #dark {
-  caret-color: white;
+  caret-color: rgb(72, 167, 231);
   --bg-color: rgb(30, 32, 35);
   --a-color: #70a6f7;
 }
@@ -172,6 +172,7 @@ body {
   margin-left: 5.9em;
   border-radius: 24px;
   height: 2.5em;
+  width: 20em;
   position: relative;
   top: 1.3em;
   right: 4.375em;
@@ -290,4 +291,16 @@ a:hover {
 }
 .result-page {
   width: 100%;
+}
+.toggle-button {
+  position: absolute;
+  top: 2.5em;
+  right: 0.5em;
+  height: 40px;
+  width: 50px;
+  background-color: rgb(255, 255, 255);
+  border: none !important;
+}
+#dark .toggle-button {
+  filter: invert(90%);
 }
