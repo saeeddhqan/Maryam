@@ -81,6 +81,7 @@ body {
   align-items: center;
   padding: 28px 61px;
   gap: 15px;
+  margin-bottom: 10em;
 }
 
 .input-wrap {
