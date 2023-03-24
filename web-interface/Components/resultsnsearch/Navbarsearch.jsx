@@ -5,11 +5,20 @@ export default function NavbarSearch({
   setUpperLimit,
   setCurrentPage,
   setLoading,
+  setshowHome,
+  setshowRes,
 }) {
   return (
     <div className="Navbarsearch-parent">
       <div className="small-logo">
-        <img src="/owasp.png"></img>
+        <img
+          onClick={() => {
+            console.log("clicked");
+            setshowHome(true);
+            setshowRes(false);
+          }}
+          src="/owasp.png"
+        ></img>
       </div>
       <div className="Navbarsearch">
         <form
@@ -41,7 +50,7 @@ export default function NavbarSearch({
             name="search"
             placeholder="iris search &#128373;&#65039;"
           />
-          <button className="nav-button" wo>
+          <button className="nav-button">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 30 30"

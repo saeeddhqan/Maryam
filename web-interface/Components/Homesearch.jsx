@@ -35,9 +35,7 @@ export function Homesearch({
               }
             }}
           >
-            <a href="#" className="logo">
-              Iris Search
-            </a>
+            <a className="logo">Iris Search</a>
             <div className="input-wrap">
               <input type="text" name="search" placeholder="iris search" />
               <button className="home-search-button">

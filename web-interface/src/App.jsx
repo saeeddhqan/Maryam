@@ -33,6 +33,8 @@ function App() {
           SearchResults={SearchResults}
           Loading={Loading}
           setLoading={setLoading}
+          setshowHome={setshowHome}
+          setshowRes={setshowRes}
         />
       </div>
     </ThemeContext.Provider>

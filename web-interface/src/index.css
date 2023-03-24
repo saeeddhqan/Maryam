@@ -54,30 +54,27 @@ body {
   width: 6.25em;
   position: fixed;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
   justify-content: center;
   top: 50%;
   left: 47%;
 }
 .loading-text-container {
-  margin-top: 4em;
-  position: fixed;
   /* top: 58%; */
   left: 48.5%;
 }
 .loading-text {
-  background-color: #fff;
-  font-style: italic;
-  color: #676464;
+  background-color: transparent;
+  color: #434242;
+}
+#dark .loading-text {
+  background-color: rgb(4, 4, 4);
+  color: #fff;
 }
 /*               HOME SCREEN CSS                */
 
-/* #dark .App {
-  background-color: #676464;
-} */
-/* .homesearch-parent {
-  height: 100%;
-  width: 100%;
-} */
 .homesearch {
   display: flex;
   flex-direction: column;
@@ -92,7 +89,9 @@ body {
   background-color: #f6f5f5d6;
   box-shadow: 0 2px 5px 1px rgb(64 60 67 / 16%);
 }
-
+#dark .input-wrap {
+  background-color: #ffffff;
+}
 .homesearch input {
   background-color: #f6f5f5d6;
   width: 100%;
@@ -102,6 +101,9 @@ body {
   padding: 0 20px;
   font-size: 0.9em;
 }
+#dark .homesearch input {
+  background-color: #ffffff;
+}
 .homesearch input:focus {
   outline: none;
 }
@@ -109,12 +111,13 @@ body {
 .home-search-button {
   margin-right: 10px;
   padding: 0px;
-  /* margin-right: 10px; */
   border-radius: 100px;
   background-color: #f6f5f5d6;
   border: none !important;
 }
-
+#dark .home-search-button {
+  background-color: #ffffff;
+}
 .logo {
   height: 7em;
   padding: 0.5em;
@@ -151,9 +154,7 @@ body {
   margin-left: 3.125em;
   margin-top: 1em;
 }
-/* #dark {
-  background-color: #080808;
-} */
+
 #dark .Navbarsearch-parent {
   border-bottom: 1px solid #393737;
 }
@@ -186,9 +187,7 @@ body {
   box-shadow: 0 2px 8px 1px rgb(64 60 67 / 24%);
   border-color: rgba(223, 225, 229, 0);
 }
-#dark .Navbarsearch input {
-  background-color: #303134;
-}
+
 .Navbarsearch input {
   font-size: small;
   font-style: italic;
@@ -199,6 +198,10 @@ body {
   outline: none;
   border: 1px white;
   padding: 0.1875em 0.5em;
+}
+#dark .Navbarsearch input {
+  background-color: #303134;
+  color: #dedcdc;
 }
 .form-small {
   display: flex;
@@ -292,6 +295,7 @@ a:hover {
 .result-page {
   width: 100%;
 }
+/* DARK MODE TOGGLE  */
 .toggle-button {
   position: absolute;
   top: 2.5em;

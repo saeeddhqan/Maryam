@@ -10,6 +10,8 @@ export default function Resultspage({
   SearchResults,
   Loading,
   setLoading,
+  setshowHome,
+  setshowRes,
 }) {
   //calculting number of pages
   const totalitems = SearchResults.length;
@@ -33,6 +35,8 @@ export default function Resultspage({
           setCurrentPage={setCurrentPage}
           Loading={Loading}
           setLoading={setLoading}
+          setshowHome={setshowHome}
+          setshowRes={setshowRes}
         />
         <div className="result-container">
           <Results
