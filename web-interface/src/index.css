@@ -143,7 +143,7 @@ body {
 
 .small-logo {
   position: relative;
-  padding: 10px;
+  padding: 0.4em;
 }
 #dark .small-logo img {
   filter: invert(100%);
@@ -151,7 +151,7 @@ body {
 .small-logo img {
   position: relative;
   width: auto;
-  height: 55px;
+  height: 3em;
   margin-left: 3.125em;
   margin-top: 1em;
 }
@@ -172,7 +172,7 @@ body {
 .Navbarsearch {
   background-color: #ffffff;
   margin-left: 5.9em;
-  border-radius: 24px;
+  border-radius: 1.5em;
   height: 2.5em;
   width: 20em;
   position: relative;
@@ -191,9 +191,8 @@ body {
 
 .Navbarsearch input {
   font-size: small;
-  font-style: italic;
+  /* font-style: italic; */
   background-color: rgb(255, 255, 255);
-  /* margin-top: 0.3em; */
   margin-left: 1em;
   width: 87%;
   outline: none;
@@ -255,7 +254,7 @@ a:hover {
   font-size: small;
 }
 .results {
-  margin-bottom: 50px;
+  margin-bottom: 3em;
 }
 
 /*              BOTTOM COMPONENT        */
@@ -278,8 +277,8 @@ a:hover {
   filter: invert(90%);
 }
 .back-button {
-  height: 40px;
-  width: 50px;
+  height: 2.5em;
+  width: 3em;
   background-color: rgb(255, 255, 255);
   border: none !important;
 }
@@ -288,8 +287,8 @@ a:hover {
   filter: invert(90%);
 }
 .next-button {
-  height: 40px;
-  width: 50px;
+  height: 2.5em;
+  width: 3em;
   background-color: rgb(255, 255, 255);
   border: none !important;
 }
@@ -301,8 +300,8 @@ a:hover {
   position: absolute;
   top: 2.5em;
   right: 0.5em;
-  height: 40px;
-  width: 50px;
+  height: 2.5em;
+  width: 3em;
   background-color: rgb(255, 255, 255);
   border: none !important;
 }
