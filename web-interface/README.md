@@ -16,6 +16,3 @@ and finally
 `npm run dev`
 
 app will be served at `http://localhost:5173/`
-
-todo:
-darkmode (in progress)
