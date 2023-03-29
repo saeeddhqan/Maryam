@@ -20,7 +20,6 @@ from flask import request, jsonify, Response
 
 framework = None
 app = flask.Flask('OWASP Maryam')
-CORS(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
