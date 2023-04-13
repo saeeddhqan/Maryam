@@ -60,9 +60,10 @@ The best help to write a new module is checking the current modules.
 
 # Roadmap
 
+ - Improving Iris page ranking
  - Write a complete metacrawler engine based on OSINT by using the current search engines
  - Add clustering algorithms: Done
- - Web User Interface
+ - Web user interface
 
 # Links
 ### [OWASP](https://owasp.org/www-project-maryam/)
