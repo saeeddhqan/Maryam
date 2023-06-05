@@ -14,49 +14,29 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import AppsOutlinedIcon from "@mui/icons-material/AppsOutlined";
 import SkeletonSearchPage from "../skeletons/SkeletonSearchPage";
 import { Tooltip } from "@mui/material";
-
-// import Response from "../Response";
+import logo_white from "./image/logo_white.png"
 
 function SearchPage() {
   const [{ term }, dispatch] = useStateValue();
   const { data, isLoading } = useWebApi(term);
 
-  //Mock API CALL
-  // const data = Response;
-  // console.log(data)
   return (
     <div className="searchPage">
       <div className="searchPage_header">
         <Link to="/" style={{ textDecoration: "none" }}>
-          <div className="title">Webpage</div>
+          <div className="title"><img src={logo_white} /></div>
         </Link>
         <div className="searchPage_headerBody">
           <Search hideShortCut />
           <div className="searchPage_option">
             <div className="searchPage_optionLeft">
-              <div className="searchPage_option">
+              <div className={`searchPage_option ${term === "/all" ? "selected" : ""}`}>
                 <SearchIcon />
-                <Link to="/all">All</Link>
+                <Link to="/search">All</Link>
               </div>
-              <div className="searchPage_option">
-                <DescriptionOutlinedIcon />
-                <Link to="/news">News</Link>
-              </div>
-              <div className="searchPage_option">
+              <div className={`searchPage_option ${term === "/image" ? "selected" : ""}`}>
                 <InsertPhotoOutlinedIcon />
                 <Link to="/image">Image</Link>
-              </div>
-              <div className="searchPage_option">
-                <PlayArrowOutlinedIcon />
-                <Link to="/video">Video</Link>
-              </div>
-              <div className="searchPage_option">
-                <ShoppingCartOutlinedIcon />
-                <Link to="/shopping">Shopping</Link>
-              </div>
-              <div className="searchPage_option">
-                <RoomOutlinedIcon />
-                <Link to="/maps">Maps</Link>
               </div>
             </div>
           </div>

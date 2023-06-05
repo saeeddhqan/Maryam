@@ -23,8 +23,9 @@
     margin-top: 8%;
     text-align: center;
 }
-.webName{
-    font-size: 90px;
-    color: white;
-    /* flex-direction: column; */
+.webName img {
+  width: 600px; 
+  height: auto; 
 }
+
+
