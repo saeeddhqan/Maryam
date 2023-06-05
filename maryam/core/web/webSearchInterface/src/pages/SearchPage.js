@@ -1,66 +1,82 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./SearchPage.css";
 import { useStateValue } from "../StateProvider";
 import useWebApi from "./useWebApi";
 import { Link } from "react-router-dom";
 import Search from "./Search";
-import SearchIcon from "@mui/icons-material/Search";
-import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
-import InsertPhotoOutlinedIcon from "@mui/icons-material/InsertPhotoOutlined";
-import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
-import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
-import RoomOutlinedIcon from "@mui/icons-material/RoomOutlined";
+import { Tooltip } from "@mui/material";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import AppsOutlinedIcon from "@mui/icons-material/AppsOutlined";
 import SkeletonSearchPage from "../skeletons/SkeletonSearchPage";
-import { Tooltip } from "@mui/material";
-import logo_white from "./image/logo_white.png"
+import logo_white from "./image/logo_white.png";
+import SearchIcon from "@mui/icons-material/Search";
+import InsertPhotoOutlinedIcon from "@mui/icons-material/InsertPhotoOutlined";
 
 function SearchPage() {
   const [{ term }, dispatch] = useStateValue();
   const { data, isLoading } = useWebApi(term);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [selectedOption, setSelectedOption] = useState("All");
+
+  useEffect(() => {
+    function handleScroll() {
+      setIsScrolled(window.scrollY > 0);
+    }
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  const handleOptionSelect = (option) => {
+    setSelectedOption(option);
+  };
 
   return (
-    <div className="searchPage">
-      <div className="searchPage_header">
+    <div className={`searchPage ${isScrolled ? "scrolled" : ""}`}>
+      <div className={`searchPage_header ${isScrolled ? "scrolled" : ""}`}>
         <Link to="/" style={{ textDecoration: "none" }}>
-          <div className="title"><img src={logo_white} /></div>
+          <div className={`title ${isScrolled ? "scrolled" : ""}`}>
+            <img src={logo_white} alt="Logo" />
+          </div>
         </Link>
         <div className="searchPage_headerBody">
-          <Search hideShortCut />
-          <div className="searchPage_option">
-            <div className="searchPage_optionLeft">
-              <div className={`searchPage_option ${term === "/all" ? "selected" : ""}`}>
-                <SearchIcon />
-                <Link to="/search">All</Link>
-              </div>
-              <div className={`searchPage_option ${term === "/image" ? "selected" : ""}`}>
-                <InsertPhotoOutlinedIcon />
-                <Link to="/image">Image</Link>
-              </div>
-            </div>
+          <div className={`searchBox ${isScrolled ? "scrolled" : ""}`}>
+            <Search hideShortCut />
           </div>
-          <div className="searchPage_optionRight">
+          <div className={`searchPage_optionRight ${isScrolled ? "scrolled" : ""}`}>
             <div className="searchPage_optionRightSetting">
-              <Link to="/setting">
+              <Link to="#">
                 <Tooltip title="Setting">
-                  <SettingsOutlinedIcon
-                    style={{ color: "gray" }}
-                    fontSize="large"
-                  />
+                  <SettingsOutlinedIcon style={{ color: "white" }} fontSize="large" />
                 </Tooltip>
               </Link>
             </div>
             <div className="searchPage_optionRightApps">
-              <Link to="/setting">
+              <Link to="#">
                 <Tooltip title="Apps">
-                  <AppsOutlinedIcon
-                    style={{ color: "gray" }}
-                    fontSize="large"
-                  />
+                  <AppsOutlinedIcon style={{ color: "white" }} fontSize="large" />
                 </Tooltip>
               </Link>
             </div>
+          </div>
+        </div>
+        <div className={`searchPage_optionLeft ${isScrolled ? "hidden" : ""}`}>
+          <div
+            className={`searchPage_option ${selectedOption === "All" ? "selected" : ""}`}
+            onClick={() => handleOptionSelect("All")}
+          >
+            <SearchIcon />
+            <Link to="/search">All</Link>
+          </div>
+          <div
+            className={`searchPage_option ${selectedOption === "Image" ? "selected" : ""}`}
+            onClick={() => handleOptionSelect("Image")}
+          >
+            <InsertPhotoOutlinedIcon />
+            <Link to="/search">Image</Link>
           </div>
         </div>
       </div>
@@ -69,7 +85,7 @@ function SearchPage() {
           {data &&
             !isLoading &&
             data.output.results.map((item) => (
-              <div className="searchPage_result">
+              <div className="searchPage_result" key={item.id}>
                 <a className="searchPage_resultLink" href={item.a}>
                   {item.c}
                 </a>
@@ -79,10 +95,7 @@ function SearchPage() {
                 <p className="searchPage_resultSnippet">{item.d}</p>
               </div>
             ))}
-          {isLoading &&
-            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map((n) => (
-              <SkeletonSearchPage key={n} theme="dark" />
-            ))}
+          {isLoading && [...Array(10)].map((_, index) => <SkeletonSearchPage key={index} theme="dark" />)}
         </div>
       )}
 

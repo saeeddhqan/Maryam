@@ -1,7 +1,8 @@
 .searchPage {
-  background-color: rgb(32, 33, 36);
-  width: 115em;
-  margin-top: -10px;
+  background-color: #202124;
+  height: 100%;
+  min-width: 100%;
+  max-width: 130em;
 }
 
 .searchPage_header {
@@ -9,20 +10,33 @@
   align-items: center;
   padding: 5px;
   border-bottom: 1px solid lightgrey;
-  background-color: rgb(32, 33, 36);
+  align-items: center;
+  position: relative;
+  transition: all 0.3s ease;
+
 }
 
 .title {
   margin-bottom: 50px;
+  margin-top: 10px;
+  transition: all 0.3s ease;
 }
 
-.title img{
+.title img {
   margin-top: 15px;
-  width: 250px; 
-  height: auto; 
+  width: 250px;
+  height: auto;
+  width: 192px;
+  transition: all 0.3s ease;
 }
 
-.searchPage_optionLeft{
+.searchBox {
+  width: 650px;
+  margin-top: -70px;
+  transition: all 0.3s ease;
+}
+
+.searchPage_optionLeft {
   margin-top: -60px;
   padding-top: 20px;
 }
@@ -38,7 +52,7 @@
   flex-direction: column;
 }
 
-.searchPage_headerBody > .search > .search_input {
+.searchPage_headerBody>.search>.search_input {
   margin-top: 0px;
   width: 600px;
   margin: unset;
@@ -59,6 +73,10 @@
   position: absolute;
   left: 90em;
   padding-top: 60px;
+  margin-top: -40px;
+  right: -10px;
+  transform: translateX(55px);
+  margin-right: 0%;
 }
 
 .searchPage_option a,
@@ -81,79 +99,68 @@
   margin-left: 4px;
 }
 
-.searchPage_option:first-child:hover{
-    transition: color 0.7s ease;
-    color: lightblue;
-    transition: transform 0.7s ease;
-    transform: scale(1.2);
+.searchPage.scrolled .searchPage_header {
+  position: fixed;
+  top: -10px;
+  margin-top: 10px;
+  width: 100%;
+  background-color: #303134;
+  height: 70px;
 }
 
-.searchPage_option:nth-child(2):hover{
-    transition: color 0.7s ease;
-    color: lightcoral;
-    transition: transform 0.7s ease;
-    transform: scale(1.2);
+.searchPage.scrolled .title {
+  margin-top: 32px;
 }
 
-.searchPage_option:nth-child(3):hover{
-    transition: color 0.7s ease;
-    color: pink;
-    transition: transform 0.7s ease;
-    transform: scale(1.2);
+.searchPage.scrolled .searchBox {
+  margin-top: -54px;
 }
 
-.searchPage_option:nth-child(4):hover{
-    transition: color 0.7s ease;
-    color: lightcyan;
-    transition: transform 0.7s ease;
-    transform: scale(1.2);
+.searchPage.scrolled .searchPage_optionRight {
+  margin-top: -16px;
+  transform: translateY(-50%);
+  right: 0;
+  margin-left: 55px;
 }
 
-.searchPage_option:nth-child(5):hover{
-    transition: color 0.7s ease;
-    color: yellowgreen;
-    transition: transform 0.7s ease;
-    transform: scale(1.2);
+.searchPage_optionLeft {
+  margin-top: 50px;
+  margin-left: -650px;
 }
 
-.searchPage_option:nth-child(6):hover{
-    transition: color 0.7s ease;
-    color: lightgreen;
-    transition: transform 0.7s ease;
-    transform: scale(1.2);
+.hidden {
+  display: none;
 }
 
+.searchPage_option.selected {
+  color: lightblue;
+  text-decoration: underline;
 
-.searchPage_option:first-child a:hover{
-    
-    color: white;
 }
 
-.searchPage_option:nth-child(2) a:hover{
-    
-    color: white;
+.searchPage_option:first-child:hover {
+  transition: color 0.7s ease;
+  color: lightblue;
+  transition: transform 0.7s ease;
+  transform: scale(1.01);
+  text-decoration: underline;
 }
 
-.searchPage_option:nth-child(3) a:hover{
-    
-    color: white;
+.searchPage_option:nth-child(2):hover {
+  transition: color 0.7s ease;
+  color: lightcoral;
+  transition: transform 0.7s ease;
+  transform: scale(1.01);
+  text-decoration: underline;
 }
 
-.searchPage_option:nth-child(4) a:hover{
-    
-    color: white;
+.searchPage_option:first-child a:hover {
+  color: white;
 }
 
-.searchPage_option:nth-child(5) a:hover{
-    
-    color: white;
+.searchPage_option:nth-child(2) a:hover {
+  color: white;
 }
-
-.searchPage_option:nth-child(6) a:hover{
-
-    color: white;
-}
-
 
 .searchPage_result {
   margin: 40px 0;
@@ -175,7 +182,7 @@
   color: lightblue;
 }
 
-.searchPage_resultTitle > h2 {
+.searchPage_resultTitle>h2 {
   font-weight: 500;
   color: lightblue;
 }
@@ -194,9 +201,15 @@
   border-top: 1px solid lightgrey;
   display: flex;
   padding: 20px;
-
   z-index: 100;
   color: gray;
+}
+
+.footer.loading {
+  position: fixed;
+  top: 70px; /* Adjust this value to match the height of your header */
+  left: 0;
+  right: 0;
 }
 
 .footerAbout {
