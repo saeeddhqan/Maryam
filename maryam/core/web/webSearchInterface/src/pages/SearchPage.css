@@ -1,8 +1,8 @@
 .searchPage {
   background-color: #202124;
   height: 100%;
-  min-width: 100%;
-  max-width: 130em;
+  max-width: 100%;
+  min-width: 114em;
 }
 
 .searchPage_header {
@@ -132,26 +132,42 @@
   display: none;
 }
 
-.searchPage_option.selected {
+.searchPage_option:first-child.selected {
+  border-bottom: 2px solid lightblue;
+  width: 120%;
   color: lightblue;
-  text-decoration: underline;
+}
+
+
+.searchPage_option:nth-child(2).selected {
+  border-bottom: 2px solid lightcoral;
+  color: lightcoral;
 
 }
 
+.searchPage_option:first-child.selected>a {
+  color: white;
+}
+
+.searchPage_option:nth-child(2).selected>a {
+  color: white;
+}
+
+
 .searchPage_option:first-child:hover {
   transition: color 0.7s ease;
-  color: lightblue;
+  border-bottom: 2px solid lightblue;
   transition: transform 0.7s ease;
   transform: scale(1.01);
-  text-decoration: underline;
+  color: lightblue;
 }
 
 .searchPage_option:nth-child(2):hover {
   transition: color 0.7s ease;
-  color: lightcoral;
   transition: transform 0.7s ease;
   transform: scale(1.01);
-  text-decoration: underline;
+  border-bottom: 2px solid lightcoral;
+  color: lightcoral;
 }
 
 .searchPage_option:first-child a:hover {
@@ -207,7 +223,7 @@
 
 .footer.loading {
   position: fixed;
-  top: 70px; /* Adjust this value to match the height of your header */
+  top: 70px;
   left: 0;
   right: 0;
 }
@@ -219,9 +235,11 @@
 .footerAbout:hover {
   transition: color 1s ease;
   color: white;
+  text-decoration: underline;
 }
 
 .footerServices:hover {
   transition: color 1s ease;
   color: white;
+  text-decoration: underline;
 }
