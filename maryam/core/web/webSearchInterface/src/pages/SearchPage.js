@@ -86,16 +86,16 @@ function SearchPage() {
             !isLoading &&
             data.output.results.map((item) => (
               <div className="searchPage_result" key={item.id}>
-                <a className="searchPage_resultLink" href={item.a}>
+                <a className="searchPage_resultLink" href={item.a} target="_blank">
                   {item.c}
                 </a>
-                <a className="searchPage_resultTitle" href={item.a}>
+                <a className="searchPage_resultTitle" href={item.a} target="_blank">
                   <h2>{item.t}</h2>
                 </a>
                 <p className="searchPage_resultSnippet">{item.d}</p>
               </div>
             ))}
-          {isLoading && [...Array(10)].map((_, index) => <SkeletonSearchPage key={index} theme="dark" />)}
+          {isLoading && [...Array(15)].map((_, index) => <SkeletonSearchPage key={index} theme="dark" />)}
         </div>
       )}
 

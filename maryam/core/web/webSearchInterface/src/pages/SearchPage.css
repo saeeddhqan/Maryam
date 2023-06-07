@@ -106,6 +106,7 @@
   width: 100%;
   background-color: #303134;
   height: 70px;
+  z-index: 6;
 }
 
 .searchPage.scrolled .title {
@@ -205,7 +206,8 @@
 
 .searchPage_resultSnippet {
   margin-top: 10px;
-  color: rgba(255, 255, 255, 0.363);
+  /* color: rgba(255, 255, 255, 0.363); */
+  color: #bdc1c6;
 }
 
 .searchPage_resultLink {
