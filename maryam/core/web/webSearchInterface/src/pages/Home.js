@@ -4,7 +4,7 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import AppsOutlinedIcon from "@mui/icons-material/AppsOutlined";
 import Search from "./Search";
 import { Tooltip } from "@mui/material";
-import logo_white from "./image/logo_white.png"
+import logo_white from "./image/logo_white.png";
 
 function Home() {
   return (
@@ -23,7 +23,9 @@ function Home() {
       </div>
 
       <div className="home_body">
-        <div className="webName"><img src={logo_white}/></div>
+        <div className="webName">
+          <img src={logo_white} alt="Logo" />
+        </div>
         <div className="home_inputContainer">
           {/* Search */}
           <Search />
@@ -34,3 +36,4 @@ function Home() {
 }
 
 export default Home;
+
