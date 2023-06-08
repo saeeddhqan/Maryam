@@ -13,7 +13,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import InsertPhotoOutlinedIcon from "@mui/icons-material/InsertPhotoOutlined";
 
 function SearchPage() {
-  const [{ term }, dispatch] = useStateValue();
+  const [{ term }] = useStateValue();
   const { data, isLoading } = useWebApi(term);
   const [isScrolled, setIsScrolled] = useState(false);
   const [selectedOption, setSelectedOption] = useState("All");
@@ -86,10 +86,10 @@ function SearchPage() {
             !isLoading &&
             data.output.results.map((item) => (
               <div className="searchPage_result" key={item.id}>
-                <a className="searchPage_resultLink" href={item.a} target="_blank">
+                <a className="searchPage_resultLink" href={item.a} target="_blank" rel="noreferrer">
                   {item.c}
                 </a>
-                <a className="searchPage_resultTitle" href={item.a} target="_blank">
+                <a className="searchPage_resultTitle" href={item.a} target="_blank" rel="noreferrer">
                   <h2>{item.t}</h2>
                 </a>
                 <p className="searchPage_resultSnippet">{item.d}</p>

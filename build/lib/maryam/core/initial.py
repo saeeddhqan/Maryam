@@ -25,7 +25,6 @@ import sys
 import shlex
 import json
 import concurrent.futures
-import subprocess
 
 from maryam.core import basedir
 import multiprocessing as mp
@@ -157,30 +156,6 @@ class initialize(core):
 		params = params.lower().split(' ')
 		if 'api' not in sys.modules:
 			from .web import api
-   
-		if params[0] == 'iris':
-			# Run npm
-			current_path = os.getcwd()
-			web_path = os.path.join(current_path, 'maryam', 'core', 'web', 'webSearchInterface')
-			npm_process = subprocess.Popen(['npm', 'start'], cwd=web_path)
-
-			# Run API
-			api_mode = self._global_options['api_mode']
-			_mode = self._mode
-			self._mode = 'api'
-			if not api_mode:
-				self._global_options['api_mode'] = True
-			if len(params) == 3:
-				host = params[1]
-				port = params[2]
-			else:
-				host = '127.0.0.1'
-				port = 1313
-    
-			api.run_app(self, host, port)
-			self._global_options['api_mode'] = api_mode
-			self._mode = _mode
-			
 		if params[0] == 'api':
 			api_mode = self._global_options['api_mode']
 			_mode = self._mode

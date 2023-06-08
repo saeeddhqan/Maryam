@@ -16,7 +16,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 
 function Search({ hideShortCut = false }) {
-  const [{}, dispatch] = useStateValue();
+  const [, dispatch] = useStateValue();
   const [voiceSearch, setVoiceSearch] = useState(false);
   const [input, setInput] = useState("");
   const navigate = useNavigate();
@@ -77,19 +77,19 @@ function Search({ hideShortCut = false }) {
 
       {!hideShortCut ? (
         <div className="shortCut">
-          <a href="/Image">
+          <a href="/#">
             <img src={imageIcon} alt="Images" />
             <span>Images</span>
           </a>
-          <a href="/News">
+          <a href="/#">
             <img src={newsIcon} alt="News" />
             <span>News</span>
           </a>
-          <a href="/Social">
+          <a href="/#">
             <img src={socialIcon} alt="Social" />
             <span>Social</span>
           </a>
-          <a href="/Video">
+          <a href="/#">
             <img src={videoIcon} alt="Shopping" />
             <span>Video</span>
           </a>
@@ -97,19 +97,19 @@ function Search({ hideShortCut = false }) {
       ) : (
         <div className="shortCut">
           <div className="shortCut_hidden">
-            <a href="/Image">
+            <a href="/#">
               <img src={imageIcon} alt="Images" />
               <span>Images</span>
             </a>
-            <a href="/News">
+            <a href="/#">
               <img src={newsIcon} alt="News" />
               <span>News</span>
             </a>
-            <a href="/Social">
+            <a href="/#">
               <img src={socialIcon} alt="Social" />
               <span>Social</span>
             </a>
-            <a href="/Video">
+            <a href="/#">
               <img src={videoIcon} alt="Shopping" />
               <span>Video</span>
             </a>
