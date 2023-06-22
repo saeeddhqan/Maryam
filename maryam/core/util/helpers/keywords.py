@@ -34,19 +34,16 @@ class main:
 		self._keys = []
 		self._yahoo = \
 			'https://search.yahoo.com/sugg/gossip/gossip-us-ura/?f=1&output=sd1&command=<Q>&pq=a&l=3&nresults=30000&b=3&s=1c&callback=<b>'
-		self._google = 'https://www.google.com/complete/search?q=<Q>&cp=&client=psy-ab&xssi=t&gs_ri=gws-wiz&hl=&authuser=0&psi='
+		self._google = 'https://www.google.com/complete/search?q=<Q>&cp=10&client=gws-wiz&xssi=t&gs_pcrt=undefined&hl=en&authuser=0'
 		self._bing = 'https://www.bing.com/AS/Suggestions?pt=&mkt=de-de&qry=<Q>&cp=0&css=0&cvid=1'
-		self._millionshort = 'https://millionshort.com/api/suggestions?q=<Q>'
-		self._zapmeta = 'https://www.zapmeta.com/suggest?q=<Q>'
+		# self._zapmeta = 'https://www.zapmeta.com/suggest?q=<Q>'
 		self._searx = 'https://searx.be/autocompleter?q=<Q>'
-		self._peekier = {'url': 'https://search.peekier.com/suggestions', 'payload': {'q': '<Q>', 'region': ''}, 'method': 'POST'}
-		self._gigablast = 'https://gigablast.com/qs?rwp=0&lang=en&q=<Q>'
 
 	def run_crawl(self):
 		keys = {}
-		for source in ('yahoo', 'google', 'bing', 'millionshort',\
-						'zapmeta', 'searx', 'peekier', 'gigablast'):
-			attr = getattr(self, '_'+source)
+		for source in ('yahoo', 'google', 'bing',\
+						'searx'):
+			attr = getattr(self, '_' + source)
 			if isinstance(attr, dict):
 				url = attr['url']
 				method = 'POST'
@@ -70,14 +67,12 @@ class main:
 		except:
 			keys['google'] = []
 		keys['bing'] = re.findall(r'<span class="sa_tm_text">([^<]+)</span>', re.sub(r'<.?strong>', '', keys['bing'].text))
-		keys['zapmeta'] = [x[0] for x in keys['zapmeta'].json()] if hasattr(keys['zapmeta'], 'json') else []
-		keys['millionshort'] = keys['millionshort'].json().get('suggestions', []) if hasattr(keys['millionshort'], 'json') else []
+		# keys['zapmeta'] = [x[0] for x in keys['zapmeta'].json()] if hasattr(keys['zapmeta'], 'json') else []
 		try:
 			keys['searx'] = keys['searx'].json()[self.q]
 		except:
 			keys['searx'] = []
-		keys['peekier'] = keys['peekier'].json()['results']
-		keys['gigablast'] = re.findall(r'" >([^\n]+?)</td', keys['gigablast'].text)
+
 		self._keys_category = keys
 		for s in keys:
 			for i in keys[s]:

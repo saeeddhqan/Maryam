@@ -21,7 +21,7 @@ meta = {
 	'author': 'Aman Singh',
 	'version': '0.1',
 	'description': 'Search your query in the GitHub and show the potentially leaked info.',
-	'sources': ('google', 'carrot2', 'bing','yahoo', 'millionshort', 'qwant', 'duckduckgo', 'github'),
+	'sources': ('google', 'carrot2', 'bing','yahoo', 'qwant', 'duckduckgo', 'github'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),

@@ -67,6 +67,7 @@ class main:
 				payload['first'] = set_page(page)
 				if page >= self.limit or 'title="Next page"' not in req.text:
 					break
+	
 	# TODO: Finish it
 	@property
 	def bing_card(self):

@@ -15,10 +15,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 meta = {
 	'name': 'Find Emails',
 	'author': 'Saeed',
-	'version': '1.0',
+	'version': '1.1',
 	'description': 'Search in open-sources to find emails.',
 	'sources': ('bing', 'pastebin', 'google', 'yahoo', 'metacrawler',
-				'baidu', 'startpage', 'qwant', 'duckduckgo', 'hunter', 'gigablast', 'github', 'keyserver',),
+				'baidu', 'startpage', 'qwant', 'duckduckgo', 'hunter', 'github', 'keyserver',),
 	'options': (
 		('query', None, True, 'Domain name or company name', '-q', 'store', str),
 		('limit', 3, False, 'Search limit(number of pages, default=3)', '-l', 'store', int),

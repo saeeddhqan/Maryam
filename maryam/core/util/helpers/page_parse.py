@@ -39,7 +39,7 @@ class main:
 
 	def html_fromstring(self, xpath, parent=None, results={}):
 		if self.page == '':
-			self.framework.error(f"document is nil", 'util/page_parse', 'html_fromstring')
+			self.framework.error('document is nil', 'util/page_parse', 'html_fromstring')
 			return False
 
 		if isinstance(xpath, dict):

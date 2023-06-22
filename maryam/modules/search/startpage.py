@@ -18,8 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 meta = {
 	'name': 'Startpage Search',
 	'author': 'Saeed',
-	'version': '0.1',
-	'description': 'Search your query in the bing.com and show the results.',
+	'version': '0.2',
+	'description': 'Search your query in the startpage.com and show the results.',
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 50, False, 'Number of results per page(min=10, max=100, default=50)', '-l', 'store', int),
@@ -40,7 +40,3 @@ def module_api(self):
 def module_run(self):
 	output = module_api(self)
 	self.search_engine_results(output)
-	# for item in output['links']:
-	# 	link,title = item
-	# 	self.output(title)
-	# 	self.output(f"\t{link}", 'G')

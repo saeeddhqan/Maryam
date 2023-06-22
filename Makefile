@@ -6,7 +6,7 @@ first: help
 # Build
 
 install:  ## Install package
-	python3 setup.py install
+	pip install .
 
 
 build:  ## Build package by sdist
@@ -19,7 +19,6 @@ build-default:  ## Build package by build (recommended)
 
 uninstall:  ## Uninstall package
 	pip uninstall maryam
-	bash uninstall.sh
 
 upload-pypi:  ## Upload package to PyPI
 	python3 -m twine upload dist/*.tar.gz

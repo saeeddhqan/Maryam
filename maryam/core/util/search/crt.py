@@ -37,12 +37,13 @@ class main:
 			self.framework.error('CRT is missed!', 'util/crt', 'run_crawl')
 			return
 		self._pages = req.text
+		self._json_page = req.json()
 		try:
 			self._json_page = req.json()
 			if self._json_page == []:
 				self._json_page = {}
 		except:
-			self.framework.error('CRT is missed!')
+			self.framework.error('CRT is missed!', 'util/crt', 'run_crawl')
 			self._json_page = []
 
 	@property

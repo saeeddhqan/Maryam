@@ -17,11 +17,11 @@ import concurrent.futures
 meta = {
 	'name': 'Iris Meta Search Engine(experiment version)',
 	'author': 'Saeed, Kaushik',
-	'version': '0.4',
+	'version': '0.5',
 	'description': 'Iris is a built-in meta search engine.',
 	'comments': ('It should be note that this is a beta version and has many bugs!',),
 	'contributors': 'Aman, Dimitris, Divya, Vikas, Kunal',
-	'sources': ('google', 'bing', 'duckduckgo', 'millionshort', 'etools'),
+	'sources': ('google', 'bing', 'duckduckgo', 'etools', 'startpage', 'searx', 'yahoo'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 	),
@@ -29,7 +29,8 @@ meta = {
 }
 
 RESULTS = {}
-MAPPED = {'google': 100, 'bing': 100, 'duckduckgo': 30, 'millionshort': 10, 'yahoo': 100, 'carrot2': 100, 'searx': 100}
+MAPPED = {'google': 100, 'bing': 100, 'duckduckgo': 30,
+	 'yahoo': 100, 'carrot2': 100, 'searx': 100, 'startpage': 30}
 
 def thread(self, function, query, limit, workers):
 	threadpool = concurrent.futures.ThreadPoolExecutor(max_workers=len(workers))
@@ -61,11 +62,12 @@ def module_api(self):
 	engines = MAPPED.keys()
 	thread(self, search, query, 3, engines)
 	simple_merge = self.meta_search_util.simple_merge([RESULTS[x] for x in engines if x in RESULTS])
-	# TODO: Removing duplicates should be done during merging
+	# TODO: Removing duplicates need to be done during merging
 	final_results = self.meta_search_util.remove_dups(self, simple_merge)
 	output = {'results': final_results}
 	self.save_gather(output, 'iris/iris', query, output=self.options['output'])
 	return output
 
 def module_run(self):
+	print()
 	self.search_engine_results(module_api(self))

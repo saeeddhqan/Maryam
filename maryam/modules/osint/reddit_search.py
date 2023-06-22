@@ -18,7 +18,7 @@ meta = {
 	'name': 'Reddit Search',
 	'author': 'Kaushik',
 	'version': '0.1',
-	'description': 'Search tweets from twitter',
+	'description': 'Search reddit posts',
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('count', 15, False, 'Max result count (default=15)', '-l', 'store', int),

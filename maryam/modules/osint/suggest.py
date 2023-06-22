@@ -17,7 +17,7 @@ meta = {
 	'author': 'Saeed',
 	'version': '0.1',
 	'description': 'Keyword autocompleter to find suggestions in search engines',
-	'sources': ('google', 'bing', 'yahoo', 'searx', 'peekier', 'gigablast', 'zapmeta', 'millionshort'),
+	'sources': ('google', 'bing', 'yahoo', 'searx'),
 	'comments': (
 		"""example: query='google' out: ['google docs', 'google summer of code', 'google maps', 'google mail', 'google news', ..]""",
 	),

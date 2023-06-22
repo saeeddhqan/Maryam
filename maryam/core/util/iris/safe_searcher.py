@@ -23,15 +23,12 @@ class main:
 					self.framework.google,
 					self.framework.duckduckgo,
 					self.framework.bing,
-					self.framework.millionshort,
 					self.framework.startpage,
 					self.framework.dogpile,
 					self.framework.qwant,
 					self.framework.yandex,
 					self.framework.yahoo,
 					self.framework.ask,
-					self.framework.gigablast,
-					self.framework.activesearch
 				]
 		else:
 			self._engine_q = engine_q

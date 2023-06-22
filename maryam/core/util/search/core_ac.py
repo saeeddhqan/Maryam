@@ -23,31 +23,41 @@ class main:
 		""" core.ac.uk search engine
 
 				q         : query for search
-				limit     : maximum result count
+				limit     : maximum page search
 		"""
 		self.framework = main.framework
 		self.q = q
 		self.limit = limit
-		self._json = []
+		self._pages = ''
+		self._jsons = []
 		self._results = []
-		self.url = 'https://core.ac.uk/search/api/search'
+		self.url = 'https://core.ac.uk/search/_next/data/-JCaNMETLG_pZxb60WhOp/search.json'
 
 	def run_crawl(self):
 		self.framework.verbose('Searching the CORE domain...')
-
-		data = f'{{"basicQuery":{{"count":"{self.limit}","searchCriteria":"{self.q}","offset":0}}}}'
-		try:
-			req = self.framework.request(
-					url=self.url,
-					method='POST',
-					data=data,
-					)
-		except Exception as e:
-			self.framework.error(f"ConnectionError {e}.", 'util/search/core_ac', 'run_crawl')
-			self.framework.error('CORE.AC.UK is missed!', 'util/search/core_ac', 'run_crawl')
-			return
-		else:
-			self._json = req.json()
+		page = 1
+		payload = {'q': self.q, 'page': 1}
+		max_attempt = 0
+		while True:
+			try:
+				req = self.framework.request(
+						url=self.url,
+						method='GET',
+						params=payload,
+						)
+			except Exception as e:
+				self.framework.error(f"ConnectionError {e}.", 'util/search/core_ac', 'run_crawl')
+				max_attempt += 1
+				if max_attempt == self.limit:
+					self.framework.error('CORE.AC.UK is missed!', 'util/search/core_ac', 'run_crawl')
+					break
+			else:
+				self._pages += req.text
+				self._jsons.append(req.json())
+				page += 1
+				payload['page'] = page
+				if page >= self.limit:
+					break
 
 	@property
 	def json(self):
@@ -55,22 +65,21 @@ class main:
 
 	@property
 	def results(self):
-		findlink = lambda x: x["downloadUrl"]
-		findauthors = lambda x: x.get("authorsString")
-		findtitle = lambda x: x["title"]
-		findsummary = lambda x: x.get("snippet")
-
-		for count,article in enumerate(self._json['results']):
-			if count == self.limit:
-				break
-			d = findsummary(article)
-			c = findauthors(article)
-			self._results.append({
-				't': findtitle(article),
-				'a': findlink(article),
-				'c': c if c is not None else 'Authors not available',
-				'd': re.sub('<[^<]+?>', '', d) if d is not None\
-						else 'Abstract not available'
+		findlink = lambda x: x['downloadUrl']
+		findauthors = lambda x: [i.get('name', '') for i in x.get('authors', [])]
+		findtitle = lambda x: x['title']
+		findsummary = lambda x: x.get('abstract')
+		for page in self._jsons:
+			for article in enumerate(page['pageProps']['data']['results']):
+				article = article[1]
+				d = findsummary(article)[:100] + '...'
+				c = findauthors(article)
+				c = ','.join(c)[:100] or '' + '...'
+				self._results.append({
+					't': findtitle(article),
+					'a': findlink(article),
+					'c': c,
+					'd': d,
 				})
 
 		return self._results

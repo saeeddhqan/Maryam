@@ -1,5 +1,5 @@
 [![Build Status](https://app.travis-ci.com/saeeddhqan/Maryam.svg?branch=master)](https://app.travis-ci.com/github/saeeddhqan/Maryam)
-![Version 2.5.1](https://img.shields.io/badge/Version-2.5.1-green.svg)
+![Version 2.5.2](https://img.shields.io/badge/Version-2.5.1-green.svg)
 ![GPLv3 License](https://img.shields.io/badge/License-GPLv3-green.svg)
 ![Python 3.10.x](https://img.shields.io/badge/Python-3.10.x-green.svg)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/4577/badge)](https://bestpractices.coreinfrastructure.org/projects/4577)
@@ -52,7 +52,6 @@ maryam -e web api 127.0.0.1 1313
  - Added famous_person
  - Core speedup optimizations
  - Added setup.py
-
 
 
 

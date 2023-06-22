@@ -23,9 +23,9 @@ meta = {
 	'description': 'Search in the open-sources to find subdomans.',
 	'sources': ('securitytrails', 'bing', 'google', 'yahoo', 'metacrawler', 'ask', 'baidu', 'startpage',
 				'netcraft', 'threatcrowd', 'virustotal', 'otx', 'carrot2', 'crt',
-				'qwant', 'millionshort', 'threatminer', 'jldc', 'bufferover', 'rapiddns', 'certspotter',
+				'qwant', 'threatminer', 'jldc', 'bufferover', 'rapiddns', 'certspotter',
 				'sublist3r', 'riddler', 'sitedossier', 'duckduckgo', 'dnsdumpster', 'yougetsignal', 'pastebin',
-				'urlscan', 'gigablast', 'dogpile'),
+				'urlscan', 'dogpile'),
 	'options': (
 		('domain', None,
 		 True, 'Domain name without https?://', '-d', 'store', str),

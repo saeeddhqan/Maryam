@@ -21,7 +21,7 @@ meta = {
 	'version': '0.1',
 	'description': 'Search for the query in online storage services like GoogleDrive, OneDrive, Dropbox,\
 	 Amazon S3, Box and show the results.',
-	'sources': ('google', 'carrot2', 'bing', 'yahoo', 'millionshort', 'qwant', 'duckduckgo'),
+	'sources': ('google', 'carrot2', 'bing', 'yahoo', 'qwant', 'duckduckgo'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),

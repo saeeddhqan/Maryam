@@ -58,18 +58,18 @@ class main:
 			self.corpus = tmp['td'].str.lower().apply(remove_stopwords).to_numpy()
 
 		else:
-			print("ERROR, only accept csv or json file!")
+			print('ERROR, only accept csv or json file!')
 
 		if verbose == True:
-			print("\n\n number of corpus = ")
+			print('\n\n number of corpus = ')
 			print(len(self.corpus))
-			print("\n\n self.corpus[0] = ")
+			print('\n\n self.corpus[0] = ')
 			print(self.corpus[0])
-			print("\n\n all self.corpus = ")
+			print('\n\n all self.corpus = ')
 			print(self.corpus)
 
 		if showcharts == True:
-			print("\n\n histogram of the number of words in each corpus")
+			print('\n\n histogram of the number of words in each corpus')
 			pd.Series([len(e.split()) for e in self.corpus]).hist()
 			plt.show()
 
@@ -81,7 +81,7 @@ class main:
 
 		pretrained_model = selected_pretrained_model
 		if verbose == True:
-			print("\n\n Model selection")
+			print('\n\n Model selection')
 			# https://www.sbert.net/docs/pretrained_models.html
 			print(pretrained_model)
 
@@ -91,23 +91,23 @@ class main:
 
 		corpus_embeddings = model.encode(self.corpus)
 		if verbose == True:
-			print("\n\n CORPUS EMBEDDING")
+			print('\n\n CORPUS EMBEDDING')
 			print(corpus_embeddings.shape)
 			print(corpus_embeddings)
 
 		K = 5
 		kmeans = KMeans(n_clusters=5, random_state=0).fit(corpus_embeddings)
 		if verbose == True:
-			print("\n\n Show Cluster using SkLearn KMeans")
+			print('\n\n Show Cluster using SkLearn KMeans')
 			print(kmeans)
 
 		corpus_labeled = pd.DataFrame({'ClusterLabel': kmeans.labels_, 'Sentence': self.corpus})
-		print("\n\n corpus_labeled = ")
+		print('\n\n corpus_labeled = ')
 		print(corpus_labeled)
 
 		cls_dist = pd.Series(kmeans.labels_).value_counts()
 		if verbose == True:
-			print("\n\n frequency of cluster label = ")
+			print('\n\n frequency of cluster label = ')
 			print(cls_dist)
 
 		distances = scipy.spatial.distance.cdist(kmeans.cluster_centers_, corpus_embeddings)
@@ -118,14 +118,14 @@ class main:
 		print("\n\n Cluster's center example = ")
 
 		centers = {}
-		print("Cluster", "Size", "Center-idx", "Center-Example", sep="\t\t")
+		print('Cluster', 'Size', 'Center-idx', 'Center-Example', sep='\t\t')
 		for i, d in enumerate(distances):
 			ind = np.argsort(d, axis=0)[0]
 			centers[i] = ind
 			print(i, cls_dist[i], ind, self.corpus[ind], sep="\t\t")
 
 		if showcharts == True:
-			print("\n\n Visualization of the cluster points")
+			print('\n\n Visualization of the cluster points')
 
 			X = umap.UMAP(n_components=2, min_dist=0.0).fit_transform(corpus_embeddings)
 			labels = kmeans.labels_
@@ -133,7 +133,7 @@ class main:
 			fig, ax = plt.subplots(figsize=(12, 8))
 			plt.scatter(X[:, 0], X[:, 1], c=labels, s=1, cmap='Paired')
 			for c in centers:
-				plt.text(X[centers[c], 0], X[centers[c], 1], "CLS-" + str(c), fontsize=24)
+				plt.text(X[centers[c], 0], X[centers[c], 1], 'CLS-' + str(c), fontsize=24)
 			plt.colorbar()
 			plt.show()
 
@@ -143,7 +143,7 @@ class main:
 
 		pretrained_model = selected_pretrained_model
 		if verbose == True:
-			print("\n\n Model selection")
+			print('\n\n Model selection')
 			# https://www.sbert.net/docs/pretrained_models.html
 			print(pretrained_model)
 
@@ -153,11 +153,11 @@ class main:
 
 		corpus_embeddings = model.encode(self.corpus)
 		if verbose == True:
-			print("\n\n CORPUS EMBEDDING")
+			print('\n\n CORPUS EMBEDDING')
 			print(corpus_embeddings.shape)
 			print(corpus_embeddings)
 
-		print("\n\n Topic Modeling with BERTopic")
+		print('\n\n Topic Modeling with BERTopic')
 
 		sentence_model = SentenceTransformer(pretrained_model)
 		if verbose == True:
@@ -176,11 +176,11 @@ class main:
 			print("\n\n corpus_labeled = ")
 			print(corpus_labeled)
 
-		print("\n\n topics for each cluster = ")
+		print('\n\n topics for each cluster = ')
 
 		i = 0
 		while i < len(topic_model.get_topic_info()):
-			print("Cluster #" + str(i) + " = ")
+			print(f"Cluster #{i} = ")
 			print(topic_model.get_topic(i))
 			i += 1
 
@@ -191,19 +191,19 @@ class main:
 
 		from top2vec import Top2Vec
 
-		print("\n\n Search Topics Using Top2Vec (caution: might not work well for a small dataset)")
-		print("\n the Search Keyword = " + keyword)
+		print('\n\n Search Topics Using Top2Vec (caution: might not work well for a small dataset)')
+		print('\n the Search Keyword = ' + keyword)
 
-		pretrained_embedding_model = "universal-sentence-encoder-multilingual"
+		pretrained_embedding_model = 'universal-sentence-encoder-multilingual'
 		if verbose == True:
-			print("\n\n Pretrained Embedding Model")
+			print('\n\n Pretrained Embedding Model')
 			# https://tfhub.dev/google/universal-sentence-encoder-multilingual/
 			# 16 languages (Arabic, Chinese-simplified, Chinese-traditional, English, French, German, Italian, Japanese, Korean, Dutch, Polish, Portuguese, Spanish, Thai, Turkish, Russian) text encoder.
 			print(pretrained_embedding_model)
 
-		model = Top2Vec(documents=self.corpus.tolist(), speed="learn", workers=8)
+		model = Top2Vec(documents=self.corpus.tolist(), speed='learn', workers=8)
 		if verbose == True:
-			print("\n Model = ")
+			print('\n Model = ')
 			print(model)
 
 		if model.get_num_topics() < 5:
@@ -216,22 +216,22 @@ class main:
 		print(word_scores)
 		print(topic_nums)
 
-		print("\n Semantic Search Documents by Keywords = ")
+		print('\n Semantic Search Documents by Keywords = ')
 		documents, document_scores, document_ids = model.search_documents_by_keywords(keywords=[keyword], num_docs=5)
 		for doc, score, doc_id in zip(documents, document_scores, document_ids):
 			print(f"Document: {doc_id}, Score: {score}")
-			print("-----------")
+			print('-----------')
 			print(doc)
-			print("-----------")
+			print('-----------')
 			print()
 
 		if showcharts == True:
-			print("\n\n Generate Word Clouds = ")
+			print('\n\n Generate Word Clouds = ')
 			topic_words, word_scores, topic_scores, topic_nums = model.search_topics(keywords=[keyword], num_topics=ntopics)
 			for topic in topic_nums:
 				model.generate_topic_wordcloud(topic)
 
-		print("\n Similar Keywords = ")
+		print('\n Similar Keywords = ')
 		words, word_scores = model.similar_words(keywords=[keyword], keywords_neg=[], num_words=20)
 		for word, score in zip(words, word_scores):
 			print(f"{word} {score}")
