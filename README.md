@@ -19,6 +19,10 @@ OWASP Maryam is a modular open-source framework based on OSINT and data gatherin
 ```bash
 $ pip install maryam
 ```
+Alternatively, you can install the latest version with the following command (Recommended):
+```bash
+pip install git+https://github.com/saeeddhqan/maryam.git
+```
 
 # Usage
 
