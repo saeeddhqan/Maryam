@@ -41,7 +41,6 @@ setup(
         'flask',
         'vaderSentiment',
         'plotly',
-        'nltk',
         'matplotlib',
         'pandas',
         'wordcloud',
