@@ -164,8 +164,8 @@ class initialize(core):
 			# Check if node is installed
 			node_exists = shutil.which('node') is not None
    
-			if not npm_exists or not node_exists:
-				print("npm and/or Node.js are not installed.")
+			if not (npm_exists and node_exists):
+				print('npm and/or Node.js are not installed.')
 
 			else:
 				# Run npm
