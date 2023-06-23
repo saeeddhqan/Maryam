@@ -28,7 +28,7 @@ function Home() {
         </div>
         <div className="home_inputContainer">
           {/* Search */}
-          <Search />
+          <Search hideShortCut />
         </div>
       </div>
     </div>
