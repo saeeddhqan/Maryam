@@ -12,14 +12,29 @@
   background-color: white;
 }
 
-.search_input > input {
+.search_icon {
+  cursor: pointer;
+  display: flex;
+
+}
+
+.clear_icon {
+  border-right: 1px solid #000;
+  height: 3em;
+  margin-left: 2em;
+  margin-right: 6px;
+}
+
+
+
+.search_input>input {
   flex: 1;
   padding: 10px 20px;
   font-size: medium;
   border: none;
 }
 
-.search_input > input:focus {
+.search_input>input:focus {
   outline-width: 0;
 }
 
@@ -67,4 +82,3 @@
 .shortCut_hidden {
   display: none !important;
 }
-

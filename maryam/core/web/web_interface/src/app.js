@@ -3,6 +3,7 @@ import Home from "./pages/home";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import SearchPage from "./pages/search_page";
 
+
 function App() {
   return (
     //BEM

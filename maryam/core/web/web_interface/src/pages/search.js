@@ -1,91 +1,65 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./search.css";
 import SearchIcon from "@mui/icons-material/Search";
-import imageIcon from "./image/image_icon.png";
-import newsIcon from "./image/news_icon.png";
-import socialIcon from "./image/social_icon.png";
-import videoIcon from "./image/video_icon.png";
 import { useNavigate } from "react-router-dom";
 import { useStateValue } from "../state_provider";
 import { actionTypes } from "../reducer";
 import CloseIcon from '@mui/icons-material/Close';
 
 
-function Search({ hideShortCut = false }) {
+function Search() {
   const [, dispatch] = useStateValue();
   const [input, setInput] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedSearchQuery = localStorage.getItem("searchQuery");
+    if (storedSearchQuery) {
+      setInput(storedSearchQuery);
+    }
+  }, []);
+
   const handleKeyDown = (e) => {
-    if (e.key === "Enter" && e.target.value === "") {
+    if (e.key === "Enter" || e.type === "click") {
       e.preventDefault();
-    } else if (e.key === "Enter") {
-      e.preventDefault();
+      if (input === "") {
+        // Handle empty search term
+        return;
+      }
       dispatch({
         type: actionTypes.SET_SEARCH_TERM,
         term: input,
       });
-
       navigate("/search");
     }
   };
+
   const clearInput = () => {
     setInput("");
   };
 
+  const handleInputChange = (e) => {
+    setInput(e.target.value);
+  };
+
+  useEffect(() => {
+    localStorage.setItem("searchQuery", input);
+  }, [input]);
+
   return (
     <form className="search">
       <div className="search_input">
-        <SearchIcon />
-        <input
+        < input
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           placeholder="Search anything"
         />
-          {input && <CloseIcon className="clear_icon" onClick={clearInput}/> }
+        <div className="search_icon">
+          {input && <CloseIcon className="clear_icon" onClick={clearInput} />}
+          <SearchIcon onClick={handleKeyDown}/>
+        </div>
       </div>
-
-      {!hideShortCut ? (
-        <div className="shortCut">
-          <a href="/#">
-            <img src={imageIcon} alt="Images" />
-            <span>Images</span>
-          </a>
-          <a href="/#">
-            <img src={newsIcon} alt="News" />
-            <span>News</span>
-          </a>
-          <a href="/#">
-            <img src={socialIcon} alt="Social" />
-            <span>Social</span>
-          </a>
-          <a href="/#">
-            <img src={videoIcon} alt="Shopping" />
-            <span>Video</span>
-          </a>
-        </div>
-      ) : (
-        <div className="shortCut">
-          <div className="shortCut_hidden">
-            <a href="/#">
-              <img src={imageIcon} alt="Images" />
-              <span>Images</span>
-            </a>
-            <a href="/#">
-              <img src={newsIcon} alt="News" />
-              <span>News</span>
-            </a>
-            <a href="/#">
-              <img src={socialIcon} alt="Social" />
-              <span>Social</span>
-            </a>
-            <a href="/#">
-              <img src={videoIcon} alt="Shopping" />
-              <span>Video</span>
-            </a>
-          </div>
-        </div>
-      )}
     </form>
   );
 }
