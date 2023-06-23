@@ -159,27 +159,36 @@ class initialize(core):
 			from .web import api
    
 		if params[0] == 'iris':
-			# Run npm
-			current_path = os.getcwd()
-			web_path = os.path.join(current_path, 'maryam', 'core', 'web', 'web_interface')
-			npm_process = subprocess.Popen(['npm', 'start'], cwd=web_path)
+			# Check if npm is installed
+			npm_exists = shutil.which('npm') is not None
+			# Check if node is installed
+			node_exists = shutil.which('node') is not None
+   
+			if not npm_exists or not node_exists:
+				print("npm and/or Node.js are not installed.")
 
-			# Run API
-			api_mode = self._global_options['api_mode']
-			_mode = self._mode
-			self._mode = 'api'
-			if not api_mode:
-				self._global_options['api_mode'] = True
-			if len(params) == 3:
-				host = params[1]
-				port = params[2]
 			else:
-				host = '127.0.0.1'
-				port = 1313
+				# Run npm
+				current_path = os.getcwd()
+				web_path = os.path.join(current_path, 'maryam', 'core', 'web', 'web_interface')
+				npm_process = subprocess.Popen(['npm', 'start'], cwd=web_path)
+
+				# Run API
+				api_mode = self._global_options['api_mode']
+				_mode = self._mode
+				self._mode = 'api'
+				if not api_mode:
+					self._global_options['api_mode'] = True
+				if len(params) == 3:
+					host = params[1]
+					port = params[2]
+				else:
+					host = '127.0.0.1'
+					port = 1313
     
-			api.run_app(self, host, port)
-			self._global_options['api_mode'] = api_mode
-			self._mode = _mode
+				api.run_app(self, host, port)
+				self._global_options['api_mode'] = api_mode
+				self._mode = _mode
 			
 		if params[0] == 'api':
 			api_mode = self._global_options['api_mode']
