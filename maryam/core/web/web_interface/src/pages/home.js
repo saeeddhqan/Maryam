@@ -1,14 +1,14 @@
 import React from "react";
 import "./home.css";
 import Search from "./search";
-import logo_white from "./image/logo_white.png";
+import logo from "./image/logo.png";
 
 function Home() {
   return (
     <div className="home">
       <div className="home_body">
         <div className="webName">
-          <img src={logo_white} alt="Logo" />
+          <img src={logo} alt="Logo" />
         </div>
         <div className="home_inputContainer">
           {/* Search */}

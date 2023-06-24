@@ -1,63 +1,42 @@
 import React, { useState, useEffect } from "react";
-import "./search_page.css";
+import { Link } from "react-router-dom";
 import { useStateValue } from "../state_provider";
 import useWebApi from "./use_web_api";
-import { Link } from "react-router-dom";
 import Search from "./search";
 import SkeletonSearchPage from "../skeletons/skeleton_search_page";
-import logo_white from "./image/logo_white.png";
-
+import logo_white from "./image/logo.png";
+import "./search_page.css";
 
 function SearchPage() {
   const [{ term }] = useStateValue();
   const { data, isLoading } = useWebApi(term);
   const [selectedOption, setSelectedOption] = useState("All");
+
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
   };
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.pageYOffset > 0) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
 
 
   return (
-    <div className={`searchPage ${scrolled ? "scrolled" : ""}`}>
+    <div className="searchPage">
       <div className="searchPage_header">
         <Link to="/" style={{ textDecoration: "none" }}>
-          <div className={`title `}>
+          <div className="title">
             <img src={logo_white} alt="Logo" />
           </div>
         </Link>
         <div className="searchPage_headerBody">
-          <div className={`searchBox`}>
-            <Search/>
+          <div className="searchBox">
+            <Search />
           </div>
         </div>
-        <div className={`searchPage_optionLeft`}>
-          <div
-            className={`searchPage_option ${selectedOption === "All" ? "selected" : ""}`}
-            onClick={() => handleOptionSelect("All")}
-          >
-            <Link to="/search">Web</Link>
-          </div>
-          <div
-            className={`searchPage_option ${selectedOption === "Image" ? "selected" : ""}`}
-            onClick={() => handleOptionSelect("Image")}
-          >
-            <Link to="/search">Image</Link>
-          </div>
+        <div className="searchPage_optionLeft">
+          <Link to="/search" className={`searchPage_option_all ${selectedOption === "All" ? "selected" : ""}`} onClick={() => handleOptionSelect("All")}>
+            Web
+          </Link>
+          <Link to="/search" className={`searchPage_option_image ${selectedOption === "Image" ? "selected" : ""}`} onClick={() => handleOptionSelect("Image")}>
+            Images
+          </Link>
         </div>
       </div>
       {term && (
@@ -75,15 +54,16 @@ function SearchPage() {
                 <p className="searchPage_resultSnippet">{item.d}</p>
               </div>
             ))}
-          {isLoading && [...Array(15)].map((_, index) => <SkeletonSearchPage key={index} theme="dark" />)}
+          {isLoading &&
+            [...Array(15)].map((_, index) => <SkeletonSearchPage key={index} theme="dark" />)}
         </div>
       )}
 
       <div className="footer">
         <div className="licensed">GPLv3 Licensed</div>
-        <div> Maryam Project</div>
+        <div>Maryam Project</div>
       </div>
-        <div className="madewith">Made with ❤️ + ☕</div>
+      <div className="madewith">Made with <span className="heart">❤️</span>  + ☕</div>
     </div>
   );
 }
