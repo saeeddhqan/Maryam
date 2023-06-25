@@ -49,14 +49,12 @@
 
 }
 
-/* Styling for the "All" option when selected */
 .searchPage_option_all.selected {
   color: #a6afff;
   border-bottom: 4px solid #a6afff;
   ;
 }
 
-/* Styling for the "Image" option when selected */
 .searchPage_option_image.selected {
   color: #a6afff;
   border-bottom: 4px solid #a6afff;
@@ -65,16 +63,12 @@
 .searchPage_option_all:hover {
   color: #a6afff;
   border-bottom: 4px solid #a6afff;
-  ;
 }
 
-/* Styling for the "Image" option when selected */
 .searchPage_option_image:hover {
   color: #a6afff;
   border-bottom: 4px solid #a6afff;
 }
-
-
 
 .searchPage_result {
   margin: 40px 0;
@@ -119,7 +113,6 @@
   color: gray;
 }
 
-
 .licensed {
   color: #174d07;
   text-decoration: underline;
@@ -130,7 +123,6 @@
   text-decoration: underline;
   position: relative;
 }
-
 
 .madewith {
   padding: 20px;

@@ -16,7 +16,6 @@ function SearchPage() {
     setSelectedOption(option);
   };
 
-
   return (
     <div className="searchPage">
       <div className="searchPage_header">
@@ -58,7 +57,6 @@ function SearchPage() {
             [...Array(15)].map((_, index) => <SkeletonSearchPage key={index} theme="dark" />)}
         </div>
       )}
-
       <div className="footer">
         <div className="licensed">GPLv3 Licensed</div>
         <div>Maryam Project</div>
