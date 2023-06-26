@@ -10,6 +10,7 @@
   margin-top: 40px;
   max-width: 560px;
   background-color: white;
+  /* position: relative; */
 }
 
 .search_icon {
@@ -36,6 +37,10 @@
 
 .search_input>input:focus {
   outline-width: 0;
+}
+
+.search_input:focus-within {
+  box-shadow: 0px 0px 3px 2px pink;
 }
 
 .search_inputIcon {

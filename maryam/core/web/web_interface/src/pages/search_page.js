@@ -33,9 +33,9 @@ function SearchPage() {
           <Link to="/search" className={`searchPage_option_all ${selectedOption === "All" ? "selected" : ""}`} onClick={() => handleOptionSelect("All")}>
             Web
           </Link>
-          <Link to="/search" className={`searchPage_option_image ${selectedOption === "Image" ? "selected" : ""}`} onClick={() => handleOptionSelect("Image")}>
+          {/* <Link to="/search" className={`searchPage_option_image ${selectedOption === "Image" ? "selected" : ""}`} onClick={() => handleOptionSelect("Image")}>
             Images
-          </Link>
+          </Link> */}
         </div>
       </div>
       {term && (
