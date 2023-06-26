@@ -10,7 +10,6 @@
   margin-top: 40px;
   max-width: 560px;
   background-color: white;
-  /* position: relative; */
 }
 
 .search_icon {
@@ -26,8 +25,6 @@
   margin-right: 6px;
 }
 
-
-
 .search_input>input {
   flex: 1;
   padding: 10px 20px;
@@ -41,49 +38,4 @@
 
 .search_input:focus-within {
   box-shadow: 0px 0px 3px 2px pink;
-}
-
-.search_inputIcon {
-  color: grey;
-}
-
-.shortCut {
-  display: flex;
-  justify-content: center;
-}
-
-.shortCut a {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-  width: 60px;
-  margin-top: 20px;
-  margin-right: 20px;
-  padding-right: 30px;
-  padding-top: 20px;
-}
-
-.shortCut a:hover {
-  align-items: center;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 5px;
-}
-
-.shortCut a img {
-  width: 50px;
-  height: 50px;
-  transition: transform 0.3s ease-in-out;
-}
-
-.shortCut a span {
-  color: white;
-}
-
-.shortCut a:hover span {
-  color: black;
-}
-
-.shortCut_hidden {
-  display: none !important;
 }

@@ -57,7 +57,7 @@ function Search() {
         />
         <div className="search_icon">
           {input && <CloseIcon className="clear_icon" onClick={clearInput} />}
-          <SearchIcon onClick={handleKeyDown}/>
+          <SearchIcon onClick={handleKeyDown} />
         </div>
       </div>
     </form>
