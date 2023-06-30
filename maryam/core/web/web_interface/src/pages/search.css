@@ -10,12 +10,12 @@
   margin-top: 40px;
   max-width: 560px;
   background-color: white;
-  border: none;
 }
 
 .search_icon {
   cursor: pointer;
   display: flex;
+
 }
 
 .clear_icon {
@@ -25,14 +25,12 @@
   margin-right: 6px;
 }
 
-.search_input input {
+.search_input>input {
   flex: 1;
   padding: 10px 20px;
   font-size: medium;
   border: none;
-  outline: none;
 }
-
 
 .search_input>input:focus {
   outline-width: 0;
