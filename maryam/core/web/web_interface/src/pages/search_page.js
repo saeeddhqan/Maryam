@@ -42,8 +42,8 @@ function SearchPage() {
         <div className="searchPage_results">
           {data &&
             !isLoading &&
-            data.output.results.map((item) => (
-              <div className="searchPage_result" key={item.id}>
+            data.output.results.map((item, index) => (
+              <div className="searchPage_result" key={index}>
                 <a className="searchPage_resultLink" href={item.a} target="_blank" rel="noreferrer">
                   {item.c}
                 </a>
