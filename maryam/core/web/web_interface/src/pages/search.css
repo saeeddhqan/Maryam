@@ -37,5 +37,5 @@
 }
 
 .search_input:focus-within {
-  box-shadow: 0px 0px 3px 2px pink;
+  box-shadow: 0px 0px 3px 2px #9370DB;
 }
