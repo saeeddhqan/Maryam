@@ -10,6 +10,7 @@
   margin-top: 40px;
   max-width: 560px;
   background-color: white;
+  outline: none;
 }
 
 .search_icon {
@@ -30,10 +31,13 @@
   padding: 10px 20px;
   font-size: medium;
   border: none;
+  outline: none;
 }
 
 .search_input>input:focus {
   outline-width: 0;
+  border: none;
+  outline: none;
 }
 
 .search_input:focus-within {
