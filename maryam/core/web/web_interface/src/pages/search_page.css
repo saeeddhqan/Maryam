@@ -1,0 +1,136 @@
+.searchPage {
+  background-color: #000d02;
+  height: 100%;
+  width: auto;
+  font-family: Inter, "Helvetica Neue", Arial, sans-serif;
+}
+
+.searchPage_header {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid lightgrey;
+  background-color: #000;
+  z-index: 100;
+  top: 0;
+  transition: none;
+  position: sticky;
+}
+
+.title img {
+  width: 120px;
+}
+
+.searchBox {
+  width: 650px;
+  margin-top: -60px;
+}
+
+.searchPage_optionLeft {
+  display: flex;
+  margin-top: 85px;
+
+}
+
+.searchPage_option_all {
+  margin-left: -600px;
+}
+
+.searchPage_option_image {
+  margin-left: 6px;
+}
+
+.searchPage_option_all,
+.searchPage_option_image {
+  padding: 10px;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 500;
+  color: white;
+
+}
+
+.searchPage_option_all.selected {
+  color: #a6afff;
+  border-bottom: 4px solid #a6afff;
+  ;
+}
+
+.searchPage_option_image.selected {
+  color: #a6afff;
+  border-bottom: 4px solid #a6afff;
+}
+
+.searchPage_option_all:hover {
+  color: #a6afff;
+  border-bottom: 4px solid #a6afff;
+}
+
+.searchPage_option_image:hover {
+  color: #a6afff;
+  border-bottom: 4px solid #a6afff;
+}
+
+.searchPage_result {
+  margin: 40px 0;
+}
+
+.searchPage_results {
+  max-width: 850px;
+  margin-top: 20px;
+  margin-left: 150px;
+  margin-bottom: 100px;
+}
+
+.searchPage_resultTitle {
+  text-decoration: none;
+}
+
+.searchPage_resultTitle:hover {
+  text-decoration: underline;
+  color: lightblue;
+}
+
+.searchPage_resultTitle>h2 {
+  font-weight: 500;
+  color: lightblue;
+}
+
+.searchPage_resultSnippet {
+  margin-top: 10px;
+  color: #bdc1c6;
+}
+
+.searchPage_resultLink {
+  text-decoration: none;
+  color: white;
+}
+
+.footer {
+  border-top: 1px solid lightgrey;
+  background-color: #000;
+  padding: 15px;
+  z-index: 100;
+  color: gray;
+}
+
+.licensed {
+  color: #174d07;
+  text-decoration: underline;
+}
+
+.licensed {
+  color: #174d07;
+  text-decoration: underline;
+  position: relative;
+}
+
+.madewith {
+  padding: 20px;
+  font-size: 20px;
+  color: white;
+  background-color: #000;
+}
+
+.heart {
+  color: red;
+}

@@ -16,7 +16,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import subprocess
 from setuptools import setup, find_packages
+
+# Check if Node.js and npm are installed
+try:
+    subprocess.run(["node", "-v"], check=True)
+    subprocess.run(["npm", "-v"], check=True)
+except FileNotFoundError:
+    print("Node.js or npm is not installed.")
+    print("You need to install Node.js and npm in order to use web iris.")
 
 setup(
 	name='maryam',
@@ -52,7 +61,9 @@ setup(
         'bertopic',
         'sentence_transformers',
         'gensim',
-        'top2vec'
+        'top2vec',
+        'node',
+        'npm'
     ],
 	classifiers=[
 		'Programming Language :: Python :: 3.10',
@@ -63,3 +74,16 @@ setup(
 		'Environment :: Console',
 	]
 )
+
+try:
+    subprocess.run(["ls", "./maryam/core/web/web_interface"], check=True)
+except FileNotFoundError:
+    print(
+        "The specified path does not exist or does not contain the /bin/local/web folder."
+    )
+    exit(1)
+
+# Install npm packages in the specified path
+print("Installing npm packages...")
+subprocess.run(["npm", "install"], cwd="./maryam/core/web/web_interface")
+print("npm packages installed successfully.")
