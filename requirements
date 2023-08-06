@@ -43,8 +43,6 @@ threadpoolctl
 tokenizers
 toolz
 top2vec
-torch
-torchvision
 tqdm
 transformers
 typing-extensions

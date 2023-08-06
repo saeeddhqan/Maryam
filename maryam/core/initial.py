@@ -15,10 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = 'v2.5.1'
+__version__ = 'v2.5.2'
 
 import argparse
-import imp
+import importlib
 import os
 import shutil
 import sys
@@ -101,6 +101,12 @@ class initialize(core):
 		if not os.path.exists(self._home):
 			os.makedirs(self._home)
 
+	def _load_a_module(self, mod_name, mod_path):
+		spec = importlib.util.spec_from_file_location(mod_name, mod_path)
+		module = importlib.util.module_from_spec(spec)
+		spec.loader.exec_module(module)
+		return module
+
 	def _init_util_classes(self, require='*'):
 		util_path = os.path.join(self.core_path, 'util')
 		for dirpath, _, files in os.walk(util_path, followlinks=True):
@@ -110,11 +116,11 @@ class initialize(core):
 				mod_name = file.split('.')[0]
 				mod_path = os.path.join(dirpath, file)
 				try:
-					imp.load_source(mod_name, mod_path, open(mod_path)).main
+					module = self._load_a_module(mod_name, mod_path)
 				except Exception as e:
 					self.error(f"Util class '{mod_name}' has been disabled due to this error: {e}", 'initial', '_init_util_classes')
 				else:
-					exec(f"self.{mod_name} = sys.modules['{mod_name}'].main")
+					exec(f"self.{mod_name} = module.main")
 					exec(f"self.{mod_name}.framework = self")
 
 	def _load_modules(self, require='*'):
@@ -122,25 +128,25 @@ class initialize(core):
 		self._loaded_modules = core._loaded_modules
 		self._init_util_classes(require)
 		for dirpath, dirnames, _ in os.walk(self.module_path, followlinks=True):
-			# Each Section
+			# Each section
 			for section in filter(lambda d: not d.startswith('__'), dirnames):
 				category = section
 				if require != category and require != '*': continue
 				self._cat_module_names[category] = []
 				section = os.path.join(dirpath, section)
 				for _, _, files in os.walk(section):
-					# Each File
+					# Each file
 					for file in filter(lambda f: f.endswith(self.module_ext) and not f.startswith('__'), files):
 						mod_path = os.path.join(section, file)
 						mod_load_name = f"__{file.split('.')[0]}"
 						mod_disp_name = file.split('.')[0]
 						try:
-							imp.load_source(mod_load_name, mod_path, open(mod_path))
+							module = self._load_a_module(mod_load_name, mod_path)
 						except Exception as e:
 							if not self._global_options['api_mode']:
 								self.error(f"Module name '{mod_disp_name}' has been disabled due to this error: {e}", 'initial', '_load_modules')
 						else:
-							self._loaded_modules[mod_disp_name] = sys.modules[mod_load_name]
+							self._loaded_modules[mod_disp_name] = module
 							self._cat_module_names[category].append(mod_disp_name)
 							self._module_names.append(mod_disp_name)
 
