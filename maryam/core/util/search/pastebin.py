@@ -24,7 +24,7 @@ class main:
 		self.framework = main.framework
 		self.q = q.split('_')[0]
 		self._pages = ''
-		self.sources = ['google', 'bing', 'yahoo', 'ask', 'carrot2', 'duckduckgo', 'millionshort', 'qwant']
+		self.sources = ['google', 'bing', 'etools', 'duckduckgo', 'millionshort', 'qwant']
 		self._domains = []
 		self.extract_url = 'https://pastebin.com/raw'
 		self.limit = limit
@@ -52,27 +52,29 @@ class main:
 		self._pages += attr.pages
 		self._pastebin_pages = ''
 
-	def open_pages(self, link):
-		heading = re.search(r"pastebin\.com/([\w\d]+)", link)
-		title = 'no title'
-		if heading:
-			head_raw = f"https://pastebin.com/raw/{heading.group(1)}"
-			try:
-				head_req = self.framework.request(url=head_raw).text
-			except Exception as e:
-				self.framework.verbose('Pastebin is missed!')
-			else:
-				head_title = f"{self.q} pastes {head_req.splitlines()[0].lstrip()[:30]}...".ljust(10, ' ')
-				title = head_title.title()
-				self._pastebin_pages += head_req
-				self._links_and_titles.append([link, title])
+	# def open_pages(self, link):
+	# 	heading = re.search(r"pastebin\.com/([\w\d]+)", link)
+	# 	title = 'no title'
+	# 	if heading:
+	# 		head_raw = f"https://pastebin.com/raw/{heading.group(1)}"
+	# 		print(head_raw)
+	# 		# try:
+	# 		head_req = self.framework.request(url=head_raw).text
+	# 		# except Exception as e:
+	# 			# self.framework.verbose('Pastebin is missed!')
+	# 		# else:
+	# 		head_title = f"{self.q} pastes {head_req.splitlines()[0].lstrip()[:30]}...".ljust(10, ' ')
+	# 		title = head_title.title()
+	# 		self._pastebin_pages += head_req
+	# 		self._links_and_titles.append([link, title])
 
 	def run_crawl(self):
 		self.framework.thread(self.search, self.thread, self.sources, self.q, self.q_formats, self.limit, self.count, self.sources)
-		links = list(set(self.framework.reglib(self._pages).search(r"https://pastebin\.com/[\w\d]{2,}")))
-		self.framework.verbose('Rearranging paste links [give it a few seconds]...')
-		with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-			[executor.submit(self.open_pages, url) for url in links]
+		self._links = list(set(self.framework.reglib(self._pages).search(r"https://pastebin\.com/[\w\d]+")))
+		# print(links)
+		# self.framework.verbose('Rearranging paste links [give it a few seconds]...')
+		# with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+			# [executor.submit(self.open_pages, url) for url in links]
 
 	@property
 	def pages(self):

@@ -20,7 +20,7 @@ meta = {
     'author': 'Kunal Khandelwal',
     'version': '0.1',
     'description': 'Search artists, albums, playlist and users on spotify',
-    'sources': ('google', 'yahoo', 'bing','duckduckgo', 'metacrawler', 'millionshort', 'carrot2', 'qwant'),
+    'sources': ('google', 'bing', 'duckduckgo', 'millionshort', 'etools'),
     'options': (
         ('query', None, True, 'Query string', '-q', 'store', str),
         ('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),

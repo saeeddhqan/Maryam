@@ -13,11 +13,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import re
+from bs4 import BeautifulSoup
+
+def remove_tags(html_text):
+    soup = BeautifulSoup(html_text, 'html.parser')
+    return soup.get_text()
 
 meta = {
 	'name': 'Pwned database search',
 	'author': 'Vikas Kundu',
-	'version': '1.1',
+	'version': '1.2',
 	'description': 'Search your email for data breaches',
 	'comments': (
 			'Using XmlHttp API of haveibeenpwned.com',
@@ -33,25 +38,24 @@ meta = {
 
 def scrap(email):
 	import cloudscraper
-	url = f"https://haveibeenpwned.com/unifiedsearch/{email}"
+	url = f"https://eapi.pcloud.com/checkpwned?checkemail={email}"
 	scraper = cloudscraper.create_scraper()
 	result = scraper.get(url)
 	if result.text:
-		return result.json()
+		return remove_tags(result.text)
 	else:
 		return False
 
 
 def module_api(self):
-	output = {'breaches':[], 'pastes':[]}
+	output = {'content':[]}
 	email = self.options['email']
 	self.verbose('[PAWNED] Searching for pwning...')
 	pwns = scrap(email)
 	if pwns:
-		output['breaches'] = [{'breach_name': x['Name'], 'breach_domain': x['Domain']} for x in pwns['Breaches']]
-		if pwns['Pastes']:
-			output['pastes'] = [{'paste_id': x['Id'], 'paste_source': x['Source']} for x in pwns['Pastes']]
-
+		output['content'] = pwns
+	else:
+		output['content'] = 'no breach'
 	self.save_gather(output, 'osint/email_pwned', email,
 					 output=self.options['output'])
 	return output
@@ -59,12 +63,4 @@ def module_api(self):
 
 def module_run(self):
 	output = module_api(self)
-
-	for section in output.keys():
-		if isinstance(output[section], str):
-			self.output(output[section])
-			break
-		rows = []
-		for data in output[section]:
-			rows.append(list(data.values()))
-		self.table(rows, ['breaches', 'pastes'], section)
+	self.alert_results(output)

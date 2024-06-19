@@ -17,8 +17,8 @@ meta = {
 	'author': 'Saeed',
 	'version': '1.1',
 	'description': 'Search in open-sources to find emails.',
-	'sources': ('bing', 'pastebin', 'google', 'yahoo', 'metacrawler',
-				'baidu', 'startpage', 'qwant', 'duckduckgo', 'hunter', 'github', 'keyserver',),
+	'sources': ('bing', 'pastebin', 'google', 'metacrawler',
+				'baidu', 'startpage', 'duckduckgo', 'hunter', 'github', 'keyserver',),
 	'options': (
 		('query', None, True, 'Domain name or company name', '-q', 'store', str),
 		('limit', 3, False, 'Search limit(number of pages, default=3)', '-l', 'store', int),

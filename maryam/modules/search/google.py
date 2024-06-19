@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 meta = {
 	'name': 'Google Search',
 	'author': 'Saeed',
-	'version': '0.5',
+	'version': '0.6',
 	'description': 'Search your query in the google.com and show the results.',
 	'sources': ('google',),
 	'options': (

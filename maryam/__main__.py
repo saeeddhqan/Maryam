@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 OWASP Maryam!
 
@@ -16,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-__VERSION__ = '2.5.2'
+__VERSION__ = '2.5.3'
 
 import sys
 

@@ -64,10 +64,12 @@ class main:
 
 	def get_engine_results(self, xpaths, xpath_names):
 		xpath_results = self.html_fromstring(xpaths)
+		print(xpath_results)
 		results = []
 		if xpath_results:
 			root = xpath_results[xpath_names['results']]
 			for i in range(len(root[xpath_names['results_a']])):
+				print(i)
 				try:
 					result = {
 						't': root[xpath_names['results_title']][i].text_content().strip(),

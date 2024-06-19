@@ -40,14 +40,11 @@ def module_api(self):
 	output = {'pastes': []}
 	pastebin = self.pastebin(query, limit, count)
 	pastebin.run_crawl()
-	output['pastes'] = pastebin.links_and_titles
+	output['pastes'] = pastebin.links
 	self.save_gather(output, 'search/pastebin', query, output=self.options.get('output'))
 	return output
 
 def module_run(self):
 	output = module_api(self)
 	for i in range(len(output['pastes'])):
-		self.output(f"{output['pastes'][i][1]}", 'G')
-		self.output(f"\t{output['pastes'][i][0]}", 'N')
-	output.pop('pastes')
-	self.alert_results(output)
+		self.output(f"{output['pastes'][i]}", 'G')

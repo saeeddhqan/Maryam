@@ -19,7 +19,7 @@ meta = {
 	'author': 'Aman Singh',
 	'version': '1.0',
 	'description': 'Search your query in the GitHub and show the results.',
-	'sources': ('google', 'carrot2', 'bing', 'yahoo', 'millionshort', 'qwant', 'duckduckgo', 'github'),
+	'sources': ('google', 'etools', 'bing', 'yahoo', 'millionshort', 'duckduckgo', 'github'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
@@ -27,7 +27,7 @@ meta = {
 		('engine', 'google,github', False, 'Engine names for search(default=google, github)', '-e', 'store', str),
 		('thread', 2, False, 'The number of engine that run per round(default=2)', '-t', 'store', int),
 	),
-    'examples': ('github -q <QUERY> -l 15 -e carrot2,bing,qwant --output',)
+    'examples': ('github -q <QUERY> -l 15 -e etools,bing,qwant --output',)
 }
 
 LINKS = []

@@ -23,7 +23,7 @@ meta = {
 	'author': 'Aman Rawat',
 	'version': '0.2',
 	'description': 'Search your query in the quora.com and show the results.',
-	'sources': ('google', 'yahoo', 'bing', 'metacrawler', 'millionshort', 'carrot2', 'qwant', 'duckduckgo'),
+	'sources': ('google', 'bing', 'millionshort', 'etools', 'duckduckgo'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),

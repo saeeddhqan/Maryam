@@ -22,7 +22,7 @@ meta = {
 	'author': 'Saeed',
 	'version': '0.5',
 	'description': 'Search your query in the twitter.com and show the results.',
-	'sources': ('google', 'carrot2', 'bing', 'yahoo', 'millionshort', 'qwant', 'duckduckgo'),
+	'sources': ('google', 'etools', 'bing', 'millionshort', 'duckduckgo'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),

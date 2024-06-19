@@ -16,26 +16,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 meta = {
-	'name': 'Metacrawler Search',
+	'name': 'Etools Search',
 	'author': 'Saeed',
-	'version': '0.2',
-	'description': 'Search your query in the metacrawler.com and show the results.',
-	'sources': ('metacrawler',),
+	'version': '0.1',
+	'description': 'Search your query in the etools.ch and show the results.',
+	'sources': ('etools',),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
-		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
 	),
-	'examples': ('metacrawler -q <QUERY> -l 15 --output',)
+	'examples': ('etools -q <QUERY>',)
 }
 
 def module_api(self):
 	query = self.options['query']
-	limit = self.options['limit']
-	run = self.metacrawler(query, limit)
+	run = self.etools(query)
 	run.run_crawl()
 	results = run.results
 	output = {'results': results}
-	self.save_gather(output, 'search/metacrawler', query, output=self.options['output'])
+	self.save_gather(output, 'search/etools', query, output=self.options['output'])
 	return output
 
 def module_run(self):

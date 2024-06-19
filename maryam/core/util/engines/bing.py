@@ -67,7 +67,7 @@ class main:
 				payload['first'] = set_page(page)
 				if page >= self.limit or 'title="Next page"' not in req.text:
 					break
-	
+
 	# TODO: Finish it
 	@property
 	def bing_card(self):
@@ -117,9 +117,9 @@ class main:
 				title = link.text_content()
 				a = link.get('href')
 				c_and_c = root[self.xpath_name['results_content_and_cite']][i]
-				desc = c_and_c.xpath('.//p')[0].text_content()
-				cite = c_and_c.xpath('.//div[@class="b_attribution"]/cite')[0].text_content().strip()
-				cite = self.framework.meta_search_util().make_cite(cite)
+				desc = c_and_c.xpath('.//p')[0].text_content().strip()
+				# cite = c_and_c.xpath('.//div[@class="b_attribution"]//cite')[0].text_content().strip()
+				cite = self.framework.meta_search_util().make_cite(a)
 				result = {
 					't': title,
 					'a': a,

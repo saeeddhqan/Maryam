@@ -17,7 +17,7 @@ meta = {
 	'author': 'Saeed',
 	'version': '0.1',
 	'description': 'Search in open-sources to find images.',
-	'sources': ('bing', 'google', 'qwant'),
+	'sources': ('bing', 'google'),
 	'options': (
 		('query', None, True, 'Query, host Name, company Name, keyword, , etc', '-q', 'store', str),
 		('engines', 'google', True, 'Search engines with comma separator', '-e', 'store', str),

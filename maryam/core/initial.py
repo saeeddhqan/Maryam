@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = 'v2.5.2'
+__version__ = 'v2.5.3'
 
 import argparse
 import importlib
@@ -381,7 +381,8 @@ class initialize(core):
 			except KeyboardInterrupt:
 				pass
 			except ImportError as e:
-				self.output(f"To run the {tool_name}, we need to install the requirements.")
+				self.output(f"{tool_name} requires some modules that can't be imported.")
+				self.output(e)
 				if 'required' in meta:
 					self.output('Installing...')
 					required = meta['required']

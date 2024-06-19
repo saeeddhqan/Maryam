@@ -23,7 +23,7 @@ meta = {
 	'author': 'Prakhar Jain',
 	'version': '0.1',
 	'description': 'Search your query on TikTok and show the results.',
-	'sources': ('google', 'yahoo', 'bing', 'metacrawler', 'millionshort', 'carrot2', 'qwant', 'duckduckgo'),
+	'sources': ('google', 'bing', 'metacrawler', 'millionshort', 'etools', 'duckduckgo'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),

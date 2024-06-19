@@ -21,7 +21,7 @@ meta = {
 	'author': 'Vikas Kundu',
 	'version': '0.1',
 	'description': 'Search the publicly listed telegram groups for juicy info like emails, phone numbers etc',
-	'sources': ('telegramchannels.me','google', 'carrot2', 'bing', 'yahoo', 'millionshort', 'qwant', 'duckduckgo'),
+	'sources': ('telegramchannels.me','google', 'etools', 'bing', 'millionshort', 'duckduckgo'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 		('limit', 1, False, 'Search limit(number of pages, default=1)', '-l', 'store', int),
@@ -61,12 +61,12 @@ def scrap(self,query,limit):
 			req = self.request(f'https://telegramchannels.me/search?type=channel&page={page_no}&search={query}').text
 		except Exception as e:
 			self.error('Telegramchannels.me is missed!', 'telegram', 'scrap')
-
-		if 'There are no media! Try another search!' in req:
-			break
 		else:
-			channel_links += set(re.findall(r"https://telegramchannels\.me/channels/[\w]+", req)) # Find all channels
-	
+			if 'There are no media! Try another search!' in req:
+				break
+			else:
+				channel_links += set(re.findall(r"https://telegramchannels\.me/channels/[\w]+", req)) # Find all channels
+
 	pointer, total = 0, len(channel_links) # Variables for progress monitor
 	# not using {channel_links.index(link)}/{len(channel_links)} as sometimes out of order iteration happens
 	for link in set(channel_links): # Scraping channels individually
@@ -78,7 +78,7 @@ def scrap(self,query,limit):
 			PAGES += req
 		except Exception as e:
 			self.error(f"Channel {link} is missed!", 'telegram', 'scrap')
-	
+
 def module_api(self):
 	query = self.options['query']
 	limit = self.options['limit']

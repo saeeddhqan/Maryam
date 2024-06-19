@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 meta = {
 	'name': 'Bing Search',
 	'author': 'Saeed',
-	'version': '0.1',
+	'version': '0.2',
 	'description': 'Search your query in the bing.com and show the results.',
 	'sources': ('bing',),
 	'options': (
