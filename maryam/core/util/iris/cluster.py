@@ -31,7 +31,7 @@ class main:
 		return [x for x in text if x not in stops]
 
 	def tokenize_and_stem(self, text):
-		tokens = re.findall("[A-Z]{2,}(?![a-z])|[A-Z][a-z]+(?=[A-Z])|[\'\w\-]+",text)
+		tokens = re.findall(r"[A-Z]{2,}(?![a-z])|[A-Z][a-z]+(?=[A-Z])|[\'\w\-]+",text)
 		filtered_tokens = []
 		for token in tokens:
 			if re.search('[a-zA-Z]', token):

@@ -30,7 +30,7 @@ meta = {
 		('debug', False, False, 'debug the scraper', '--debug', 'store_true', bool),
 		('thread', 1, False, 'The number of links that open per round', '-t', 'store', int),
 	),
-	'examples': ('crawl_pages -d <DOMAIN> -r "https?://[A-z0-9\./]+"\
+	'examples': (r'crawl_pages -d <DOMAIN> -r "https?://[A-z0-9\./]+"\
 	 --output', 'crawl_pages -d <DOMAIN> --limit 2 --more')
 }
 

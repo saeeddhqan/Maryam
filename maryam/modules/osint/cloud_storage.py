@@ -70,7 +70,7 @@ def module_api(self):
 		self.thread(search, self.options['thread'], engine, query, q_formats, limit, count, meta['sources'])
 			
 		output['links'] += list( self.reglib().filter(r"https?://([\w\-\.]+\.)?"\
-		+ site_url.replace('.','\.')+"/", list( set(LINKS) ) ) ) #escaping . for regex search using replace()
+		+ site_url.replace('.',r'\.')+"/", list( set(LINKS) ) ) ) #escaping . for regex search using replace()
 
 	self.save_gather(output, 'osint/cloud_storage', query, output=self.options.get('output'))
 	return output
