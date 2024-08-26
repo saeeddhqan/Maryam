@@ -136,7 +136,7 @@ class main:
 			if cond1:
 				continue
 
-			join = str(join).replace('\/', '/')
+			join = str(join).replace(r'\/', '/')
 			##########################
 			# ADD OUT SCOPE
 			##########################
