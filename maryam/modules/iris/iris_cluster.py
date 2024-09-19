@@ -13,11 +13,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 meta = {
-	'name': 'Iris_Cluster',
+	'name': 'Iris Cluster',
 	'author': 'Shaad',
 	'version': '0.1',
 	'description': 'Get Iris Search result and clustered results for your query',
-	'required': ('kneed', 'mlxtend, numpy, sklearn'),
+	'required': ('kneed', 'mlxtend', 'numpy', 'sklearn'),
 	'options': (
 			('query', None, True, 'Query string', '-q', 'store', str),
 		),
@@ -51,7 +51,7 @@ def module_run(self):
 
 	print('\n\nCLUSTER RESULT: ')
 	for index, title in enumerate(output):
-	    print('\n')
-	    print(f"CLUSTER {index+1}")
-	    print(f"TITLE: {title}")
-	    print('  '+'\n  '.join(output[title]))
+		print('\n')
+		print(f"CLUSTER {index+1}")
+		print(f"TITLE: {title}")
+		print('  '+'\n  '.join(output[title]))

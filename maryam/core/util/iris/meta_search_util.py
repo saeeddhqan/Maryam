@@ -15,8 +15,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from math import trunc
 
 class main:
+
 	def __init__(self):
 		self.framework = main.framework
+
 
 	def make_cite(self, url: 'URL string') -> 'cite':
 		urlib = self.framework.urlib(url)
@@ -40,6 +42,7 @@ class main:
 		cite = f"{host}{path}"
 		return cite
 
+
 	def remove_dups(self, res):
 		urls = []
 		new = []
@@ -49,6 +52,7 @@ class main:
 				urls.append(a)
 				new.append(i)
 		return new
+
 
 	def simple_merge(results) -> 'merging results based on quality of engines':
 		engines_len = len(results)
@@ -65,14 +69,16 @@ class main:
 
 		return merged
 
+
 	def compute_count_consensus( 
 			e: dict(type=list, help='list of search engines sorted by quality'),
-			l: dict(type=int, help='number of results')) -> 'a list of numbers':
+			l: dict(type=int, help='number of results'),
+		) -> 'a list of numbers':
 		x = len(e)
 		o = {}
 		for i in e:
-			o[i] = trunc(l/x)
-		l -= l - (l%x)
+			o[i] = trunc(l / x)
+		l -= l - (l % x)
 		if l != 0:
 			if l < x:
 				for i in range(l):

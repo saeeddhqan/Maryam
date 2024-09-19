@@ -70,7 +70,7 @@ def module_api(self):
 			return
 		DATA = loads(file.read())
 		if key not in DATA and key != None:
-			self.error("The key doesn't exists", 'module_api', 'iris/sentiment')
+			self.error('The key doesn\'t exists', 'module_api', 'iris/sentiment')
 			return
 		if key != None:
 			DATA = DATA[key]

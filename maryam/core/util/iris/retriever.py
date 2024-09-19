@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 OWASP Maryam!
 This program is free software: you can redistribute it and/or modify
@@ -87,7 +86,7 @@ class main:
 		lowercase=True,
 		preprocessor=None,
 		tokenizer=None,
-		stop_words="english",
+		stop_words='english',
 		token_pattern=r"(?u)\b\w\w+\b",
 		ngram_range=(1, 2),
 		max_df=1,
@@ -124,10 +123,12 @@ class main:
 		)
 		self.vectorizer = vectorizer
 
+
 	def fit(self, df, y=None):
 		self.metadata = df
 		self.tfidf_matrix = self.vectorizer.fit_transform(list(map(' '.join, df["pages"])))
 		return self
+
 
 	def predict(self, query: str) -> 'OrderedDict':
 		"""
@@ -160,10 +161,8 @@ class main:
 			table = prettytable.PrettyTable(["rank", "index", "title"])
 			for i in range(len(closest_docs_indices)):
 				index = closest_docs_indices[i]
-				# if self.paragraphs:
-				#	  article_index = self.paragraphs[int(index)]["index"]
-				#	  title = self.metadata.iloc[int(article_index)]["title"]
-				# else:
+
+
 				title = self.metadata.iloc[int(index)]["title"]
 				table.add_row([rank, index, title])
 				rank += 1

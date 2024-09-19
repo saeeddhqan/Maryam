@@ -21,7 +21,7 @@ meta = {
 	'description': 'Iris is a built-in meta search engine.',
 	'comments': ('It should be note that this is a beta version and has many bugs!',),
 	'contributors': 'Aman, Dimitris, Divya, Vikas, Kunal',
-	'sources': ('google', 'bing', 'duckduckgo', 'etools', 'startpage', 'searx', 'yahoo'),
+	'sources': ('google', 'bing', 'duckduckgo', 'etools', 'startpage', 'yahoo'),
 	'options': (
 		('query', None, True, 'Query string', '-q', 'store', str),
 	),

@@ -11,13 +11,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-# core/util/iris/topic.py
 # Hatma Suryotrisongko
 
+import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sentence_transformers import SentenceTransformer
+BASEDIR = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
 
 class main:
 
@@ -25,7 +26,7 @@ class main:
 
 		from dask import dataframe as dd
 		import json
-		from gensim.parsing.preprocessing import remove_stopwords
+		self.stops = open(os.path.join(BASEDIR, '../../', 'data', 'stopwords.csv')).read().split(',')
 
 		if verbose == True:
 			print("\n\n DATASET = reading file : " + inputfile)
@@ -42,7 +43,7 @@ class main:
 				print("\n\n csv file (before preprocessing) = ")
 				print(tmp4)
 
-			self.corpus = tmp4[0].str.lower().apply(remove_stopwords).to_numpy()
+			self.corpus = tmp4[0].str.lower().apply(self.remove_stopwords).to_numpy()
 
 		elif filetype == "json":
 			with open(inputfile) as json_file:
@@ -55,7 +56,7 @@ class main:
 				print(tmp)
 
 			tmp['td'] = tmp['t'] + ' ' + tmp['d']
-			self.corpus = tmp['td'].str.lower().apply(remove_stopwords).to_numpy()
+			self.corpus = tmp['td'].str.lower().apply(self.remove_stopwords).to_numpy()
 
 		else:
 			print('ERROR, only accept csv or json file!')
@@ -72,6 +73,11 @@ class main:
 			print('\n\n histogram of the number of words in each corpus')
 			pd.Series([len(e.split()) for e in self.corpus]).hist()
 			plt.show()
+
+
+	def remove_stopwords(self, text):
+		return ''.join([x for x in text if x not in self.stops])
+
 
 	def run_sklearn_cluster_kmeans(self, selected_pretrained_model, showcharts, verbose):
 

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 
 from maryam import __main__
 import sys

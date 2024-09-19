@@ -17,6 +17,7 @@ import os
 from collections import Counter
 BASEDIR = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
 
+
 class main:
 
 	def __init__(self, docs: 'documents', form: 'documet form. e.g html', without_punc=True):
@@ -33,17 +34,21 @@ class main:
 		if self.without_punc:
 			self._punc()
 
+
 	def remove_stopwords(self, rest):
 		stops = open(os.path.join(BASEDIR, '../../', 'data', 'stopwords.csv')).read().split(',')
 		self.words = [x for x in self.words if x not in stops and x not in rest]
 
+
 	def _punc(self):
 		self.words = re.findall(r"[\w\-_#]{2,}", self.docs)
+
 
 	def _counter(self, last):
 		""" last: number of terms to show in plot """
 		bow = Counter(self.words)
 		return bow.most_common(last)
+
 
 	def plot_histogram(self, title, last, should_show=False):
 		import pandas as pd
